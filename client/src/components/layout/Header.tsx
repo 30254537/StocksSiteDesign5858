@@ -74,6 +74,11 @@ export default function Header() {
             
             {/* Right side controls */}
             <div className="flex items-center space-x-4">
+              {/* Background Music Control */}
+              <div className="hidden md:block">
+                <BackgroundMusic />
+              </div>
+              
               {/* Language Toggle */}
               <div className="relative mr-4 hidden md:block">
                 <div className="flex items-center">

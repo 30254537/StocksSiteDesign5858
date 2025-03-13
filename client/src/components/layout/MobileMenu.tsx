@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import BackgroundMusic from "@/components/ui/background-music";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -58,6 +59,11 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                 />
                 <span className="ml-2">EN</span>
+              </div>
+            </li>
+            <li>
+              <div className="flex items-center justify-center mt-4">
+                <BackgroundMusic />
               </div>
             </li>
           </ul>
