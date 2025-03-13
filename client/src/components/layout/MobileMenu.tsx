@@ -30,31 +30,23 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         <nav className="flex-grow flex flex-col items-center justify-center">
           <ul className="space-y-8 text-center">
             <li>
-              <Link href="/">
-                <a className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
+              <Link href="/" className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
                   {t("nav.home")}
-                </a>
               </Link>
             </li>
             <li>
-              <Link href="/#products">
-                <a className="text-xl font-orbitron text-accent transition-colors duration-300" onClick={onClose}>
+              <Link href="/#products" className="text-xl font-orbitron text-accent transition-colors duration-300" onClick={onClose}>
                   {t("nav.products")}
-                </a>
               </Link>
             </li>
             <li>
-              <Link href="#">
-                <a className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
+              <Link href="#" className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
                   {t("nav.about")}
-                </a>
               </Link>
             </li>
             <li>
-              <Link href="#">
-                <a className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
+              <Link href="#" className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
                   {t("nav.community")}
-                </a>
               </Link>
             </li>
             <li>
