@@ -67,12 +67,10 @@ export default function Header() {
                 <li>
                   <a 
                     href="https://t.me/STONKSOPEN" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="font-medium hover:text-accent transition-colors duration-300 flex items-center"
+                    target="_blank"
+                    className="font-medium hover:text-accent transition-colors duration-300"
                   >
                     {t("nav.community")}
-                    <i className="fas fa-external-link-alt text-xs ml-1"></i>
                   </a>
                 </li>
               </ul>
