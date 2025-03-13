@@ -1,0 +1,140 @@
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ProductGrid } from "@/components/ui/product-grid";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+export default function Home() {
+  const { t } = useLanguage();
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  // Scroll to products section when URL has #products
+  useEffect(() => {
+    if (window.location.hash === '#products') {
+      const productsSection = document.getElementById('products');
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, []);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  return (
+    <div className="pt-16">
+      {/* Background Grid Effect */}
+      <div className="fixed inset-0 grid-bg opacity-20 z-0"></div>
+      
+      {/* Scanline Effect */}
+      <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
+      
+      {/* Hero Section */}
+      <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center items-center text-center z-10 overflow-hidden">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary via-secondary to-darkblue z-0"></div>
+        
+        {/* Animated Circuit Lines */}
+        <div className="absolute inset-0 z-0 opacity-20">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M0,0 L20,40 L40,20 L60,60 L80,40 L100,100" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
+            <path d="M0,20 L20,60 L40,40 L60,80 L80,60 L100,80" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
+            <path d="M0,40 L20,80 L40,60 L60,100 L80,80 L100,60" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
+          </svg>
+        </div>
+        
+        {/* Hero Content */}
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl mx-auto animate-float">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
+              <span className="block">{t("hero.title").split(',')[0]},</span> 
+              <span className="text-accent animate-glow">{t("hero.title").split(',')[1]}</span>
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-gray-300">{t("hero.subtitle")}</p>
+            <a 
+              href="#products" 
+              className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
+            >
+              {t("hero.cta")}
+            </a>
+          </div>
+          
+          {/* Floating Ethereum Symbol */}
+          <div className="absolute -bottom-16 right-1/4 text-accent opacity-25 text-9xl animate-pulse-slow">
+            <i className="fab fa-ethereum"></i>
+          </div>
+        </div>
+        
+        {/* Down Arrow */}
+        <a href="#products" className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-accent animate-bounce">
+          <i className="fas fa-chevron-down text-2xl"></i>
+        </a>
+      </section>
+
+      {/* Products Section */}
+      <section id="products" className="py-20 relative z-20">
+        {/* Background with slight gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-darkblue to-primary opacity-90 z-0"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2>
+            
+            {/* Product Filter Tabs */}
+            <div className="inline-flex flex-wrap justify-center bg-primary/80 rounded-lg p-1 border border-accent/30 mb-8 max-w-xl mx-auto">
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "all" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("all")}
+              >
+                {t("products.all")}
+              </Button>
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "clothing" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("clothing")}
+              >
+                {t("products.clothing")}
+              </Button>
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "digital" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("digital")}
+              >
+                {t("products.digital")}
+              </Button>
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "accessories" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("accessories")}
+              >
+                {t("products.accessories")}
+              </Button>
+            </div>
+          </div>
+          
+          {/* Product Grid */}
+          <ProductGrid category={selectedCategory === "all" ? undefined : selectedCategory} />
+        </div>
+      </section>
+    </div>
+  );
+}
