@@ -27,7 +27,11 @@ export default function CartModal() {
 
   return (
     <Sheet open={isCartOpen} onOpenChange={(open) => !open && closeCart()}>
-      <SheetContent side="right" className="bg-secondary border-l border-accent/30 p-0 w-full md:max-w-md">
+      <SheetContent 
+        side="right" 
+        className="bg-secondary border-l border-accent/30 p-0 w-full md:max-w-md"
+        aria-describedby="cart-description"
+      >
         <div className="flex flex-col h-full">
           {/* Cart Header */}
           <SheetHeader className="p-4 border-b border-accent/30">
@@ -45,7 +49,7 @@ export default function CartModal() {
             {cartItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <i className="fas fa-shopping-cart text-4xl text-gray-500 mb-4"></i>
-                <p className="text-gray-300 mb-4">{t("cart.emptyCart")}</p>
+                <p id="cart-description" className="text-gray-300 mb-4">{t("cart.emptyCart")}</p>
                 <Link href="/#products">
                   <Button 
                     variant="outline" 
@@ -58,6 +62,7 @@ export default function CartModal() {
               </div>
             ) : (
               <>
+                <span id="cart-description" className="sr-only">{t("cart.itemsInCart")}</span>
                 {cartItems.map((item) => (
                   <div 
                     key={item.id} 

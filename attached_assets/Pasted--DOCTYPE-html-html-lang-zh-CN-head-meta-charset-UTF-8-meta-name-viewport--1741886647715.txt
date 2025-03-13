@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STONKS DEX - 周边产品</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 页眉 -->
+    <header>
+        <div class="logo">STONKS DEX <span class="powered">Powered by $STONKS</span></div>
+        <nav>
+            <ul>
+                <li><a href="#">首页</a></li>
+                <li><a href="#">产品</a></li>
+                <li><a href="#">关于我们</a></li>
+                <li><a href="#">社区</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 主推区 -->
+    <section class="hero">
+        <h1>Gear Up with $STONKS</h1>
+        <p>用 $STONKS 代币解锁独家周边</p>
+        <a href="#" class="cta-button">用 $STONKS 购物</a>
+    </section>
+
+    <!-- 产品推广网格 -->
+    <section class="products">
+        <h2>精选周边</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="T恤">
+                <h3>STONKS T恤</h3>
+                <p>100 $STONKS</p>
+                <span class="stonks-only">仅限 $STONKS</span>
+            </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="帽子">
+                <h3>DEX 棒球帽</h3>
+                <p>80 $STONKS</p>
+                <span class="stonks-only">仅限 $STONKS</span>
+            </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="NFT">
+                <h3>限量 NFT</h3>
+                <p>200 $STONKS</p>
+                <span class="stonks-only">仅限 $STONKS</span>
+            </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="马克杯">
+                <h3>STONKS 马克杯</h3>
+                <p>60 $STONKS</p>
+                <span class="stonks-only">仅限 $STONKS</span>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
