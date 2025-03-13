@@ -54,6 +54,21 @@
   .font-inter {
     font-family: 'Inter', sans-serif;
   }
+  
+  /* Audio control styles */
+  .audio-control {
+    @apply ml-4 flex items-center;
+  }
+  
+  .audio-button {
+    @apply bg-transparent border border-accent text-accent p-1 
+    rounded-full cursor-pointer transition-all duration-300
+    flex items-center justify-center w-8 h-8 text-sm;
+  }
+  
+  .audio-button:hover {
+    @apply bg-accent text-primary-foreground;
+  }
 }
 
 @layer components {

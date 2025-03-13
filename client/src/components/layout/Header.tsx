@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import MobileMenu from "./MobileMenu";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import BackgroundMusic from "@/components/ui/background-music";
 
 export default function Header() {
   const [location] = useLocation();

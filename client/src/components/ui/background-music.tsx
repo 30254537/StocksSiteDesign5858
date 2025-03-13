@@ -1,0 +1,63 @@
+import { useState, useRef, useEffect } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+export default function BackgroundMusic() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const { t } = useLanguage();
+  
+  const togglePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.muted = false;
+        audioRef.current.play().catch(err => {
+          console.error("Playback failed:", err);
+          // Most browsers require user interaction before playing audio
+          setIsPlaying(false);
+        });
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  // Save user preference in local storage
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('musicEnabled');
+    if (savedPreference === 'true' && audioRef.current) {
+      audioRef.current.muted = false;
+      audioRef.current.play().catch(() => {
+        // Silent error - browsers require interaction
+      });
+      setIsPlaying(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('musicEnabled', isPlaying.toString());
+  }, [isPlaying]);
+
+  return (
+    <div className="audio-control">
+      <button 
+        id="play-pause" 
+        onClick={togglePlayPause}
+        className={`audio-button ${isPlaying ? 'pause' : 'play'}`}
+        aria-label={isPlaying ? t('audio.pause') : t('audio.play')}
+      >
+        {isPlaying ? '⏸️' : '▶️'}
+      </button>
+      <audio 
+        ref={audioRef} 
+        id="background-music" 
+        loop 
+        muted
+        preload="auto"
+      >
+        <source src="/assets/audio/stonks-bg-music.mp3" type="audio/mpeg" />
+        <span className="sr-only">{t('audio.notSupported')}</span>
+      </audio>
+    </div>
+  );
+}

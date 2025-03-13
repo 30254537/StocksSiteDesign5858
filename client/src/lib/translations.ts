@@ -75,7 +75,13 @@ export const translations: Translations = {
     "footer.copyright": "© 2023 STONKS DEX. All rights reserved.",
     "footer.privacy": "Privacy Policy",
     "footer.terms": "Terms of Use",
-    "footer.refund": "Refund Policy"
+    "footer.refund": "Refund Policy",
+    
+    // Audio
+    "audio.play": "Play background music",
+    "audio.pause": "Pause background music",
+    "audio.notSupported": "Your browser does not support the audio element.",
+    "cart.itemsInCart": "Items in your cart"
   },
   zh: {
     // Navigation
@@ -145,7 +151,13 @@ export const translations: Translations = {
     "footer.copyright": "© 2023 STONKS DEX. 保留所有权利。",
     "footer.privacy": "隐私政策",
     "footer.terms": "使用条款",
-    "footer.refund": "退款政策"
+    "footer.refund": "退款政策",
+    
+    // Audio
+    "audio.play": "播放背景音乐",
+    "audio.pause": "暂停背景音乐",
+    "audio.notSupported": "您的浏览器不支持音频元素。",
+    "cart.itemsInCart": "购物车中的商品"
   }
 };
 
