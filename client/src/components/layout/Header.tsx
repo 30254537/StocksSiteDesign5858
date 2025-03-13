@@ -35,11 +35,9 @@ export default function Header() {
           <div className="flex justify-between items-center h-16 md:h-20">
             {/* Logo */}
             <div className="flex items-center">
-              <Link href="/">
-                <a className="font-orbitron text-2xl md:text-3xl font-bold text-white flex items-center">
-                  <span className="text-accent animate-glow">STONKS</span>
-                  <span className="ml-1">DEX</span>
-                </a>
+              <Link href="/" className="font-orbitron text-2xl md:text-3xl font-bold text-white flex items-center">
+                <span className="text-accent animate-glow">STONKS</span>
+                <span className="ml-1">DEX</span>
               </Link>
             </div>
             
@@ -47,35 +45,27 @@ export default function Header() {
             <nav className="hidden md:block">
               <ul className="flex space-x-8">
                 <li>
-                  <Link href="/">
-                    <a className={`font-medium transition-colors duration-300 ${
+                  <Link href="/" className={`font-medium transition-colors duration-300 ${
                       location === "/" ? "text-accent" : "hover:text-accent"
                     }`}>
                       {t("nav.home")}
-                    </a>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#products">
-                    <a className={`font-medium transition-colors duration-300 ${
+                  <Link href="/#products" className={`font-medium transition-colors duration-300 ${
                       location.includes("#products") ? "text-accent" : "hover:text-accent"
                     }`}>
                       {t("nav.products")}
-                    </a>
                   </Link>
                 </li>
                 <li>
-                  <Link href="#">
-                    <a className="font-medium hover:text-accent transition-colors duration-300">
+                  <Link href="#" className="font-medium hover:text-accent transition-colors duration-300">
                       {t("nav.about")}
-                    </a>
                   </Link>
                 </li>
                 <li>
-                  <Link href="#">
-                    <a className="font-medium hover:text-accent transition-colors duration-300">
+                  <Link href="#" className="font-medium hover:text-accent transition-colors duration-300">
                       {t("nav.community")}
-                    </a>
                   </Link>
                 </li>
               </ul>
