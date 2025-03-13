@@ -36,7 +36,10 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-secondary border border-accent/30 rounded-xl p-0 w-[95vw] max-w-4xl">
+      <DialogContent 
+        className="bg-secondary border border-accent/30 rounded-xl p-0 w-[95vw] max-w-4xl"
+        aria-describedby="product-description"
+      >
         <div className="p-6 relative">
           <DialogClose className="absolute top-4 right-4 text-gray-400 hover:text-white">
             <i className="fas fa-times"></i>
@@ -68,7 +71,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
               {/* Description */}
               <div className="mb-6">
                 <p className="text-gray-400 mb-1">{t("product.description")}</p>
-                <p className="text-gray-300">{product.description}</p>
+                <p id="product-description" className="text-gray-300">{product.description}</p>
               </div>
               
               {/* Size Selector - Only show for clothing */}
