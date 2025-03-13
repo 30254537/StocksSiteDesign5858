@@ -39,6 +39,10 @@ export const translations: Translations = {
     "product.cryptoPayment": "Cryptocurrency Payment",
     "product.secureTransaction": "Secure Transaction",
     
+    // About Us
+    "about.title": "About Us",
+    "about.content": "Welcome to the STONKS DEX merchandise universe—the ultimate decentralized gear station! STONKS DEX is a community-driven decentralized exchange platform that enables everyone to freely trade, hold $STONKS, and participate in the DeFi revolution. We launched this independent merchandise store to bring the STONKS spirit into the real world—from T-shirts to NFTs, every product is inspired and supported by the $STONKS community. There is no fiat currency here, only $STONKS—unlock exclusive merchandise with our native token and truly embrace the power of decentralization. Join our <a href='https://t.me/STONKSOPEN' target='_blank'>Telegram community</a>, get $STONKS, and wear gear that belongs to the future. STONKS TO THE MOON!",
+    
     // Cart
     "cart.title": "Shopping Cart",
     "cart.total": "Total:",
@@ -114,6 +118,10 @@ export const translations: Translations = {
     "product.returnPolicy": "30天退换政策",
     "product.cryptoPayment": "加密货币支付",
     "product.secureTransaction": "安全交易",
+    
+    // About Us
+    "about.title": "关于我们",
+    "about.content": "欢迎来到 STONKS DEX 的周边宇宙——去中心化的终极装备站！STONKS DEX 是一个由社区驱动的去中心化交易平台，让每个人都能自由交易、持有 $STONKS 并参与 DeFi 革命。我们推出这个独立销售网站，把 STONKS 的精神带到现实世界——从 T 恤到 NFT，每件产品都由 $STONKS 社区启发和支持。这里没有法币，只有 $STONKS——用我们的原生代币解锁独家周边，真正拥抱去中心化的力量。加入我们的 <a href='https://t.me/STONKSOPEN' target='_blank'>Telegram 社区</a>，获取 $STONKS，穿上属于未来的装备。STONKS TO THE MOON！",
     
     // Cart
     "cart.title": "购物车",

@@ -60,7 +60,7 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="font-medium hover:text-accent transition-colors duration-300">
+                  <Link href="/#about" className="font-medium hover:text-accent transition-colors duration-300">
                       {t("nav.about")}
                   </Link>
                 </li>

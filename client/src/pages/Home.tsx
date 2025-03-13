@@ -71,6 +71,24 @@ export default function Home() {
           <i className="fas fa-chevron-down text-2xl"></i>
         </a>
       </section>
+      
+      {/* About Us Section */}
+      <section id="about" className="py-20 relative z-20">
+        {/* Light background contrast with dark theme */}
+        <div className="absolute inset-0 glass-effect opacity-90 z-0"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-8 text-accent">
+              {t("about.title")}
+            </h2>
+            <div 
+              className="text-lg leading-relaxed space-y-4"
+              dangerouslySetInnerHTML={{ __html: t("about.content") }}
+            />
+          </div>
+        </div>
+      </section>
 
       {/* Products Section */}
       <section id="products" className="py-20 relative z-20">
