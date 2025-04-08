@@ -76,9 +76,14 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors duration-300">
-                  {t("footer.faq")}
-                </a>
+                <Link href="/privacy" className="hover:text-accent transition-colors duration-300">
+                  {t("footer.privacy")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-accent transition-colors duration-300">
+                  {t("footer.terms")}
+                </Link>
               </li>
             </ul>
           </div>
@@ -102,12 +107,11 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-orbitron font-medium mb-4 text-white">{t("footer.subscribeTitle")}</h3>
             <p className="mb-4 text-sm">{t("footer.subscribeDescription")}</p>
-            <form className="flex" onSubmit={handleSubscribe}>
+            <form className="flex subscribe-form" action="https://your-mailchimp-url" method="post" target="_blank">
               <Input
                 type="email"
+                name="EMAIL"
                 placeholder={t("footer.email")}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
                 className="bg-secondary text-white border border-accent/30 rounded-l-lg px-4 py-2 focus:outline-none focus:border-accent w-full"
               />
@@ -115,7 +119,7 @@ export default function Footer() {
                 type="submit"
                 className="bg-accent text-primary px-4 rounded-r-lg hover:bg-white transition-colors duration-300"
               >
-                <i className="fas fa-paper-plane"></i>
+                📩
               </Button>
             </form>
           </div>
@@ -125,12 +129,12 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm mb-4 md:mb-0">{t("footer.copyright")}</p>
           <div className="flex space-x-6 text-sm">
-            <a href="#" className="hover:text-accent transition-colors duration-300">
+            <Link href="/privacy" className="hover:text-accent transition-colors duration-300">
               {t("footer.privacy")}
-            </a>
-            <a href="#" className="hover:text-accent transition-colors duration-300">
+            </Link>
+            <Link href="/terms" className="hover:text-accent transition-colors duration-300">
               {t("footer.terms")}
-            </a>
+            </Link>
             <a href="#" className="hover:text-accent transition-colors duration-300">
               {t("footer.refund")}
             </a>

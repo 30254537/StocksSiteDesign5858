@@ -1,0 +1,196 @@
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const app = express();
+const PORT = 3000;
+
+// CORS
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+
+// 数据库
+const db = new sqlite3.Database('server/db.sqlite', (err) => {
+    if (err) {
+        console.error('数据库连接失败:', err.message);
+    } else {
+        console.log('成功连接到 SQLite 数据库');
+        db.run(`
+            CREATE TABLE IF NOT EXISTS products (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                description TEXT,
+                price REAL NOT NULL,
+                stock INTEGER NOT NULL DEFAULT 0,
+                imagePath TEXT
+            )
+        `);
+        db.run(`
+            CREATE TABLE IF NOT EXISTS orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                items TEXT NOT NULL,
+                total REAL NOT NULL,
+                createdAt TEXT NOT NULL
+            )
+        `);
+    }
+});
+
+// 图片上传
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'server/uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
+        if (extname && mimetype) {
+            cb(null, true);
+        } else {
+            cb(new Error('仅支持 JPEG/PNG 图片！'));
+        }
+    },
+    limits: { fileSize: 5 * 1024 * 1024 } // 限制 5MB
+});
+
+app.use(express.json());
+app.use(express.static('public'));
+app.use('/uploads', express.static('server/uploads'));
+
+// 输入验证中间件
+const validateProductInput = (req, res, next) => {
+    const { name, price, stock } = req.body;
+    if (!name || typeof name !== 'string' || name.length > 100) {
+        return res.status(400).json({ error: '产品名称必须是字符串且长度不超过 100' });
+    }
+    if (!price || isNaN(price) || price <= 0) {
+        return res.status(400).json({ error: '价格必须是正数' });
+    }
+    if (!stock || isNaN(stock) || stock < 0) {
+        return res.status(400).json({ error: '库存必须是非负整数' });
+    }
+    next();
+};
+
+// API 路由
+app.get('/api/products', (req, res) => {
+    db.all('SELECT * FROM products', [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(rows);
+    });
+});
+
+app.post('/api/products', upload.single('image'), validateProductInput, (req, res) => {
+    const { name, description, price, stock } = req.body;
+    const image = req.file;
+
+    if (!image) {
+        res.status(400).json({ error: '必须上传图片' });
+        return;
+    }
+
+    const imagePath = `/uploads/${image.filename}`;
+    db.run(
+        'INSERT INTO products (name, description, price, stock, imagePath) VALUES (?, ?, ?, ?, ?)',
+        [name, description || '', price, stock || 0, imagePath],
+        function (err) {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.status(201).json({ id: this.lastID, name, description, price, stock, imagePath });
+        }
+    );
+});
+
+app.put('/api/products/:id', upload.single('image'), validateProductInput, (req, res) => {
+    const { id } = req.params;
+    const { name, description, price, stock } = req.body;
+    const image = req.file;
+
+    let query = 'UPDATE products SET name = ?, description = ?, price = ?, stock = ?';
+    const params = [name, description || '', price, stock || 0];
+
+    if (image) {
+        db.get('SELECT imagePath FROM products WHERE id = ?', [id], (err, row) => {
+            if (row && row.imagePath) {
+                fs.unlinkSync(path.join(__dirname, '..', row.imagePath));
+            }
+        });
+        const imagePath = `/uploads/${image.filename}`;
+        query += ', imagePath = ?';
+        params.push(imagePath);
+    }
+
+    query += ' WHERE id = ?';
+    params.push(id);
+
+    db.run(query, params, function (err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({ message: '产品更新成功' });
+    });
+});
+
+app.delete('/api/products/:id', (req, res) => {
+    const { id } = req.params;
+    db.get('SELECT imagePath FROM products WHERE id = ?', [id], (err, row) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        if (row && row.imagePath) {
+            fs.unlinkSync(path.join(__dirname, '..', row.imagePath));
+        }
+
+        db.run('DELETE FROM products WHERE id = ?', [id], function (err) {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.json({ message: '产品删除成功' });
+        });
+    });
+});
+
+app.post('/api/orders', (req, res) => {
+    const { items, total } = req.body;
+    if (!items || !Array.isArray(items) || !total || isNaN(total)) {
+        return res.status(400).json({ error: '无效的订单数据' });
+    }
+
+    db.run(
+        'INSERT INTO orders (items, total, createdAt) VALUES (?, ?, ?)',
+        [JSON.stringify(items), total, new Date().toISOString()],
+        function (err) {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.status(201).json({ message: '订单创建成功', orderId: this.lastID });
+        }
+    );
+});
+
+app.listen(PORT, () => {
+    console.log(`服务器运行在 http://localhost:${PORT}`);
+});

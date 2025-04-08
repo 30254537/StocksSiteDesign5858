@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="STONKS DEX 订单管理">
+    <meta name="keywords" content="STONKS DEX, 订单管理">
+    <title>STONKS DEX - 订单管理</title>
+    <link rel="stylesheet" href="https://stonksdex.shop/styles.css">
+    <style>
+        .orders-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .orders-container table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #16213e;
+            color: white;
+        }
+
+        .orders-container th,
+        .orders-container td {
+            padding: 1rem;
+            border: 1px solid #00ffcc;
+            text-align: left;
+        }
+
+        .orders-container th {
+            background: #1a1a2e;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">STONKS DEX <span class="powered">Powered by $STONKS</span></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="products.html">产品</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="manage.html">后台管理</a></li>
+                <li><a href="orders.html">订单管理</a></li>
+                <li><a href="https://t.me/STONKSOPEN">社区</a></li>
+                <li><a href="cart.html">购物车 (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="orders-container">
+        <h2>订单管理</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>订单 ID</th>
+                    <th>商品</th>
+                    <th>总价 ($STONKS)</th>
+                    <th>创建时间</th>
+                </tr>
+            </thead>
+            <tbody id="order-list"></tbody>
+        </table>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>STONKS DEX</h3>
+                <p>星际区域模块技术学院中欧区总用户，为加密货币投资者提供最佳策略和最新信息。</p>
+                <div class="social-icons">
+                    <a href="https://twitter.com/STONKSOPEN" target="_blank">🐦</a>
+                    <a href="https://discord.gg/STONKSOPEN" target="_blank">💬</a>
+                    <a href="https://t.me/STONKSOPEN" target="_blank">📢</a>
+                    <a href="https://medium.com/@STONKSOPEN" target="_blank">📝</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>快捷链接</h3>
+                <ul>
+                    <li><a href="#">区块资讯</a></li>
+                    <li><a href="#">NFT 市场</a></li>
+                    <li><a href="#">社区新闻</a></li>
+                    <li><a href="privacy.html">隐私政策</a></li>
+                    <li><a href="terms.html">使用条款</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <p>📧 <a href="mailto:stonksdex-shop@gmail.com">stonksdex-shop@gmail.com</a></p>
+                <p>📍 中国深圳区块链大厦 #42-01</p>
+            </div>
+            <div class="footer-section">
+                <h3>订阅更新</h3>
+                <p>订阅我们的通讯，了解最新产品和独家优惠信息。</p>
+                <form class="subscribe-form" action="https://your-mailchimp-url" method="post" target="_blank">
+                    <input type="email" name="EMAIL" placeholder="输入您的邮箱" required>
+                    <button type="submit">📩</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 加载订单
+        async function loadOrders() {
+            try {
+                const response = await fetch('http://localhost:3000/api/orders');
+                const orders = await response.json();
+                const orderList = document.getElementById('order-list');
+                orderList.innerHTML = '';
+                orders.forEach(order => {
+                    const items = JSON.parse(order.items);
+                    const itemNames = items.map(item => item.name).join(', ');
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.id}</td>
+                        <td>${itemNames}</td>
+                        <td>${order.total}</td>
+                        <td>${new Date(order.createdAt).toLocaleString()}</td>
+                    `;
+                    orderList.appendChild(row);
+                });
+            } catch (error) {
+                alert('无法加载订单列表，请确保后端已启动！');
+            }
+        }
+
+        // 更新购物车数量
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        document.getElementById('cart-count').textContent = cart.length;
+
+        loadOrders();
+    </script>
+</body>
+</html>

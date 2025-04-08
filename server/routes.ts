@@ -7,8 +7,36 @@ import { randomUUID } from "crypto";
 import * as crypto from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Get all orders
+  app.get('/api/orders', (req, res) => {
+    const orders: any[] = []; // In a real app, this would fetch from a database
+    res.json(orders);
+  });
+  
+  // Create a new order
+  app.post('/api/orders', (req, res) => {
+    try {
+      const { items, total } = req.body;
+      if (!items || !Array.isArray(items) || !total || isNaN(total)) {
+        return res.status(400).json({ error: '无效的订单数据' });
+      }
+      
+      // In a real app, we would save this to a database
+      // For now, just return success response
+      res.status(201).json({ 
+        message: '订单创建成功', 
+        orderId: Date.now().toString(),
+        createdAt: new Date().toISOString() 
+      });
+    } catch (error) {
+      res.status(500).json({ error: '服务器错误' });
+    }
+  });
   // Helper function to get or create session ID
-  const getSessionId = (req: Request): string => {
+  const getSessionId = (req: Request & { session?: { id?: string } }): string => {
+    if (!req.session) {
+      req.session = {};
+    }
     if (!req.session.id) {
       req.session.id = randomUUID();
     }
@@ -16,7 +44,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // Set up session middleware
-  app.use((req, res, next) => {
+  app.use((req: Request & { session?: any }, res, next) => {
     if (!req.session) {
       req.session = {} as any;
     }
@@ -98,8 +126,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Update existing item quantity
         const updatedItem = await storage.updateCartItem(
           existingItem.id,
-          existingItem.quantity + validatedData.quantity,
-          validatedData.size
+          existingItem.quantity + (validatedData.quantity || 1),
+          validatedData.size && typeof validatedData.size === 'string' 
+            ? validatedData.size 
+            : undefined
         );
         return res.status(200).json(updatedItem);
       }
