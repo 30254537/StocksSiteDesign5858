@@ -1,0 +1,47 @@
+import React from 'react';
+
+interface NLogoProps {
+  className?: string;
+  size?: number;
+}
+
+export function NLogo({ className = "", size = 40 }: NLogoProps) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 200 200"
+      width={size} 
+      height={size} 
+      className={className}
+    >
+      <g transform="translate(15, 35) scale(0.7)">
+        {/* 顶部横杠 */}
+        <polygon points="50,20 150,20 130,40 70,40" fill="#ffffff" />
+        <polygon points="150,20 170,40 130,40" fill="#b3b3b3" />
+        <polygon points="150,20 170,40 170,60 150,40" fill="#808080" />
+        
+        {/* 垂直部分 */}
+        <polygon points="70,40 90,60 90,120 70,100" fill="#b3b3b3" />
+        <polygon points="70,40 70,100 50,80 50,20" fill="#808080" />
+        <polygon points="150,40 150,100 130,120 130,60" fill="#808080" />
+        <polygon points="150,40 170,60 170,120 150,100" fill="#666666" />
+        
+        {/* 中间横杠 */}
+        <polygon points="90,60 130,60 130,80 90,80" fill="#ffffff" />
+        <polygon points="90,60 90,80 70,100 70,80" fill="#b3b3b3" />
+        <polygon points="130,60 150,40 150,60 130,80" fill="#808080" />
+        
+        {/* 底部 */}
+        <polygon points="90,120 130,120 150,140 110,140" fill="#ffffff" />
+        <polygon points="90,120 90,140 70,120" fill="#b3b3b3" />
+        <polygon points="130,120 150,100 170,120 150,140" fill="#808080" />
+        <polygon points="70,120 90,140 50,140 30,120" fill="#808080" />
+        <polygon points="30,120 50,140 50,80 30,60" fill="#666666" />
+        
+        {/* 边缘轮廓光线 */}
+        <path d="M50,20 L150,20 L170,40 L170,120 L150,140 L50,140 L30,120 L30,60 L50,20" 
+          stroke="#00ffcc" strokeWidth="2" fill="none" />
+      </g>
+    </svg>
+  );
+}

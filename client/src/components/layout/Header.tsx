@@ -6,6 +6,7 @@ import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
 import BackgroundMusic from "@/components/ui/background-music";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { NLogo } from "@/components/ui/n-logo";
 
 export default function Header() {
   const [location] = useLocation();
@@ -38,8 +39,8 @@ export default function Header() {
             {/* Left side - Logo and N */}
             <div className="flex items-center gap-4">
               {/* N Logo */}
-              <div className="hidden md:block w-10 h-10">
-                <img src="/N-logo-simple.svg" alt="N Logo" className="w-full h-full" />
+              <div className="hidden md:flex w-10 h-10 items-center justify-center">
+                <NLogo size={40} />
               </div>
               
               {/* Brand text */}
@@ -81,8 +82,8 @@ export default function Header() {
             {/* Right side - Controls */}
             <div className="flex items-center gap-4">
               {/* N Logo (mobile only) */}
-              <div className="md:hidden w-8 h-8">
-                <img src="/N-logo-simple.svg" alt="N Logo" className="w-full h-full" />
+              <div className="md:hidden flex w-8 h-8 items-center justify-center">
+                <NLogo size={32} />
               </div>
               
               {/* Language Switcher */}
