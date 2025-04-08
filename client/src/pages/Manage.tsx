@@ -13,6 +13,8 @@ export default function Manage() {
   const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -35,10 +37,34 @@ export default function Manage() {
     }
   };
 
-  // 页面加载时获取产品列表
+  // 检查管理员身份验证
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    const checkAuth = async () => {
+      setCheckingAuth(true);
+      try {
+        const response = await apiRequest("GET", "/api/check-admin-auth");
+        if (response.ok) {
+          setIsAuthenticated(true);
+          fetchProducts();
+        } else {
+          // 未经授权，重定向到登录页面
+          toast({
+            title: "需要管理员权限",
+            description: "请先登录",
+            variant: "destructive",
+          });
+          setLocation("/admin-stonks-dex-secret-login");
+        }
+      } catch (error) {
+        // 出错，重定向到登录页面
+        setLocation("/admin-stonks-dex-secret-login");
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
+  }, [setLocation, toast]);
   
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
@@ -86,9 +112,51 @@ export default function Manage() {
     }
   };
 
+  // 在检查认证状态时显示加载中
+  if (checkingAuth) {
+    return (
+      <div className="container mx-auto py-12 px-4 flex flex-col items-center justify-center min-h-[50vh]">
+        <div className="animate-spin w-10 h-10 border-4 border-accent border-t-transparent rounded-full mb-4"></div>
+        <p>正在验证管理员身份...</p>
+      </div>
+    );
+  }
+
+  // 如果未认证，显示未授权信息（虽然通常会被重定向）
+  if (!isAuthenticated) {
+    return (
+      <div className="container mx-auto py-12 px-4 flex flex-col items-center justify-center min-h-[50vh]">
+        <h1 className="text-3xl font-bold mb-4 text-accent">需要管理员权限</h1>
+        <p className="mb-8">您没有访问此页面的权限</p>
+        <Button onClick={() => setLocation("/admin-stonks-dex-secret-login")}>前往登录</Button>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-12 px-4">
       <h1 className="text-3xl font-bold mb-8 text-accent">STONKS DEX 后台管理系统</h1>
+      
+      <div className="flex justify-end mb-4">
+        <Button 
+          variant="ghost" 
+          className="text-accent hover:text-white hover:bg-primary/50"
+          onClick={async () => {
+            try {
+              await apiRequest("POST", "/api/admin-logout");
+              toast({
+                title: "已登出",
+                description: "您已成功登出管理系统",
+              });
+              setLocation("/");
+            } catch (error) {
+              console.error("登出错误:", error);
+            }
+          }}
+        >
+          退出登录
+        </Button>
+      </div>
       
       <Card className="shadow-lg mb-8">
         <CardHeader>

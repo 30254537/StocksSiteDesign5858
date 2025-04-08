@@ -64,6 +64,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: '服务器错误' });
     }
   });
+  
+  // 管理员会话变量
+  let adminLoggedIn = false;
+  
+  // 管理员登录端点
+  app.post('/api/admin-login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ message: "用户名和密码是必填的" });
+      }
+      
+      // 获取用户
+      const user = await storage.getUserByUsername(username);
+      
+      if (!user) {
+        return res.status(401).json({ message: "无效的凭据" });
+      }
+      
+      // 验证密码 (在真实应用中，我们会使用 bcrypt 比较哈希密码)
+      if (password === "STONKS_admin_2023!") {
+        // 设置管理员会话
+        adminLoggedIn = true;
+        
+        // 响应
+        res.status(200).json({ message: "登录成功" });
+      } else {
+        res.status(401).json({ message: "无效的凭据" });
+      }
+    } catch (error) {
+      console.error("管理员登录错误:", error);
+      res.status(500).json({ message: "服务器错误" });
+    }
+  });
+  
+  // 检查管理员认证状态
+  app.get('/api/check-admin-auth', (req, res) => {
+    if (adminLoggedIn) {
+      res.status(200).json({ authenticated: true });
+    } else {
+      res.status(401).json({ authenticated: false });
+    }
+  });
+  
+  // 管理员登出端点
+  app.post('/api/admin-logout', (req, res) => {
+    adminLoggedIn = false;
+    res.status(200).json({ message: "已登出" });
+  });
+  
+  // 保护管理路由的中间件
+  const requireAdmin = (req: Request, res: Response, next: Function) => {
+    if (adminLoggedIn) {
+      next();
+    } else {
+      res.status(401).json({ message: "需要管理员权限" });
+    }
+  };
+  
+  // 使用中间件保护产品管理接口
+  app.post("/api/products", requireAdmin, async (req, res) => {
+    try {
+      const product = await storage.createProduct(req.body);
+      res.status(201).json(product);
+    } catch (error) {
+      res.status(500).json({ message: "创建产品时出错" });
+    }
+  });
+  
+  // 更新产品
+  app.put("/api/products/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "无效的产品ID" });
+      }
+      
+      const updatedProduct = await storage.updateProduct(id, req.body);
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "未找到产品" });
+      }
+      
+      res.json(updatedProduct);
+    } catch (error) {
+      res.status(500).json({ message: "更新产品时出错" });
+    }
+  });
+  
+  // 删除产品
+  app.delete("/api/products/:id", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "无效的产品ID" });
+      }
+      
+      const result = await storage.deleteProduct(id);
+      if (!result) {
+        return res.status(404).json({ message: "未找到产品" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "删除产品时出错" });
+    }
+  });
   // Helper function to get or create session ID
   const getSessionId = (req: Request & { session?: { id?: string } }): string => {
     if (!req.session) {

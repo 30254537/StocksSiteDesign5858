@@ -58,11 +58,7 @@ export default function Header() {
                       {t("nav.products")}
                   </Link>
                 </li>
-                <li>
-                  <Link href="/manage" className="font-medium hover:text-accent transition-colors duration-300">
-                      {t("nav.manage")}
-                  </Link>
-                </li>
+                {/* 管理入口已移除 */}
                 <li>
                   <a 
                     href="https://t.me/STONKSOPEN" 
