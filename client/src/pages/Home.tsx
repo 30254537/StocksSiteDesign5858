@@ -44,35 +44,34 @@ export default function Home() {
           </svg>
         </div>
         
-        {/* Hero Content - Two Columns */}
-        <div className="container mx-auto px-4 relative z-10 flex flex-col-reverse md:flex-row items-center justify-between">
-          {/* Left Column - Text */}
-          <div className="md:w-1/2 text-left md:pr-12 mt-12 md:mt-0">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
-              <span className="block">{t("hero.title").split(',')[0]},</span> 
-              <span className="text-accent animate-glow">{t("hero.title").split(',')[1]}</span>
-            </h1>
-            <p className="text-lg md:text-xl mb-8 text-gray-300">{t("hero.subtitle")}</p>
-            <div className="flex flex-wrap gap-4">
-              <a 
-                href="#products" 
-                className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
-              >
-                {t("hero.cta")}
-              </a>
-              <a 
-                href="https://t.me/STONKSOPEN" 
-                target="_blank"
-                className="inline-block bg-accent/10 text-white hover:bg-accent/20 transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg border-2 border-transparent"
-              >
-                {t("nav.community")}
-              </a>
+        {/* Hero Content - Centered */}
+        <div className="container mx-auto px-4 relative z-10">
+          {/* Centered Content */}
+          <div className="flex flex-col items-center justify-center text-center">
+            <div className="w-full max-w-3xl">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
+                <span className="block">Trade</span>
+                <span className="block">Decentralized,</span>
+                <span className="text-accent animate-glow block">Wear the</span>
+                <span className="text-accent animate-glow block">Future</span>
+              </h1>
+              <p className="text-lg md:text-xl mb-8 text-gray-300">{t("hero.subtitle")}</p>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <a 
+                  href="#products" 
+                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
+                >
+                  {t("hero.cta")}
+                </a>
+                <a 
+                  href="https://t.me/STONKSOPEN" 
+                  target="_blank"
+                  className="inline-block bg-accent/10 text-white hover:bg-accent/20 transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg border-2 border-transparent"
+                >
+                  {t("nav.community")}
+                </a>
+              </div>
             </div>
-          </div>
-          
-          {/* Right Column - Empty */}
-          <div className="md:w-1/2 flex justify-center items-center invisible md:visible">
-            {/* 完全移除了圆形和DEX字母 */}
           </div>
         </div>
         
