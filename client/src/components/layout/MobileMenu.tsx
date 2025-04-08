@@ -22,7 +22,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* Brand */}
           <div className="flex items-center gap-2">
-            <span className="text-accent font-bold">STONKS DEX</span>
+            <span className="text-accent font-bold">STONKS DEX SHOP</span>
           </div>
           
           {/* Close Button */}

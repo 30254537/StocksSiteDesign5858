@@ -39,7 +39,7 @@ export default function Header() {
             <div className="flex items-center gap-4">
               {/* Brand text */}
               <Link href="/" className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row">
-                <span className="text-accent animate-glow">STONKS DEX</span>
+                <span className="text-accent animate-glow">STONKS DEX SHOP</span>
                 <span className="powered text-xs text-gray-400 md:ml-2">Powered by $STONKS</span>
               </Link>
             </div>
