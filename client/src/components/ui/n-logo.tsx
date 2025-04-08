@@ -9,57 +9,42 @@ export function NLogo({ className = "", size = 40 }: NLogoProps) {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 240 240"
+      viewBox="0 0 100 60"
       width={size} 
-      height={size} 
+      height={size * 0.6} 
       className={className}
+      style={{ background: 'transparent' }}
     >
-      {/* 极简几何风格的三维等距N字母 */}
-      <g transform="translate(20, 20)">
-        {/* 左侧立方体 */}
-        <polygon points="20,50 50,30 50,150 20,170" fill="#ffffff" /> {/* 前面 */}
-        <polygon points="20,50 0,60 0,180 20,170" fill="#666666" /> {/* 左侧面 */}
-        <polygon points="20,50 50,30 30,20 0,40" fill="#dddddd" /> {/* 顶面 */}
+      <rect width="100" height="60" fill="transparent" />
+      
+      {/* 完全匹配图片中的N形状 */}
+      <g transform="translate(10, 0) scale(0.8)">
+        {/* 顶部水平长条 */}
+        <polygon points="10,10 80,10 90,20 20,20" fill="#ffffff" /> {/* 顶面 */}
+        <polygon points="10,10 10,15 20,25 20,20" fill="#333333" /> {/* 左侧面 */}
         
-        {/* 中间斜向方块连接 */}
-        <polygon points="50,30 130,30 150,50 70,50" fill="#ffffff" /> {/* 上方连接前面 */}
-        <polygon points="50,30 70,50 70,170 50,150" fill="#333333" /> {/* 斜向主体左侧 */}
-        <polygon points="130,30 150,50 150,170 130,150" fill="#333333" /> {/* 斜向主体右侧 */}
-        <polygon points="70,50 150,50 150,170 70,170" fill="#111111" /> {/* 斜向主体前面 */}
-        <polygon points="50,150 70,170 150,170 130,150" fill="#dddddd" /> {/* 下方连接顶面 */}
+        {/* 左侧竖条 */}
+        <polygon points="10,15 20,25 20,50 10,40" fill="#333333" /> {/* 左侧面 */}
+        <polygon points="20,20 30,20 30,45 20,45" fill="#ffffff" /> {/* 前面 */}
         
-        {/* 右侧立方体 */}
-        <polygon points="150,50 180,30 180,150 150,170" fill="#ffffff" /> {/* 前面 */}
-        <polygon points="180,30 200,40 200,160 180,150" fill="#666666" /> {/* 右侧面 */}
-        <polygon points="150,50 180,30 200,40 170,60" fill="#dddddd" /> {/* 顶面 */}
-
-        {/* 底部阴影 */}
-        <polygon points="0,180 20,170 70,170 50,190" fill="#333333" /> {/* 左侧底部 */}
-        <polygon points="150,170 200,160 170,180 130,190" fill="#333333" /> {/* 右侧底部 */}
-        <polygon points="50,190 70,170 150,170 130,190" fill="#111111" /> {/* 中间底部 */}
+        {/* 中间连接块 - 从左上到右中 */}
+        <polygon points="30,20 80,10 80,25 30,35" fill="#222222" /> {/* 前面 */}
         
-        {/* 边缘高光 */}
-        <line x1="20" y1="50" x2="20" y2="170" stroke="#ffffff" strokeWidth="1.5" />
-        <line x1="150" y1="50" x2="150" y2="170" stroke="#ffffff" strokeWidth="1.5" />
-        <line x1="70" y1="50" x2="70" y2="170" stroke="#444444" strokeWidth="1" />
+        {/* 右侧小立方体 */}
+        <polygon points="80,25 90,20 90,35 80,40" fill="#444444" /> {/* 右侧面 */}
+        <polygon points="80,25 80,40 70,50 70,35" fill="#333333" /> {/* 左侧面 */}
+        <polygon points="70,35 80,25 90,35 80,45" fill="#ffffff" /> {/* 顶面 */}
         
-        {/* 轮廓光效 */}
-        <path 
-          d="M0,40 L30,20 L180,20 L200,40 L200,160 L170,180 L30,180 L0,160 Z" 
-          stroke="#00ffcc" 
-          strokeWidth="1" 
-          fill="none" 
-          strokeOpacity="0.9" 
-        />
+        {/* 底部水平长条 */}
+        <polygon points="20,45 30,45 40,55 30,55" fill="#dddddd" /> {/* 顶面连接 */}
+        <polygon points="20,45 20,50 30,60 30,55" fill="#333333" /> {/* 左侧面 */}
+        <polygon points="30,45 100,45 90,55 40,55" fill="#ffffff" /> {/* 前面 */}
+        <polygon points="90,55 100,45 100,50 90,60" fill="#444444" /> {/* 右侧面 */}
         
-        {/* 增强立体感的额外线条 */}
-        <line x1="50" y1="30" x2="50" y2="150" stroke="#888888" strokeWidth="0.7" opacity="0.8" />
-        <line x1="180" y1="30" x2="180" y2="150" stroke="#888888" strokeWidth="0.7" opacity="0.8" />
-        <line x1="130" y1="30" x2="130" y2="150" stroke="#222222" strokeWidth="0.7" opacity="0.8" />
-        
-        {/* 现代感点缀效果 */}
-        <circle cx="20" cy="50" r="2" fill="#00ffcc" opacity="0.8" />
-        <circle cx="180" cy="150" r="2" fill="#00ffcc" opacity="0.8" />
+        {/* 阴影部分 */}
+        <polygon points="40,55 90,55 90,60 40,60" fill="#111111" /> {/* 底部 */}
+        <polygon points="30,35 30,45 70,35 80,25" fill="#111111" /> {/* 中间连接阴影 */}
+        <polygon points="10,40 20,50 30,60 20,50" fill="#111111" /> {/* 左下连接处 */}
       </g>
     </svg>
   );
