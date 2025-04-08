@@ -3,7 +3,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import BackgroundMusic from "@/components/ui/background-music";
 import { Switch } from "@/components/ui/switch";
-import { NLogo } from "@/components/ui/n-logo";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -21,9 +20,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     <div className="fixed inset-0 bg-primary/95 z-50">
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
-          {/* N Logo and Brand */}
+          {/* Logo and Brand */}
           <div className="flex items-center gap-2">
-            <NLogo size={32} />
+            <img src="/logo.svg" alt="Logo" className="w-8 h-8" />
             <span className="text-accent font-bold">STONKS DEX</span>
           </div>
           
