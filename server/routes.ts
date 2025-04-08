@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
@@ -6,6 +7,9 @@ import { z } from "zod";
 import { randomUUID } from "crypto";
 import * as crypto from "crypto";
 import Stripe from "stripe";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error("Missing STRIPE_SECRET_KEY environment variable");
@@ -14,6 +18,47 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // 配置multer用于文件上传
+  const uploadsDir = path.join(process.cwd(), 'public/uploads');
+  
+  // 确保上传目录存在
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  
+  // 配置multer存储
+  const multerStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, uploadsDir);
+    },
+    filename: function (req, file, cb) {
+      // 生成唯一文件名
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      cb(null, uniqueSuffix + ext);
+    }
+  });
+  
+  // 文件过滤
+  const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    // 只接受图片格式
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  };
+  
+  const upload = multer({ 
+    storage: multerStorage,
+    fileFilter: fileFilter,
+    limits: {
+      fileSize: 5 * 1024 * 1024 // 限制5MB
+    }
+  });
+  
+  // 为静态文件提供服务
+  app.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
   // Get all orders
   app.get('/api/orders', async (req, res) => {
     try {
@@ -124,25 +169,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
   
-  // 使用中间件保护产品管理接口
-  app.post("/api/products", requireAdmin, async (req, res) => {
+  // 图片上传端点
+  app.post('/api/upload', requireAdmin, upload.single('image'), (req, res) => {
     try {
-      const product = await storage.createProduct(req.body);
+      const file = req.file;
+      
+      if (!file) {
+        return res.status(400).json({ 
+          message: "没有上传文件或文件类型不被支持" 
+        });
+      }
+      
+      // 返回上传的文件路径
+      res.status(200).json({ 
+        imageUrl: `/uploads/${file.filename}` 
+      });
+    } catch (error) {
+      console.error('文件上传错误:', error);
+      res.status(500).json({ 
+        message: "文件上传失败", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // 使用中间件保护产品管理接口
+  app.post("/api/products", requireAdmin, upload.single('image'), async (req, res) => {
+    try {
+      // 获取表单数据
+      const productData = JSON.parse(req.body.productData || '{}');
+      
+      // 如果有上传图片，添加图片URL
+      if (req.file) {
+        productData.imageUrl = `/uploads/${req.file.filename}`;
+      }
+      
+      const product = await storage.createProduct(productData);
       res.status(201).json(product);
     } catch (error) {
-      res.status(500).json({ message: "创建产品时出错" });
+      console.error('创建产品时出错:', error);
+      res.status(500).json({ 
+        message: "创建产品时出错", 
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
   
   // 更新产品
-  app.put("/api/products/:id", requireAdmin, async (req, res) => {
+  app.put("/api/products/:id", requireAdmin, upload.single('image'), async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ message: "无效的产品ID" });
       }
       
-      const updatedProduct = await storage.updateProduct(id, req.body);
+      // 获取表单数据
+      let productData = req.body;
+      
+      if (req.body.productData) {
+        productData = JSON.parse(req.body.productData);
+      }
+      
+      // 如果有上传图片，添加图片URL
+      if (req.file) {
+        productData.imageUrl = `/uploads/${req.file.filename}`;
+      }
+      
+      const updatedProduct = await storage.updateProduct(id, productData);
       if (!updatedProduct) {
         return res.status(404).json({ message: "未找到产品" });
       }
