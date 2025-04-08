@@ -70,14 +70,9 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Right Column - Animation Effect */}
-          <div className="md:w-1/2 flex justify-center items-center">
-            <div className="w-48 h-48 md:w-80 md:h-80 relative animate-float">
-              <div className="w-full h-full rounded-full bg-accent/20 backdrop-blur-lg drop-shadow-2xl flex items-center justify-center">
-                <div className="text-accent text-5xl md:text-7xl font-orbitron font-bold animate-pulse">DEX</div>
-              </div>
-              <div className="absolute inset-0 bg-accent/10 rounded-full filter blur-3xl -z-10"></div>
-            </div>
+          {/* Right Column - Empty */}
+          <div className="md:w-1/2 flex justify-center items-center invisible md:visible">
+            {/* 完全移除了圆形和DEX字母 */}
           </div>
         </div>
         
