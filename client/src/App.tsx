@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
+import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import Manage from "@/pages/Manage";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/checkout" component={Checkout} />
+      <Route path="/checkout-success" component={CheckoutSuccess} />
       <Route path="/manage" component={Manage} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />

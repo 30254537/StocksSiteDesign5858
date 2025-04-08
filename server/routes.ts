@@ -1,10 +1,17 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCartItemSchema } from "@shared/schema";
+import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import * as crypto from "crypto";
+import Stripe from "stripe";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("Missing STRIPE_SECRET_KEY environment variable");
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all orders
@@ -240,8 +247,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Mock checkout endpoint
-  app.post("/api/checkout", async (req, res) => {
+  // Create payment intent for Stripe
+  app.post("/api/create-payment-intent", async (req, res) => {
     try {
       const sessionId = getSessionId(req);
       const cartItems = await storage.getCartItems(sessionId);
@@ -250,34 +257,182 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Cart is empty" });
       }
       
-      const { paymentMethod } = req.body;
+      // Calculate total in USD
+      const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
       
-      // Validate payment method
-      if (!paymentMethod || !["credit", "crypto"].includes(paymentMethod)) {
-        return res.status(400).json({ message: "Invalid payment method" });
+      // Convert to cents for Stripe
+      const amountInCents = Math.round(total * 100);
+      
+      // Create payment intent
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: "usd",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          sessionId,
+          items: JSON.stringify(cartItems.map(item => ({
+            id: item.productId,
+            quantity: item.quantity,
+            size: item.size || null
+          })))
+        }
+      });
+      
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        amount: total
+      });
+    } catch (error) {
+      console.error("Error creating payment intent:", error);
+      res.status(500).json({ 
+        message: "Error creating payment intent", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // Process successful payments and create order
+  app.post("/api/complete-order", async (req: Request & { user?: any }, res) => {
+    try {
+      const { paymentIntentId, shippingAddress } = req.body;
+      
+      if (!paymentIntentId) {
+        return res.status(400).json({ message: "Payment intent ID is required" });
+      }
+      
+      // Retrieve the payment intent to get the metadata
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      if (paymentIntent.status !== "succeeded") {
+        return res.status(400).json({ message: "Payment has not been completed" });
+      }
+      
+      const sessionId = paymentIntent.metadata.sessionId || getSessionId(req);
+      
+      // Get cart items
+      const cartItems = await storage.getCartItems(sessionId);
+      
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
       }
       
       // Calculate totals
       const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
       const ethTotal = cartItems.reduce((sum, item) => sum + (item.product.ethPrice * item.quantity), 0);
       
-      // Generate mock order ID
-      const orderId = crypto.randomBytes(8).toString("hex");
+      // Create order in database
+      const order = await storage.createOrder(
+        {
+          sessionId,
+          status: "paid",
+          total,
+          ethTotal,
+          paymentMethod: "credit",
+          shippingAddress: shippingAddress || null,
+          trackingNumber: null,
+          notes: `Payment Intent: ${paymentIntentId}`,
+          // If user is logged in, associate with their account
+          userId: req.user?.id || null
+        },
+        // Create order items
+        cartItems.map(item => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+          price: item.product.price,
+          ethPrice: item.product.ethPrice,
+          size: item.size
+        }))
+      );
       
-      // In a real app, we would process payment and create an order
-      // For now, just clear the cart
+      // Clear the cart after successful order
       await storage.clearCart(sessionId);
       
-      res.status(201).json({ 
-        success: true, 
-        orderId,
-        total,
-        ethTotal,
-        paymentMethod,
-        items: cartItems.length
+      res.status(201).json({
+        success: true,
+        order: {
+          id: order.id,
+          total,
+          status: order.status,
+          createdAt: order.createdAt
+        }
       });
     } catch (error) {
-      res.status(500).json({ message: "Error processing checkout" });
+      console.error("Error completing order:", error);
+      res.status(500).json({ 
+        message: "Error processing order", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // Process crypto payments
+  app.post("/api/crypto-checkout", async (req: Request & { user?: any }, res) => {
+    try {
+      const sessionId = getSessionId(req);
+      const cartItems = await storage.getCartItems(sessionId);
+      
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+      
+      const { paymentMethod, transactionHash, shippingAddress } = req.body;
+      
+      // Validate payment method
+      if (paymentMethod !== "crypto" || !transactionHash) {
+        return res.status(400).json({ message: "Invalid payment information" });
+      }
+      
+      // Calculate totals
+      const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+      const ethTotal = cartItems.reduce((sum, item) => sum + (item.product.ethPrice * item.quantity), 0);
+      
+      // Here in a real application, we would verify the blockchain transaction
+      // For now we'll assume the transaction is valid
+      
+      // Create order in database
+      const order = await storage.createOrder(
+        {
+          sessionId,
+          status: "paid",
+          total,
+          ethTotal,
+          paymentMethod: "crypto",
+          shippingAddress: shippingAddress || null,
+          trackingNumber: null,
+          notes: `Crypto transaction: ${transactionHash}`,
+          // If user is logged in, associate with their account
+          userId: req.user?.id || null
+        },
+        // Create order items
+        cartItems.map(item => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+          price: item.product.price,
+          ethPrice: item.product.ethPrice,
+          size: item.size
+        }))
+      );
+      
+      // Clear the cart after successful order
+      await storage.clearCart(sessionId);
+      
+      res.status(201).json({
+        success: true,
+        order: {
+          id: order.id,
+          total: ethTotal,
+          status: order.status,
+          createdAt: order.createdAt
+        }
+      });
+    } catch (error) {
+      console.error("Error processing crypto payment:", error);
+      res.status(500).json({ 
+        message: "Error processing payment", 
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 

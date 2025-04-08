@@ -1,15 +1,37 @@
 import { 
   products, type Product, type InsertProduct,
   cartItems, type CartItem, type InsertCartItem,
-  type CartItemWithProduct
+  type CartItemWithProduct,
+  users, type User, type InsertUser,
+  orders, type Order, type InsertOrder,
+  orderItems, type OrderItem, type InsertOrderItem,
+  subscribers, type Subscriber, type InsertSubscriber,
+  type OrderWithItems
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc, sql } from "drizzle-orm";
+import * as bcrypt from "bcryptjs";
 
 export interface IStorage {
+  // User operations
+  getUsers(): Promise<User[]>;
+  getUserById(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: Omit<InsertUser, "passwordHash"> & {password: string}): Promise<User>;
+  updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<boolean>;
+  updateStripeCustomerId(userId: number, customerId: string): Promise<User>;
+  updateUserStripeInfo(userId: number, stripeInfo: {customerId: string, subscriptionId: string}): Promise<User>;
+
   // Product operations
   getProducts(): Promise<Product[]>;
   getProductById(id: number): Promise<Product | undefined>;
   getProductsByCategory(category: string): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: number, product: Partial<Product>): Promise<Product | undefined>;
+  deleteProduct(id: number): Promise<boolean>;
+  getFeaturedProducts(): Promise<Product[]>;
 
   // Cart operations
   getCartItems(sessionId: string): Promise<CartItemWithProduct[]>;
@@ -19,27 +41,311 @@ export interface IStorage {
   updateCartItem(id: number, quantity: number, size?: string): Promise<CartItem | undefined>;
   deleteCartItem(id: number): Promise<boolean>;
   clearCart(sessionId: string): Promise<boolean>;
+  
+  // Order operations
+  getOrders(): Promise<Order[]>;
+  getOrderById(id: number): Promise<Order | undefined>;
+  getOrdersByUserId(userId: number): Promise<Order[]>;
+  getOrdersBySessionId(sessionId: string): Promise<Order[]>;
+  createOrder(order: InsertOrder, items: Omit<InsertOrderItem, 'orderId'>[]): Promise<Order>;
+  updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
+  getOrderWithItems(id: number): Promise<OrderWithItems | undefined>;
+  
+  // Newsletter operations
+  getSubscribers(): Promise<Subscriber[]>;
+  getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
+  createSubscriber(subscriber: InsertSubscriber): Promise<Subscriber>;
+  unsubscribe(email: string): Promise<boolean>;
 }
 
-export class MemStorage implements IStorage {
-  private products: Map<number, Product>;
-  private cartItems: Map<number, CartItem>;
-  private productId: number;
-  private cartItemId: number;
-
-  constructor() {
-    this.products = new Map();
-    this.cartItems = new Map();
-    this.productId = 1;
-    this.cartItemId = 1;
-    
-    // Initialize with some products
-    this.initializeProducts();
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(users.username);
   }
 
-  // Initialize default products
-  private initializeProducts() {
-    const defaultProducts: InsertProduct[] = [
+  async getUserById(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(userData: Omit<InsertUser, "passwordHash"> & {password: string}): Promise<User> {
+    const { password, ...userDataWithoutPassword } = userData;
+    const passwordHash = await bcrypt.hash(password, 10);
+    
+    const [user] = await db.insert(users)
+      .values({ ...userDataWithoutPassword, passwordHash })
+      .returning();
+    
+    return user;
+  }
+
+  async updateUser(id: number, userData: Partial<User>): Promise<User | undefined> {
+    const [user] = await db.update(users)
+      .set(userData)
+      .where(eq(users.id, id))
+      .returning();
+    
+    return user;
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    const result = await db.delete(users).where(eq(users.id, id));
+    return result.count > 0;
+  }
+
+  async updateStripeCustomerId(userId: number, customerId: string): Promise<User> {
+    const [user] = await db.update(users)
+      .set({ stripeCustomerId: customerId })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return user;
+  }
+
+  async updateUserStripeInfo(userId: number, stripeInfo: {customerId: string, subscriptionId: string}): Promise<User> {
+    const [user] = await db.update(users)
+      .set({
+        stripeCustomerId: stripeInfo.customerId,
+        stripeSubscriptionId: stripeInfo.subscriptionId
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return user;
+  }
+
+  // Product methods
+  async getProducts(): Promise<Product[]> {
+    return await db.select().from(products).orderBy(desc(products.featured), products.name);
+  }
+
+  async getProductById(id: number): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product;
+  }
+
+  async getProductsByCategory(category: string): Promise<Product[]> {
+    return await db.select().from(products)
+      .where(eq(products.category, category))
+      .orderBy(desc(products.featured), products.name);
+  }
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const [newProduct] = await db.insert(products).values(product).returning();
+    return newProduct;
+  }
+
+  async updateProduct(id: number, data: Partial<Product>): Promise<Product | undefined> {
+    const [product] = await db.update(products)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(products.id, id))
+      .returning();
+    
+    return product;
+  }
+
+  async deleteProduct(id: number): Promise<boolean> {
+    const result = await db.delete(products).where(eq(products.id, id));
+    return result.count > 0;
+  }
+
+  async getFeaturedProducts(): Promise<Product[]> {
+    return await db.select().from(products)
+      .where(sql`${products.featured} > 0`)
+      .orderBy(desc(products.featured))
+      .limit(4);
+  }
+
+  // Cart methods
+  async getCartItems(sessionId: string): Promise<CartItemWithProduct[]> {
+    const items = await db.select().from(cartItems)
+      .where(eq(cartItems.sessionId, sessionId));
+    
+    // Join with products
+    const result: CartItemWithProduct[] = [];
+    
+    for (const item of items) {
+      const [product] = await db.select().from(products)
+        .where(eq(products.id, item.productId));
+      
+      if (product) {
+        result.push({ ...item, product });
+      }
+    }
+    
+    return result;
+  }
+
+  async getCartItem(id: number): Promise<CartItem | undefined> {
+    const [item] = await db.select().from(cartItems).where(eq(cartItems.id, id));
+    return item;
+  }
+
+  async getCartItemByProductAndSession(productId: number, sessionId: string): Promise<CartItem | undefined> {
+    const [item] = await db.select().from(cartItems)
+      .where(and(
+        eq(cartItems.productId, productId),
+        eq(cartItems.sessionId, sessionId)
+      ));
+    
+    return item;
+  }
+
+  async createCartItem(cartItem: InsertCartItem): Promise<CartItem> {
+    const [newItem] = await db.insert(cartItems).values(cartItem).returning();
+    return newItem;
+  }
+
+  async updateCartItem(id: number, quantity: number, size?: string): Promise<CartItem | undefined> {
+    const updateData: any = { quantity };
+    if (size !== undefined) {
+      updateData.size = size;
+    }
+    
+    const [item] = await db.update(cartItems)
+      .set(updateData)
+      .where(eq(cartItems.id, id))
+      .returning();
+    
+    return item;
+  }
+
+  async deleteCartItem(id: number): Promise<boolean> {
+    const result = await db.delete(cartItems).where(eq(cartItems.id, id));
+    return result.count > 0;
+  }
+
+  async clearCart(sessionId: string): Promise<boolean> {
+    const result = await db.delete(cartItems).where(eq(cartItems.sessionId, sessionId));
+    return result.count > 0;
+  }
+
+  // Order methods
+  async getOrders(): Promise<Order[]> {
+    return await db.select().from(orders).orderBy(desc(orders.createdAt));
+  }
+
+  async getOrderById(id: number): Promise<Order | undefined> {
+    const [order] = await db.select().from(orders).where(eq(orders.id, id));
+    return order;
+  }
+
+  async getOrdersByUserId(userId: number): Promise<Order[]> {
+    return await db.select().from(orders)
+      .where(eq(orders.userId, userId))
+      .orderBy(desc(orders.createdAt));
+  }
+
+  async getOrdersBySessionId(sessionId: string): Promise<Order[]> {
+    return await db.select().from(orders)
+      .where(eq(orders.sessionId, sessionId))
+      .orderBy(desc(orders.createdAt));
+  }
+
+  async createOrder(order: InsertOrder, items: Omit<InsertOrderItem, 'orderId'>[]): Promise<Order> {
+    // Create the order first
+    const [newOrder] = await db.insert(orders).values(order).returning();
+
+    // Then create all the order items
+    for (const item of items) {
+      await db.insert(orderItems).values({
+        ...item,
+        orderId: newOrder.id
+      });
+    }
+
+    return newOrder;
+  }
+
+  async updateOrderStatus(id: number, status: string): Promise<Order | undefined> {
+    const [order] = await db.update(orders)
+      .set({
+        status,
+        updatedAt: new Date()
+      })
+      .where(eq(orders.id, id))
+      .returning();
+    
+    return order;
+  }
+
+  async getOrderWithItems(id: number): Promise<OrderWithItems | undefined> {
+    const [order] = await db.select().from(orders).where(eq(orders.id, id));
+    
+    if (!order) {
+      return undefined;
+    }
+    
+    const orderItemsList = await db.select().from(orderItems)
+      .where(eq(orderItems.orderId, id));
+    
+    const itemsWithProducts = [];
+    
+    for (const item of orderItemsList) {
+      const [product] = await db.select().from(products)
+        .where(eq(products.id, item.productId));
+      
+      if (product) {
+        itemsWithProducts.push({ ...item, product });
+      }
+    }
+    
+    return {
+      ...order,
+      items: itemsWithProducts
+    };
+  }
+
+  // Newsletter operations
+  async getSubscribers(): Promise<Subscriber[]> {
+    return await db.select().from(subscribers)
+      .where(eq(subscribers.active, 1))
+      .orderBy(subscribers.email);
+  }
+
+  async getSubscriberByEmail(email: string): Promise<Subscriber | undefined> {
+    const [subscriber] = await db.select().from(subscribers)
+      .where(eq(subscribers.email, email));
+    
+    return subscriber;
+  }
+
+  async createSubscriber(subscriber: InsertSubscriber): Promise<Subscriber> {
+    const [newSubscriber] = await db.insert(subscribers).values(subscriber).returning();
+    return newSubscriber;
+  }
+
+  async unsubscribe(email: string): Promise<boolean> {
+    const result = await db.update(subscribers)
+      .set({ active: 0 })
+      .where(eq(subscribers.email, email));
+    
+    return result.count > 0;
+  }
+}
+
+// Initialize with sample data
+async function seedInitialData() {
+  // Check if products table is empty
+  const existingProducts = await db.select().from(products);
+  
+  if (existingProducts.length === 0) {
+    // Add sample products
+    const sampleProducts: InsertProduct[] = [
       {
         name: "STONKS T恤",
         description: "独家设计的STONKS DEX T恤，采用100%有机棉制作，舒适透气。正面印有标志性的STONKS图案和品牌logo。",
@@ -114,92 +420,33 @@ export class MemStorage implements IStorage {
       }
     ];
 
-    defaultProducts.forEach(product => this.createProduct(product));
-  }
-
-  // Product methods
-  async getProducts(): Promise<Product[]> {
-    return Array.from(this.products.values());
-  }
-
-  async getProductById(id: number): Promise<Product | undefined> {
-    return this.products.get(id);
-  }
-
-  async getProductsByCategory(category: string): Promise<Product[]> {
-    return Array.from(this.products.values()).filter(
-      product => product.category === category
-    );
-  }
-
-  async createProduct(product: InsertProduct): Promise<Product> {
-    const id = this.productId++;
-    const newProduct: Product = { ...product, id };
-    this.products.set(id, newProduct);
-    return newProduct;
-  }
-
-  // Cart methods
-  async getCartItems(sessionId: string): Promise<CartItemWithProduct[]> {
-    const items = Array.from(this.cartItems.values()).filter(
-      item => item.sessionId === sessionId
-    );
-    
-    // Join with products
-    return items.map(item => {
-      const product = this.products.get(item.productId);
-      if (!product) {
-        throw new Error(`Product with id ${item.productId} not found`);
-      }
-      return { ...item, product };
-    });
-  }
-
-  async getCartItem(id: number): Promise<CartItem | undefined> {
-    return this.cartItems.get(id);
-  }
-
-  async getCartItemByProductAndSession(productId: number, sessionId: string): Promise<CartItem | undefined> {
-    return Array.from(this.cartItems.values()).find(
-      item => item.productId === productId && item.sessionId === sessionId
-    );
-  }
-
-  async createCartItem(cartItem: InsertCartItem): Promise<CartItem> {
-    const id = this.cartItemId++;
-    const newCartItem: CartItem = { ...cartItem, id };
-    this.cartItems.set(id, newCartItem);
-    return newCartItem;
-  }
-
-  async updateCartItem(id: number, quantity: number, size?: string): Promise<CartItem | undefined> {
-    const cartItem = this.cartItems.get(id);
-    if (!cartItem) {
-      return undefined;
+    for (const product of sampleProducts) {
+      await db.insert(products).values(product);
     }
-    
-    const updatedCartItem: CartItem = { 
-      ...cartItem, 
-      quantity,
-      size: size || cartItem.size
-    };
-    
-    this.cartItems.set(id, updatedCartItem);
-    return updatedCartItem;
+
+    console.log("✅ Sample products added to the database");
   }
 
-  async deleteCartItem(id: number): Promise<boolean> {
-    return this.cartItems.delete(id);
-  }
-
-  async clearCart(sessionId: string): Promise<boolean> {
-    const itemsToDelete = Array.from(this.cartItems.values())
-      .filter(item => item.sessionId === sessionId)
-      .map(item => item.id);
+  // Check if admin user exists
+  const adminUser = await db.select().from(users).where(eq(users.role, "admin"));
+  
+  if (adminUser.length === 0) {
+    // Create an admin user
+    const passwordHash = await bcrypt.hash("admin123", 10);
     
-    itemsToDelete.forEach(id => this.cartItems.delete(id));
-    return true;
+    await db.insert(users).values({
+      username: "admin",
+      email: "admin@stonksdex.com",
+      passwordHash: passwordHash,
+      role: "admin"
+    });
+    
+    console.log("✅ Admin user created");
   }
 }
 
-export const storage = new MemStorage();
+// Create storage instance and seed data
+export const storage = new DatabaseStorage();
+seedInitialData().catch(err => {
+  console.error("Error seeding initial data:", err);
+});
