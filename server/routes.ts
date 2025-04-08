@@ -8,9 +8,34 @@ import * as crypto from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all orders
-  app.get('/api/orders', (req, res) => {
-    const orders: any[] = []; // In a real app, this would fetch from a database
-    res.json(orders);
+  app.get('/api/orders', async (req, res) => {
+    try {
+      // In a real app with SQLite, we would use:
+      // db.all('SELECT * FROM orders', [], (err, rows) => {...})
+      // For now, we'll return a mock data set
+      const orders = [
+        {
+          id: 1,
+          items: JSON.stringify([
+            { name: "STONKS T恤", price: 50, quantity: 2 }
+          ]),
+          total: 100,
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 2,
+          items: JSON.stringify([
+            { name: "STONKS 帽子", price: 30, quantity: 1 },
+            { name: "STONKS 手机壳", price: 20, quantity: 1 }
+          ]),
+          total: 50,
+          createdAt: new Date(Date.now() - 86400000).toISOString()
+        }
+      ];
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching orders' });
+    }
   });
   
   // Create a new order
