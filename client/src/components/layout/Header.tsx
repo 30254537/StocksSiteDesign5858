@@ -35,13 +35,8 @@ export default function Header() {
       } border-b border-accent/30`}>
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16 md:h-20">
-            {/* Left side - Logo and N */}
+            {/* Left side - Brand text only */}
             <div className="flex items-center gap-4">
-              {/* Logo */}
-              <div className="hidden md:flex w-10 h-10 items-center justify-center">
-                <img src="/logo.svg" alt="Logo" className="w-10 h-10" />
-              </div>
-              
               {/* Brand text */}
               <Link href="/" className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row">
                 <span className="text-accent animate-glow">STONKS DEX</span>
@@ -80,10 +75,7 @@ export default function Header() {
             
             {/* Right side - Controls */}
             <div className="flex items-center gap-4">
-              {/* Logo (mobile only) */}
-              <div className="md:hidden w-8 h-8">
-                <img src="/logo.svg" alt="Logo" className="w-full h-full" />
-              </div>
+
               
               {/* Language Switcher */}
               <Button

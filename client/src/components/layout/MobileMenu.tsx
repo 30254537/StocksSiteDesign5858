@@ -20,9 +20,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     <div className="fixed inset-0 bg-primary/95 z-50">
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
-          {/* Logo and Brand */}
+          {/* Brand */}
           <div className="flex items-center gap-2">
-            <img src="/logo.svg" alt="Logo" className="w-8 h-8" />
             <span className="text-accent font-bold">STONKS DEX</span>
           </div>
           
