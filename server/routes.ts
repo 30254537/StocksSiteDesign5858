@@ -57,8 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 为静态文件提供服务
-  app.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
+  // 注意：静态文件服务已经在 index.ts 中配置
   // Get all orders
   app.get('/api/orders', async (req, res) => {
     try {

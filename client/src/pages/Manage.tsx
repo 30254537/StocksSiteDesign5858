@@ -96,13 +96,18 @@ export default function Manage() {
   const handleDeleteProduct = async (productId: number) => {
     if (window.confirm("确定要删除此产品吗？此操作无法撤销。")) {
       try {
+        // 发送删除请求
+        await apiRequest("DELETE", `/api/products/${productId}`);
+        
         toast({
-          title: "功能演示",
-          description: "在实际应用中，这将删除产品",
+          title: "删除成功",
+          description: "产品已成功删除",
         });
+        
         // Re-fetch products to update the UI
         await fetchProducts();
       } catch (error) {
+        console.error("删除产品错误:", error);
         toast({
           title: "删除失败",
           description: "无法删除产品，请稍后再试",
@@ -165,7 +170,7 @@ export default function Manage() {
         <CardContent>
           <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
             <h3 className="text-xl mb-4 text-accent">产品表单</h3>
-            <form id="product-form" className="space-y-4" onSubmit={async (e) => {
+            <form id="product-form" className="space-y-4" encType="multipart/form-data" onSubmit={async (e) => {
               e.preventDefault();
               
               const productId = document.getElementById("product-id") as HTMLInputElement;
@@ -177,24 +182,65 @@ export default function Manage() {
               
               const isEditing = productId.value ? true : false;
               
-              toast({
-                title: isEditing ? "更新产品" : "添加产品",
-                description: "在实际应用中，这将" + (isEditing ? "更新" : "添加") + "产品",
-              });
-              
-              // Reset form after submission
-              if (!isEditing) {
-                e.currentTarget.reset();
-              }
-              
-              // Re-fetch products to update the table
-              await fetchProducts();
-              
-              // Reset editing state
-              if (isEditing) {
-                setEditingProduct(null);
-                productId.value = "";
-                window.scrollTo({ top: document.getElementById("products-table")?.offsetTop || 0, behavior: "smooth" });
+              try {
+                // 创建 FormData 对象来处理文件上传
+                const formData = new FormData();
+                
+                // 添加产品数据
+                const productData = {
+                  name: name.value,
+                  description: description.value,
+                  price: parseFloat(price.value),
+                  stock: parseInt(stock.value),
+                };
+                
+                formData.append('productData', JSON.stringify(productData));
+                
+                // 如果选择了文件，添加到表单数据
+                if (image.files && image.files.length > 0) {
+                  formData.append('image', image.files[0]);
+                }
+                
+                // 发送请求
+                if (isEditing) {
+                  // 更新产品
+                  await apiRequest("PUT", `/api/products/${productId.value}`, formData);
+                  
+                  toast({
+                    title: "更新成功",
+                    description: `产品 "${name.value}" 已更新`,
+                  });
+                } else {
+                  // 创建新产品
+                  await apiRequest("POST", "/api/products", formData);
+                  
+                  toast({
+                    title: "添加成功",
+                    description: `产品 "${name.value}" 已添加`,
+                  });
+                }
+                
+                // Reset form after submission
+                if (!isEditing) {
+                  e.currentTarget.reset();
+                }
+                
+                // Re-fetch products to update the table
+                await fetchProducts();
+                
+                // Reset editing state
+                if (isEditing) {
+                  setEditingProduct(null);
+                  productId.value = "";
+                  window.scrollTo({ top: document.getElementById("products-table")?.offsetTop || 0, behavior: "smooth" });
+                }
+              } catch (error) {
+                console.error("产品操作错误:", error);
+                toast({
+                  title: isEditing ? "更新失败" : "添加失败",
+                  description: "操作失败，请稍后再试",
+                  variant: "destructive",
+                });
               }
             }}>
               <input type="hidden" id="product-id" />
