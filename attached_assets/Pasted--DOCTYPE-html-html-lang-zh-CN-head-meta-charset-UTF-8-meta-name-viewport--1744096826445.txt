@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STONKS DEX - 后台管理</title>
+    <link rel="stylesheet" href="https://stonksdex.shop/styles.css">
+    <style>
+        .manage-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .manage-form {
+            background: #16213e;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .manage-form h2 {
+            color: #00ffcc;
+            margin-bottom: 1rem;
+        }
+
+        .manage-form label {
+            display: block;
+            color: white;
+            margin: 0.5rem 0;
+        }
+
+        .manage-form input,
+        .manage-form textarea {
+            width: 100%;
+            padding: 0.5rem;
+            background: #1a1a2e;
+            color: white;
+            border: 1px solid #00ffcc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .manage-form button {
+            background: #00ffcc;
+            color: #1a1a2e;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .manage-form button:hover {
+            background: #00ccaa;
+        }
+
+        .product-list table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #16213e;
+            color: white;
+        }
+
+        .product-list th,
+        .product-list td {
+            padding: 1rem;
+            border: 1px solid #00ffcc;
+            text-align: left;
+        }
+
+        .product-list th {
+            background: #1a1a2e;
+        }
+
+        .product-list img {
+            max-width: 50px;
+        }
+
+        .product-list button {
+            background: #00ffcc;
+            color: #1a1a2e;
+            padding: 0.3rem 0.6rem;
+            border: none;
+            border-radius: 5px;
+            margin: 0 0.5rem;
+            cursor: pointer;
+        }
+
+        .product-list button:hover {
+            background: #00ccaa;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header>
+        <div class="logo">STONKS DEX <span class="powered">Powered by $STONKS</span></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="products.html">产品</a></li>
+                <li><a href="manage.html">后台管理</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 管理页面 -->
+    <div class="manage-container">
+        <!-- 添加/编辑产品表单 -->
+        <div class="manage-form">
+            <h2>添加/编辑产品</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <label>产品名称:</label>
+                <input type="text" id="product-name" required>
+                <label>产品描述:</label>
+                <textarea id="product-description"></textarea>
+                <label>价格 ($STONKS):</label>
+                <input type="number" id="product-price" step="0.01" required>
+                <label>产品图片:</label>
+                <input type="file" id="product-image" accept="image/*">
+                <button type="submit">保存</button>
+            </form>
+        </div>
+
+        <!-- 产品列表 -->
+        <div class="product-list">
+            <h2>产品列表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th>价格 ($STONKS)</th>
+                        <th>图片</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="product-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>STONKS DEX</h3>
+                <p>星际区域模块技术学院中欧区总用户，为加密货币投资者提供最佳策略和最新信息。</p>
+                <div class="social-icons">
+                    <a href="https://twitter.com/STONKSOPEN" target="_blank">🐦</a>
+                    <a href="https://discord.gg/STONKSOPEN" target="_blank">💬</a>
+                    <a href="https://t.me/STONKSOPEN" target="_blank">📢</a>
+                    <a href="https://medium.com/@STONKSOPEN" target="_blank">📝</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>快捷链接</h3>
+                <ul>
+                    <li><a href="#">区块资讯</a></li>
+                    <li><a href="#">NFT 市场</a></li>
+                    <li><a href="#">社区新闻</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <p>📧 <a href="mailto:stonksdex-shop@gmail.com">stonksdex-shop@gmail.com</a></p>
+                <p>📍 中国深圳区块链大厦 #42-01</p>
+            </div>
+            <div class="footer-section">
+                <h3>订阅更新</h3>
+                <p>订阅我们的通讯，了解最新产品和独家优惠信息。</p>
+                <form class="subscribe-form">
+                    <input type="email" placeholder="输入您的邮箱" required>
+                    <button type="submit">📩</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const productForm = document.getElementById('product-form');
+        const productList = document.getElementById('product-list');
+        const API_BASE_URL = 'http://localhost:3000/api/products';
+
+        // 加载产品列表
+        async function loadProducts() {
+            try {
+                const response = await fetch(API_BASE_URL);
+                const products = await response.json();
+                productList.innerHTML = '';
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.description || ''}</td>
+                        <td>${product.price}</td>
+                        <td><img src="http://localhost:3000${product.imagePath}" alt="${product.name}" width="50"></td>
+                        <td>
+                            <button onclick="editProduct(${product.id})">编辑</button>
+                            <button onclick="deleteProduct(${product.id})">删除</button>
+                        </td>
+                    `;
+                    productList.appendChild(row);
+                });
+            } catch (error) {
+                alert('无法加载产品列表，请确保后端已启动！');
+            }
+        }
+
+        // 提交表单（添加/编辑产品）
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('product-id').value;
+            const name = document.getElementById('product-name').value;
+            const description = document.getElementById('product-description').value;
+            const price = document.getElementById('product-price').value;
+            const image = document.getElementById('product-image').files[0];
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('price', price);
+            if (image) {
+                formData.append('image', image);
+            }
+
+            try {
+                const url = id ? `${API_BASE_URL}/${id}` : API_BASE_URL;
+                const method = id ? 'PUT' : 'POST';
+                const response = await fetch(url, {
+                    method,
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert(id ? '产品更新成功' : '产品添加成功');
+                    productForm.reset();
+                    document.getElementById('product-id').value = '';
+                    loadProducts();
+                } else {
+                    alert('操作失败，请检查后端是否运行！');
+                }
+            } catch (error) {
+                alert('无法连接到后端，请确保后端已启动！');
+            }
+        });
+
+        // 编辑产品
+        async function editProduct(id) {
+            try {
+                const response = await fetch(API_BASE_URL);
+                const products = await response.json();
+                const product = products.find(p => p.id === id);
+                if (product) {
+                    document.getElementById('product-id').value = product.id;
+                    document.getElementById('product-name').value = product.name;
+                    document.getElementById('product-description').value = product.description || '';
+                    document.getElementById('product-price').value = product.price;
+                }
+            } catch (error) {
+                alert('无法加载产品信息，请确保后端已启动！');
+            }
+        }
+
+        // 删除产品
+        async function deleteProduct(id) {
+            if (confirm('确定删除此产品？')) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        alert('产品删除成功');
+                        loadProducts();
+                    } else {
+                        alert('删除失败，请检查后端是否运行！');
+                    }
+                } catch (error) {
+                    alert('无法连接到后端，请确保后端已启动！');
+                }
+            }
+        }
+
+        // 初始加载产品
+        loadProducts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="STONKS DEX 周边产品 - 查看产品详情并用 $STONKS 代币购买">
+    <meta name="keywords" content="STONKS DEX, $STONKS, 周边产品, 加密货币">
+    <title>STONKS DEX - 产品详情</title>
+    <link rel="stylesheet" href="https://stonksdex.shop/styles.css">
+    <style>
+        .product-detail {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .product-detail img {
+            max-width: 400px;
+            border-radius: 10px;
+        }
+
+        .product-info {
+            flex: 1;
+            color: white;
+        }
+
+        .product-info h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-info p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .product-info .price {
+            color: #00ffcc;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .product-info .stock {
+            color: #ff4d4d;
+        }
+
+        .product-info button {
+            background: #00ffcc;
+            color: #1a1a2e;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .product-info button:hover {
+            background: #00ccaa;
+        }
+
+        .product-info button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">STONKS DEX <span class="powered">Powered by $STONKS</span></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="products.html">产品</a></li>
+                <li><a href="about.html">关于我们</a></li>
+                <li><a href="manage.html">后台管理</a></li>
+                <li><a href="https://t.me/STONKSOPEN">社区</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="product-detail">
+        <img id="product-image" src="" alt="">
+        <div class="product-info">
+            <h2 id="product-name"></h2>
+            <p id="product-description"></p>
+            <p class="price" id="product-price"></p>
+            <p class="stock" id="product-stock"></p>
+            <button id="add-to-cart" disabled>添加到购物车</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>STONKS DEX</h3>
+                <p>星际区域模块技术学院中欧区总用户，为加密货币投资者提供最佳策略和最新信息。</p>
+                <div class="social-icons">
+                    <a href="https://twitter.com/STONKSOPEN" target="_blank">🐦</a>
+                    <a href="https://discord.gg/STONKSOPEN" target="_blank">💬</a>
+                    <a href="https://t.me/STONKSOPEN" target="_blank">📢</a>
+                    <a href="https://medium.com/@STONKSOPEN" target="_blank">📝</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>快捷链接</h3>
+                <ul>
+                    <li><a href="#">区块资讯</a></li>
+                    <li><a href="#">NFT 市场</a></li>
+                    <li><a href="#">社区新闻</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <p>📧 <a href="mailto:stonksdex-shop@gmail.com">stonksdex-shop@gmail.com</a></p>
+                <p>📍 中国深圳区块链大厦 #42-01</p>
+            </div>
+            <div class="footer-section">
+                <h3>订阅更新</h3>
+                <p>订阅我们的通讯，了解最新产品和独家优惠信息。</p>
+                <form class="subscribe-form">
+                    <input type="email" placeholder="输入您的邮箱" required>
+                    <button type="submit">📩</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 从 URL 获取产品 ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        // 加载产品详情
+        async function loadProduct() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/products`);
+                const products = await response.json();
+                const product = products.find(p => p.id == productId);
+                if (product) {
+                    document.getElementById('product-image').src = `http://localhost:3000${product.imagePath}`;
+                    document.getElementById('product-image').alt = product.name;
+                    document.getElementById('product-name').textContent = product.name;
+                    document.getElementById('product-description').textContent = product.description || '暂无描述';
+                    document.getElementById('product-price').textContent = `${product.price} $STONKS`;
+                    document.getElementById('product-stock').textContent = product.stock > 0 ? `库存：${product.stock}` : '已售罄';
+                    const addToCartBtn = document.getElementById('add-to-cart');
+                    if (product.stock > 0) {
+                        addToCartBtn.disabled = false;
+                        addToCartBtn.onclick = () => addToCart(product);
+                    }
+                } else {
+                    window.location.href = '404.html';
+                }
+            } catch (error) {
+                alert('无法加载产品详情，请确保后端已启动！');
+            }
+        }
+
+        // 添加到购物车（占位，需后端支持）
+        function addToCart(product) {
+            alert(`已将 ${product.name} 添加到购物车！`);
+            // 实际应用中需保存到本地存储或后端
+        }
+
+        loadProduct();
+    </script>
+</body>
+</html>

@@ -3,14 +3,13 @@ import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import MobileMenu from "./MobileMenu";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import BackgroundMusic from "@/components/ui/background-music";
 
 export default function Header() {
   const [location] = useLocation();
   const { openCart, totalItems } = useCart();
-  const { language, toggleLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -35,15 +34,15 @@ export default function Header() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16 md:h-20">
             {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/" className="font-orbitron text-2xl md:text-3xl font-bold text-white flex items-center">
-                <span className="text-accent animate-glow">STONKS</span>
-                <span className="ml-1">DEX</span>
+            <div className="logo flex items-center">
+              <Link href="/" className="font-orbitron text-2xl md:text-3xl font-bold text-white flex items-center flex-col md:flex-row">
+                <span className="text-accent animate-glow">STONKS DEX</span>
+                <span className="powered text-xs text-gray-400 md:ml-2">Powered by $STONKS</span>
               </Link>
             </div>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:block">
+            <nav className="hidden md:flex items-center justify-between">
               <ul className="flex space-x-8">
                 <li>
                   <Link href="/" className={`font-medium transition-colors duration-300 ${
@@ -60,8 +59,8 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#about" className="font-medium hover:text-accent transition-colors duration-300">
-                      {t("nav.about")}
+                  <Link href="/manage" className="font-medium hover:text-accent transition-colors duration-300">
+                      {t("nav.manage")}
                   </Link>
                 </li>
                 <li>
@@ -74,28 +73,15 @@ export default function Header() {
                   </a>
                 </li>
               </ul>
-            </nav>
-            
-            {/* Right side controls */}
-            <div className="flex items-center space-x-4">
-              {/* Background Music Control */}
-              <div className="hidden md:block">
+              
+              {/* Audio Control */}
+              <div className="audio-control ml-8">
                 <BackgroundMusic />
               </div>
-              
-              {/* Language Toggle */}
-              <div className="relative mr-4 hidden md:block">
-                <div className="flex items-center">
-                  <span className="mr-2 text-sm">中文</span>
-                  <Switch 
-                    checked={language === "en"}
-                    onCheckedChange={toggleLanguage}
-                    className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
-                  />
-                  <span className="ml-2 text-sm">EN</span>
-                </div>
-              </div>
-              
+            </nav>
+            
+            {/* Right side controls for mobile */}
+            <div className="flex items-center space-x-4 md:hidden">
               {/* Cart Button */}
               <Button
                 variant="ghost"

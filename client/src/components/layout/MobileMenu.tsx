@@ -41,6 +41,11 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </Link>
             </li>
             <li>
+              <Link href="/manage" className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
+                  {t("nav.manage")}
+              </Link>
+            </li>
+            <li>
               <Link href="/#about" className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
                   {t("nav.about")}
               </Link>
