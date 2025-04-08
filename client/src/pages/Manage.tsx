@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -11,33 +11,12 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function Manage() {
   const { t } = useLanguage();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-
-  const handleLogin = () => {
-    // In a real application, this should be handled by a secure backend
-    // Using hardcoded passwords is only for demonstration
-    if (password === "admin123") {
-      setIsAuthenticated(true);
-      toast({
-        title: "登录成功",
-        description: "欢迎访问后台管理系统",
-      });
-      fetchProducts();
-    } else {
-      toast({
-        title: "密码错误",
-        description: "请输入正确的管理员密码",
-        variant: "destructive",
-      });
-    }
-  };
-
+  
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
@@ -56,11 +35,10 @@ export default function Manage() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleLogin();
-    }
-  };
+  // 页面加载时获取产品列表
+  useEffect(() => {
+    fetchProducts();
+  }, []);
   
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
@@ -107,40 +85,6 @@ export default function Manage() {
       }
     }
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto max-w-md py-24 px-4">
-        <Card className="bg-card text-card-foreground shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl font-bold text-accent">
-              后台管理系统
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  type="password"
-                  placeholder="请输入管理密码"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="bg-primary/50 border-accent"
-                />
-              </div>
-              <Button 
-                onClick={handleLogin} 
-                className="w-full bg-accent text-primary hover:bg-accent/80"
-              >
-                登录
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto py-12 px-4">
