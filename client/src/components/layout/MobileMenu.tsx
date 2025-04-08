@@ -1,8 +1,8 @@
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import BackgroundMusic from "@/components/ui/background-music";
+import { Switch } from "@/components/ui/switch";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -17,62 +17,76 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   }
 
   return (
-    <div className="fixed inset-0 glass-effect z-50">
+    <div className="fixed inset-0 bg-primary/95 z-50">
       <div className="flex flex-col h-full">
-        <div className="flex justify-end p-4">
+        <div className="flex justify-between items-center p-4 border-b border-accent/30">
+          {/* N Logo and Brand */}
+          <div className="flex items-center gap-2">
+            <img src="/N-logo.svg" alt="N Logo" className="w-8 h-8" />
+            <span className="text-accent font-bold">STONKS DEX</span>
+          </div>
+          
+          {/* Close Button */}
           <Button 
             variant="ghost"
             className="text-white" 
             onClick={onClose}
           >
-            <i className="fas fa-times text-2xl"></i>
+            <i className="fas fa-times text-xl"></i>
           </Button>
         </div>
-        <nav className="flex-grow flex flex-col items-center justify-center">
-          <ul className="space-y-8 text-center">
+        
+        <nav className="flex-grow flex flex-col items-center pt-12">
+          {/* Navigation Links */}
+          <ul className="space-y-6 text-center w-full">
             <li>
-              <Link href="/" className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
-                  {t("nav.home")}
+              <Link 
+                href="/" 
+                className="text-xl hover:text-accent transition-colors duration-300 block py-2" 
+                onClick={onClose}
+              >
+                {t("nav.home")}
               </Link>
             </li>
             <li>
-              <Link href="/#products" className="text-xl font-orbitron text-accent transition-colors duration-300" onClick={onClose}>
-                  {t("nav.products")}
-              </Link>
-            </li>
-            {/* 管理入口已移除 */}
-            <li>
-              <Link href="/#about" className="text-xl font-orbitron hover:text-accent transition-colors duration-300" onClick={onClose}>
-                  {t("nav.about")}
+              <Link 
+                href="/#products" 
+                className="text-xl text-accent transition-colors duration-300 block py-2 border-y border-accent/20 bg-accent/5" 
+                onClick={onClose}
+              >
+                {t("nav.products")}
               </Link>
             </li>
             <li>
               <a 
                 href="https://t.me/STONKSOPEN" 
                 target="_blank"
-                className="text-xl font-orbitron hover:text-accent transition-colors duration-300"
+                className="text-xl hover:text-accent transition-colors duration-300 block py-2"
                 onClick={onClose}
               >
                 {t("nav.community")}
               </a>
             </li>
-            <li>
-              <div className="flex items-center justify-center mt-6">
-                <span className="mr-2">中文</span>
+          </ul>
+          
+          {/* Controls */}
+          <div className="mt-auto p-6 w-full border-t border-accent/30">
+            <div className="flex justify-between items-center">
+              {/* Language Toggle */}
+              <div className="flex items-center gap-2">
+                <span className={language === 'zh' ? 'text-accent font-bold' : 'text-white'}>中文</span>
                 <Switch 
                   checked={language === "en"}
                   onCheckedChange={toggleLanguage}
-                  className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                  className="data-[state=checked]:bg-accent"
                 />
-                <span className="ml-2">EN</span>
+                <span className={language === 'en' ? 'text-accent font-bold' : 'text-white'}>EN</span>
               </div>
-            </li>
-            <li>
-              <div className="flex items-center justify-center mt-4">
-                <BackgroundMusic />
-              </div>
-            </li>
-          </ul>
+              
+              {/* Audio Control */}
+              <BackgroundMusic />
+            </div>
+          </div>
         </nav>
       </div>
     </div>

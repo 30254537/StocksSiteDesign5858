@@ -5,13 +5,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
 import BackgroundMusic from "@/components/ui/background-music";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Header() {
   const [location] = useLocation();
   const { openCart, totalItems } = useCart();
-  const { t } = useLanguage();
+  const { t, toggleLanguage, language } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,17 +35,23 @@ export default function Header() {
       } border-b border-accent/30`}>
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16 md:h-20">
-            {/* Logo */}
-            <div className="logo flex items-center">
-              <Link href="/" className="font-orbitron text-2xl md:text-3xl font-bold text-white flex items-center flex-col md:flex-row">
+            {/* Left side - Logo and N */}
+            <div className="flex items-center gap-4">
+              {/* N Logo */}
+              <div className="hidden md:block w-10 h-10">
+                <img src="/N-logo.svg" alt="N Logo" className="w-full h-full" />
+              </div>
+              
+              {/* Brand text */}
+              <Link href="/" className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row">
                 <span className="text-accent animate-glow">STONKS DEX</span>
                 <span className="powered text-xs text-gray-400 md:ml-2">Powered by $STONKS</span>
               </Link>
             </div>
             
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center justify-between">
-              <ul className="flex space-x-8">
+            {/* Center - Navigation */}
+            <nav className="hidden md:flex items-center justify-center">
+              <ul className="flex space-x-10 bg-primary/50 px-6 py-2 rounded-full">
                 <li>
                   <Link href="/" className={`font-medium transition-colors duration-300 ${
                       location === "/" ? "text-accent" : "hover:text-accent"
@@ -58,7 +66,6 @@ export default function Header() {
                       {t("nav.products")}
                   </Link>
                 </li>
-                {/* 管理入口已移除 */}
                 <li>
                   <a 
                     href="https://t.me/STONKSOPEN" 
@@ -69,25 +76,40 @@ export default function Header() {
                   </a>
                 </li>
               </ul>
-              
-              {/* Audio Control */}
-              <div className="audio-control ml-8">
-                <BackgroundMusic />
-              </div>
             </nav>
             
-            {/* Right side controls for mobile */}
-            <div className="flex items-center space-x-4 md:hidden">
-              {/* Cart Button */}
+            {/* Right side - Controls */}
+            <div className="flex items-center gap-4">
+              {/* N Logo (mobile only) */}
+              <div className="md:hidden w-8 h-8">
+                <img src="/N-logo.svg" alt="N Logo" className="w-full h-full" />
+              </div>
+              
+              {/* Language Switcher */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:text-accent transition-duration-300"
+                onClick={toggleLanguage}
+              >
+                {language === 'en' ? '中文' : 'EN'}
+              </Button>
+              
+              {/* Audio Control (desktop only) */}
+              <div className="hidden md:block">
+                <BackgroundMusic />
+              </div>
+              
+              {/* Cart Button (desktop only) */}
               <Button
                 variant="ghost"
                 size="icon" 
-                className="relative p-2 text-accent hover:text-white transition-colors duration-300"
+                className="relative hidden md:flex p-2 text-white hover:text-accent transition-colors duration-300"
                 onClick={openCart}
               >
                 <i className="fas fa-shopping-cart"></i>
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-neonpink text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-accent text-primary text-xs w-5 h-5 rounded-full flex items-center justify-center">
                     {totalItems}
                   </span>
                 )}

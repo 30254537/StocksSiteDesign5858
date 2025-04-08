@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <!-- 背景 -->
+  <rect width="300" height="300" fill="#1a1a2e" fill-opacity="0" />
+  
+  <!-- 3D N Logo (类似于图片中的样式) -->
+  <g transform="translate(50, 50) scale(0.8)">
+    <!-- 顶部横条 -->
+    <polygon points="65,40 175,40 155,60 85,60" fill="#ffffff" />
+    <polygon points="175,40 155,60 155,90 175,70" fill="#999999" />
+    
+    <!-- 右侧竖条 -->
+    <polygon points="175,70 155,90 155,150 175,130" fill="#999999" />
+    <polygon points="175,130 155,150 195,190 215,170" fill="#999999" />
+    
+    <!-- 底部横条 -->
+    <polygon points="125,170 195,170 195,190 125,190" fill="#ffffff" />
+    <polygon points="125,170 125,190 85,150 85,130" fill="#999999" />
+    
+    <!-- 左侧竖条 -->
+    <polygon points="85,60 85,130 65,110 65,40" fill="#999999" />
+    
+    <!-- 内部横条 -->
+    <polygon points="85,110 135,110 135,130 85,130" fill="#ffffff" />
+    <polygon points="135,110 135,130 155,110 155,90" fill="#999999" />
+    
+    <!-- 边缘高光 -->
+    <path d="M65,40 L175,40 L175,70 L175,130 L215,170 L195,190 L125,190 L85,150 L85,60 L65,40" 
+          stroke="#00ffcc" stroke-width="2" fill="none" />
+  </g>
+  
+  <!-- 添加发光效果 -->
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="3" result="blur" />
+    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+  </filter>
+  
+  <!-- 外部轮廓发光 -->
+  <g filter="url(#glow)" opacity="0.7">
+    <path d="M105,82 L175,82 L175,112 L175,172 L215,212 L145,212 L105,172 L105,82" 
+          stroke="#00ffcc" stroke-width="1" fill="none" />
+  </g>
+</svg>

@@ -31,7 +31,7 @@ export default function Home() {
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
       {/* Hero Section */}
-      <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center items-center text-center z-10 overflow-hidden">
+      <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center z-10 overflow-hidden">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary via-secondary to-darkblue z-0"></div>
         
@@ -44,25 +44,38 @@ export default function Home() {
           </svg>
         </div>
         
-        {/* Hero Content */}
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto animate-float">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
+        {/* Hero Content - Two Columns */}
+        <div className="container mx-auto px-4 relative z-10 flex flex-col-reverse md:flex-row items-center justify-between">
+          {/* Left Column - Text */}
+          <div className="md:w-1/2 text-left md:pr-12 mt-12 md:mt-0">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
               <span className="block">{t("hero.title").split(',')[0]},</span> 
               <span className="text-accent animate-glow">{t("hero.title").split(',')[1]}</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-300">{t("hero.subtitle")}</p>
-            <a 
-              href="#products" 
-              className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
-            >
-              {t("hero.cta")}
-            </a>
+            <p className="text-lg md:text-xl mb-8 text-gray-300">{t("hero.subtitle")}</p>
+            <div className="flex flex-wrap gap-4">
+              <a 
+                href="#products" 
+                className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
+              >
+                {t("hero.cta")}
+              </a>
+              <a 
+                href="https://t.me/STONKSOPEN" 
+                target="_blank"
+                className="inline-block bg-accent/10 text-white hover:bg-accent/20 transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg border-2 border-transparent"
+              >
+                {t("nav.community")}
+              </a>
+            </div>
           </div>
           
-          {/* Floating Ethereum Symbol */}
-          <div className="absolute -bottom-16 right-1/4 text-accent opacity-25 text-9xl animate-pulse-slow">
-            <i className="fab fa-ethereum"></i>
+          {/* Right Column - N Logo */}
+          <div className="md:w-1/2 flex justify-center items-center">
+            <div className="w-48 h-48 md:w-80 md:h-80 relative animate-float">
+              <img src="/N-logo.svg" alt="N Logo" className="w-full h-full drop-shadow-2xl" />
+              <div className="absolute inset-0 bg-accent/10 rounded-full filter blur-3xl -z-10"></div>
+            </div>
           </div>
         </div>
         
