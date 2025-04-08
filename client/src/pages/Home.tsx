@@ -73,7 +73,7 @@ export default function Home() {
           {/* Right Column - N Logo */}
           <div className="md:w-1/2 flex justify-center items-center">
             <div className="w-48 h-48 md:w-80 md:h-80 relative animate-float">
-              <img src="/N-logo.svg" alt="N Logo" className="w-full h-full drop-shadow-2xl" />
+              <img src="/N-logo-simple.svg" alt="N Logo" className="w-full h-full drop-shadow-2xl" />
               <div className="absolute inset-0 bg-accent/10 rounded-full filter blur-3xl -z-10"></div>
             </div>
           </div>

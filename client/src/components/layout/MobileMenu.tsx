@@ -22,7 +22,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* N Logo and Brand */}
           <div className="flex items-center gap-2">
-            <img src="/N-logo.svg" alt="N Logo" className="w-8 h-8" />
+            <img src="/N-logo-simple.svg" alt="N Logo" className="w-8 h-8" />
             <span className="text-accent font-bold">STONKS DEX</span>
           </div>
           

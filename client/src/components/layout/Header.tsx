@@ -39,7 +39,7 @@ export default function Header() {
             <div className="flex items-center gap-4">
               {/* N Logo */}
               <div className="hidden md:block w-10 h-10">
-                <img src="/N-logo.svg" alt="N Logo" className="w-full h-full" />
+                <img src="/N-logo-simple.svg" alt="N Logo" className="w-full h-full" />
               </div>
               
               {/* Brand text */}
@@ -82,7 +82,7 @@ export default function Header() {
             <div className="flex items-center gap-4">
               {/* N Logo (mobile only) */}
               <div className="md:hidden w-8 h-8">
-                <img src="/N-logo.svg" alt="N Logo" className="w-full h-full" />
+                <img src="/N-logo-simple.svg" alt="N Logo" className="w-full h-full" />
               </div>
               
               {/* Language Switcher */}
