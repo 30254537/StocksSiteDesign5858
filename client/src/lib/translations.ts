@@ -103,7 +103,7 @@ export const translations: Translations = {
     // Footer
     "footer.about": "A blockchain-based decentralized trading platform offering exclusive limited merchandise for cryptocurrency enthusiasts.",
     "footer.quickLinks": "Quick Links",
-    "footer.tradingPlatform": "Trading Platform",
+    "footer.tradingPlatform": "STONKS DEX",
     "footer.nftMarketplace": "NFT Marketplace",
     "footer.community": "Community Forum",
     "footer.faq": "FAQ",
@@ -219,7 +219,7 @@ export const translations: Translations = {
     // Footer
     "footer.about": "基于区块链技术的去中心化交易平台，为加密货币爱好者提供独家限量周边产品。",
     "footer.quickLinks": "快速链接",
-    "footer.tradingPlatform": "交易平台",
+    "footer.tradingPlatform": "STONKS DEX",
     "footer.nftMarketplace": "NFT 市场",
     "footer.community": "社区论坛",
     "footer.faq": "常见问题",

@@ -20,7 +20,7 @@ export default function About() {
             <div className="bg-primary/30 border border-accent/20 p-6 rounded-lg hover:bg-accent/5 transition-colors">
               <h3 className="text-xl font-semibold mb-2">DEV 001</h3>
               <p className="text-gray-300 mb-4">首席开发官</p>
-              <p className="text-sm">STONKS DEX核心开发者，负责去中心化交易平台的智能合约和区块链交互。</p>
+              <p className="text-sm">STONKS DEX核心开发者，负责去中心化STONKS DEX的智能合约和区块链交互。</p>
             </div>
             
             <div className="bg-primary/30 border border-accent/20 p-6 rounded-lg hover:bg-accent/5 transition-colors">
@@ -48,7 +48,7 @@ export default function About() {
               <li>通过持有$STONKS代币参与平台治理</li>
               <li>获取独家周边商品的折扣和早期访问权限</li>
               <li>参与社区活动，包括空投、挖矿挑战和周边设计比赛</li>
-              <li>为去中心化交易平台的改进提供反馈和建议</li>
+              <li>为去中心化 STONKS DEX 的改进提供反馈和建议</li>
             </ul>
             
             <div className="mt-8">

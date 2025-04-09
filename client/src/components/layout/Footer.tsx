@@ -61,7 +61,7 @@ export default function Footer() {
             <h3 className="text-xl font-orbitron font-medium mb-4 text-white">{t("footer.quickLinks")}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="hover:text-accent transition-colors duration-300">
+                <a href="https://mystonks.org/pc/" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors duration-300">
                   {t("footer.tradingPlatform")}
                 </a>
               </li>
