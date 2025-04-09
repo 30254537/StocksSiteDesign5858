@@ -25,8 +25,7 @@ export default function Home() {
 
   return (
     <div className="pt-16">
-      {/* Background Grid Effect */}
-      <div className="fixed inset-0 grid-bg opacity-20 z-0"></div>
+      {/* Background Grid Effect - 已移除 */}
       
       {/* Scanline Effect */}
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
@@ -36,14 +35,7 @@ export default function Home() {
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
-        {/* Animated Circuit Lines */}
-        <div className="absolute inset-0 z-0 opacity-20">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0,0 L20,40 L40,20 L60,60 L80,40 L100,100" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
-            <path d="M0,20 L20,60 L40,40 L60,80 L80,60 L100,80" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
-            <path d="M0,40 L20,80 L40,60 L60,100 L80,80 L100,60" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
-          </svg>
-        </div>
+        {/* Animated Circuit Lines - 已移除 */}
         
         {/* Hero Content - Centered */}
         <div className="container mx-auto px-4 relative z-10">
