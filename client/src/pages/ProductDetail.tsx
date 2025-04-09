@@ -91,75 +91,77 @@ export default function ProductDetail() {
       <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Gallery */}
-          <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden">
-            {/* Main Image */}
-            <img 
-              src={product.imageUrls && product.imageUrls.length > 0 
-                ? product.imageUrls[currentImageIndex] 
-                : product.imageUrl} 
-              alt={product.name} 
-              className="w-full h-full object-cover" 
-            />
+          <div>
+            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden">
+              {/* Main Image */}
+              <img 
+                src={product.imageUrls && product.imageUrls.length > 0 
+                  ? product.imageUrls[currentImageIndex] 
+                  : product.imageUrl} 
+                alt={product.name} 
+                className="w-full h-full object-cover" 
+              />
+              
+              {/* Image Navigation Arrows - Only show if there are multiple images */}
+              {product.imageUrls && product.imageUrls.length > 1 && (
+                <>
+                  <button 
+                    onClick={handlePrevImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button 
+                    onClick={handleNextImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                  
+                  {/* Image Indicators - Only show on mobile */}
+                  <div className="absolute bottom-3 left-0 right-0 flex md:hidden justify-center gap-2">
+                    {product.imageUrls.map((_, index) => (
+                      <button 
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          currentImageIndex === index 
+                            ? "bg-accent w-4" 
+                            : "bg-white/60 hover:bg-white"
+                        }`}
+                        aria-label={`View image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
             
-            {/* Image Navigation Arrows - Only show if there are multiple images */}
+            {/* Thumbnail Gallery - Show if there are multiple images */}
             {product.imageUrls && product.imageUrls.length > 1 && (
-              <>
-                <button 
-                  onClick={handlePrevImage}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button 
-                  onClick={handleNextImage}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                  aria-label="Next image"
-                >
-                  <ChevronRight size={20} />
-                </button>
-                
-                {/* Image Indicators */}
-                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-                  {product.imageUrls.map((_, index) => (
-                    <button 
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        currentImageIndex === index 
-                          ? "bg-accent w-4" 
-                          : "bg-white/60 hover:bg-white"
-                      }`}
-                      aria-label={`View image ${index + 1}`}
+              <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+                {product.imageUrls.map((url, index) => (
+                  <button 
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-16 h-16 rounded overflow-hidden flex-shrink-0 border-2 transition-all ${
+                      currentImageIndex === index 
+                        ? "border-accent" 
+                        : "border-transparent hover:border-gray-400"
+                    }`}
+                  >
+                    <img 
+                      src={url} 
+                      alt={`${product.name} view ${index + 1}`} 
+                      className="w-full h-full object-cover"
                     />
-                  ))}
-                </div>
-              </>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
-          
-          {/* Thumbnail Gallery - Show if there are multiple images */}
-          {product.imageUrls && product.imageUrls.length > 1 && (
-            <div className="hidden md:flex gap-2 mt-4 overflow-x-auto pb-2 -mx-2 px-2">
-              {product.imageUrls.map((url, index) => (
-                <button 
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-16 h-16 rounded overflow-hidden flex-shrink-0 border-2 transition-all ${
-                    currentImageIndex === index 
-                      ? "border-accent" 
-                      : "border-transparent hover:border-gray-400"
-                  }`}
-                >
-                  <img 
-                    src={url} 
-                    alt={`${product.name} view ${index + 1}`} 
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
           
           {/* Product Details */}
           <div>
