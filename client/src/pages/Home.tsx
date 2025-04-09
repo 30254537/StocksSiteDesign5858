@@ -59,7 +59,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-4 justify-center">
                 <a 
                   href="#products" 
-                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
+                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-6 rounded-lg text-lg max-w-md w-full text-center"
                   onClick={(e) => {
                     e.preventDefault();
                     const productsSection = document.getElementById('products');
@@ -69,13 +69,6 @@ export default function Home() {
                   }}
                 >
                   {t("hero.cta")}
-                </a>
-                <a 
-                  href="https://t.me/STONKSOPEN" 
-                  target="_blank"
-                  className="inline-block bg-accent/10 text-white hover:bg-accent/20 transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg border-2 border-transparent"
-                >
-                  {t("nav.community")}
                 </a>
               </div>
             </div>

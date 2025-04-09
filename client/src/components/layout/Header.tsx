@@ -128,15 +128,7 @@ export default function Header() {
                     {t("nav.about")}
                   </Link>
                 </li>
-                <li>
-                  <a 
-                    href="https://t.me/STONKSOPEN" 
-                    target="_blank"
-                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 px-2 py-1 whitespace-nowrap"
-                  >
-                    {t("nav.community")}
-                  </a>
-                </li>
+
               </ul>
             </nav>
             
