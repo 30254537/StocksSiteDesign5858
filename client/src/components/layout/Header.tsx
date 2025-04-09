@@ -58,9 +58,9 @@ export default function Header() {
         isScrolled ? 'bg-primary/90' : 'glass-effect'
       } border-b border-accent/30`}>
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center h-16 md:h-20">
+          <div className="flex items-center h-16 md:h-20">
             {/* Left side - Brand text only */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center mr-8">
               {/* Brand text */}
               <Link 
                 href="/" 
@@ -72,14 +72,14 @@ export default function Header() {
               </Link>
             </div>
             
-            {/* Center - Navigation */}
-            <nav className="hidden md:flex items-center justify-center">
-              <ul className="flex space-x-10 bg-primary/50 px-6 py-2 rounded-full">
+            {/* Navigation - Now placed to the right of the brand */}
+            <nav className="hidden md:flex flex-grow items-center">
+              <ul className="flex space-x-10 px-3">
                 <li>
                   <Link 
                     href="/" 
-                    className={`font-medium transition-colors duration-300 ${
-                      location === "/" ? "text-accent" : "hover:text-accent"
+                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 ${
+                      location === "/" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
                   >
@@ -89,8 +89,8 @@ export default function Header() {
                 <li>
                   <a 
                     href="/#products" 
-                    className={`font-medium transition-colors duration-300 ${
-                      location.includes("#products") ? "text-accent" : "hover:text-accent"
+                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 ${
+                      location.includes("#products") ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={handleProductsClick}
                   >
@@ -100,8 +100,8 @@ export default function Header() {
                 <li>
                   <Link 
                     href="/about" 
-                    className={`font-medium transition-colors duration-300 ${
-                      location === "/about" ? "text-accent" : "hover:text-accent"
+                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 ${
+                      location === "/about" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
                   >
@@ -112,7 +112,7 @@ export default function Header() {
                   <a 
                     href="https://t.me/STONKSOPEN" 
                     target="_blank"
-                    className="font-medium hover:text-accent transition-colors duration-300"
+                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 px-2 py-1"
                   >
                     {t("nav.community")}
                   </a>
@@ -120,30 +120,26 @@ export default function Header() {
               </ul>
             </nav>
             
-            {/* Right side - Controls */}
-            <div className="flex items-center gap-4">
-
-              
+            {/* Right side - Controls - Now pushed to the far right */}
+            <div className="flex items-center gap-3 ml-auto">
               {/* Language Switcher */}
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-accent transition-duration-300"
+                className="text-white font-medium hover:text-accent py-1 px-2 transition-duration-300"
                 onClick={toggleLanguage}
               >
-                {language === 'en' ? '中文' : 'EN'}
+                {language === 'en' ? 'EN' : '中文'}
               </Button>
-              
-              {/* Audio Control removed */}
               
               {/* Cart Button (desktop only) */}
               <Button
                 variant="ghost"
                 size="icon" 
-                className="relative hidden md:flex p-2 text-white hover:text-accent transition-colors duration-300"
+                className="relative hidden md:flex py-1 px-2 text-white hover:text-accent transition-colors duration-300"
                 onClick={openCart}
               >
-                <i className="fas fa-shopping-cart"></i>
+                <i className="fas fa-shopping-cart text-lg"></i>
                 {totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 bg-accent text-primary text-xs w-5 h-5 rounded-full flex items-center justify-center">
                     {totalItems}

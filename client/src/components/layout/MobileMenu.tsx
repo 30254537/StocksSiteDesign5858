@@ -59,13 +59,13 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           </Button>
         </div>
         
-        <nav className="flex-grow flex flex-col items-center pt-12">
+        <nav className="flex-grow flex flex-col items-center pt-10">
           {/* Navigation Links */}
-          <ul className="space-y-6 text-center w-full">
+          <ul className="space-y-5 text-center w-full">
             <li>
               <Link 
                 href="/" 
-                className="text-xl hover:text-accent transition-colors duration-300 block py-2" 
+                className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
                 onClick={() => {
                   scrollToTop();
                   onClose();
@@ -77,7 +77,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <li>
               <a 
                 href="/#products" 
-                className="text-xl text-accent transition-colors duration-300 block py-2 border-y border-accent/20 bg-accent/5" 
+                className="text-xl transition-colors duration-300 block py-3" 
                 onClick={(e) => handleProductsClick(e, onClose)}
               >
                 {t("nav.products")}
@@ -86,7 +86,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <li>
               <Link 
                 href="/about" 
-                className="text-xl hover:text-accent transition-colors duration-300 block py-2" 
+                className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
                 onClick={() => {
                   scrollToTop();
                   onClose();
@@ -99,7 +99,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <a 
                 href="https://t.me/STONKSOPEN" 
                 target="_blank"
-                className="text-xl hover:text-accent transition-colors duration-300 block py-2"
+                className="text-xl hover:text-accent transition-colors duration-300 block py-3"
                 onClick={onClose}
               >
                 {t("nav.community")}
