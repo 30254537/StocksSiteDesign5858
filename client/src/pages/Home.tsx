@@ -24,28 +24,25 @@ export default function Home() {
   };
 
   return (
-    <div className="pt-12">
+    <div className="pt-16">
       {/* Background Grid Effect - 已移除 */}
       
       {/* Scanline Effect */}
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
       {/* Hero Section */}
-      <section className="hero relative min-h-80vh pt-0 pb-0 flex flex-col z-10 overflow-hidden">
+      <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center z-10 overflow-hidden">
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
-        {/* Animated Circuit Lines */}
-        <div className="absolute inset-0 z-1">
-          <div className="circuit-pattern h-full w-full opacity-20"></div>
-        </div>
+        {/* Animated Circuit Lines - 已移除 */}
         
-        {/* Hero Content */}
-        <div className="container mx-auto px-4 relative z-10 mt-0">
-          {/* Top Content */}
-          <div className="flex flex-col items-center justify-start text-center pt-24">
+        {/* Hero Content - Centered */}
+        <div className="container mx-auto px-4 relative z-10">
+          {/* Centered Content */}
+          <div className="flex flex-col items-center justify-center text-center">
             <div className="w-full max-w-3xl">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-orbitron leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
                 <span className="block">Trade</span>
                 <span className="block">Decentralized,</span>
                 <span className="text-accent animate-glow block">Wear the</span>
@@ -88,17 +85,17 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="pt-0 mt-0 -translate-y-64 pb-20 relative z-20">
+      <section id="products" className="py-20 relative z-20">
         {/* Background with deep blue color */}
-        <div className="absolute inset-0 -top-10 bg-primary z-0"></div>
+        <div className="absolute inset-0 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-5">
+          <div className="text-center mb-16">
             {/* <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2> */}
             
             {/* Product Filter Banner */}
-            <div className="mb-6 mx-auto text-center">
+            <div className="mb-8 mx-auto text-center">
               <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
                 <NeonText>STONKS DEX 周边产品</NeonText>
               </div>

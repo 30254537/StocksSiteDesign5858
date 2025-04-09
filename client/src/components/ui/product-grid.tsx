@@ -15,7 +15,7 @@ export function ProductGrid({ category = "all" }: ProductGridProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
-  const { data: products = [], isLoading } = useQuery<Product[]>({
+  const { data: products = [], isLoading } = useQuery({
     queryKey: category === "all" ? ['/api/products'] : [`/api/products/category/${category}`],
     enabled: true
   });
@@ -51,7 +51,7 @@ export function ProductGrid({ category = "all" }: ProductGridProps) {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {products.map((product) => (
+          {products.map((product: Product) => (
             <ProductCard
               key={product.id}
               product={product}
