@@ -4,6 +4,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
+import { MusicPlayer } from "@/components/ui/music-player";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -122,6 +123,11 @@ export default function Header() {
             
             {/* Right side - Controls - Now pushed to the far right */}
             <div className="flex items-center gap-3 ml-auto">
+              {/* Music Player */}
+              <div className="hidden md:block">
+                <MusicPlayer />
+              </div>
+              
               {/* Language Switcher */}
               <button
                 className="text-white font-medium hover:text-accent py-1 px-2 transition-duration-300 bg-transparent border-none cursor-pointer"

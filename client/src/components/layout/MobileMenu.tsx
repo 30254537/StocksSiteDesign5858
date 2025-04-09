@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { MusicPlayer } from "@/components/ui/music-player";
 
 // 跳转到页面顶部的函数
 const scrollToTop = () => {
@@ -121,7 +122,10 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <span className={language === 'en' ? 'text-accent font-bold' : 'text-white'}>EN</span>
               </div>
               
-              {/* Audio Control removed */}
+              {/* Music Player */}
+              <div className="flex items-center">
+                <MusicPlayer />
+              </div>
             </div>
           </div>
         </nav>
