@@ -80,24 +80,6 @@ export default function Home() {
           <i className="fas fa-chevron-down text-2xl"></i>
         </a>
       </section>
-      
-      {/* About Us Section */}
-      <section id="about" className="py-20 relative z-20">
-        {/* Light background contrast with dark theme */}
-        <div className="absolute inset-0 glass-effect opacity-90 z-0"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-8 text-accent">
-              {t("about.title")}
-            </h2>
-            <div 
-              className="text-lg leading-relaxed space-y-4"
-              dangerouslySetInnerHTML={{ __html: t("about.content") }}
-            />
-          </div>
-        </div>
-      </section>
 
       {/* Products Section */}
       <section id="products" className="py-20 relative z-20">
@@ -160,6 +142,24 @@ export default function Home() {
           
           {/* Product Grid */}
           <ProductGrid category={selectedCategory === "all" ? undefined : selectedCategory} />
+        </div>
+      </section>
+      
+      {/* About Us Section */}
+      <section id="about" className="py-20 relative z-20 bg-primary/40">
+        {/* Dark background with accent highlights */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-dark to-primary opacity-90 z-0"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-8 text-accent animate-glow-soft">
+              {t("about.title")}
+            </h2>
+            <div 
+              className="text-lg leading-relaxed space-y-4 text-gray-200"
+              dangerouslySetInnerHTML={{ __html: t("about.content") }}
+            />
+          </div>
         </div>
       </section>
     </div>
