@@ -70,17 +70,18 @@ export default function Header() {
               >
                 <span className="text-accent animate-glow flex items-center">
                   <svg 
-                    width="20" 
-                    height="20" 
+                    width="24" 
+                    height="24" 
                     viewBox="0 0 24 24" 
                     fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
                     className="mr-1"
+                    style={{ verticalAlign: 'middle' }}
                   >
                     <path 
                       d="M5 17L10 12L13 15L19 9M19 9H14M19 9V14" 
                       stroke="#00FFCC" 
-                      strokeWidth="2" 
+                      strokeWidth="2.5" 
                       strokeLinecap="round" 
                       strokeLinejoin="round"
                     />
