@@ -108,52 +108,12 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Product Filter Tabs */}
-            <div className="inline-flex flex-wrap justify-center bg-primary/80 rounded-lg p-1 border border-accent/30 mb-8 max-w-xl mx-auto">
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "all" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("all")}
-              >
-                {t("products.all")}
-              </Button>
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "clothing" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("clothing")}
-              >
-                {t("products.clothing")}
-              </Button>
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "digital" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("digital")}
-              >
-                {t("products.digital")}
-              </Button>
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "accessories" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("accessories")}
-              >
-                {t("products.accessories")}
-              </Button>
+            {/* Product Filter Tabs - Hidden by user request */}
+            <div className="hidden">
+              <Button onClick={() => handleCategoryChange("all")}>{t("products.all")}</Button>
+              <Button onClick={() => handleCategoryChange("clothing")}>{t("products.clothing")}</Button>
+              <Button onClick={() => handleCategoryChange("digital")}>{t("products.digital")}</Button>
+              <Button onClick={() => handleCategoryChange("accessories")}>{t("products.accessories")}</Button>
             </div>
           </div>
           
