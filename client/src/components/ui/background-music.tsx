@@ -54,7 +54,9 @@ export default function BackgroundMusic() {
             </svg>
           ) : (
             <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 4L6 20L11 20L11 12L17 20L17 4L12 4L12 12L6 4Z" fill="none" stroke="#00ffcc" strokeWidth="2" strokeLinejoin="round" />
+              <circle cx="12" cy="12" r="8" fill="none" stroke="#00ffcc" strokeWidth="2" />
+              <circle cx="12" cy="12" r="4" fill="none" stroke="#00ffcc" strokeWidth="2" />
+              <circle cx="12" cy="12" r="1" fill="#00ffcc" />
             </svg>
           )}
         </div>
