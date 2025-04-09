@@ -57,6 +57,15 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </Link>
             </li>
             <li>
+              <Link 
+                href="/about" 
+                className="text-xl hover:text-accent transition-colors duration-300 block py-2" 
+                onClick={onClose}
+              >
+                {t("nav.about")}
+              </Link>
+            </li>
+            <li>
               <a 
                 href="https://t.me/STONKSOPEN" 
                 target="_blank"

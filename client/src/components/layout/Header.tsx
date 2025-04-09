@@ -62,6 +62,13 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/about" className={`font-medium transition-colors duration-300 ${
+                      location === "/about" ? "text-accent" : "hover:text-accent"
+                    }`}>
+                      {t("nav.about")}
+                  </Link>
+                </li>
+                <li>
                   <a 
                     href="https://t.me/STONKSOPEN" 
                     target="_blank"

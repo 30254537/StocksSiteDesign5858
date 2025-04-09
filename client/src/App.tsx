@@ -14,6 +14,7 @@ import Manage from "@/pages/Manage";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import AdminLogin from "@/pages/AdminLogin";
+import About from "@/pages/About";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartModal from "@/components/ui/cart-modal";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/manage" component={Manage} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
+      <Route path="/about" component={About} />
       <Route path="/admin-stonks-dex-secret-login" component={AdminLogin} />
       <Route component={NotFound} />
     </Switch>
