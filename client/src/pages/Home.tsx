@@ -31,19 +31,16 @@ export default function Home() {
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
       {/* Hero Section */}
-      <section className="hero relative h-auto min-h-screen pt-0 pb-4 flex flex-col z-10 overflow-hidden">
+      <section className="hero relative min-h-90vh pt-0 pb-4 flex flex-col z-10 overflow-hidden">
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
-        {/* Animated Circuit Lines */}
-        <div className="absolute inset-0 z-1">
-          <div className="circuit-pattern h-full w-full opacity-20"></div>
-        </div>
+        {/* Animated Circuit Lines - 已移除 */}
         
-        {/* Hero Content */}
-        <div className="container mx-auto px-4 relative z-10 mt-0 h-full flex items-center justify-center">
-          {/* Centered Content */}
-          <div className="flex flex-col items-center justify-center text-center">
+        {/* Hero Content - 移到顶部 */}
+        <div className="container mx-auto px-4 relative z-10 mt-0">
+          {/* Top Content */}
+          <div className="flex flex-col items-center justify-start text-center pt-20">
             <div className="w-full max-w-3xl">
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-orbitron leading-tight">
                 <span className="block">Trade</span>
@@ -79,7 +76,7 @@ export default function Home() {
             e.preventDefault();
             const productsSection = document.getElementById('products');
             if (productsSection) {
-              productsSection.scrollIntoView({ behavior: 'smooth' });
+              productsSection.scrollIntoView({ behavior: 'instant' });
             }
           }}
         >
@@ -88,9 +85,9 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="pt-32 mt-0 pb-20 relative z-20">
-        {/* Same background color as hero for continuity */}
-        <div className="absolute inset-0 bg-primary z-0"></div>
+      <section id="products" className="pt-0 mt-0 -translate-y-80 pb-20 relative z-20">
+        {/* Background with deep blue color */}
+        <div className="absolute inset-0 -top-10 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
