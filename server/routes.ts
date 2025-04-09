@@ -206,13 +206,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 使用中间件保护产品管理接口
   app.post("/api/products", requireAdmin, upload.array('images', 10), async (req, res) => {
     try {
+      console.log('创建产品 API 被调用');
+      
       // 获取表单数据
+      console.log('请求头:', req.headers);
+      console.log('请求体:', req.body);
+      console.log('文件:', req.files);
+      console.log('文件数量:', req.files ? (req.files as Express.Multer.File[]).length : 0);
+      
       const productData = JSON.parse(req.body.productData || '{}');
+      console.log('解析的产品数据:', productData);
       
       // 如果有上传图片，添加图片URL
       const files = req.files as Express.Multer.File[];
       if (files && files.length > 0) {
+        console.log(`处理 ${files.length} 个上传文件`);
         const imageUrls = files.map(file => `/uploads/${file.filename}`);
+        console.log('生成的图片URL:', imageUrls);
         productData.imageUrls = imageUrls;
         productData.imageUrl = imageUrls[0]; // 第一张图片作为主图
       }
@@ -231,6 +241,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 更新产品
   app.put("/api/products/:id", requireAdmin, upload.array('images', 10), async (req, res) => {
     try {
+      console.log('更新产品 API 被调用');
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ message: "无效的产品ID" });
@@ -239,14 +250,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 获取表单数据
       let productData = req.body;
       
+      console.log('请求体:', req.body);
+      console.log('文件:', req.files);
+      console.log('文件数量:', req.files ? (req.files as Express.Multer.File[]).length : 0);
+      
       if (req.body.productData) {
         productData = JSON.parse(req.body.productData);
+        console.log('解析的产品数据:', productData);
       }
       
       // 如果有上传图片，添加图片URL
       const files = req.files as Express.Multer.File[];
       if (files && files.length > 0) {
+        console.log(`处理 ${files.length} 个上传文件`);
         const imageUrls = files.map(file => `/uploads/${file.filename}`);
+        console.log('生成的图片URL:', imageUrls);
         productData.imageUrls = imageUrls;
         productData.imageUrl = imageUrls[0]; // 第一张图片作为主图
       }
