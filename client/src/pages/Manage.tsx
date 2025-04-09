@@ -123,9 +123,20 @@ export default function Manage() {
   // 处理文件选择变化
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+    console.log('文件输入变化事件触发');
+    console.log('选择的文件数量:', files ? files.length : 0);
+    
     if (files && files.length > 0) {
       const fileNames = Array.from(files).map(file => file.name);
+      console.log('文件名列表:', fileNames);
       setSelectedFiles(fileNames);
+      
+      // 存储文件引用以确保在提交时能使用
+      const fileInput = document.getElementById('product-image') as HTMLInputElement;
+      console.log('文件输入元素有效:', !!fileInput);
+      if (fileInput && fileInput.files) {
+        console.log('文件输入元素文件数量:', fileInput.files.length);
+      }
     } else {
       setSelectedFiles([]);
     }
@@ -217,10 +228,22 @@ export default function Manage() {
                 
                 // 如果选择了文件，添加到表单数据
                 if (imageInput.files && imageInput.files.length > 0) {
+                  console.log('选择的文件数量:', imageInput.files.length);
+                  console.log('文件列表:', Array.from(imageInput.files).map(f => f.name));
+                  
                   // 支持多文件上传
                   for (let i = 0; i < imageInput.files.length; i++) {
+                    console.log(`添加文件 ${i+1}/${imageInput.files.length}: ${imageInput.files[i].name}`);
                     formData.append('images', imageInput.files[i]);
                   }
+                  
+                  // 打印表单数据检查
+                  console.log('FormData包含的数据:');
+                  // 检查images字段
+                  const imageValues = formData.getAll('images');
+                  console.log(`- images: ${imageValues.length} 个值`);
+                  // 检查productData字段
+                  console.log('- productData 已添加')
                 }
                 
                 // 发送请求
