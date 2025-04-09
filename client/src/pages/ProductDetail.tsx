@@ -76,16 +76,24 @@ export default function ProductDetail() {
   };
   
   const handlePrevImage = () => {
-    if (!product || !Array.isArray(product.imageUrls) || product.imageUrls.length === 0) return;
+    // 使用直接获取的数据或产品数据
+    const urls = Array.isArray(directData?.imageUrls) ? directData.imageUrls : 
+                (Array.isArray(product?.imageUrls) ? product.imageUrls : []);
     
-    const maxIndex = product.imageUrls.length - 1;
+    if (urls.length <= 1) return;
+    
+    const maxIndex = urls.length - 1;
     setCurrentImageIndex(prev => (prev === 0 ? maxIndex : prev - 1));
   };
   
   const handleNextImage = () => {
-    if (!product || !Array.isArray(product.imageUrls) || product.imageUrls.length === 0) return;
+    // 使用直接获取的数据或产品数据
+    const urls = Array.isArray(directData?.imageUrls) ? directData.imageUrls : 
+                (Array.isArray(product?.imageUrls) ? product.imageUrls : []);
     
-    const maxIndex = product.imageUrls.length - 1;
+    if (urls.length <= 1) return;
+    
+    const maxIndex = urls.length - 1;
     setCurrentImageIndex(prev => (prev === maxIndex ? 0 : prev + 1));
   };
 
@@ -204,44 +212,53 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Gallery */}
           <div>
-            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden">
-              {/* Main Image */}
+            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group">
+              {/* Main Image - 优先使用直接获取的数据 */}
               <img 
-                src={Array.isArray(product.imageUrls) && product.imageUrls.length > 0 
-                  ? product.imageUrls[currentImageIndex] 
-                  : product.imageUrl} 
+                src={Array.isArray(directData?.imageUrls) && directData.imageUrls.length > 0 
+                  ? directData.imageUrls[currentImageIndex] 
+                  : (Array.isArray(product.imageUrls) && product.imageUrls.length > 0 
+                    ? product.imageUrls[currentImageIndex] 
+                    : product.imageUrl)} 
                 alt={product.name} 
                 className="w-full h-full object-cover" 
               />
               
-              {/* Image Navigation Arrows - Only show if there are multiple images */}
-              {Array.isArray(product.imageUrls) && product.imageUrls.length > 1 ? (
+              {/* 强制显示调试信息 */}
+              <div className="absolute top-3 left-3 bg-black/80 text-white px-2 py-1 rounded text-xs">
+                图片: {currentImageIndex + 1} / {Array.isArray(product.imageUrls) ? product.imageUrls.length : 1}
+              </div>
+              
+              {/* Image Navigation Arrows - 使用优化的检测逻辑 */}
+              {(Array.isArray(directData?.imageUrls) && directData.imageUrls.length > 1) || 
+               (Array.isArray(product?.imageUrls) && product.imageUrls.length > 1) ? (
                 <>
                   <button 
                     onClick={handlePrevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-accent/90 text-white p-3 rounded-full transition-colors opacity-90 shadow-lg"
                     aria-label="Previous image"
                   >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={24} />
                   </button>
                   <button 
                     onClick={handleNextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-accent/90 text-white p-3 rounded-full transition-colors opacity-90 shadow-lg"
                     aria-label="Next image"
                   >
-                    <ChevronRight size={20} />
+                    <ChevronRight size={24} />
                   </button>
                   
-                  {/* Image Indicators - Only show on mobile */}
-                  <div className="absolute bottom-3 left-0 right-0 flex md:hidden justify-center gap-2">
-                    {product.imageUrls.map((_: string, index: number) => (
+                  {/* Image Indicators - Always display */}
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                    {(Array.isArray(directData?.imageUrls) ? directData.imageUrls : 
+                     (Array.isArray(product?.imageUrls) ? product.imageUrls : [])).map((_: string, index: number) => (
                       <button 
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-all ${
+                        className={`w-3 h-3 rounded-full transition-all shadow-md ${
                           currentImageIndex === index 
-                            ? "bg-accent w-4" 
-                            : "bg-white/60 hover:bg-white"
+                            ? "bg-accent scale-125" 
+                            : "bg-white/80 hover:bg-white"
                         }`}
                         aria-label={`View image ${index + 1}`}
                       />
@@ -251,10 +268,12 @@ export default function ProductDetail() {
               ) : null}
             </div>
             
-            {/* Thumbnail Gallery - Show if there are multiple images */}
-            {Array.isArray(product.imageUrls) && product.imageUrls.length > 1 ? (
+            {/* Thumbnail Gallery - 使用优化的检测逻辑 */}
+            {((Array.isArray(directData?.imageUrls) && directData.imageUrls.length > 1) || 
+              (Array.isArray(product?.imageUrls) && product.imageUrls.length > 1)) ? (
               <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-                {product.imageUrls.map((url: string, index: number) => (
+                {(Array.isArray(directData?.imageUrls) ? directData.imageUrls : 
+                 (Array.isArray(product?.imageUrls) ? product.imageUrls : [])).map((url: string, index: number) => (
                   <button 
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
@@ -266,7 +285,7 @@ export default function ProductDetail() {
                   >
                     <img 
                       src={url} 
-                      alt={`${product.name} view ${index + 1}`} 
+                      alt={`${product?.name || 'Product'} view ${index + 1}`} 
                       className="w-full h-full object-cover"
                     />
                   </button>
