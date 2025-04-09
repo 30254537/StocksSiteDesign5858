@@ -47,7 +47,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* Brand */}
           <div className="flex flex-col">
-            <span className="text-white font-bold flex items-center justify-start">
+            <span className="bright-white font-bold flex items-center justify-start">
               <svg 
                 width="30" 
                 height="30" 

@@ -81,6 +81,11 @@
     animation: glowSoft 2s ease-in-out infinite alternate;
   }
   
+  .bright-white {
+    color: #e6ffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+  }
+  
   .glow-border {
     box-shadow: 0 0 5px #00ffcc, 0 0 15px rgba(0, 255, 204, 0.5);
   }

@@ -68,7 +68,7 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row"
                 onClick={scrollToTop}
               >
-                <span className="text-white flex items-center">
+                <span className="bright-white flex items-center">
                   <svg 
                     width="30" 
                     height="30" 
