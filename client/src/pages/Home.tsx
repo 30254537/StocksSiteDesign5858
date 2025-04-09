@@ -13,7 +13,7 @@ export default function Home() {
     if (window.location.hash === '#products') {
       const productsSection = document.getElementById('products');
       if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth' });
+        productsSection.scrollIntoView({ behavior: 'instant' }); // 使用立即滚动而不是平滑滚动
       }
     }
   }, []);
@@ -60,6 +60,13 @@ export default function Home() {
                 <a 
                   href="#products" 
                   className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const productsSection = document.getElementById('products');
+                    if (productsSection) {
+                      productsSection.scrollIntoView({ behavior: 'instant' });
+                    }
+                  }}
                 >
                   {t("hero.cta")}
                 </a>
@@ -76,7 +83,17 @@ export default function Home() {
         </div>
         
         {/* Down Arrow */}
-        <a href="#products" className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-accent animate-bounce">
+        <a 
+          href="#products" 
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-accent animate-bounce"
+          onClick={(e) => {
+            e.preventDefault();
+            const productsSection = document.getElementById('products');
+            if (productsSection) {
+              productsSection.scrollIntoView({ behavior: 'instant' });
+            }
+          }}
+        >
           <i className="fas fa-chevron-down text-2xl"></i>
         </a>
       </section>

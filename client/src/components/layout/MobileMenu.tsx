@@ -1,8 +1,32 @@
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-
 import { Switch } from "@/components/ui/switch";
+
+// 跳转到页面顶部的函数
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "instant" // 使用"instant"而不是"smooth"以实现立即跳转
+  });
+};
+
+// 处理产品部分链接的点击
+const handleProductsClick = (e: React.MouseEvent, onClose: () => void) => {
+  e.preventDefault();
+  onClose(); // 关闭移动菜单
+  
+  // 如果当前在首页，滚动到产品部分
+  if (window.location.pathname === "/") {
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: 'instant' });
+    }
+  } else {
+    // 如果不在首页，先导航到首页，然后设置一个标记以便首页加载后滚动到产品部分
+    window.location.href = "/#products";
+  }
+};
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -42,25 +66,31 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <Link 
                 href="/" 
                 className="text-xl hover:text-accent transition-colors duration-300 block py-2" 
-                onClick={onClose}
+                onClick={() => {
+                  scrollToTop();
+                  onClose();
+                }}
               >
                 {t("nav.home")}
               </Link>
             </li>
             <li>
-              <Link 
+              <a 
                 href="/#products" 
                 className="text-xl text-accent transition-colors duration-300 block py-2 border-y border-accent/20 bg-accent/5" 
-                onClick={onClose}
+                onClick={(e) => handleProductsClick(e, onClose)}
               >
                 {t("nav.products")}
-              </Link>
+              </a>
             </li>
             <li>
               <Link 
                 href="/about" 
                 className="text-xl hover:text-accent transition-colors duration-300 block py-2" 
-                onClick={onClose}
+                onClick={() => {
+                  scrollToTop();
+                  onClose();
+                }}
               >
                 {t("nav.about")}
               </Link>

@@ -7,6 +7,30 @@ import { Button } from "@/components/ui/button";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 
+// 跳转到页面顶部的函数
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "instant" // 使用"instant"而不是"smooth"以实现立即跳转
+  });
+};
+
+// 处理产品部分链接的点击
+const handleProductsClick = (e: React.MouseEvent) => {
+  e.preventDefault();
+  
+  // 如果当前在首页，滚动到产品部分
+  if (window.location.pathname === "/") {
+    const productsSection = document.getElementById('products');
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: 'instant' });
+    }
+  } else {
+    // 如果不在首页，先导航到首页，然后设置一个标记以便首页加载后滚动到产品部分
+    window.location.href = "/#products";
+  }
+};
+
 export default function Header() {
   const [location] = useLocation();
   const { openCart, totalItems } = useCart();
@@ -38,7 +62,11 @@ export default function Header() {
             {/* Left side - Brand text only */}
             <div className="flex items-center gap-4">
               {/* Brand text */}
-              <Link href="/" className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row">
+              <Link 
+                href="/" 
+                className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row"
+                onClick={scrollToTop}
+              >
                 <span className="text-accent animate-glow">STONKS DEX SHOP</span>
                 <span className="powered text-xs text-gray-400 md:ml-2">Powered by $STONKS</span>
               </Link>
@@ -48,24 +76,36 @@ export default function Header() {
             <nav className="hidden md:flex items-center justify-center">
               <ul className="flex space-x-10 bg-primary/50 px-6 py-2 rounded-full">
                 <li>
-                  <Link href="/" className={`font-medium transition-colors duration-300 ${
+                  <Link 
+                    href="/" 
+                    className={`font-medium transition-colors duration-300 ${
                       location === "/" ? "text-accent" : "hover:text-accent"
-                    }`}>
-                      {t("nav.home")}
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    {t("nav.home")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#products" className={`font-medium transition-colors duration-300 ${
+                  <a 
+                    href="/#products" 
+                    className={`font-medium transition-colors duration-300 ${
                       location.includes("#products") ? "text-accent" : "hover:text-accent"
-                    }`}>
-                      {t("nav.products")}
-                  </Link>
+                    }`}
+                    onClick={handleProductsClick}
+                  >
+                    {t("nav.products")}
+                  </a>
                 </li>
                 <li>
-                  <Link href="/about" className={`font-medium transition-colors duration-300 ${
+                  <Link 
+                    href="/about" 
+                    className={`font-medium transition-colors duration-300 ${
                       location === "/about" ? "text-accent" : "hover:text-accent"
-                    }`}>
-                      {t("nav.about")}
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    {t("nav.about")}
                   </Link>
                 </li>
                 <li>
