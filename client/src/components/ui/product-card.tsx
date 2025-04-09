@@ -35,37 +35,47 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="bg-white rounded-lg overflow-hidden shadow-md transition-all">
+      <div className="bg-secondary border border-accent/30 rounded-xl overflow-hidden transition-all duration-500 hover:glow-border">
         {/* Product Image */}
-        <Link href={`/product/${product.id}`}>
-          <div className="relative h-52 overflow-hidden">
-            <img 
-              src={product.imageUrl} 
-              alt={product.name} 
-              className="w-full h-full object-cover object-center" 
-            />
+        <div className="relative h-64 overflow-hidden">
+          <img 
+            src={product.imageUrl} 
+            alt={product.name} 
+            className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110" 
+          />
+          
+          {/* Product Detail Link */}
+          <div className={`absolute inset-0 bg-primary/60 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+            <Link href={`/product/${product.id}`}>
+              <Button 
+                className="bg-accent text-primary font-medium hover:bg-white transition-colors duration-300"
+              >
+                {t("products.viewDetails")}
+              </Button>
+            </Link>
           </div>
-        </Link>
+        </div>
         
         {/* Product Info */}
         <div className="p-4">
           <Link href={`/product/${product.id}`}>
-            <h3 className="text-lg font-medium mb-2 text-[#0a1528] hover:text-accent transition-colors cursor-pointer">
+            <h3 className="font-orbitron text-lg font-medium mb-2 hover:text-accent transition-colors cursor-pointer">
               {product.name}
             </h3>
           </Link>
-          <div className="flex flex-col">
-            <div className="flex items-center mb-2">
-              <div className="text-[#0a1528] font-medium flex items-center">
-                <span className="inline-block text-accent mr-1">⊙</span>
-                <span>{product.ethPrice} $STONKS</span>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-gray-300 text-sm mb-1">{t("products.price")}</p>
+              <div className="flex items-center">
+                <span className="text-accent">{formatEth(product.ethPrice)}</span>
               </div>
             </div>
             <Button 
-              className="w-full bg-accent hover:bg-accent/90 text-primary font-medium py-2 rounded-md transition-colors"
+              className="w-10 h-10 rounded-full bg-accent/20 hover:bg-accent flex items-center justify-center text-accent hover:text-primary transition-colors duration-300"
               onClick={handleAddToCart}
+              aria-label="Add to cart"
             >
-              订 加购物车
+              <i className="fas fa-plus"></i>
             </Button>
           </div>
         </div>
