@@ -119,6 +119,41 @@ export default function ProductDetail() {
         <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-8 text-center">
           <h2 className="text-2xl font-orbitron font-bold mb-4">Product Not Found</h2>
           <p className="mb-6">The product you are looking for does not exist or has been removed.</p>
+          
+          {/* 显示直接获取的数据 */}
+          {directData && (
+            <div className="text-left bg-gray-800 p-4 rounded my-4 overflow-auto max-h-96">
+              <h3 className="text-xl text-accent font-bold mb-2">调试信息（直接获取的产品数据）</h3>
+              <p className="mb-2">产品ID: {directData.id}</p>
+              <p className="mb-2">产品名称: {directData.name}</p>
+              <p className="mb-2">图片URL: {directData.imageUrl}</p>
+              <p className="mb-2">图片URLs数组类型: {typeof directData.imageUrls}</p>
+              <p className="mb-2">是否是数组: {Array.isArray(directData.imageUrls) ? "是" : "否"}</p>
+              
+              {Array.isArray(directData.imageUrls) && (
+                <>
+                  <p className="mb-2">图片数组长度: {directData.imageUrls.length}</p>
+                  <div className="mb-4">
+                    <h4 className="font-medium mb-1">图片列表:</h4>
+                    <ul className="list-disc list-inside">
+                      {directData.imageUrls.map((url: string, index: number) => (
+                        <li key={index}>{url}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    {directData.imageUrls.map((url: string, index: number) => (
+                      <div key={index} className="border border-accent p-1 rounded">
+                        <img src={url} alt={`图片${index + 1}`} className="w-full h-24 object-cover" />
+                        <p className="text-xs text-center mt-1">图片 {index + 1}</p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          
           <Link href="/#products">
             <Button className="bg-accent text-primary hover:bg-white transition-colors">
               Return to Products
@@ -131,6 +166,40 @@ export default function ProductDetail() {
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-16">
+      {/* 显示直接获取的数据，用于调试 */}
+      {directData && (
+        <div className="text-left bg-gray-800 p-4 rounded mb-8 overflow-auto max-h-96">
+          <h3 className="text-xl text-accent font-bold mb-2">调试信息（直接获取的产品数据）</h3>
+          <p className="mb-2">产品ID: {directData.id}</p>
+          <p className="mb-2">产品名称: {directData.name}</p>
+          <p className="mb-2">图片URL: {directData.imageUrl}</p>
+          <p className="mb-2">图片URLs数组类型: {typeof directData.imageUrls}</p>
+          <p className="mb-2">是否是数组: {Array.isArray(directData.imageUrls) ? "是" : "否"}</p>
+          
+          {Array.isArray(directData.imageUrls) && (
+            <>
+              <p className="mb-2">图片数组长度: {directData.imageUrls.length}</p>
+              <div className="mb-4">
+                <h4 className="font-medium mb-1">图片列表:</h4>
+                <ul className="list-disc list-inside">
+                  {directData.imageUrls.map((url: string, index: number) => (
+                    <li key={index}>{url}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {directData.imageUrls.map((url: string, index: number) => (
+                  <div key={index} className="border border-accent p-1 rounded">
+                    <img src={url} alt={`图片${index + 1}`} className="w-full h-24 object-cover" />
+                    <p className="text-xs text-center mt-1">图片 {index + 1}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Gallery */}
