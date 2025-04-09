@@ -177,19 +177,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
   
   // 图片上传端点
-  app.post('/api/upload', requireAdmin, upload.single('image'), (req, res) => {
+  app.post('/api/upload', requireAdmin, upload.array('images', 10), (req, res) => {
     try {
-      const file = req.file;
+      const files = req.files as Express.Multer.File[];
       
-      if (!file) {
+      if (!files || files.length === 0) {
         return res.status(400).json({ 
           message: "没有上传文件或文件类型不被支持" 
         });
       }
       
-      // 返回上传的文件路径
+      // 返回上传的文件路径数组
+      const imageUrls = files.map(file => `/uploads/${file.filename}`);
+      
       res.status(200).json({ 
-        imageUrl: `/uploads/${file.filename}` 
+        imageUrls,
+        imageUrl: imageUrls[0] // 兼容旧代码，返回第一张图片作为主图
       });
     } catch (error) {
       console.error('文件上传错误:', error);
@@ -201,14 +204,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // 使用中间件保护产品管理接口
-  app.post("/api/products", requireAdmin, upload.single('image'), async (req, res) => {
+  app.post("/api/products", requireAdmin, upload.array('images', 10), async (req, res) => {
     try {
       // 获取表单数据
       const productData = JSON.parse(req.body.productData || '{}');
       
       // 如果有上传图片，添加图片URL
-      if (req.file) {
-        productData.imageUrl = `/uploads/${req.file.filename}`;
+      const files = req.files as Express.Multer.File[];
+      if (files && files.length > 0) {
+        const imageUrls = files.map(file => `/uploads/${file.filename}`);
+        productData.imageUrls = imageUrls;
+        productData.imageUrl = imageUrls[0]; // 第一张图片作为主图
       }
       
       const product = await storage.createProduct(productData);
@@ -223,7 +229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // 更新产品
-  app.put("/api/products/:id", requireAdmin, upload.single('image'), async (req, res) => {
+  app.put("/api/products/:id", requireAdmin, upload.array('images', 10), async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -238,8 +244,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // 如果有上传图片，添加图片URL
-      if (req.file) {
-        productData.imageUrl = `/uploads/${req.file.filename}`;
+      const files = req.files as Express.Multer.File[];
+      if (files && files.length > 0) {
+        const imageUrls = files.map(file => `/uploads/${file.filename}`);
+        productData.imageUrls = imageUrls;
+        productData.imageUrl = imageUrls[0]; // 第一张图片作为主图
+      }
+      
+      // 保留现有图片列表，如果有传递
+      if (productData.existingImages && Array.isArray(productData.existingImages)) {
+        // 合并现有图片和新上传的图片
+        if (productData.imageUrls) {
+          productData.imageUrls = [...productData.existingImages, ...productData.imageUrls];
+        } else {
+          productData.imageUrls = productData.existingImages;
+        }
+        
+        // 使用第一张图片作为主图
+        if (productData.imageUrls.length > 0) {
+          productData.imageUrl = productData.imageUrls[0];
+        }
+        
+        // 删除临时属性
+        delete productData.existingImages;
       }
       
       const updatedProduct = await storage.updateProduct(id, productData);
@@ -249,7 +276,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updatedProduct);
     } catch (error) {
-      res.status(500).json({ message: "更新产品时出错" });
+      console.error('更新产品时出错:', error);
+      res.status(500).json({ 
+        message: "更新产品时出错", 
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
   

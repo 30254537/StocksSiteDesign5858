@@ -36,7 +36,8 @@ export const products = pgTable("products", {
   price: doublePrecision("price").notNull(),
   ethPrice: doublePrecision("eth_price").notNull(),
   category: text("category").notNull(),
-  imageUrl: text("image_url").notNull(),
+  imageUrl: text("image_url").notNull(), // 保留主图兼容旧数据
+  imageUrls: text("image_urls").array(), // 新增多图支持
   stock: integer("stock").notNull().default(10),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

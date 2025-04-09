@@ -1,27 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatCurrency, formatEth } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Product } from "@shared/schema";
 
 export default function ProductDetail() {
-  const { id } = useParams();
-  const productId = parseInt(id);
+  const { id } = useParams<{ id: string }>();
+  const productId = parseInt(id || '0');
   const { addToCart } = useCart();
   const { t } = useLanguage();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const { data: product, isLoading, error } = useQuery({
+  const { data: product, isLoading, error } = useQuery<Product>({
     queryKey: [`/api/products/${productId}`],
     enabled: !isNaN(productId)
   });
+  
+  // 重置图片索引，当产品加载完成时
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [product?.id]);
 
   const handleQuantityChange = (delta: number) => {
     const newQuantity = Math.max(1, quantity + delta);
     setQuantity(newQuantity);
+  };
+  
+  const handlePrevImage = () => {
+    if (product?.imageUrls && product.imageUrls.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? product.imageUrls.length - 1 : prev - 1
+      );
+    }
+  };
+  
+  const handleNextImage = () => {
+    if (product?.imageUrls && product.imageUrls.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === product.imageUrls.length - 1 ? 0 : prev + 1
+      );
+    }
   };
 
   const handleAddToCart = () => {
@@ -68,14 +92,76 @@ export default function ProductDetail() {
     <div className="container mx-auto px-4 pt-24 pb-16">
       <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Product Image */}
-          <div className="aspect-square bg-primary/50 rounded-lg overflow-hidden">
+          {/* Product Image Gallery */}
+          <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden">
+            {/* Main Image */}
             <img 
-              src={product.imageUrl} 
+              src={product.imageUrls && product.imageUrls.length > 0 
+                ? product.imageUrls[currentImageIndex] 
+                : product.imageUrl} 
               alt={product.name} 
               className="w-full h-full object-cover" 
             />
+            
+            {/* Image Navigation Arrows - Only show if there are multiple images */}
+            {product.imageUrls && product.imageUrls.length > 1 && (
+              <>
+                <button 
+                  onClick={handlePrevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button 
+                  onClick={handleNextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight size={20} />
+                </button>
+                
+                {/* Image Indicators */}
+                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                  {product.imageUrls.map((_, index) => (
+                    <button 
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        currentImageIndex === index 
+                          ? "bg-accent w-4" 
+                          : "bg-white/60 hover:bg-white"
+                      }`}
+                      aria-label={`View image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
+          
+          {/* Thumbnail Gallery - Show if there are multiple images */}
+          {product.imageUrls && product.imageUrls.length > 1 && (
+            <div className="hidden md:flex gap-2 mt-4 overflow-x-auto pb-2 -mx-2 px-2">
+              {product.imageUrls.map((url, index) => (
+                <button 
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`w-16 h-16 rounded overflow-hidden flex-shrink-0 border-2 transition-all ${
+                    currentImageIndex === index 
+                      ? "border-accent" 
+                      : "border-transparent hover:border-gray-400"
+                  }`}
+                >
+                  <img 
+                    src={url} 
+                    alt={`${product.name} view ${index + 1}`} 
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
           
           {/* Product Details */}
           <div>

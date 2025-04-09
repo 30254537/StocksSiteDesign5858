@@ -83,6 +83,8 @@ export default function Manage() {
     
     const stockInput = document.getElementById("product-stock") as HTMLInputElement;
     if (stockInput) stockInput.value = product.stock?.toString() || "0";
+
+    // 图片处理在UI中展示，不需要设置文件输入值（浏览器安全限制）
     
     // Scroll to form
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -178,7 +180,7 @@ export default function Manage() {
               const description = document.getElementById("product-description") as HTMLTextAreaElement;
               const price = document.getElementById("product-price") as HTMLInputElement;
               const stock = document.getElementById("product-stock") as HTMLInputElement;
-              const image = document.getElementById("product-image") as HTMLInputElement;
+              const imageInput = document.getElementById("product-image") as HTMLInputElement;
               
               const isEditing = productId.value ? true : false;
               
@@ -187,18 +189,26 @@ export default function Manage() {
                 const formData = new FormData();
                 
                 // 添加产品数据
-                const productData = {
+                const productData: any = {
                   name: name.value,
                   description: description.value,
                   price: parseFloat(price.value),
                   stock: parseInt(stock.value),
                 };
                 
+                // 如果是编辑模式并且有现有图片列表，添加到数据
+                if (isEditing && editingProduct && editingProduct.imageUrls) {
+                  productData.existingImages = editingProduct.imageUrls;
+                }
+                
                 formData.append('productData', JSON.stringify(productData));
                 
                 // 如果选择了文件，添加到表单数据
-                if (image.files && image.files.length > 0) {
-                  formData.append('image', image.files[0]);
+                if (imageInput.files && imageInput.files.length > 0) {
+                  // 支持多文件上传
+                  for (let i = 0; i < imageInput.files.length; i++) {
+                    formData.append('images', imageInput.files[i]);
+                  }
                 }
                 
                 // 发送请求
@@ -288,13 +298,26 @@ export default function Manage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="product-image" className="block text-sm">产品图片:</label>
+                  <label htmlFor="product-image" className="block text-sm">产品图片: (可选择多张)</label>
                   <Input 
                     id="product-image" 
                     type="file" 
                     accept="image/*"
                     className="bg-primary/50 border-accent" 
+                    multiple
                   />
+                  {editingProduct && editingProduct.imageUrls && editingProduct.imageUrls.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-xs mb-2">当前图片:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {editingProduct.imageUrls.map((url, index) => (
+                          <div key={index} className="relative w-16 h-16 border border-accent/30 rounded overflow-hidden">
+                            <img src={url} alt={`产品图片 ${index + 1}`} className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               
