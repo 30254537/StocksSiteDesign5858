@@ -46,16 +46,11 @@ export default function BackgroundMusic() {
         className={`audio-button ${isPlaying ? 'pause' : 'play'}`}
         aria-label={isPlaying ? t('audio.pause') : t('audio.play')}
       >
-        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#091428] border-2 border-[#00ffcc] shadow-[0_0_10px_#00ffcc] transition-all duration-300 hover:shadow-[0_0_15px_#00ffcc] hover:scale-110">
+        <div className="w-10 h-10 flex items-center justify-center rounded-md bg-[#091428] border-2 border-[#00ffcc] shadow-[0_0_10px_#00ffcc] transition-all duration-300 hover:shadow-[0_0_15px_#00ffcc] hover:scale-110">
           {isPlaying ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="6" y="4" width="4" height="16"></rect>
-              <rect x="14" y="4" width="4" height="16"></rect>
-            </svg>
+            <div className="text-[#00ffcc] font-bold text-lg">II</div>
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-            </svg>
+            <div className="text-[#00ffcc] font-bold text-lg">N</div>
           )}
         </div>
       </button>
