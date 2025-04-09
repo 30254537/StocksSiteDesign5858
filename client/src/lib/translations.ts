@@ -18,7 +18,7 @@ export const translations: Translations = {
     // Hero Section
     "hero.title": "Trade Decentralized, Wear the Future",
     "hero.subtitle": "Explore STONKS DEX exclusive merchandise",
-    "hero.cta": "Shop with $STONKS",
+    "hero.cta": "Shop Now",
     
     // Products Section
     "products.title": "Featured Products",
@@ -143,7 +143,7 @@ export const translations: Translations = {
     // Hero Section
     "hero.title": "Trade Decentralized, Wear the Future",
     "hero.subtitle": "探索 STONKS DEX SHOP 独家周边产品",
-    "hero.cta": "用 $STONKS 代币购物",
+    "hero.cta": "立即购买",
     
     // Products Section
     "products.title": "精选周边",
