@@ -46,7 +46,7 @@ export default function BackgroundMusic() {
         className={`audio-button ${isPlaying ? 'pause' : 'play'}`}
         aria-label={isPlaying ? t('audio.pause') : t('audio.play')}
       >
-        <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#091428] shadow-[0_0_15px_#00ffcc] transition-all duration-300 hover:shadow-[0_0_20px_#00ffcc] hover:scale-110">
+        <div className="w-14 h-14 flex items-center justify-center rounded-full bg-transparent shadow-[0_0_15px_#00ffcc] transition-all duration-300 hover:shadow-[0_0_20px_#00ffcc] hover:scale-110">
           {isPlaying ? (
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <rect x="6" y="4" width="4" height="16"></rect>
@@ -54,7 +54,8 @@ export default function BackgroundMusic() {
             </svg>
           ) : (
             <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="6" fill="none" stroke="#00ffcc" strokeWidth="2" />
+              <circle cx="12" cy="12" r="8" fill="none" stroke="#00ffcc" strokeWidth="1.5" />
+              <circle cx="12" cy="12" r="5" fill="none" stroke="#00ffcc" strokeWidth="1" />
               <circle cx="12" cy="12" r="2" fill="#00ffcc" />
             </svg>
           )}
