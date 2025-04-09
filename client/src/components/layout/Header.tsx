@@ -68,14 +68,14 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row"
                 onClick={scrollToTop}
               >
-                <span className="text-accent animate-glow flex items-center">
+                <span className="text-white flex items-center">
                   <svg 
                     width="30" 
                     height="30" 
                     viewBox="0 0 24 24" 
                     fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
-                    className="mr-1"
+                    className="mr-1 text-accent"
                     style={{ verticalAlign: 'middle' }}
                   >
                     <path 
@@ -88,7 +88,7 @@ export default function Header() {
                   </svg>
                   STONKS DEX SHOP
                 </span>
-                <span className="powered text-xs text-gray-400 md:ml-2">Powered by <span className="text-accent">$</span>STONKS</span>
+                <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
               </Link>
             </div>
             

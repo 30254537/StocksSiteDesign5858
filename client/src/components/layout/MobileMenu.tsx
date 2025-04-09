@@ -46,15 +46,15 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* Brand */}
-          <div className="flex items-center gap-2">
-            <span className="text-accent font-bold flex items-center justify-center">
+          <div className="flex flex-col">
+            <span className="text-white font-bold flex items-center justify-start">
               <svg 
                 width="30" 
                 height="30" 
                 viewBox="0 0 24 24" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
-                className="mr-1"
+                className="mr-1 text-accent"
                 style={{ verticalAlign: 'middle' }}
               >
                 <path 
@@ -67,6 +67,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </svg>
               STONKS DEX SHOP
             </span>
+            <span className="text-accent text-xs ml-7">Powered by $STONKS</span>
           </div>
           
           {/* Close Button */}
