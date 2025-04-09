@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ export default function Manage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
@@ -116,6 +117,17 @@ export default function Manage() {
           variant: "destructive",
         });
       }
+    }
+  };
+  
+  // 处理文件选择变化
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileNames = Array.from(files).map(file => file.name);
+      setSelectedFiles(fileNames);
+    } else {
+      setSelectedFiles([]);
     }
   };
 
@@ -237,6 +249,7 @@ export default function Manage() {
                 // Reset form after submission
                 if (!isEditing) {
                   e.currentTarget.reset();
+                  setSelectedFiles([]); // 清空已选择的文件列表
                 }
                 
                 // Re-fetch products to update the table
@@ -245,6 +258,7 @@ export default function Manage() {
                 // Reset editing state
                 if (isEditing) {
                   setEditingProduct(null);
+                  setSelectedFiles([]); // 清空已选择的文件列表
                   productId.value = "";
                   window.scrollTo({ top: document.getElementById("products-table")?.offsetTop || 0, behavior: "smooth" });
                 }
@@ -303,13 +317,39 @@ export default function Manage() {
                 
                 <div className="space-y-2">
                   <label htmlFor="product-image" className="block text-sm">产品图片: (可选择多张)</label>
-                  <Input 
-                    id="product-image" 
-                    type="file" 
-                    accept="image/*"
-                    className="bg-primary/50 border-accent" 
-                    multiple
-                  />
+                  <div className="relative cursor-pointer" onClick={() => document.getElementById('product-image')?.click()}>
+                    <Input 
+                      id="product-image" 
+                      type="file" 
+                      accept="image/*"
+                      className="bg-primary/50 border-accent sr-only" 
+                      multiple
+                      onChange={handleFileChange}
+                    />
+                    <div className="w-full h-24 bg-primary/30 border-2 border-dashed border-accent/50 rounded-md flex items-center justify-center hover:bg-primary/40 transition-colors">
+                      <div className="text-center">
+                        <i className="fas fa-upload text-accent mb-2"></i>
+                        <p className="text-sm text-accent">添加上传图片</p>
+                        <p className="text-xs text-gray-400 mt-1">点击或拖放文件至此处</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* 显示已选择的文件名 */}
+                  {selectedFiles.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-xs mb-1 text-accent">已选择 {selectedFiles.length} 个文件:</p>
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                        {selectedFiles.map((fileName, index) => (
+                          <div key={index} className="bg-primary/50 px-2 py-1 rounded-md flex items-center">
+                            <span className="truncate max-w-[120px]">{fileName}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* 显示已有产品图片 */}
                   {editingProduct && editingProduct.imageUrls && editingProduct.imageUrls.length > 0 && (
                     <div className="mt-2">
                       <p className="text-xs mb-2">当前图片:</p>
@@ -333,6 +373,7 @@ export default function Manage() {
                     className="border-accent text-accent"
                     onClick={() => {
                       setEditingProduct(null);
+                      setSelectedFiles([]); // 清空已选择的文件列表
                       (document.getElementById("product-id") as HTMLInputElement).value = "";
                       (document.getElementById("product-form") as HTMLFormElement).reset();
                     }}
