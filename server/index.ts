@@ -2,10 +2,24 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
+import session from "express-session";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+// Set up session middleware
+app.use(session({
+  secret: 'stonksdexshop-session-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    secure: false, // set to true if using https
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+  }
+}));
 
 app.use((req, res, next) => {
   const start = Date.now();

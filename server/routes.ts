@@ -10,6 +10,14 @@ import Stripe from "stripe";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import session from "express-session";
+
+// Extend the Express.Session interface to include our custom properties
+declare module 'express-session' {
+  interface SessionData {
+    cartId?: string;
+  }
+}
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error("Missing STRIPE_SECRET_KEY environment variable");
@@ -264,23 +272,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   // Helper function to get or create session ID
-  const getSessionId = (req: Request & { session?: { id?: string } }): string => {
+  const getSessionId = (req: Request): string => {
     if (!req.session) {
-      req.session = {};
+      console.error('Session middleware not properly configured');
+      return randomUUID(); // Fallback but should never happen with express-session properly set up
     }
-    if (!req.session.id) {
-      req.session.id = randomUUID();
+    
+    // Use a custom property for our session ID to avoid conflicts
+    if (!req.session.cartId) {
+      req.session.cartId = randomUUID();
+      console.log('Created new cart session ID:', req.session.cartId);
     }
-    return req.session.id;
+    
+    return req.session.cartId;
   };
 
-  // Set up session middleware
-  app.use((req: Request & { session?: any }, res, next) => {
-    if (!req.session) {
-      req.session = {} as any;
-    }
-    next();
-  });
+  // No need for custom session middleware since we're using express-session in index.ts
 
   // Product routes
   app.get("/api/products", async (req, res) => {

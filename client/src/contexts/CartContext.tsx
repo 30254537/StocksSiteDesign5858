@@ -35,11 +35,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       const response = await fetch('/api/cart', {
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       });
       
       if (response.ok) {
         const data = await response.json();
+        console.log('Cart data:', data); // Debugging
         setCartItems(data);
         
         const { totalItems, totalPrice, totalEthPrice } = calculateCartTotals(data);
@@ -70,11 +75,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addToCart = async (productId: number, quantity: number, size?: string) => {
     try {
       setIsLoading(true);
+      console.log('Adding to cart:', { productId, quantity, size }); // Debugging
       const response = await apiRequest('POST', '/api/cart', {
         productId,
         quantity,
         size
       });
+      
+      console.log('Add to cart response:', response.status); // Debugging
       
       if (response.ok) {
         toast({
@@ -82,10 +90,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
           description: "Item added to cart",
           variant: "default"
         });
-        await refreshCart();
-        
-        // Open the cart to show the added item
-        openCart();
+        // Force a delay before refreshing to ensure server has updated
+        setTimeout(async () => {
+          await refreshCart();
+          // Open the cart to show the added item
+          openCart();
+        }, 500);
       }
     } catch (error) {
       console.error('Error adding item to cart:', error);
