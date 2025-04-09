@@ -44,14 +44,15 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110" 
           />
           
-          {/* Quick View Button */}
+          {/* Product Detail Link */}
           <div className={`absolute inset-0 bg-primary/60 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-            <Button 
-              className="bg-accent text-primary font-medium hover:bg-white transition-colors duration-300"
-              onClick={handleQuickView}
-            >
-              {t("products.quickView")}
-            </Button>
+            <Link href={`/product/${product.id}`}>
+              <Button 
+                className="bg-accent text-primary font-medium hover:bg-white transition-colors duration-300"
+              >
+                {t("products.viewDetails")}
+              </Button>
+            </Link>
           </div>
         </div>
         

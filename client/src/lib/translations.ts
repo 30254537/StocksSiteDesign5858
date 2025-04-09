@@ -29,6 +29,7 @@ export const translations: Translations = {
     "products.loadMore": "Load More",
     "products.price": "Price:",
     "products.quickView": "Quick View",
+    "products.viewDetails": "View Details",
     
     // Product Details
     "product.description": "Description:",
@@ -145,6 +146,7 @@ export const translations: Translations = {
     "products.loadMore": "加载更多",
     "products.price": "价格:",
     "products.quickView": "快速查看",
+    "products.viewDetails": "查看详情",
     
     // Product Details
     "product.description": "描述:",
