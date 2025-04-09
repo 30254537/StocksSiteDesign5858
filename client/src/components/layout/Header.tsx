@@ -123,20 +123,16 @@ export default function Header() {
             {/* Right side - Controls - Now pushed to the far right */}
             <div className="flex items-center gap-3 ml-auto">
               {/* Language Switcher */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white font-medium hover:text-accent py-1 px-2 transition-duration-300"
+              <button
+                className="text-white font-medium hover:text-accent py-1 px-2 transition-duration-300 bg-transparent border-none cursor-pointer"
                 onClick={toggleLanguage}
               >
                 {language === 'en' ? 'EN' : '中文'}
-              </Button>
+              </button>
               
               {/* Cart Button (desktop only) */}
-              <Button
-                variant="ghost"
-                size="icon" 
-                className="relative hidden md:flex py-1 px-2 text-white hover:text-accent transition-colors duration-300"
+              <button
+                className="relative hidden md:flex py-1 px-2 text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 onClick={openCart}
               >
                 <i className="fas fa-shopping-cart text-lg"></i>
@@ -145,17 +141,15 @@ export default function Header() {
                     {totalItems}
                   </span>
                 )}
-              </Button>
+              </button>
               
               {/* Mobile Menu Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden text-white"
+              <button
+                className="md:hidden text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer p-2"
                 onClick={toggleMobileMenu}
               >
                 <i className="fas fa-bars text-xl"></i>
-              </Button>
+              </button>
             </div>
           </div>
         </div>
