@@ -19,7 +19,15 @@ export default function ProductDetail() {
 
   const { data: product, isLoading, error } = useQuery<Product>({
     queryKey: [`/api/products/${productId}`],
-    enabled: !isNaN(productId)
+    enabled: !isNaN(productId),
+    onSuccess: (data) => {
+      console.log("加载的产品数据:", data);
+      console.log("产品图片URL:", data.imageUrl);
+      console.log("产品图片URLs数组:", data.imageUrls);
+      if (data.imageUrls && data.imageUrls.length > 0) {
+        console.log("图片数组长度:", data.imageUrls.length);
+      }
+    }
   });
   
   // 重置图片索引，当产品加载完成时
