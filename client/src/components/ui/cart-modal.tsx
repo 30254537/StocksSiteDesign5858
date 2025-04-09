@@ -99,7 +99,7 @@ export default function CartModal() {
                         </button>
                       </div>
                       <div className="text-accent text-sm">
-                        {formatEth(item.product.ethPrice * item.quantity)}
+                        {formatEth(item.product.ethPrice)}
                       </div>
                     </div>
                     <button 
@@ -121,8 +121,7 @@ export default function CartModal() {
               <div className="flex justify-between mb-4">
                 <span className="font-medium">{t("cart.total")}</span>
                 <div className="text-right">
-                  <div className="font-medium">{formatCurrency(totalPrice)}</div>
-                  <div className="text-accent text-sm">{formatEth(totalEthPrice)}</div>
+                  <div className="font-medium">{formatCurrency(totalPrice)} /<span className="text-accent">{formatEth(totalEthPrice)}</span></div>
                 </div>
               </div>
               

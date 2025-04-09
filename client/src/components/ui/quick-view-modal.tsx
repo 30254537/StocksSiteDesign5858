@@ -63,8 +63,8 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
               <div className="mb-6">
                 <p className="text-gray-400 mb-1">{t("products.price")}</p>
                 <div className="flex items-center">
-                  <span className="text-2xl font-medium mr-3">{formatCurrency(product.price)}</span>
-                  <span className="text-accent">{formatEth(product.ethPrice)}</span>
+                  <span className="text-2xl font-medium mr-1">{formatCurrency(product.price)}</span>
+                  <span className="text-accent">/{formatEth(product.ethPrice)}</span>
                 </div>
               </div>
               
