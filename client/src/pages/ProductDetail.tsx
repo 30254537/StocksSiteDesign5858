@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatCurrency, formatEth } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { Product } from "@shared/schema";
+import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [zoomModalOpen, setZoomModalOpen] = useState(false);
 
   const { data: product, isLoading, error } = useQuery<Product, Error>({
     queryKey: [`/api/products/${productId}`],
@@ -93,14 +95,23 @@ export default function ProductDetail() {
           {/* Product Image Gallery */}
           <div>
             <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group">
-              {/* Main Image */}
-              <img 
-                src={Array.isArray(product.imageUrls) && product.imageUrls.length > 0 
-                  ? product.imageUrls[currentImageIndex] 
-                  : product.imageUrl} 
-                alt={product.name} 
-                className="w-full h-full object-cover" 
-              />
+              {/* Main Image - Clickable for zoom */}
+              <div
+                onClick={() => setZoomModalOpen(true)}
+                className="w-full h-full cursor-zoom-in"
+              >
+                <img 
+                  src={Array.isArray(product.imageUrls) && product.imageUrls.length > 0 
+                    ? product.imageUrls[currentImageIndex] 
+                    : product.imageUrl} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover" 
+                />
+                {/* Zoom indicator */}
+                <div className="absolute bottom-3 right-3 bg-black/70 hover:bg-accent/90 text-white p-2 rounded-full opacity-70 hover:opacity-100 shadow-lg transition-all">
+                  <ZoomIn size={20} />
+                </div>
+              </div>
               
               {/* Image Navigation Arrows */}
               {Array.isArray(product.imageUrls) && product.imageUrls.length > 1 && (
@@ -266,6 +277,20 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+      
+      {/* Image Zoom Modal */}
+      {product && (
+        <ImageZoomModal
+          isOpen={zoomModalOpen}
+          onClose={() => setZoomModalOpen(false)}
+          images={Array.isArray(product.imageUrls) && product.imageUrls.length > 0 
+            ? product.imageUrls 
+            : [product.imageUrl]}
+          currentIndex={currentImageIndex}
+          onIndexChange={setCurrentImageIndex}
+          altText={product.name}
+        />
+      )}
     </div>
   );
 }
