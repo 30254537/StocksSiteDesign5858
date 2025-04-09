@@ -120,6 +120,9 @@ export default function Manage() {
     }
   };
   
+  // 存储选择的文件对象引用
+  const [selectedFilesObjects, setSelectedFilesObjects] = useState<File[]>([]);
+  
   // 处理文件选择变化
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -127,18 +130,22 @@ export default function Manage() {
     console.log('选择的文件数量:', files ? files.length : 0);
     
     if (files && files.length > 0) {
-      const fileNames = Array.from(files).map(file => file.name);
+      // 将FileList转换为数组
+      const newFiles = Array.from(files);
+      const fileNames = newFiles.map(file => file.name);
       console.log('文件名列表:', fileNames);
-      setSelectedFiles(fileNames);
       
-      // 存储文件引用以确保在提交时能使用
-      const fileInput = document.getElementById('product-image') as HTMLInputElement;
-      console.log('文件输入元素有效:', !!fileInput);
-      if (fileInput && fileInput.files) {
-        console.log('文件输入元素文件数量:', fileInput.files.length);
-      }
-    } else {
-      setSelectedFiles([]);
+      // 保存所有选择的文件名称
+      setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...fileNames]);
+      
+      // 保存文件对象引用
+      setSelectedFilesObjects(prevFiles => [...prevFiles, ...newFiles]);
+      
+      console.log('文件输入元素有效:', true);
+      console.log('累计选择的文件数量:', selectedFiles.length + fileNames.length);
+      
+      // 重置文件输入框，以便用户可以再次选择同一文件
+      e.target.value = '';
     }
   };
 
@@ -226,15 +233,15 @@ export default function Manage() {
                 
                 formData.append('productData', JSON.stringify(productData));
                 
-                // 如果选择了文件，添加到表单数据
-                if (imageInput.files && imageInput.files.length > 0) {
-                  console.log('选择的文件数量:', imageInput.files.length);
-                  console.log('文件列表:', Array.from(imageInput.files).map(f => f.name));
+                // 如果收集了文件，添加到表单数据
+                if (selectedFilesObjects.length > 0) {
+                  console.log('选择的文件总数量:', selectedFilesObjects.length);
+                  console.log('文件列表:', selectedFilesObjects.map(f => f.name));
                   
                   // 支持多文件上传
-                  for (let i = 0; i < imageInput.files.length; i++) {
-                    console.log(`添加文件 ${i+1}/${imageInput.files.length}: ${imageInput.files[i].name}`);
-                    formData.append('images', imageInput.files[i]);
+                  for (let i = 0; i < selectedFilesObjects.length; i++) {
+                    console.log(`添加文件 ${i+1}/${selectedFilesObjects.length}: ${selectedFilesObjects[i].name}`);
+                    formData.append('images', selectedFilesObjects[i]);
                   }
                   
                   // 打印表单数据检查
@@ -272,7 +279,8 @@ export default function Manage() {
                 // Reset form after submission
                 if (!isEditing) {
                   e.currentTarget.reset();
-                  setSelectedFiles([]); // 清空已选择的文件列表
+                  setSelectedFiles([]); // 清空已选择的文件列表名称
+                  setSelectedFilesObjects([]); // 清空已选择的文件对象
                 }
                 
                 // Re-fetch products to update the table
@@ -281,7 +289,8 @@ export default function Manage() {
                 // Reset editing state
                 if (isEditing) {
                   setEditingProduct(null);
-                  setSelectedFiles([]); // 清空已选择的文件列表
+                  setSelectedFiles([]); // 清空已选择的文件列表名称
+                  setSelectedFilesObjects([]); // 清空已选择的文件对象
                   productId.value = "";
                   window.scrollTo({ top: document.getElementById("products-table")?.offsetTop || 0, behavior: "smooth" });
                 }
@@ -396,7 +405,8 @@ export default function Manage() {
                     className="border-accent text-accent"
                     onClick={() => {
                       setEditingProduct(null);
-                      setSelectedFiles([]); // 清空已选择的文件列表
+                      setSelectedFiles([]); // 清空已选择的文件列表名称
+                      setSelectedFilesObjects([]); // 清空已选择的文件对象
                       (document.getElementById("product-id") as HTMLInputElement).value = "";
                       (document.getElementById("product-form") as HTMLFormElement).reset();
                     }}
