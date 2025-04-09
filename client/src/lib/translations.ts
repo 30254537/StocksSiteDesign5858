@@ -126,7 +126,7 @@ export const translations: Translations = {
   zh: {
     // Navigation
     "nav.home": "首页",
-    "nav.products": "周边商品",
+    "nav.products": "周边产品",
     "nav.manage": "后台管理",
     "nav.about": "关于我们",
     "nav.community": "社区",
