@@ -81,14 +81,7 @@
     animation: glowSoft 2s ease-in-out infinite alternate;
   }
   
-  .neon-text {
-    color: #fff;
-    text-shadow: 
-      0 0 5px #fff, 
-      0 0 10px #00ffcc, 
-      0 0 20px #00ffcc;
-    animation: neon-glow 8s ease-in-out infinite alternate;
-  }
+  /* .neon-text 类已被替换为 NeonText 组件 */
   
   .bright-white {
     color: #e6ffff;

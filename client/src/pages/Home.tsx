@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ProductGrid } from "@/components/ui/product-grid";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { NeonText } from "@/components/ui/neon-text";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -103,8 +104,8 @@ export default function Home() {
             
             {/* Product Filter Banner */}
             <div className="mb-8 mx-auto text-center">
-              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 neon-text text-xl font-bold">
-                STONKS DEX 周边产品
+              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
+                <NeonText>STONKS DEX 周边产品</NeonText>
               </div>
             </div>
             

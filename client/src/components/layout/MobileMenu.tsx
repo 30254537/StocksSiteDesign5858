@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { MusicPlayer } from "@/components/ui/music-player";
+import { NeonText } from "@/components/ui/neon-text";
 
 // 跳转到页面顶部的函数
 const scrollToTop = () => {
@@ -17,15 +18,28 @@ const handleProductsClick = (e: React.MouseEvent, onClose: () => void) => {
   e.preventDefault();
   onClose(); // 关闭移动菜单
   
-  // 如果当前在首页，滚动到产品部分
+  // 如果当前在首页，平滑滚动到产品部分
   if (window.location.pathname === "/") {
     const productsSection = document.getElementById('products');
     if (productsSection) {
-      productsSection.scrollIntoView({ behavior: 'instant' });
+      // 使用更平滑的滚动
+      window.scrollTo({
+        top: productsSection.offsetTop - 100, // 留出一些顶部空间
+        behavior: 'smooth'
+      });
     }
   } else {
-    // 如果不在首页，先导航到首页，然后设置一个标记以便首页加载后滚动到产品部分
-    window.location.href = "/#products";
+    // 如果不在首页，使用前端路由而不是重新加载页面
+    window.history.pushState({}, '', '/');
+    setTimeout(() => {
+      const productsSection = document.getElementById('products');
+      if (productsSection) {
+        window.scrollTo({
+          top: productsSection.offsetTop - 100,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
   }
 };
 
@@ -47,7 +61,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* Brand */}
           <div className="flex flex-col">
-            <span className="neon-text font-bold flex items-center justify-start">
+            <span className="font-bold flex items-center justify-start">
               <svg 
                 width="30" 
                 height="30" 
@@ -65,7 +79,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   strokeLinejoin="round"
                 />
               </svg>
-              STONKS DEX SHOP
+              <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
             <span className="text-accent text-xs ml-7">Powered by $STONKS</span>
           </div>
