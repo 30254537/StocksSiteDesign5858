@@ -33,19 +33,17 @@ export default function ProductDetail() {
   };
   
   const handlePrevImage = () => {
-    if (product?.imageUrls && product.imageUrls.length > 0) {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? product.imageUrls.length - 1 : prev - 1
-      );
-    }
+    if (!product || !product.imageUrls || product.imageUrls.length === 0) return;
+    
+    const maxIndex = product.imageUrls.length - 1;
+    setCurrentImageIndex(prev => (prev === 0 ? maxIndex : prev - 1));
   };
   
   const handleNextImage = () => {
-    if (product?.imageUrls && product.imageUrls.length > 0) {
-      setCurrentImageIndex((prev) => 
-        prev === product.imageUrls.length - 1 ? 0 : prev + 1
-      );
-    }
+    if (!product || !product.imageUrls || product.imageUrls.length === 0) return;
+    
+    const maxIndex = product.imageUrls.length - 1;
+    setCurrentImageIndex(prev => (prev === maxIndex ? 0 : prev + 1));
   };
 
   const handleAddToCart = () => {

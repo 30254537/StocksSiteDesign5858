@@ -213,16 +213,20 @@ export default function Manage() {
                 
                 // 发送请求
                 if (isEditing) {
-                  // 更新产品
-                  await apiRequest("PUT", `/api/products/${productId.value}`, formData);
+                  // 更新产品 - 确保不设置Content-Type以便浏览器自动添加带boundary的值
+                  await apiRequest("PUT", `/api/products/${productId.value}`, formData, {
+                    headers: {} // 不设置Content-Type，让浏览器自动处理
+                  });
                   
                   toast({
                     title: "更新成功",
                     description: `产品 "${name.value}" 已更新`,
                   });
                 } else {
-                  // 创建新产品
-                  await apiRequest("POST", "/api/products", formData);
+                  // 创建新产品 - 确保不设置Content-Type以便浏览器自动添加带boundary的值
+                  await apiRequest("POST", "/api/products", formData, {
+                    headers: {} // 不设置Content-Type，让浏览器自动处理
+                  });
                   
                   toast({
                     title: "添加成功",
