@@ -16,6 +16,27 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [directData, setDirectData] = useState<any>(null);
+
+  // 添加直接fetch请求，用于调试
+  useEffect(() => {
+    if (!isNaN(productId) && productId > 0) {
+      console.log(`开始直接获取产品ID: ${productId}的数据`);
+      fetch(`/api/products/${productId}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log('直接获取的产品数据:', data);
+          console.log('图片数组类型:', typeof data.imageUrls);
+          console.log('是数组吗?', Array.isArray(data.imageUrls));
+          if (data.imageUrls) {
+            console.log('图片URLs:', data.imageUrls);
+            console.log('图片数组长度:', data.imageUrls.length);
+          }
+          setDirectData(data);
+        })
+        .catch(err => console.error('获取产品数据错误:', err));
+    }
+  }, [productId]);
 
   const { data: product, isLoading, error } = useQuery<Product, Error>({
     queryKey: [`/api/products/${productId}`],
