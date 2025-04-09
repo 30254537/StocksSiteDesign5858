@@ -6,32 +6,32 @@
 
 @layer base {
   :root {
-    --background: 240 23% 15%;
+    --background: 220 30% 13%;
     --foreground: 0 0% 98%;
     
-    --card: 240 24% 20%;
+    --card: 220 30% 18%;
     --card-foreground: 0 0% 98%;
     
-    --popover: 240 25% 15%;
+    --popover: 220 30% 13%;
     --popover-foreground: 0 0% 98%;
     
-    --primary: 240 23% 15%;
+    --primary: 220 30% 13%;
     --primary-foreground: 0 0% 98%;
     
-    --secondary: 223 46% 17%;
+    --secondary: 220 35% 15%;
     --secondary-foreground: 0 0% 98%;
     
-    --muted: 223 47% 11%;
-    --muted-foreground: 224 26% 70%;
+    --muted: 220 40% 10%;
+    --muted-foreground: 220 26% 70%;
     
     --accent: 166 100% 50%;
-    --accent-foreground: 240 23% 15%;
+    --accent-foreground: 220 30% 13%;
     
     --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 240 24% 20%;
-    --input: 240 24% 20%;
+    --border: 220 30% 18%;
+    --input: 220 30% 18%;
     --ring: 166 100% 50%;
     
     --radius: 0.5rem;
@@ -79,6 +79,13 @@
   
   .animate-glow-soft {
     animation: glowSoft 2s ease-in-out infinite alternate;
+  }
+  
+  /* .neon-text 类已被替换为 NeonText 组件 */
+  
+  .bright-white {
+    color: #e6ffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
   }
   
   .glow-border {
@@ -141,4 +148,51 @@
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
+}
+
+@keyframes neon-glow {
+  0%, 100% {
+    text-shadow: 
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px #00ffcc,
+      0 0 20px #00ffcc,
+      0 0 25px #00ffcc,
+      0 0 30px #00ffcc,
+      0 0 35px #00ffcc;
+    color: #fff;
+  }
+  25%, 75% {
+    text-shadow: 
+      0 0 3px #fff,
+      0 0 7px #fff,
+      0 0 10px #00ffcc,
+      0 0 15px #00ffcc,
+      0 0 20px #00ffcc,
+      0 0 25px #00ffcc;
+    color: #fff;
+  }
+  50% {
+    text-shadow: 
+      0 0 2px #fff,
+      0 0 5px #fff,
+      0 0 8px #00ffcc,
+      0 0 10px #00ffcc,
+      0 0 15px #00ffcc;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px #00ffcc,
+      0 0 20px #00ffcc,
+      0 0 25px #00ffcc;
+  }
+  20%, 22%, 24%, 55% {
+    text-shadow: none;
+  }
 }

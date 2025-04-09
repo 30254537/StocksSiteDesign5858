@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ProductGrid } from "@/components/ui/product-grid";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { NeonText } from "@/components/ui/neon-text";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -32,8 +33,8 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center z-10 overflow-hidden">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary via-secondary to-darkblue z-0"></div>
+        {/* Background with deep blue color */}
+        <div className="absolute inset-0 bg-primary z-0"></div>
         
         {/* Animated Circuit Lines */}
         <div className="absolute inset-0 z-0 opacity-20">
@@ -59,7 +60,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-4 justify-center">
                 <a 
                   href="#products" 
-                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg"
+                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-6 rounded-lg text-lg text-center w-auto"
                   onClick={(e) => {
                     e.preventDefault();
                     const productsSection = document.getElementById('products');
@@ -69,13 +70,6 @@ export default function Home() {
                   }}
                 >
                   {t("hero.cta")}
-                </a>
-                <a 
-                  href="https://t.me/STONKSOPEN" 
-                  target="_blank"
-                  className="inline-block bg-accent/10 text-white hover:bg-accent/20 transition-all duration-300 font-medium py-3 px-8 rounded-lg text-lg border-2 border-transparent"
-                >
-                  {t("nav.community")}
                 </a>
               </div>
             </div>
@@ -100,60 +94,27 @@ export default function Home() {
 
       {/* Products Section */}
       <section id="products" className="py-20 relative z-20">
-        {/* Background with slight gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-darkblue to-primary opacity-90 z-0"></div>
+        {/* Background with deep blue color */}
+        <div className="absolute inset-0 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2>
+            {/* <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2> */}
             
-            {/* Product Filter Tabs */}
-            <div className="inline-flex flex-wrap justify-center bg-primary/80 rounded-lg p-1 border border-accent/30 mb-8 max-w-xl mx-auto">
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "all" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("all")}
-              >
-                {t("products.all")}
-              </Button>
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "clothing" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("clothing")}
-              >
-                {t("products.clothing")}
-              </Button>
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "digital" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("digital")}
-              >
-                {t("products.digital")}
-              </Button>
-              <Button 
-                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
-                  selectedCategory === "accessories" 
-                    ? "text-accent bg-secondary/80" 
-                    : "text-gray-300"
-                }`}
-                variant="ghost"
-                onClick={() => handleCategoryChange("accessories")}
-              >
-                {t("products.accessories")}
-              </Button>
+            {/* Product Filter Banner */}
+            <div className="mb-8 mx-auto text-center">
+              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
+                <NeonText>STONKS DEX 周边产品</NeonText>
+              </div>
+            </div>
+            
+            {/* Product Filter Tabs - Hidden by user request */}
+            <div className="hidden">
+              <Button onClick={() => handleCategoryChange("all")}>{t("products.all")}</Button>
+              <Button onClick={() => handleCategoryChange("clothing")}>{t("products.clothing")}</Button>
+              <Button onClick={() => handleCategoryChange("digital")}>{t("products.digital")}</Button>
+              <Button onClick={() => handleCategoryChange("accessories")}>{t("products.accessories")}</Button>
             </div>
           </div>
           
@@ -163,9 +124,9 @@ export default function Home() {
       </section>
       
       {/* About Us Section */}
-      <section id="about" className="py-20 relative z-20 bg-primary/40">
-        {/* Dark background with accent highlights */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-dark to-primary opacity-90 z-0"></div>
+      <section id="about" className="py-20 relative z-20">
+        {/* Deep blue background */}
+        <div className="absolute inset-0 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
