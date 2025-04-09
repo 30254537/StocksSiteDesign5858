@@ -24,7 +24,7 @@ type MusicSourceType = "local" | "youtube";
 
 export function MusicPlayer() {
   const { t } = useLanguage();
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true); // 默认设置为播放状态
   const [musicUrl, setMusicUrl] = useState(DEFAULT_MUSIC_URL);
   const [musicSource, setMusicSource] = useState<MusicSourceType>("local");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -155,8 +155,38 @@ export function MusicPlayer() {
     setIsSettingsOpen(false);
   };
   
-  // 组件卸载时清理
+  // 组件挂载时自动播放音乐
   useEffect(() => {
+    // 组件挂载后自动播放音乐
+    if (musicSource === "local") {
+      // 创建音频元素并播放
+      audioRef.current = new Audio(musicUrl);
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.5;
+      
+      // 添加错误处理 - 如果主音乐文件加载失败，尝试备用音乐
+      audioRef.current.onerror = () => {
+        console.log("主音乐文件加载失败，尝试备用音乐");
+        if (audioRef.current) {
+          audioRef.current.src = FALLBACK_MUSIC_URL;
+          audioRef.current.play().catch(error => {
+            console.error("备用音乐播放被阻止:", error);
+          });
+        }
+      };
+      
+      // 尝试播放
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("自动播放被阻止:", error);
+          // 自动播放被阻止时，更新状态
+          setIsPlaying(false);
+        });
+      }
+    }
+    
+    // 组件卸载时清理
     return () => {
       // 清理音频元素
       if (audioRef.current) {

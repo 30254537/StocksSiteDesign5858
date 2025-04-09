@@ -74,12 +74,12 @@ export default function Header() {
             </div>
             
             {/* Navigation - Now placed to the right of the brand */}
-            <nav className="hidden md:flex flex-grow items-center">
-              <ul className="flex space-x-10 px-3">
+            <nav className="hidden md:flex flex-grow items-center justify-center">
+              <ul className="flex items-center space-x-5 px-3">
                 <li>
                   <Link 
                     href="/" 
-                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 ${
+                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 whitespace-nowrap ${
                       location === "/" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
@@ -90,7 +90,7 @@ export default function Header() {
                 <li>
                   <a 
                     href="/#products" 
-                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 ${
+                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 whitespace-nowrap ${
                       location.includes("#products") ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={handleProductsClick}
@@ -101,7 +101,7 @@ export default function Header() {
                 <li>
                   <Link 
                     href="/about" 
-                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 ${
+                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 whitespace-nowrap ${
                       location === "/about" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
@@ -113,7 +113,7 @@ export default function Header() {
                   <a 
                     href="https://t.me/STONKSOPEN" 
                     target="_blank"
-                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 px-2 py-1"
+                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 px-2 py-1 whitespace-nowrap"
                   >
                     {t("nav.community")}
                   </a>
