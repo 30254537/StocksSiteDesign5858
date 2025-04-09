@@ -13,7 +13,7 @@ export function formatCurrency(value: number, currency = 'USD'): string {
 }
 
 export function formatEth(value: number): string {
-  return `$STONKS`;
+  return `${value} $STONKS`;
 }
 
 export function formatPrice(price: number): string {

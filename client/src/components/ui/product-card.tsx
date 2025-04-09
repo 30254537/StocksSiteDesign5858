@@ -67,8 +67,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             <div>
               <p className="text-gray-300 text-sm mb-1">{t("products.price")}</p>
               <div className="flex items-center">
-                <span className="text-accent mr-1">{formatEth(product.ethPrice)}</span>
-                <span className="text-white text-sm crypto-font">/{formatPrice(product.price)}</span>
+                <span className="text-accent">{formatEth(product.ethPrice)}</span>
               </div>
             </div>
             <Button 

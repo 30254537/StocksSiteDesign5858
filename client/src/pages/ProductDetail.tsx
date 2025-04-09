@@ -182,8 +182,7 @@ export default function ProductDetail() {
             <div className="mb-6">
               <p className="text-gray-400 mb-1">{t("products.price")}</p>
               <div className="flex items-center">
-                <span className="text-2xl font-medium text-accent mr-1">{formatEth(product.ethPrice)}</span>
-                <span className="text-white">/{formatPrice(product.price)}</span>
+                <span className="text-2xl font-medium text-accent">{formatEth(product.ethPrice)}</span>
               </div>
             </div>
             

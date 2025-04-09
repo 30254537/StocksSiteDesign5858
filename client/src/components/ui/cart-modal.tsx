@@ -89,7 +89,7 @@ export default function CartModal() {
                           <i className="fas fa-minus"></i>
                         </button>
                         <span className="text-sm text-gray-400 mx-2">
-                          {item.quantity} x {formatPrice(item.product.price)}
+                          {item.quantity} x
                         </span>
                         <button
                           className="text-xs text-gray-400 hover:text-accent"
@@ -99,7 +99,7 @@ export default function CartModal() {
                         </button>
                       </div>
                       <div className="text-accent text-sm">
-                        {formatEth(item.product.ethPrice)}
+                        {formatEth(item.product.ethPrice * item.quantity)}
                       </div>
                     </div>
                     <button 
@@ -121,7 +121,7 @@ export default function CartModal() {
               <div className="flex justify-between mb-4">
                 <span className="font-medium">{t("cart.total")}</span>
                 <div className="text-right">
-                  <div className="font-medium"><span className="text-accent">{formatEth(totalEthPrice)}</span>/{formatPrice(totalPrice)}</div>
+                  <div className="font-medium text-accent">{formatEth(totalEthPrice)}</div>
                 </div>
               </div>
               
