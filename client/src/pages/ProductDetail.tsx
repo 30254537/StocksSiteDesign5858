@@ -17,18 +17,22 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const { data: product, isLoading, error } = useQuery<Product>({
+  const { data: product, isLoading, error } = useQuery<Product, Error>({
     queryKey: [`/api/products/${productId}`],
-    enabled: !isNaN(productId),
-    onSuccess: (data) => {
-      console.log("加载的产品数据:", data);
-      console.log("产品图片URL:", data.imageUrl);
-      console.log("产品图片URLs数组:", data.imageUrls);
-      if (data.imageUrls && data.imageUrls.length > 0) {
-        console.log("图片数组长度:", data.imageUrls.length);
+    enabled: !isNaN(productId)
+  });
+  
+  // 使用useEffect来在产品数据加载后记录信息
+  useEffect(() => {
+    if (product) {
+      console.log("加载的产品数据:", product);
+      console.log("产品图片URL:", product.imageUrl);
+      console.log("产品图片URLs数组:", product.imageUrls);
+      if (Array.isArray(product.imageUrls) && product.imageUrls.length > 0) {
+        console.log("图片数组长度:", product.imageUrls.length);
       }
     }
-  });
+  }, [product]);
   
   // 重置图片索引，当产品加载完成时
   useEffect(() => {
@@ -41,14 +45,14 @@ export default function ProductDetail() {
   };
   
   const handlePrevImage = () => {
-    if (!product || !product.imageUrls || product.imageUrls.length === 0) return;
+    if (!product || !Array.isArray(product.imageUrls) || product.imageUrls.length === 0) return;
     
     const maxIndex = product.imageUrls.length - 1;
     setCurrentImageIndex(prev => (prev === 0 ? maxIndex : prev - 1));
   };
   
   const handleNextImage = () => {
-    if (!product || !product.imageUrls || product.imageUrls.length === 0) return;
+    if (!product || !Array.isArray(product.imageUrls) || product.imageUrls.length === 0) return;
     
     const maxIndex = product.imageUrls.length - 1;
     setCurrentImageIndex(prev => (prev === maxIndex ? 0 : prev + 1));
@@ -103,7 +107,7 @@ export default function ProductDetail() {
             <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden">
               {/* Main Image */}
               <img 
-                src={product.imageUrls && product.imageUrls.length > 0 
+                src={Array.isArray(product.imageUrls) && product.imageUrls.length > 0 
                   ? product.imageUrls[currentImageIndex] 
                   : product.imageUrl} 
                 alt={product.name} 
@@ -111,7 +115,7 @@ export default function ProductDetail() {
               />
               
               {/* Image Navigation Arrows - Only show if there are multiple images */}
-              {product.imageUrls && product.imageUrls.length > 1 && (
+              {Array.isArray(product.imageUrls) && product.imageUrls.length > 1 ? (
                 <>
                   <button 
                     onClick={handlePrevImage}
@@ -130,7 +134,7 @@ export default function ProductDetail() {
                   
                   {/* Image Indicators - Only show on mobile */}
                   <div className="absolute bottom-3 left-0 right-0 flex md:hidden justify-center gap-2">
-                    {product.imageUrls.map((_, index) => (
+                    {product.imageUrls.map((_: string, index: number) => (
                       <button 
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
@@ -144,13 +148,13 @@ export default function ProductDetail() {
                     ))}
                   </div>
                 </>
-              )}
+              ) : null}
             </div>
             
             {/* Thumbnail Gallery - Show if there are multiple images */}
-            {product.imageUrls && product.imageUrls.length > 1 && (
+            {Array.isArray(product.imageUrls) && product.imageUrls.length > 1 ? (
               <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-                {product.imageUrls.map((url, index) => (
+                {product.imageUrls.map((url: string, index: number) => (
                   <button 
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
@@ -168,7 +172,7 @@ export default function ProductDetail() {
                   </button>
                 ))}
               </div>
-            )}
+            ) : null}
           </div>
           
           {/* Product Details */}
