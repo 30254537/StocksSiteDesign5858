@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { formatCurrency, formatEth } from "@/lib/utils";
+import { formatCurrency, formatEth, formatPrice } from "@/lib/utils";
 import { Product } from "@shared/schema";
 
 interface QuickViewModalProps {
@@ -63,8 +63,8 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
               <div className="mb-6">
                 <p className="text-gray-400 mb-1">{t("products.price")}</p>
                 <div className="flex items-center">
-                  <span className="text-2xl font-medium mr-1">{formatCurrency(product.price)}</span>
-                  <span className="text-accent">/{formatEth(product.ethPrice)}</span>
+                  <span className="text-2xl font-medium text-accent mr-1">{formatEth(product.ethPrice)}</span>
+                  <span className="text-white">/{formatPrice(product.price)}</span>
                 </div>
               </div>
               

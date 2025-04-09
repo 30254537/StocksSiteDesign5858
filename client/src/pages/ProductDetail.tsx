@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { formatCurrency, formatEth } from "@/lib/utils";
+import { formatCurrency, formatEth, formatPrice } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { Product } from "@shared/schema";
 import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
@@ -182,8 +182,8 @@ export default function ProductDetail() {
             <div className="mb-6">
               <p className="text-gray-400 mb-1">{t("products.price")}</p>
               <div className="flex items-center">
-                <span className="text-2xl font-medium mr-1">{formatCurrency(product.price)}</span>
-                <span className="text-accent">/{formatEth(product.ethPrice)}</span>
+                <span className="text-2xl font-medium text-accent mr-1">{formatEth(product.ethPrice)}</span>
+                <span className="text-white">/{formatPrice(product.price)}</span>
               </div>
             </div>
             

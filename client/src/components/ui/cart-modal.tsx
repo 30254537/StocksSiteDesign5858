@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { formatCurrency, formatEth } from "@/lib/utils";
+import { formatCurrency, formatEth, formatPrice } from "@/lib/utils";
 
 export default function CartModal() {
   const { cartItems, totalPrice, totalEthPrice, isCartOpen, closeCart, removeCartItem, updateCartItem } = useCart();
@@ -89,7 +89,7 @@ export default function CartModal() {
                           <i className="fas fa-minus"></i>
                         </button>
                         <span className="text-sm text-gray-400 mx-2">
-                          {item.quantity} x {formatCurrency(item.product.price)}
+                          {item.quantity} x {formatPrice(item.product.price)}
                         </span>
                         <button
                           className="text-xs text-gray-400 hover:text-accent"
@@ -121,7 +121,7 @@ export default function CartModal() {
               <div className="flex justify-between mb-4">
                 <span className="font-medium">{t("cart.total")}</span>
                 <div className="text-right">
-                  <div className="font-medium">{formatCurrency(totalPrice)} /<span className="text-accent">{formatEth(totalEthPrice)}</span></div>
+                  <div className="font-medium"><span className="text-accent">{formatEth(totalEthPrice)}</span>/{formatPrice(totalPrice)}</div>
                 </div>
               </div>
               

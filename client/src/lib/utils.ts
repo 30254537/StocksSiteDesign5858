@@ -13,7 +13,11 @@ export function formatCurrency(value: number, currency = 'USD'): string {
 }
 
 export function formatEth(value: number): string {
-  return `STONKS`;
+  return `$STONKS`;
+}
+
+export function formatPrice(price: number): string {
+  return `${price.toFixed(2)}`;
 }
 
 export function truncateText(text: string, maxLength: number): string {

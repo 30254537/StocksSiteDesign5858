@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { formatCurrency, formatEth } from "@/lib/utils";
+import { formatCurrency, formatEth, formatPrice } from "@/lib/utils";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -67,8 +67,8 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             <div>
               <p className="text-gray-300 text-sm mb-1">{t("products.price")}</p>
               <div className="flex items-center">
-                <span className="text-white mr-1">{formatCurrency(product.price)}</span>
-                <span className="text-accent text-sm crypto-font">/{formatEth(product.ethPrice)}</span>
+                <span className="text-accent mr-1">{formatEth(product.ethPrice)}</span>
+                <span className="text-white text-sm crypto-font">/{formatPrice(product.price)}</span>
               </div>
             </div>
             <Button 
