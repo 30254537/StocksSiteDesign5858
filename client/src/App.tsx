@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/contexts/CartContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { AudioProvider } from "@/contexts/AudioContext";
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
@@ -41,15 +42,17 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <CartProvider>
-          <div className="flex flex-col min-h-screen bg-nightblue">
-            <Header />
-            <main className="flex-grow">
-              <Router />
-            </main>
-            <Footer />
-            <CartModal />
-          </div>
-          <Toaster />
+          <AudioProvider>
+            <div className="flex flex-col min-h-screen bg-nightblue">
+              <Header />
+              <main className="flex-grow">
+                <Router />
+              </main>
+              <Footer />
+              <CartModal />
+            </div>
+            <Toaster />
+          </AudioProvider>
         </CartProvider>
       </LanguageProvider>
     </QueryClientProvider>

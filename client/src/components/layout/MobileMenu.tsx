@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { MusicPlayer } from "@/components/ui/music-player";
+import { NeonText } from "@/components/ui/neon-text";
 
 // 跳转到页面顶部的函数
 const scrollToTop = () => {
@@ -17,15 +18,28 @@ const handleProductsClick = (e: React.MouseEvent, onClose: () => void) => {
   e.preventDefault();
   onClose(); // 关闭移动菜单
   
-  // 如果当前在首页，滚动到产品部分
+  // 如果当前在首页，平滑滚动到产品部分
   if (window.location.pathname === "/") {
     const productsSection = document.getElementById('products');
     if (productsSection) {
-      productsSection.scrollIntoView({ behavior: 'instant' });
+      // 使用更平滑的滚动
+      window.scrollTo({
+        top: productsSection.offsetTop - 100, // 留出一些顶部空间
+        behavior: 'smooth'
+      });
     }
   } else {
-    // 如果不在首页，先导航到首页，然后设置一个标记以便首页加载后滚动到产品部分
-    window.location.href = "/#products";
+    // 如果不在首页，使用前端路由而不是重新加载页面
+    window.history.pushState({}, '', '/');
+    setTimeout(() => {
+      const productsSection = document.getElementById('products');
+      if (productsSection) {
+        window.scrollTo({
+          top: productsSection.offsetTop - 100,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
   }
 };
 
@@ -46,27 +60,28 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* Brand */}
-          <div className="flex items-center gap-2">
-            <span className="text-accent font-bold flex items-center justify-center">
+          <div className="flex flex-col">
+            <span className="font-bold flex items-center justify-start">
               <svg 
                 width="30" 
                 height="30" 
                 viewBox="0 0 24 24" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
-                className="mr-1"
+                className="mr-1 text-accent"
                 style={{ verticalAlign: 'middle' }}
               >
                 <path 
-                  d="M5 17L10 12L13 15L19 9M19 9H14M19 9V14" 
+                  d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
                   stroke="#00FFCC" 
-                  strokeWidth="3" 
+                  strokeWidth="2" 
                   strokeLinecap="round" 
                   strokeLinejoin="round"
                 />
               </svg>
-              STONKS DEX SHOP
+              <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
+            <span className="text-accent text-xs ml-7">Powered by $STONKS</span>
           </div>
           
           {/* Close Button */}
