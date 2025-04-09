@@ -124,10 +124,12 @@ export const translations: Translations = {
     "audio.notSupported": "Your browser does not support the audio element.",
     "audio.settings": "Music settings",
     "audio.settingsTitle": "Music Settings",
-    "audio.settingsDescription": "Enter a YouTube link to customize background music.",
+    "audio.settingsDescription": "Choose music source or enter a YouTube link to customize background music.",
     "audio.linkFormats": "Supported YouTube link formats: youtu.be/ID or youtube.com/watch?v=ID",
     "audio.cancel": "Cancel",
     "audio.save": "Save",
+    "audio.localMusic": "Local Music (Default)",
+    "audio.youtubeMusic": "YouTube Music",
     "cart.itemsInCart": "Items in your cart"
   },
   zh: {
@@ -247,10 +249,12 @@ export const translations: Translations = {
     "audio.notSupported": "您的浏览器不支持音频元素。",
     "audio.settings": "音乐设置",
     "audio.settingsTitle": "音乐设置",
-    "audio.settingsDescription": "输入YouTube链接来自定义背景音乐。",
+    "audio.settingsDescription": "选择音乐来源或输入YouTube链接来自定义背景音乐。",
     "audio.linkFormats": "支持 YouTube 链接格式: youtu.be/ID 或 youtube.com/watch?v=ID",
     "audio.cancel": "取消",
     "audio.save": "保存",
+    "audio.localMusic": "本地音乐 (默认)",
+    "audio.youtubeMusic": "YouTube 音乐",
     "cart.itemsInCart": "购物车中的商品"
   }
 };
