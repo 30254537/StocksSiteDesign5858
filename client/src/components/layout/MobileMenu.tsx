@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import BackgroundMusic from "@/components/ui/background-music";
+
 import { Switch } from "@/components/ui/switch";
 
 interface MobileMenuProps {
@@ -91,8 +91,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <span className={language === 'en' ? 'text-accent font-bold' : 'text-white'}>EN</span>
               </div>
               
-              {/* Audio Control */}
-              <BackgroundMusic />
+              {/* Audio Control removed */}
             </div>
           </div>
         </nav>

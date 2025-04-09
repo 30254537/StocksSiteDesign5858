@@ -4,7 +4,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
-import BackgroundMusic from "@/components/ui/background-music";
+
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Header() {
@@ -94,10 +94,7 @@ export default function Header() {
                 {language === 'en' ? '中文' : 'EN'}
               </Button>
               
-              {/* Audio Control (desktop only) */}
-              <div className="hidden md:block">
-                <BackgroundMusic />
-              </div>
+              {/* Audio Control removed */}
               
               {/* Cart Button (desktop only) */}
               <Button
