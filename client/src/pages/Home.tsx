@@ -30,8 +30,8 @@ export default function Home() {
       {/* Scanline Effect */}
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
-      {/* Hero Section */}
-      <section className="hero relative min-h-90vh pt-0 pb-4 flex flex-col z-10 overflow-hidden">
+      {/* Hero Section - Reduced height */}
+      <section className="hero relative h-auto min-h-[420px] pt-0 pb-4 flex flex-col z-10 overflow-hidden">
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
@@ -68,10 +68,10 @@ export default function Home() {
           </div>
         </div>
         
-        {/* Down Arrow */}
+        {/* Down Arrow - Hidden since products are already visible */}
         <a 
           href="#products" 
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-accent animate-bounce"
+          className="hidden absolute bottom-8 left-1/2 transform -translate-x-1/2 text-accent animate-bounce"
           onClick={(e) => {
             e.preventDefault();
             const productsSection = document.getElementById('products');
@@ -85,9 +85,9 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="pt-0 mt-14 pb-20 relative z-20">
-        {/* Background with deep blue color */}
-        <div className="absolute inset-0 bg-primary z-0"></div>
+      <section id="products" className="pt-0 mt-0 -translate-y-80 pb-20 relative z-20">
+        {/* Background with deep blue color - Extended top */}
+        <div className="absolute inset-0 -top-10 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}

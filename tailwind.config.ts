@@ -6,6 +6,7 @@ export default {
   theme: {
     extend: {
       minHeight: {
+        '75vh': '75vh',
         '90vh': '90vh',
       },
       borderRadius: {
