@@ -25,11 +25,21 @@ export default function ProductDetail() {
   // 使用useEffect来在产品数据加载后记录信息
   useEffect(() => {
     if (product) {
-      console.log("加载的产品数据:", product);
+      console.log("加载的产品数据:", JSON.stringify(product, null, 2));
+      console.log("产品ID:", product.id);
+      console.log("产品名称:", product.name);
       console.log("产品图片URL:", product.imageUrl);
+      console.log("产品图片URLs数组类型:", typeof product.imageUrls);
+      console.log("是否是数组:", Array.isArray(product.imageUrls));
       console.log("产品图片URLs数组:", product.imageUrls);
-      if (Array.isArray(product.imageUrls) && product.imageUrls.length > 0) {
+      
+      if (Array.isArray(product.imageUrls)) {
         console.log("图片数组长度:", product.imageUrls.length);
+        product.imageUrls.forEach((url, index) => {
+          console.log(`图片 ${index + 1}:`, url);
+        });
+      } else {
+        console.log("警告: imageUrls 不是数组");
       }
     }
   }, [product]);
