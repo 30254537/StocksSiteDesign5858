@@ -57,28 +57,48 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     if (!audioRef.current) return;
     
     try {
-      // 创建音频上下文
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // 检查是否已经创建了音频上下文和分析器
+      if (!audioContextRef.current) {
+        // 创建音频上下文
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        
+        // 创建媒体源节点
+        const source = audioContextRef.current.createMediaElementSource(audioRef.current);
+        
+        // 创建分析器节点
+        analyserRef.current = audioContextRef.current.createAnalyser();
+        analyserRef.current.fftSize = 512; // 增加FFT大小以获得更精确的频率分析
+        analyserRef.current.smoothingTimeConstant = 0.8; // 平滑过渡
+        
+        // 连接节点
+        source.connect(analyserRef.current);
+        analyserRef.current.connect(audioContextRef.current.destination);
+        
+        // 创建数据数组
+        const bufferLength = analyserRef.current.frequencyBinCount;
+        dataArrayRef.current = new Uint8Array(bufferLength);
+      }
       
-      // 创建媒体源节点
-      const source = audioContextRef.current.createMediaElementSource(audioRef.current);
-      
-      // 创建分析器节点
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 256;
-      
-      // 连接节点
-      source.connect(analyserRef.current);
-      analyserRef.current.connect(audioContextRef.current.destination);
-      
-      // 创建数据数组
-      const bufferLength = analyserRef.current.frequencyBinCount;
-      dataArrayRef.current = new Uint8Array(bufferLength);
+      // 恢复音频上下文（可能被浏览器暂停）
+      if (audioContextRef.current.state === 'suspended') {
+        audioContextRef.current.resume();
+      }
       
       // 开始分析
       startAnalyzing();
     } catch (error) {
       console.error("设置音频分析器时出错:", error);
+      // 即使设置失败，也要提供一个默认的节拍强度
+      // 通过定时函数模拟节拍
+      if (!animationFrameRef.current) {
+        let intensity = 0;
+        const simulateBeats = () => {
+          intensity = (intensity + 0.05) % 1;
+          setBeatIntensity(Math.sin(intensity * Math.PI) * 0.7 + 0.3);
+          animationFrameRef.current = requestAnimationFrame(simulateBeats);
+        };
+        animationFrameRef.current = requestAnimationFrame(simulateBeats);
+      }
     }
   };
 
@@ -89,11 +109,22 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     // 获取频率数据
     analyserRef.current.getByteFrequencyData(dataArrayRef.current);
     
-    // 计算平均振幅
-    const average = dataArrayRef.current.reduce((acc, val) => acc + val, 0) / dataArrayRef.current.length;
+    // 分析低频(bass)部分，通常包含节拍信息
+    const bassRange = dataArrayRef.current.slice(0, Math.floor(dataArrayRef.current.length * 0.15));
+    const bassAverage = bassRange.reduce((acc, val) => acc + val, 0) / bassRange.length;
     
-    // 将平均值归一化到0-1范围
-    const normalizedValue = Math.min(1, average / 128);
+    // 分析中频部分
+    const midRange = dataArrayRef.current.slice(
+      Math.floor(dataArrayRef.current.length * 0.15),
+      Math.floor(dataArrayRef.current.length * 0.5)
+    );
+    const midAverage = midRange.reduce((acc, val) => acc + val, 0) / midRange.length;
+    
+    // 计算加权平均值，低频权重更高以强调节拍
+    const weightedAverage = (bassAverage * 0.7) + (midAverage * 0.3);
+    
+    // 将平均值归一化到0-1范围，增加了响应度
+    const normalizedValue = Math.min(1, weightedAverage / 100);
     
     // 更新状态
     setBeatIntensity(normalizedValue);
@@ -200,8 +231,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// 自定义Hook
-export function useAudio() {
+// 创建稳定的引用以支持HMR
+export const useAudio = function useAudioHook() {
   const context = useContext(AudioContext);
   if (!context) {
     throw new Error('useAudio必须在AudioProvider内部使用');
