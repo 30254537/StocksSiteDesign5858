@@ -32,8 +32,8 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center z-10 overflow-hidden">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary via-secondary to-darkblue z-0"></div>
+        {/* Background with deep blue color */}
+        <div className="absolute inset-0 bg-primary z-0"></div>
         
         {/* Animated Circuit Lines */}
         <div className="absolute inset-0 z-0 opacity-20">
@@ -93,8 +93,8 @@ export default function Home() {
 
       {/* Products Section */}
       <section id="products" className="py-20 relative z-20">
-        {/* Background with slight gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-darkblue to-primary opacity-90 z-0"></div>
+        {/* Background with deep blue color */}
+        <div className="absolute inset-0 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
@@ -123,9 +123,9 @@ export default function Home() {
       </section>
       
       {/* About Us Section */}
-      <section id="about" className="py-20 relative z-20 bg-primary/40">
-        {/* Dark background with accent highlights */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-dark to-primary opacity-90 z-0"></div>
+      <section id="about" className="py-20 relative z-20">
+        {/* Deep blue background */}
+        <div className="absolute inset-0 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
