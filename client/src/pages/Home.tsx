@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ProductGrid } from "@/components/ui/product-grid";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { NeonText } from "@/components/ui/neon-text";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -25,17 +24,25 @@ export default function Home() {
 
   return (
     <div className="pt-16">
-      {/* Background Grid Effect - 已移除 */}
+      {/* Background Grid Effect */}
+      <div className="fixed inset-0 grid-bg opacity-20 z-0"></div>
       
       {/* Scanline Effect */}
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
       {/* Hero Section */}
       <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center z-10 overflow-hidden">
-        {/* Background with deep blue color */}
-        <div className="absolute inset-0 bg-primary z-0"></div>
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary via-secondary to-darkblue z-0"></div>
         
-        {/* Animated Circuit Lines - 已移除 */}
+        {/* Animated Circuit Lines */}
+        <div className="absolute inset-0 z-0 opacity-20">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M0,0 L20,40 L40,20 L60,60 L80,40 L100,100" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
+            <path d="M0,20 L20,60 L40,40 L60,80 L80,60 L100,80" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
+            <path d="M0,40 L20,80 L40,60 L60,100 L80,80 L100,60" stroke="#00ffcc" strokeWidth="0.2" fill="none" />
+          </svg>
+        </div>
         
         {/* Hero Content - Centered */}
         <div className="container mx-auto px-4 relative z-10">
@@ -86,27 +93,60 @@ export default function Home() {
 
       {/* Products Section */}
       <section id="products" className="py-20 relative z-20">
-        {/* Background with deep blue color */}
-        <div className="absolute inset-0 bg-primary z-0"></div>
+        {/* Background with slight gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-darkblue to-primary opacity-90 z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
           <div className="text-center mb-16">
-            {/* <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2> */}
+            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2>
             
-            {/* Product Filter Banner */}
-            <div className="mb-8 mx-auto text-center">
-              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
-                <NeonText>STONKS DEX 周边产品</NeonText>
-              </div>
-            </div>
-            
-            {/* Product Filter Tabs - Hidden by user request */}
-            <div className="hidden">
-              <Button onClick={() => handleCategoryChange("all")}>{t("products.all")}</Button>
-              <Button onClick={() => handleCategoryChange("clothing")}>{t("products.clothing")}</Button>
-              <Button onClick={() => handleCategoryChange("digital")}>{t("products.digital")}</Button>
-              <Button onClick={() => handleCategoryChange("accessories")}>{t("products.accessories")}</Button>
+            {/* Product Filter Tabs */}
+            <div className="inline-flex flex-wrap justify-center bg-primary/80 rounded-lg p-1 border border-accent/30 mb-8 max-w-xl mx-auto">
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "all" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("all")}
+              >
+                {t("products.all")}
+              </Button>
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "clothing" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("clothing")}
+              >
+                {t("products.clothing")}
+              </Button>
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "digital" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("digital")}
+              >
+                {t("products.digital")}
+              </Button>
+              <Button 
+                className={`py-2 px-4 rounded-md m-1 hover:bg-accent hover:text-primary transition-all duration-300 ${
+                  selectedCategory === "accessories" 
+                    ? "text-accent bg-secondary/80" 
+                    : "text-gray-300"
+                }`}
+                variant="ghost"
+                onClick={() => handleCategoryChange("accessories")}
+              >
+                {t("products.accessories")}
+              </Button>
             </div>
           </div>
           
@@ -116,9 +156,9 @@ export default function Home() {
       </section>
       
       {/* About Us Section */}
-      <section id="about" className="py-20 relative z-20">
-        {/* Deep blue background */}
-        <div className="absolute inset-0 bg-primary z-0"></div>
+      <section id="about" className="py-20 relative z-20 bg-primary/40">
+        {/* Dark background with accent highlights */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-dark to-primary opacity-90 z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
