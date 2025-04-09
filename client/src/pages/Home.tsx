@@ -99,7 +99,14 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2>
+            {/* <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2> */}
+            
+            {/* Product Filter Banner */}
+            <div className="mb-8 mx-auto text-center">
+              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-accent text-xl font-bold animate-glow-soft">
+                STONKS DEX 周边产品
+              </div>
+            </div>
             
             {/* Product Filter Tabs */}
             <div className="inline-flex flex-wrap justify-center bg-primary/80 rounded-lg p-1 border border-accent/30 mb-8 max-w-xl mx-auto">
