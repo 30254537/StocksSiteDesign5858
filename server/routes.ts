@@ -137,7 +137,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // 验证密码 (在真实应用中，我们会使用 bcrypt 比较哈希密码)
-      if (password === "STONKS_admin_2023!") {
+      if (password === "123456") {
         // 设置管理员会话
         adminLoggedIn = true;
         
