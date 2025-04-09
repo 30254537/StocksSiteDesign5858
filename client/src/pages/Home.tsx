@@ -31,7 +31,7 @@ export default function Home() {
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
       {/* Hero Section */}
-      <section className="hero relative min-h-screen pt-0 pb-12 flex flex-col z-10 overflow-hidden">
+      <section className="hero relative min-h-90vh pt-0 pb-4 flex flex-col z-10 overflow-hidden">
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
@@ -48,8 +48,8 @@ export default function Home() {
                 <span className="text-accent animate-glow block">Wear the</span>
                 <span className="text-accent animate-glow block">Future</span>
               </h1>
-              <p className="text-lg md:text-xl mb-8 text-gray-300">{t("hero.subtitle")}</p>
-              <div className="flex flex-wrap gap-4 justify-center">
+              <p className="text-lg md:text-xl mb-6 text-gray-300">{t("hero.subtitle")}</p>
+              <div className="flex flex-wrap gap-4 justify-center mb-4">
                 <a 
                   href="#products" 
                   className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-6 rounded-lg text-lg text-center w-auto"
@@ -85,17 +85,17 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="py-20 relative z-20">
+      <section id="products" className="pt-0 mt-14 pb-20 relative z-20">
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-5">
             {/* <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2> */}
             
             {/* Product Filter Banner */}
-            <div className="mb-8 mx-auto text-center">
+            <div className="mb-6 mx-auto text-center">
               <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
                 <NeonText>STONKS DEX 周边产品</NeonText>
               </div>
