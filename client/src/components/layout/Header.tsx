@@ -68,7 +68,7 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row"
                 onClick={scrollToTop}
               >
-                <span className="bright-white flex items-center">
+                <span className="neon-text flex items-center">
                   <svg 
                     width="30" 
                     height="30" 
@@ -79,9 +79,9 @@ export default function Header() {
                     style={{ verticalAlign: 'middle' }}
                   >
                     <path 
-                      d="M5 17L10 12L13 15L19 9M19 9H14M19 9V14" 
+                      d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
                       stroke="#00FFCC" 
-                      strokeWidth="3" 
+                      strokeWidth="2" 
                       strokeLinecap="round" 
                       strokeLinejoin="round"
                     />

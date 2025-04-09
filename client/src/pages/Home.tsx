@@ -103,7 +103,7 @@ export default function Home() {
             
             {/* Product Filter Banner */}
             <div className="mb-8 mx-auto text-center">
-              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 bright-white text-xl font-bold animate-pulse">
+              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 neon-text text-xl font-bold">
                 STONKS DEX 周边产品
               </div>
             </div>

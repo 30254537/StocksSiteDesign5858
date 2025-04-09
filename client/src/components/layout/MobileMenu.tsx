@@ -47,7 +47,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* Brand */}
           <div className="flex flex-col">
-            <span className="bright-white font-bold flex items-center justify-start">
+            <span className="neon-text font-bold flex items-center justify-start">
               <svg 
                 width="30" 
                 height="30" 
@@ -58,9 +58,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 style={{ verticalAlign: 'middle' }}
               >
                 <path 
-                  d="M5 17L10 12L13 15L19 9M19 9H14M19 9V14" 
+                  d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
                   stroke="#00FFCC" 
-                  strokeWidth="3" 
+                  strokeWidth="2" 
                   strokeLinecap="round" 
                   strokeLinejoin="round"
                 />
