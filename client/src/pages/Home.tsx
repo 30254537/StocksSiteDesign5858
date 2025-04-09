@@ -59,7 +59,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-4 justify-center">
                 <a 
                   href="#products" 
-                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-6 rounded-lg text-lg max-w-md w-full text-center"
+                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-6 rounded-lg text-lg text-center w-auto"
                   onClick={(e) => {
                     e.preventDefault();
                     const productsSection = document.getElementById('products');
