@@ -68,7 +68,25 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row"
                 onClick={scrollToTop}
               >
-                <span className="text-accent animate-glow">STONKS DEX SHOP</span>
+                <span className="text-accent animate-glow flex items-center">
+                  <svg 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mr-1"
+                  >
+                    <path 
+                      d="M5 17L10 12L13 15L19 9M19 9H14M19 9V14" 
+                      stroke="#00FFCC" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  STONKS DEX SHOP
+                </span>
                 <span className="powered text-xs text-gray-400 md:ml-2">Powered by $STONKS</span>
               </Link>
             </div>
