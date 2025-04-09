@@ -88,7 +88,7 @@ export default function Header() {
                   </svg>
                   STONKS DEX SHOP
                 </span>
-                <span className="powered text-xs text-gray-400 md:ml-2">Powered by $STONKS</span>
+                <span className="powered text-xs text-gray-400 md:ml-2">Powered by <span className="text-accent">$</span>STONKS</span>
               </Link>
             </div>
             
