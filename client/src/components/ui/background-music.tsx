@@ -48,9 +48,9 @@ export default function BackgroundMusic() {
       >
         <div className="w-10 h-10 flex items-center justify-center rounded-md bg-[#091428] border-2 border-[#00ffcc] shadow-[0_0_10px_#00ffcc] transition-all duration-300 hover:shadow-[0_0_15px_#00ffcc] hover:scale-110">
           {isPlaying ? (
-            <div className="text-[#00ffcc] font-bold text-lg">II</div>
+            <div className="text-[#00ffcc] font-bold text-xl">II</div>
           ) : (
-            <div className="text-[#00ffcc] font-bold text-lg">N</div>
+            <div className="text-[#00ffcc] font-bold text-xl">X</div>
           )}
         </div>
       </button>
