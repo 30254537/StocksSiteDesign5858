@@ -24,25 +24,25 @@ export default function Home() {
   };
 
   return (
-    <div className="pt-16">
+    <div className="pt-12">
       {/* Background Grid Effect - 已移除 */}
       
       {/* Scanline Effect */}
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
       {/* Hero Section */}
-      <section className="hero relative min-h-screen pt-20 pb-12 flex flex-col justify-center z-10 overflow-hidden">
+      <section className="hero relative min-h-screen pt-0 pb-12 flex flex-col z-10 overflow-hidden">
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
         {/* Animated Circuit Lines - 已移除 */}
         
-        {/* Hero Content - Centered */}
-        <div className="container mx-auto px-4 relative z-10">
-          {/* Centered Content */}
-          <div className="flex flex-col items-center justify-center text-center">
+        {/* Hero Content - 移到顶部 */}
+        <div className="container mx-auto px-4 relative z-10 mt-0">
+          {/* Top Content */}
+          <div className="flex flex-col items-center justify-start text-center pt-4">
             <div className="w-full max-w-3xl">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-orbitron leading-tight">
                 <span className="block">Trade</span>
                 <span className="block">Decentralized,</span>
                 <span className="text-accent animate-glow block">Wear the</span>
