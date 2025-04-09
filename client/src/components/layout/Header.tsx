@@ -70,8 +70,8 @@ export default function Header() {
               >
                 <span className="text-accent animate-glow flex items-center">
                   <svg 
-                    width="24" 
-                    height="24" 
+                    width="30" 
+                    height="30" 
                     viewBox="0 0 24 24" 
                     fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
@@ -81,7 +81,7 @@ export default function Header() {
                     <path 
                       d="M5 17L10 12L13 15L19 9M19 9H14M19 9V14" 
                       stroke="#00FFCC" 
-                      strokeWidth="2.5" 
+                      strokeWidth="3" 
                       strokeLinecap="round" 
                       strokeLinejoin="round"
                     />
