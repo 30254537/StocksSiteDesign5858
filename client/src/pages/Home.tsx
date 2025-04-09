@@ -40,7 +40,7 @@ export default function Home() {
         {/* Hero Content - 移到顶部 */}
         <div className="container mx-auto px-4 relative z-10 mt-0">
           {/* Top Content */}
-          <div className="flex flex-col items-center justify-start text-center pt-4">
+          <div className="flex flex-col items-center justify-start text-center pt-20">
             <div className="w-full max-w-3xl">
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-orbitron leading-tight">
                 <span className="block">Trade</span>
