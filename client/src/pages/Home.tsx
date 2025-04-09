@@ -30,40 +30,32 @@ export default function Home() {
       {/* Scanline Effect */}
       <div className="scanline fixed inset-0 pointer-events-none z-50 opacity-30"></div>
       
-      {/* Hero Section - Reduced height */}
-      <section className="hero relative h-auto min-h-[420px] pt-0 pb-4 flex flex-col z-10 overflow-hidden">
-        {/* Background with deep blue color */}
-        <div className="absolute inset-0 bg-primary z-0"></div>
+      {/* Hero Section - Simplified layout like reference */}
+      <section className="hero relative h-auto min-h-[380px] pt-0 pb-4 flex flex-col z-10 overflow-hidden">
+        {/* Dark blue background */}
+        <div className="absolute inset-0 bg-[#0a1528] z-0"></div>
         
-        {/* Animated Circuit Lines - 已移除 */}
-        
-        {/* Hero Content - 移到顶部 */}
-        <div className="container mx-auto px-4 relative z-10 mt-0">
-          {/* Top Content */}
-          <div className="flex flex-col items-center justify-start text-center pt-20">
-            <div className="w-full max-w-3xl">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 font-orbitron leading-tight">
-                <span className="block">Trade</span>
-                <span className="block">Decentralized,</span>
-                <span className="text-accent animate-glow block">Wear the</span>
-                <span className="text-accent animate-glow block">Future</span>
-              </h1>
-              <p className="text-lg md:text-xl mb-6 text-gray-300">{t("hero.subtitle")}</p>
-              <div className="flex flex-wrap gap-4 justify-center mb-4">
-                <a 
-                  href="#products" 
-                  className="inline-block cta-button bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-primary transition-all duration-300 font-medium py-3 px-6 rounded-lg text-lg text-center w-auto"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const productsSection = document.getElementById('products');
-                    if (productsSection) {
-                      productsSection.scrollIntoView({ behavior: 'instant' });
-                    }
-                  }}
-                >
-                  {t("hero.cta")}
-                </a>
-              </div>
+        {/* Hero Content - Center layout */}
+        <div className="container mx-auto px-4 relative z-10 mt-0 flex flex-col items-center justify-center h-full">
+          <div className="text-center max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white">
+              Gear Up with <span className="text-accent">$STONKS</span>
+            </h1>
+            <p className="text-lg mb-8 text-gray-300">用 $STONKS 代币购买独家周边</p>
+            <div className="flex justify-center">
+              <a 
+                href="#products" 
+                className="inline-block bg-accent hover:bg-accent/90 text-primary font-medium py-3 px-8 rounded-md text-lg"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const productsSection = document.getElementById('products');
+                  if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'instant' });
+                  }
+                }}
+              >
+                用 $STONKS 购物
+              </a>
             </div>
           </div>
         </div>
@@ -86,19 +78,19 @@ export default function Home() {
 
       {/* Products Section */}
       <section id="products" className="pt-0 mt-0 -translate-y-80 pb-20 relative z-20">
-        {/* Background with deep blue color - Extended top */}
-        <div className="absolute inset-0 -top-10 bg-primary z-0"></div>
+        {/* White background */}
+        <div className="absolute inset-0 -top-10 bg-white z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-5">
+          <div className="text-center mb-8 pt-10">
             {/* <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2> */}
             
             {/* Product Filter Banner */}
             <div className="mb-6 mx-auto text-center">
-              <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
-                <NeonText>STONKS DEX 周边产品</NeonText>
-              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-primary">
+                STONKS DEX 周边产品
+              </h2>
             </div>
             
             {/* Product Filter Tabs - Hidden by user request */}

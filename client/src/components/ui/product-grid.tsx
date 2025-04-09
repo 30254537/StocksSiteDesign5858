@@ -32,25 +32,22 @@ export function ProductGrid({ category = "all" }: ProductGridProps) {
   return (
     <>
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="bg-secondary border border-accent/30 rounded-xl animate-pulse">
-              <div className="h-64 bg-primary/50 rounded-t-xl"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="bg-white rounded-lg animate-pulse shadow-md">
+              <div className="h-52 bg-gray-200 rounded-t-lg"></div>
               <div className="p-4">
-                <div className="h-6 bg-primary/50 rounded w-3/4 mb-2"></div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="h-4 bg-primary/50 rounded w-16 mb-1"></div>
-                    <div className="h-5 bg-primary/50 rounded w-24"></div>
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-primary/50"></div>
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="flex flex-col">
+                  <div className="h-5 bg-gray-200 rounded w-24 mb-2"></div>
+                  <div className="h-10 bg-gray-200 rounded w-full"></div>
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product: Product) => (
             <ProductCard
               key={product.id}
