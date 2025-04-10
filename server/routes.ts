@@ -1442,6 +1442,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 初始化加密货币新闻定时获取任务
   initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
   
+  // 添加测试合约地址推文（仅管理员）
+  app.post('/api/test/add-contract-tweet', requireAdmin, async (req, res) => {
+    try {
+      // 创建一个包含合约地址的测试推文
+      const contractAddress = "0x7d8146cf21e8d7cbe46054e01588207b51198729";
+      const testTweet: InsertCryptoTweet = {
+        tweetId: `test-${Date.now()}`,
+        text: `This is a new project launching soon! Contract address: ${contractAddress} - check it out!`,
+        authorName: "Crypto Analyst",
+        authorUsername: "crypto_analyst",
+        authorProfileImage: null,
+        likeCount: 250,
+        retweetCount: 120,
+        replyCount: 45,
+        quoteCount: 12,
+        url: "https://twitter.com/example/status/123456789",
+        source: 'x',
+        category: 'contract',
+        language: 'en',
+        translatedText: `这是一个即将推出的新项目！合约地址：${contractAddress} - 快来看看！`,
+        contractAddress: contractAddress
+      };
+      
+      // 保存到数据库
+      const newTweet = await storage.createCryptoTweet(testTweet);
+      
+      res.status(201).json({
+        success: true,
+        message: '测试合约地址推文已添加',
+        tweet: newTweet
+      });
+    } catch (error) {
+      console.error('添加测试推文失败:', error);
+      res.status(500).json({ error: '添加测试推文失败' });
+    }
+  });
+  
   // 初始化推文翻译服务 (每4小时翻译一次未翻译的推文)
   initTweetTranslationScheduler('0 */4 * * *');
   
