@@ -407,7 +407,7 @@ export default function Manage() {
                 
                 // 添加文件
                 selectedFilesObjects.forEach(file => {
-                  formData.append("productImages", file);
+                  formData.append("images", file);
                 });
                 
                 try {
