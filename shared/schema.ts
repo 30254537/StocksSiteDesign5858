@@ -245,6 +245,7 @@ export const cryptoTweets = pgTable("crypto_tweets", {
   category: text("category").default("crypto"), // 分类
   language: text("language").default("en"), // 语言
   translatedText: text("translated_text"), // 翻译后的内容
+  contractAddress: text("contract_address"), // 提取的合约地址
 });
 
 export const insertCryptoTweetSchema = createInsertSchema(cryptoTweets).omit({

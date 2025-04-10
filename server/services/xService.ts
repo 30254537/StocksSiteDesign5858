@@ -197,7 +197,8 @@ export async function syncCryptoTweets(): Promise<number> {
           source: 'x',
           category: 'contract', // 将类别标记为合约地址
           language: 'en',
-          translatedText: null
+          translatedText: null,
+          contractAddress: contractAddress // 保存提取的合约地址
         };
         
         // 保存推文到数据库

@@ -4,8 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/lib/translations';
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, Repeat2, Heart } from "lucide-react";
+import { MessageCircle, Repeat2, Heart, Copy, CheckCircle2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 import LoadingSkeleton from '@/components/ui/loading-skeleton';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
@@ -31,6 +34,7 @@ interface Tweet {
   createdAt: string;
   isTranslated: boolean;
   category?: string;
+  contractAddress?: string;
 }
 
 interface TweetsResponse {
