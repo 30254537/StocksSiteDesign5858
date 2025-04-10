@@ -699,6 +699,208 @@ export default function Manage() {
         </CardContent>
       </Card>
 
+      {/* 合约地址管理卡片 */}
+      <Card className="shadow-lg mb-8">
+        <CardHeader>
+          <CardTitle>合约地址管理</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
+            <h3 className="text-xl mb-4 text-accent">添加/编辑合约地址</h3>
+            <form id="address-form" className="space-y-4" onSubmit={async (e) => {
+              e.preventDefault();
+              
+              const addressId = document.getElementById("address-id") as HTMLInputElement;
+              const network = document.getElementById("address-network") as HTMLSelectElement;
+              const coinType = document.getElementById("address-coin-type") as HTMLSelectElement;
+              const address = document.getElementById("address-value") as HTMLInputElement;
+              
+              if (!network.value || !coinType.value || !address.value) {
+                toast({
+                  title: "表单验证失败",
+                  description: "请填写所有字段",
+                  variant: "destructive",
+                });
+                return;
+              }
+              
+              const isEditing = addressId.value ? true : false;
+              
+              try {
+                if (isEditing) {
+                  // 更新已有合约地址
+                  await apiRequest("PUT", `/api/contract-addresses/${addressId.value}`, {
+                    network: network.value,
+                    coinType: coinType.value,
+                    address: address.value
+                  });
+                  
+                  toast({
+                    title: "更新成功",
+                    description: `${network.value} - ${coinType.value} 合约地址已更新`,
+                  });
+                } else {
+                  // 创建新合约地址
+                  await apiRequest("POST", "/api/contract-addresses", {
+                    network: network.value,
+                    coinType: coinType.value,
+                    address: address.value
+                  });
+                  
+                  toast({
+                    title: "添加成功",
+                    description: `${network.value} - ${coinType.value} 合约地址已添加`,
+                  });
+                }
+                
+                // 重置表单
+                e.currentTarget.reset();
+                addressId.value = "";
+                setEditingAddress(null);
+                
+                // 重新获取合约地址列表
+                await fetchContractAddresses();
+              } catch (error) {
+                console.error("合约地址操作错误:", error);
+                toast({
+                  title: isEditing ? "更新失败" : "添加失败",
+                  description: "操作失败，请稍后再试",
+                  variant: "destructive",
+                });
+              }
+            }}>
+              <input type="hidden" id="address-id" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="address-network" className="block text-sm">区块链网络:</label>
+                  <Select id="address-network" defaultValue="SOL">
+                    <SelectTrigger className="bg-primary/50 border-accent">
+                      <SelectValue placeholder="选择网络" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="SOL">Solana (SOL)</SelectItem>
+                      <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
+                      <SelectItem value="BSC">Binance Smart Chain (BSC)</SelectItem>
+                      <SelectItem value="TRON">Tron (TRX)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="address-coin-type" className="block text-sm">代币类型:</label>
+                  <Select id="address-coin-type" defaultValue="STONKS">
+                    <SelectTrigger className="bg-primary/50 border-accent">
+                      <SelectValue placeholder="选择代币类型" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="STONKS">STONKS</SelectItem>
+                      <SelectItem value="USDT">USDT</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="address-value" className="block text-sm">合约地址:</label>
+                <Input 
+                  id="address-value" 
+                  className="bg-primary/50 border-accent font-mono text-sm"
+                  required 
+                  placeholder="输入完整的合约地址"
+                />
+              </div>
+              
+              <div className="flex justify-end gap-2">
+                {editingAddress && (
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    className="border-accent text-accent"
+                    onClick={() => {
+                      setEditingAddress(null);
+                      (document.getElementById("address-id") as HTMLInputElement).value = "";
+                      (document.getElementById("address-form") as HTMLFormElement).reset();
+                    }}
+                  >
+                    取消编辑
+                  </Button>
+                )}
+                <Button 
+                  type="submit"
+                  className="bg-accent text-primary hover:bg-accent/80"
+                  disabled={loadingAddresses}
+                >
+                  {loadingAddresses ? (
+                    <>
+                      <span className="mr-2">处理中</span>
+                      <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                    </>
+                  ) : (editingAddress ? "更新合约地址" : "添加合约地址")}
+                </Button>
+              </div>
+            </form>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>区块链网络</TableHead>
+                  <TableHead>代币类型</TableHead>
+                  <TableHead>合约地址</TableHead>
+                  <TableHead>操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {contractAddresses.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-4">
+                      {loadingAddresses ? (
+                        <div className="flex justify-center items-center space-x-2">
+                          <div className="animate-spin w-4 h-4 border-2 border-accent border-t-transparent rounded-full"></div>
+                          <span>加载合约地址中...</span>
+                        </div>
+                      ) : "尚未添加任何合约地址"}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  contractAddresses.map((address) => (
+                    <TableRow key={address.id}>
+                      <TableCell>{address.id}</TableCell>
+                      <TableCell>{address.network}</TableCell>
+                      <TableCell>{address.coinType}</TableCell>
+                      <TableCell className="font-mono text-xs max-w-[200px] truncate user-select-all">
+                        {address.address}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-1">
+                          <Button 
+                            variant="ghost" 
+                            className="h-8 w-8 p-0 text-accent"
+                            onClick={() => handleEditAddress(address)}
+                          >
+                            ✎
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            className="h-8 w-8 p-0 text-red-500"
+                            onClick={() => handleDeleteAddress(address.id)}
+                          >
+                            ✕
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="mt-8">
         <Button 
           variant="outline" 
