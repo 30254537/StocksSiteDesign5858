@@ -50,11 +50,26 @@ export default function Manage() {
     try {
       // 添加时间戳参数避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/products?t=${timestamp}`);
-      // First convert response to json and then cast to Product[]
+      const response = await apiRequest("GET", `/api/products?t=${timestamp}`, null, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
+      
+      // 清除响应缓存
       const productData = await response.json();
       console.log("刷新获取的产品数据:", productData);
-      setProducts(productData);
+      
+      // 强制重新渲染：先清空产品列表，然后用setTimeout确保DOM更新后再设置新数据
+      setProducts([]);
+      
+      // 立即设置实际数据，确保UI能立即更新
+      setTimeout(() => {
+        setProducts(productData);
+        console.log("产品数据已更新，强制重绘");
+      }, 10);
     } catch (error) {
       toast({
         title: "加载失败",
