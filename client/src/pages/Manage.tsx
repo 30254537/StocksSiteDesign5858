@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
-import { Product } from "@shared/schema";
+import { Product, ContractAddress } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Manage() {
   const { t } = useLanguage();
@@ -30,6 +31,11 @@ export default function Manage() {
     address: ''
   });
   const [loadingContactInfo, setLoadingContactInfo] = useState(false);
+  
+  // 合约地址状态
+  const [contractAddresses, setContractAddresses] = useState<ContractAddress[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<ContractAddress | null>(null);
   
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -60,6 +66,8 @@ export default function Manage() {
           fetchProducts();
           // 获取联系信息
           fetchContactInfo();
+          // 获取合约地址列表
+          fetchContractAddresses();
         } else {
           // 未经授权，重定向到登录页面
           toast({
@@ -99,6 +107,75 @@ export default function Manage() {
       });
     } finally {
       setLoadingContactInfo(false);
+    }
+  };
+  
+  // 获取合约地址列表
+  const fetchContractAddresses = async () => {
+    setLoadingAddresses(true);
+    try {
+      const response = await apiRequest("GET", "/api/contract-addresses");
+      const data = await response.json();
+      setContractAddresses(data);
+    } catch (error) {
+      console.error("获取合约地址列表失败:", error);
+      toast({
+        title: "获取合约地址失败",
+        description: "无法获取合约地址列表，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
+  
+  // 处理编辑合约地址
+  const handleEditAddress = (address: ContractAddress) => {
+    setEditingAddress(address);
+    
+    // 填充表单
+    document.getElementById("address-id")?.setAttribute("value", address.id.toString());
+    
+    const networkInput = document.getElementById("address-network") as HTMLSelectElement;
+    if (networkInput) networkInput.value = address.network;
+    
+    const coinTypeInput = document.getElementById("address-coin-type") as HTMLSelectElement;
+    if (coinTypeInput) coinTypeInput.value = address.coinType;
+    
+    const addressInput = document.getElementById("address-value") as HTMLInputElement;
+    if (addressInput) addressInput.value = address.address;
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("address-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑合约地址",
+      description: `正在编辑: ${address.network} - ${address.coinType}`,
+    });
+  };
+  
+  // 处理删除合约地址
+  const handleDeleteAddress = async (addressId: number) => {
+    if (window.confirm("确定要删除此合约地址吗？此操作无法撤销。")) {
+      try {
+        // 发送删除请求
+        await apiRequest("DELETE", `/api/contract-addresses/${addressId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "合约地址已成功删除",
+        });
+        
+        // 重新获取地址列表以更新UI
+        await fetchContractAddresses();
+      } catch (error) {
+        console.error("删除合约地址错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除合约地址，请稍后再试",
+          variant: "destructive",
+        });
+      }
     }
   };
   

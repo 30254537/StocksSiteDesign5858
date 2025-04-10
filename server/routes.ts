@@ -959,6 +959,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // 合约地址管理API端点
+  // 获取所有合约地址
+  app.get('/api/contract-addresses', async (req, res) => {
+    try {
+      const addresses = await storage.getContractAddresses();
+      res.json(addresses);
+    } catch (error) {
+      console.error('获取合约地址列表失败:', error);
+      res.status(500).json({
+        message: "获取合约地址列表失败",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // 通过网络和币种获取特定合约地址
+  app.get('/api/contract-addresses/:network/:coinType', async (req, res) => {
+    try {
+      const { network, coinType } = req.params;
+      const contractAddress = await storage.getContractAddressByNetwork(network, coinType);
+      
+      if (!contractAddress) {
+        return res.status(404).json({ message: "未找到指定的合约地址" });
+      }
+      
+      res.json(contractAddress);
+    } catch (error) {
+      console.error('获取合约地址失败:', error);
+      res.status(500).json({
+        message: "获取合约地址失败",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // 添加新合约地址（需要管理员权限）
+  app.post('/api/contract-addresses', requireAdmin, async (req, res) => {
+    try {
+      const { network, coinType, address } = req.body;
+      
+      // 验证必要字段
+      if (!network || !coinType || !address) {
+        return res.status(400).json({ message: "网络、币种和地址都是必填字段" });
+      }
+      
+      // 检查是否已存在同样的网络和币种组合
+      const existing = await storage.getContractAddressByNetwork(network, coinType);
+      if (existing) {
+        return res.status(409).json({ 
+          message: "此网络和币种的合约地址已存在，请使用更新API更新现有地址",
+          existingId: existing.id
+        });
+      }
+      
+      // 创建新合约地址
+      const newAddress = await storage.createContractAddress({
+        network,
+        coinType,
+        address
+      });
+      
+      res.status(201).json(newAddress);
+    } catch (error) {
+      console.error('添加合约地址失败:', error);
+      res.status(500).json({
+        message: "添加合约地址失败",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // 更新合约地址（需要管理员权限）
+  app.put('/api/contract-addresses/:id', requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "无效的合约地址ID" });
+      }
+      
+      const { network, coinType, address } = req.body;
+      
+      // 至少需要一个更新字段
+      if (!network && !coinType && !address) {
+        return res.status(400).json({ message: "请提供至少一个要更新的字段" });
+      }
+      
+      // 构建更新数据对象
+      const updateData: any = {};
+      if (network) updateData.network = network;
+      if (coinType) updateData.coinType = coinType;
+      if (address) updateData.address = address;
+      
+      // 更新合约地址
+      const updatedAddress = await storage.updateContractAddress(id, updateData);
+      
+      if (!updatedAddress) {
+        return res.status(404).json({ message: "未找到指定的合约地址" });
+      }
+      
+      res.json(updatedAddress);
+    } catch (error) {
+      console.error('更新合约地址失败:', error);
+      res.status(500).json({
+        message: "更新合约地址失败",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // 删除合约地址（需要管理员权限）
+  app.delete('/api/contract-addresses/:id', requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "无效的合约地址ID" });
+      }
+      
+      const result = await storage.deleteContractAddress(id);
+      
+      if (!result) {
+        return res.status(404).json({ message: "未找到指定的合约地址" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error('删除合约地址失败:', error);
+      res.status(500).json({
+        message: "删除合约地址失败",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
