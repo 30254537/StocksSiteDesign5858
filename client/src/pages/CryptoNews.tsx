@@ -140,6 +140,9 @@ const CryptoNews: React.FC = () => {
   const getNewsImage = (news: CryptoNewsType) => {
     console.log("处理图片URL:", news.title, news.imageUrl);
     
+    // 默认图片，如果所有其他方法都失败，将使用此图片
+    const DEFAULT_IMAGE = "https://cdn.pixabay.com/photo/2018/01/18/07/31/bitcoin-3089728_1280.jpg";
+    
     // 首先检查新闻是否有有效的图片URL
     if (news.imageUrl && 
         news.imageUrl.trim() !== '' && 
@@ -381,11 +384,17 @@ const CryptoNews: React.FC = () => {
     
     // 使用AI生成的图片，确保每篇新闻都有一张匹配的图片
     // 首先尝试使用通用加密货币图片
-    if (Math.random() > 0.5) {
-      return selectRandom(contentImages.general);
-    } else {
-      // 否则使用AI生成的图片
-      return selectAIImage();
+    try {
+      if (Math.random() > 0.5) {
+        return selectRandom(contentImages.general);
+      } else {
+        // 否则使用AI生成的图片
+        return selectAIImage();
+      }
+    } catch (error) {
+      // 如果上述所有方法都失败，返回默认图片
+      console.error("无法生成图片，使用默认图片", error);
+      return DEFAULT_IMAGE;
     }
   };
 
@@ -747,6 +756,12 @@ const CryptoNews: React.FC = () => {
                       src={getNewsImage(news)} 
                       alt={news.title} 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // 如果图片加载失败，使用备用图片
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null; // 防止循环
+                        target.src = "https://cdn.pixabay.com/photo/2018/01/18/07/31/bitcoin-3089728_1280.jpg";
+                      }}
                     />
                   </div>
                   <CardHeader className="pb-2">
@@ -828,6 +843,12 @@ const CryptoNews: React.FC = () => {
                             src={getNewsImage(news)} 
                             alt={news.title} 
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // 如果图片加载失败，使用备用图片
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null; // 防止循环
+                              target.src = "https://cdn.pixabay.com/photo/2018/01/18/07/31/bitcoin-3089728_1280.jpg";
+                            }}
                           />
                         </div>
                         <div className="flex-1 flex flex-col md:w-3/4">
