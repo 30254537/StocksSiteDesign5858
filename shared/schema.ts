@@ -42,6 +42,7 @@ export const products = pgTable("products", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   featured: integer("featured").default(0),
+  hasSizes: integer("has_sizes").default(0),
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
