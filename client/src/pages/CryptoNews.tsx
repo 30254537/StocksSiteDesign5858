@@ -162,23 +162,29 @@ const CryptoNews: React.FC = () => {
     const sourceImages: Record<string, string[]> = {
       'CoinGecko': [
         'https://static.coingecko.com/s/coingecko-logo-8903d34ce19ca4be1c81f0db30e924154750d208683fad7ae6f2ce06c76d0a56.png',
-        'https://cryptologos.cc/logos/coingecko-cg-logo.png'
+        'https://cryptologos.cc/logos/coingecko-cg-logo.png',
+        'https://assets.coingecko.com/article_images/311064/large/Bitcoin-2.jpg'
       ],
       'CoinTelegraph': [
+        'https://assets.coingecko.com/article_images/310805/large/COINTELEGRAPH-2.jpg',
         'https://s2.coinmarketcap.com/static/img/coins/200x200/8996.png',
         'https://cryptologos.cc/logos/cointelegraph-ct-logo.png'
       ],
       'TheBlock': [
         'https://pbs.twimg.com/profile_images/1559173535693926400/BV9v1HDo_400x400.jpg',
-        'https://cryptologos.cc/logos/the-block-block-logo.png'
+        'https://cryptologos.cc/logos/the-block-block-logo.png',
+        'https://assets.coingecko.com/article_images/310958/large/THEBLOCK.jpg'
       ],
       'CoinDesk': [
         'https://cryptologos.cc/logos/coindesk-cd-logo.png',
-        'https://pbs.twimg.com/profile_images/1599803099607384066/UW4sH2ii_400x400.jpg'
+        'https://pbs.twimg.com/profile_images/1599803099607384066/UW4sH2ii_400x400.jpg',
+        'https://assets.coingecko.com/article_images/310789/large/COINDESK.jpg'
       ],
       '8BTC': [
         'https://pbs.twimg.com/profile_images/1275716146762661890/BP8aHRk2_400x400.jpg',
-        'https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/8a/88/bd/8a88bd76-e81f-87b9-0c24-7a29b9b5d9f5/source/512x512bb.jpg'
+        'https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/8a/88/bd/8a88bd76-e81f-87b9-0c24-7a29b9b5d9f5/source/512x512bb.jpg',
+        'https://img.block123.com/nav/images/4aaf1c6bcd2054418ed0aca9d08e7c1ejpg.jpg',
+        'https://assets.coingecko.com/article_images/310969/large/8BTC.jpg'
       ]
     };
     
@@ -278,14 +284,58 @@ const CryptoNews: React.FC = () => {
       return originalTitle;
     }
 
+    // 首先尝试匹配完整的标题模板
+    const completeTitleTemplates: Record<string, string> = {
+      "Former CFTC Chairman Timothy Massad On Bitcoin And Digital Asset Privacy": 
+        "前CFTC主席Timothy Massad谈比特币和数字资产隐私",
+      "Atomic, Exodus wallets targeted in new cybersecurity exploit": 
+        "Atomic和Exodus钱包成为新网络安全漏洞的目标",
+      "Ether ETF staking could come as soon as May — Bloomberg analyst": 
+        "以太坊ETF质押可能最早在5月推出 — 彭博分析师",
+      "How The Psychology Of Money Impacts Bitcoin Users": 
+        "金钱心理学如何影响比特币用户",
+      "Cosmos launches Eureka to connect Ethereum and IBC networks": 
+        "Cosmos推出Eureka连接以太坊和IBC网络",
+      "Anti-Elon Musk protests 2025: Everything you need to know": 
+        "2025年反马斯克抗议：你需要知道的一切",
+      "Top Bitcoin miners produced nearly $800M of BTC in Q1 2025": 
+        "顶级比特币矿工在2025年第一季度产出了近8亿美元的BTC",
+      "Semler Scientific escapes the Zombie Zone with a Bitcoin Treasury Strategy": 
+        "Semler Scientific通过比特币财政战略摆脱僵尸区",
+    };
+
+    // 检查是否有完全匹配的标题
+    if (completeTitleTemplates[originalTitle]) {
+      return completeTitleTemplates[originalTitle];
+    }
+
+    // 检查常见的标题短语模板
+    const phraseTemplates: Record<string, string> = {
+      "could come as soon as": "可能很快就会",
+      "everything you need to know": "你需要知道的一切",
+      "produced nearly": "产出了近",
+      "targeted in": "成为目标于",
+      "launches": "推出",
+      "to connect": "连接",
+      "On Bitcoin": "谈比特币",
+      "And Digital Asset": "和数字资产",
+      "How The": "如何",
+      "Impacts": "影响",
+      "Users": "用户",
+      "in Q1": "在第一季度",
+      "with a": "通过一个",
+      "escapes the": "摆脱了",
+      "Treasury Strategy": "财政战略"
+    };
+
     // 为常见的加密货币新闻标题提供中文翻译
     const newsTranslations: Record<string, string> = {
       // 常见加密货币相关术语翻译
       "Bitcoin": "比特币",
-      "BTC": "比特币",
+      "BTC": "BTC",
       "Ethereum": "以太坊",
-      "ETH": "以太坊",
-      "ETF": "ETF交易所交易基金",
+      "ETH": "ETH",
+      "ETF": "ETF",
       "staking": "质押",
       "wallets": "钱包",
       "wallet": "钱包",
@@ -300,8 +350,8 @@ const CryptoNews: React.FC = () => {
       "cybersecurity": "网络安全",
       "hack": "黑客攻击",
       "security": "安全",
-      "NFT": "NFT非同质化代币",
-      "DeFi": "DeFi去中心化金融",
+      "NFT": "NFT",
+      "DeFi": "DeFi",
       "Solana": "索拉纳",
       "Binance": "币安",
       "Coinbase": "比特币基地",
@@ -316,6 +366,8 @@ const CryptoNews: React.FC = () => {
       "government": "政府",
       "adoption": "采用",
       "digital": "数字",
+      "asset": "资产",
+      "assets": "资产",
       "currency": "货币",
       "rally": "反弹",
       "surge": "暴涨",
@@ -329,6 +381,31 @@ const CryptoNews: React.FC = () => {
       "should": "应该",
       "future": "未来",
       "halving": "减半",
+      "money": "金钱",
+      "psychology": "心理学",
+      "network": "网络",
+      "networks": "网络",
+      "protest": "抗议",
+      "protests": "抗议",
+      "former": "前",
+      "chairman": "主席",
+      "privacy": "隐私",
+      "new": "新的",
+      "Cosmos": "Cosmos",
+      "Eureka": "Eureka",
+      "Atomic": "Atomic",
+      "Exodus": "Exodus",
+      "Semler": "Semler",
+      "Scientific": "Scientific",
+      "Zombie": "僵尸",
+      "Zone": "区域",
+      "Bloomberg": "彭博",
+      "analyst": "分析师",
+      "Elon": "埃隆",
+      "Musk": "马斯克",
+      "CFTC": "CFTC",
+      "Timothy": "Timothy",
+      "Massad": "Massad",
       // 常见新闻标题模式翻译
       "Analysis": "分析",
       "Report": "报告",
@@ -360,13 +437,21 @@ const CryptoNews: React.FC = () => {
       "profit": "利润",
     };
 
-    // 简单替换常见术语
+    // 先尝试替换短语
     let translatedTitle = originalTitle;
+    Object.entries(phraseTemplates).forEach(([en, zh]) => {
+      translatedTitle = translatedTitle.replace(new RegExp(en, 'gi'), zh);
+    });
+
+    // 再替换常见术语
     Object.entries(newsTranslations).forEach(([en, zh]) => {
       // 使用正则表达式进行替换，保证只替换完整的单词
       const regex = new RegExp(`\\b${en}\\b`, 'gi');
       translatedTitle = translatedTitle.replace(regex, zh);
     });
+
+    // 如果是美元金额，确保格式正确
+    translatedTitle = translatedTitle.replace(/\$(\d+)([MBK])/g, '$1$2美元');
 
     return translatedTitle;
   };
@@ -378,22 +463,111 @@ const CryptoNews: React.FC = () => {
       return originalContent;
     }
 
+    // 首先尝试匹配完整的内容模板
+    const completeContentTemplates: Record<string, string> = {
+      "Former CFTC chairman Tim Massad discusses privacy in digital assets and how to build an effective crypto regulatory framework.": 
+        "前CFTC主席Tim Massad讨论数字资产的隐私和如何建立有效的加密货币监管框架。",
+      "Hardware wallet users report exploit and token theft. Some wallets affected by a similar issue to the previous supply chain attack.": 
+        "硬件钱包用户报告漏洞和代币被盗。一些钱包受到类似于之前供应链攻击的问题影响。",
+      "Haskel says staking for the spot ETH ETF is months, not years, away as progress continues.": 
+        "Haskel表示，随着进展继续，现货ETH ETF的质押将在几个月内而非几年内实现。",
+      "How do our attitudes toward money influence our behavior with Bitcoin and cryptocurrency in general?": 
+        "我们对金钱的态度如何影响我们对比特币和加密货币的整体行为？",
+      "Semler Scientific's Bitcoin treasury strategy has quickly put the company back on the map, with shares up over 100% in 6 months.": 
+        "Semler Scientific的比特币财政战略迅速使该公司重回市场关注，股价在6个月内上涨超过100%。"
+    };
+
+    // 检查是否有完全匹配的内容
+    if (completeContentTemplates[originalContent]) {
+      return completeContentTemplates[originalContent];
+    }
+
     // 如果内容太长，返回一个简短的中文说明
     if (originalContent.length > 100) {
       return "此为英文原文新闻内容，点击可查看完整报道。";
     }
 
-    // 否则尝试进行简单替换翻译
+    // 常见短语及句型的翻译
+    const contentPhraseTemplates: Record<string, string> = {
+      "Read more about": "了解更多关于",
+      "Learn more about": "了解更多关于",
+      "Click here for more": "点击这里了解更多",
+      "Latest news on": "关于以下内容的最新消息",
+      "Breaking news:": "重大新闻：",
+      "How to": "如何",
+      "Why this matters:": "为什么这很重要：",
+      "According to": "根据",
+      "Reports suggest": "报道表明",
+      "What you need to know": "你需要知道的事情",
+      "This is a developing story": "这是一个正在发展的故事",
+      "Key points:": "关键点：",
+      "The future of": "未来的",
+      "The impact of": "影响",
+      "A guide to": "指南",
+      "Analysis:": "分析：",
+      "Opinion:": "观点：",
+      "Review:": "评论：",
+      "Interview with": "采访",
+      "Explained:": "解释：",
+      "The rise of": "兴起",
+      "The fall of": "衰落",
+      "Questions about": "关于以下问题",
+      "Answers to": "关于以下问题的答案",
+      "What is": "什么是",
+      "Who is": "谁是",
+      "When will": "何时会"
+    };
+
+    // 常见单词和短语的翻译
     const contentTranslations: Record<string, string> = {
-      // 常见短语翻译
+      // 通用短语
       "Read more": "阅读更多",
       "Click to view": "点击查看",
       "View full article": "查看完整文章",
       "Learn more": "了解更多",
+      "More details": "更多详情",
+      "Find out more": "了解更多",
+      "Continue reading": "继续阅读",
+      "Full story": "完整报道",
+      "Original source": "原始来源",
+      "Source": "来源",
+      "Read the full article": "阅读完整文章",
+      "Click for details": "点击查看详情",
+      "See more": "查看更多",
+      
+      // 加密货币相关
+      "Bitcoin": "比特币",
+      "Ethereum": "以太坊",
+      "cryptocurrency": "加密货币",
+      "blockchain": "区块链",
+      "digital asset": "数字资产",
+      "mining": "挖矿",
+      "wallet": "钱包",
+      "exchange": "交易所",
+      "token": "代币",
+      "staking": "质押",
+      "DeFi": "去中心化金融",
+      "NFT": "非同质化代币",
+      "smart contract": "智能合约",
+      "regulation": "监管",
+      "adoption": "采用",
+      "transaction": "交易",
+      "security": "安全",
+      "privacy": "隐私",
+      "market": "市场",
+      "investment": "投资",
+      "trading": "交易",
+      "volatility": "波动性",
+      "analysis": "分析"
     };
 
-    // 简单替换常见短语
+    // 首先替换较长的短语
     let translatedContent = originalContent;
+    Object.entries(contentPhraseTemplates).forEach(([en, zh]) => {
+      translatedContent = translatedContent.replace(new RegExp(en, 'gi'), zh);
+    });
+
+    // 然后替换单词和较短的短语
     Object.entries(contentTranslations).forEach(([en, zh]) => {
       const regex = new RegExp(`\\b${en}\\b`, 'gi');
       translatedContent = translatedContent.replace(regex, zh);
