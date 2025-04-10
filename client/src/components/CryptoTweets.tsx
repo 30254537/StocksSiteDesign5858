@@ -22,6 +22,7 @@ interface Tweet {
   id: number;
   tweetId: string;
   text: string;
+  translatedText?: string;
   authorName: string;
   authorUsername: string;
   authorProfileImage: string | null;
@@ -140,8 +141,12 @@ const CryptoTweets: React.FC = () => {
                           X
                         </a>
                       </div>
-                      <p className="text-sm mt-2">{tweet.text}</p>
-                      {tweet.isTranslated && (
+                      <p className="text-sm mt-2">
+                        {language === 'zh' && tweet.translatedText 
+                          ? tweet.translatedText 
+                          : tweet.text}
+                      </p>
+                      {language === 'zh' && tweet.translatedText && (
                         <p className="text-xs text-muted-foreground mt-1 italic">
                           {t('cryptoTweets.translated')}
                         </p>
@@ -203,8 +208,12 @@ const CryptoTweets: React.FC = () => {
                           X
                         </a>
                       </div>
-                      <p className="text-sm mt-2">{tweet.text}</p>
-                      {tweet.isTranslated && (
+                      <p className="text-sm mt-2">
+                        {language === 'zh' && tweet.translatedText 
+                          ? tweet.translatedText 
+                          : tweet.text}
+                      </p>
+                      {language === 'zh' && tweet.translatedText && (
                         <p className="text-xs text-muted-foreground mt-1 italic">
                           {t('cryptoTweets.translated')}
                         </p>

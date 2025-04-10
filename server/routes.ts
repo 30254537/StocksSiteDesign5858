@@ -14,6 +14,7 @@ import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 import cryptoNewsRoutes from "./routes/cryptoNewsRoutes";
 import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
+import { translateAllUntranslatedTweets, initTweetTranslationScheduler } from "./services/translationService";
 import { syncCryptoTweets } from "./services/xService";
 import * as cron from "node-cron";
 
@@ -1367,6 +1368,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 初始化加密货币新闻定时获取任务
   initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
+  
+  // 初始化推文翻译服务 (每4小时翻译一次未翻译的推文)
+  initTweetTranslationScheduler('0 */4 * * *');
   
   // 定时同步X推文 (每4小时一次)
   cron.schedule('0 */4 * * *', async () => {

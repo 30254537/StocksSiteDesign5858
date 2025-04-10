@@ -97,6 +97,7 @@ export interface IStorage {
   getCryptoTweetByTweetId(tweetId: string): Promise<CryptoTweet | undefined>;
   createCryptoTweet(tweet: InsertCryptoTweet): Promise<CryptoTweet>;
   updateCryptoTweet(id: number, tweet: Partial<CryptoTweet>): Promise<CryptoTweet | undefined>;
+  updateTweetTranslation(id: number, translatedText: string): Promise<CryptoTweet | undefined>;
   deleteCryptoTweet(id: number): Promise<boolean>;
 }
 

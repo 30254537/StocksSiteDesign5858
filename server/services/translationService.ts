@@ -180,7 +180,7 @@ export async function translateAllUntranslatedTweets(): Promise<number> {
 
 /**
  * 初始化推文翻译定时任务
- * @param cronExpression cron表达式，如 '0 */4 * * *' 表示每4小时执行一次
+ * @param cronExpression cron表达式，例如每4小时执行一次
  */
 export function initTweetTranslationScheduler(cronExpression: string): void {
   // 立即执行一次翻译
