@@ -753,14 +753,14 @@ const CryptoNews: React.FC = () => {
                 <Card className="overflow-hidden border-teal-500/20 shadow-lg bg-gray-900 hover:bg-gray-800 transition-colors cursor-pointer h-full transform hover:scale-[1.02] transition-transform">
                   <div className="w-full h-40 overflow-hidden">
                     <img 
-                      src={getNewsImage(news)} 
+                      src={"/images/crypto/bitcoin.jpg"} 
                       alt={news.title} 
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         // 如果图片加载失败，使用备用图片
                         const target = e.target as HTMLImageElement;
                         target.onerror = null; // 防止循环
-                        target.src = "https://cdn.pixabay.com/photo/2018/01/18/07/31/bitcoin-3089728_1280.jpg";
+                        target.src = "/images/crypto/bitcoin.jpg";
                       }}
                     />
                   </div>
@@ -840,14 +840,14 @@ const CryptoNews: React.FC = () => {
                       <div className="flex flex-col md:flex-row">
                         <div className="w-full md:w-1/4 h-40 md:h-auto overflow-hidden">
                           <img 
-                            src={getNewsImage(news)} 
+                            src={"/images/crypto/bitcoin.jpg"} 
                             alt={news.title} 
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               // 如果图片加载失败，使用备用图片
                               const target = e.target as HTMLImageElement;
                               target.onerror = null; // 防止循环
-                              target.src = "https://cdn.pixabay.com/photo/2018/01/18/07/31/bitcoin-3089728_1280.jpg";
+                              target.src = "/images/crypto/bitcoin.jpg";
                             }}
                           />
                         </div>
