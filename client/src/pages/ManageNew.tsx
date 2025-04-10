@@ -45,6 +45,14 @@ export default function Manage() {
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [editingAddress, setEditingAddress] = useState<ContractAddress | null>(null);
   
+  // 订单管理状态
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderItems, setSelectedOrderItems] = useState<OrderItemWithProduct[]>([]);
+  const [orderStatusFilter, setOrderStatusFilter] = useState("all");
+  const [trackingNumber, setTrackingNumber] = useState("");
+  
   // 获取商品列表
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -953,9 +961,262 @@ export default function Manage() {
             <CardTitle>订单管理</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="p-4 bg-primary/30 rounded-md text-center">
-              <p>订单管理功能正在施工中...</p>
+            <div className="mb-4 flex justify-between items-center">
+              <Button 
+                variant="outline" 
+                className="border-accent text-accent"
+                onClick={fetchOrders}
+                disabled={loadingOrders}
+              >
+                {loadingOrders ? "加载中..." : "刷新订单"}
+              </Button>
+              
+              <div className="flex items-center space-x-2">
+                <label htmlFor="order-status-filter" className="text-sm">状态筛选:</label>
+                <select
+                  id="order-status-filter"
+                  className="rounded-md p-2 bg-primary/50 border border-accent text-sm"
+                  onChange={(e) => setOrderStatusFilter(e.target.value)}
+                  value={orderStatusFilter}
+                >
+                  <option value="all">全部订单</option>
+                  <option value="pending">待付款</option>
+                  <option value="paid">已付款</option>
+                  <option value="shipped">已发货</option>
+                  <option value="completed">已完成</option>
+                  <option value="cancelled">已取消</option>
+                </select>
+              </div>
             </div>
+
+            {loadingOrders ? (
+              <div className="flex justify-center my-8">
+                <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+              </div>
+            ) : (
+              <div className="rounded-md border overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-primary/50">
+                    <TableRow>
+                      <TableHead className="text-accent">订单号</TableHead>
+                      <TableHead className="text-accent">日期</TableHead>
+                      <TableHead className="text-accent">总金额</TableHead>
+                      <TableHead className="text-accent">支付方式</TableHead>
+                      <TableHead className="text-accent">状态</TableHead>
+                      <TableHead className="text-accent">操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredOrders.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8">
+                          {orderStatusFilter === 'all' ? "暂无订单记录" : `暂无${getStatusDisplay(orderStatusFilter)}订单`}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredOrders.map((order) => (
+                        <TableRow key={order.id} className={order.status === 'paid' && !order.trackingNumber ? "bg-yellow-900/20" : ""}>
+                          <TableCell>{order.id}</TableCell>
+                          <TableCell>{new Date(order.createdAt).toLocaleString('zh-CN')}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="text-accent">⊙ {order.ethTotal.toFixed(6)} $STONKS</span>
+                              <span className="text-xs text-gray-400">${order.total.toFixed(2)} USD</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>{getPaymentMethodDisplay(order.paymentMethod)}</TableCell>
+                          <TableCell>
+                            <span className={getStatusClass(order.status)}>
+                              {getStatusDisplay(order.status)}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                className="text-accent hover:text-white hover:bg-primary/50"
+                                onClick={() => setSelectedOrder(order)}
+                              >
+                                查看详情
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+            
+            {/* 订单详情弹窗 */}
+            {selectedOrder && (
+              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                <div className="bg-nightblue border border-accent rounded-lg w-full max-w-3xl max-h-[90vh] overflow-auto">
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h3 className="text-2xl font-bold text-accent mb-1">订单 #{selectedOrder.id}</h3>
+                        <p className="text-sm text-gray-400">创建于 {new Date(selectedOrder.createdAt).toLocaleString('zh-CN')}</p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="text-gray-400 hover:text-white"
+                        onClick={() => setSelectedOrder(null)}
+                      >
+                        关闭
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-accent">订单状态</h4>
+                        <div className="flex items-center gap-3">
+                          <span className={getStatusClass(selectedOrder.status)}>
+                            {getStatusDisplay(selectedOrder.status)}
+                          </span>
+                          {selectedOrder.status !== 'cancelled' && (
+                            <select
+                              className="rounded bg-primary/50 border border-accent p-1 text-sm"
+                              value={selectedOrder.status}
+                              onChange={(e) => handleOrderStatusChange(selectedOrder.id, e.target.value)}
+                            >
+                              <option value="pending">待付款</option>
+                              <option value="paid">已付款</option>
+                              <option value="shipped">已发货</option>
+                              <option value="completed">已完成</option>
+                              <option value="cancelled">已取消</option>
+                            </select>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-accent">支付信息</h4>
+                        <p>方式: {getPaymentMethodDisplay(selectedOrder.paymentMethod)}</p>
+                        <div className="flex flex-col">
+                          <span className="text-accent">⊙ {selectedOrder.ethTotal.toFixed(6)} $STONKS</span>
+                          <span className="text-xs text-gray-400">${selectedOrder.total.toFixed(2)} USD</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-6">
+                      <h4 className="font-medium text-accent mb-2">收货信息</h4>
+                      <div className="bg-primary/20 p-3 rounded border border-accent/30">
+                        <p className="whitespace-pre-line">{selectedOrder.shippingAddress || '暂无收货地址'}</p>
+                      </div>
+                    </div>
+                    
+                    {selectedOrder.status === 'pending' && (
+                      <div className="mb-6">
+                        <h4 className="font-medium text-accent mb-2">标记为已付款</h4>
+                        <Button 
+                          variant="outline" 
+                          className="border-green-500 text-green-500 hover:bg-green-500/20"
+                          onClick={() => handleOrderStatusChange(selectedOrder.id, 'paid')}
+                        >
+                          确认收到付款
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {selectedOrder.status === 'paid' && (
+                      <div className="mb-6">
+                        <h4 className="font-medium text-accent mb-2">添加物流信息</h4>
+                        <div className="flex gap-2">
+                          <Input 
+                            placeholder="输入物流单号" 
+                            value={trackingNumber}
+                            onChange={(e) => setTrackingNumber(e.target.value)}
+                            className="bg-primary/50 border-accent"
+                          />
+                          <Button 
+                            variant="outline" 
+                            className="border-accent text-accent"
+                            onClick={() => handleTrackingNumberUpdate(selectedOrder.id)}
+                            disabled={!trackingNumber.trim()}
+                          >
+                            保存物流信息
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedOrder.trackingNumber && (
+                      <div className="mb-6">
+                        <h4 className="font-medium text-accent mb-2">物流信息</h4>
+                        <div className="bg-primary/20 p-3 rounded border border-accent/30">
+                          <p>物流单号: {selectedOrder.trackingNumber}</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div>
+                      <h4 className="font-medium text-accent mb-2">订单商品</h4>
+                      <div className="rounded-md border border-accent/30 overflow-hidden">
+                        <Table>
+                          <TableHeader className="bg-primary/50">
+                            <TableRow>
+                              <TableHead className="text-accent">商品</TableHead>
+                              <TableHead className="text-accent">数量</TableHead>
+                              <TableHead className="text-accent">单价</TableHead>
+                              <TableHead className="text-accent">小计</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {selectedOrderItems.map((item, index) => (
+                              <TableRow key={index}>
+                                <TableCell>
+                                  <div className="flex items-center gap-3">
+                                    {item.product?.imageUrl && (
+                                      <div className="w-12 h-12 bg-primary/30 rounded overflow-hidden">
+                                        <img 
+                                          src={item.product.imageUrl} 
+                                          alt={item.product?.name || '产品图片'} 
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    )}
+                                    <div>
+                                      <p>{item.product?.name || '未知商品'}</p>
+                                      {item.size && <p className="text-xs text-gray-400">尺码: {item.size}</p>}
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                <TableCell>{item.quantity}</TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span className="text-accent">⊙ {item.ethPrice.toFixed(6)}</span>
+                                    <span className="text-xs text-gray-400">${item.price.toFixed(2)}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span className="text-accent">⊙ {(item.ethPrice * item.quantity).toFixed(6)}</span>
+                                    <span className="text-xs text-gray-400">${(item.price * item.quantity).toFixed(2)}</span>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
+                    
+                    {selectedOrder.notes && (
+                      <div className="mt-6">
+                        <h4 className="font-medium text-accent mb-2">订单备注</h4>
+                        <div className="bg-primary/20 p-3 rounded border border-accent/30">
+                          <p className="whitespace-pre-line">{selectedOrder.notes}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
