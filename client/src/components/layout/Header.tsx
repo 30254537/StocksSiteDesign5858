@@ -151,14 +151,6 @@ export default function Header() {
             
             {/* 功能控件 - 右侧 */}
             <div className="flex items-center space-x-6">
-              {/* 语言切换 */}
-              <button
-                className="hidden md:block text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
-                onClick={toggleLanguage}
-              >
-                {language === 'en' ? 'EN' : '中文'}
-              </button>
-              
               {/* 购物车按钮（仅桌面端） */}
               <button
                 className="relative hidden md:flex items-center justify-center text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
@@ -172,10 +164,18 @@ export default function Header() {
                 )}
               </button>
               
-              {/* 迷你音乐播放器 - 最后位置，增加显著的左侧间距 */}
-              <div className="hidden md:block ml-8 pl-2">
+              {/* 迷你音乐播放器 */}
+              <div className="hidden md:block">
                 <MiniMusicPlayer />
               </div>
+              
+              {/* 语言切换 - 移至最后角落 */}
+              <button
+                className="hidden md:block text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer ml-4"
+                onClick={toggleLanguage}
+              >
+                {language === 'en' ? 'EN' : '中文'}
+              </button>
               
               {/* 移动菜单按钮 */}
               <button
