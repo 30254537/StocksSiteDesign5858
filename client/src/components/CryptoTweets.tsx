@@ -30,6 +30,7 @@ interface Tweet {
   url: string;
   createdAt: string;
   isTranslated: boolean;
+  category?: string;
 }
 
 interface TweetsResponse {
@@ -38,7 +39,7 @@ interface TweetsResponse {
 
 const CryptoTweets: React.FC = () => {
   const { t, language } = useTranslation();
-  const [activeTab, setActiveTab] = useState<string>('tweets');
+  const [activeTab, setActiveTab] = useState<string>('trending');
   
   // 获取推文数据
   const { data: tweetsData, isLoading, error } = useQuery<TweetsResponse>({
@@ -78,7 +79,7 @@ const CryptoTweets: React.FC = () => {
     return num.toString();
   };
 
-  if (isLoading) {
+  if (isLoading && isContractLoading) {
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-bold mb-4">{t('cryptoTweets.title')}</h2>
@@ -101,6 +102,7 @@ const CryptoTweets: React.FC = () => {
   }
 
   const tweets = tweetsData?.data || [];
+  const contractTweets = contractTweetsData?.data || [];
 
   return (
     <div className="mb-8">
@@ -108,13 +110,15 @@ const CryptoTweets: React.FC = () => {
         <h2 className="text-2xl font-bold">{t('cryptoTweets.title')}</h2>
       </div>
 
-      <Tabs defaultValue="tweets" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="tweets">{t('cryptoTweets.trending')}</TabsTrigger>
-          <TabsTrigger value="news">{t('cryptoTweets.popular')}</TabsTrigger>
+      <Tabs defaultValue="trending" className="w-full" onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3 mb-4">
+          <TabsTrigger value="trending">{t('cryptoTweets.trending')}</TabsTrigger>
+          <TabsTrigger value="popular">{t('cryptoTweets.popular')}</TabsTrigger>
+          <TabsTrigger value="contracts">{t('cryptoTweets.contracts')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="tweets" className="space-y-4">
+        {/* 最新推文标签页 */}
+        <TabsContent value="trending" className="space-y-4">
           {tweets.length === 0 ? (
             <Card>
               <CardContent className="p-6 text-center">
@@ -185,7 +189,8 @@ const CryptoTweets: React.FC = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="news" className="space-y-4">
+        {/* 热门推文标签页 */}
+        <TabsContent value="popular" className="space-y-4">
           {tweets
             .sort((a, b) => b.metrics.likes - a.metrics.likes)
             .slice(0, 5)
@@ -249,6 +254,86 @@ const CryptoTweets: React.FC = () => {
                 </CardContent>
               </Card>
             ))}
+        </TabsContent>
+        
+        {/* 合约地址推文标签页 */}
+        <TabsContent value="contracts" className="space-y-4">
+          {isContractLoading ? (
+            <div className="grid grid-cols-1 gap-4">
+              {[1, 2].map((i) => (
+                <LoadingSkeleton key={i} className="h-32" />
+              ))}
+            </div>
+          ) : contractTweets.length === 0 ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p>{t('cryptoTweets.noContractTweets')}</p>
+              </CardContent>
+            </Card>
+          ) : (
+            contractTweets
+              .sort((a, b) => b.metrics.retweets - a.metrics.retweets)
+              .map((tweet) => (
+                <Card key={tweet.id} className="overflow-hidden hover:shadow-md transition-shadow border-primary-darker">
+                  <CardContent className="p-4">
+                    <div className="flex space-x-4">
+                      <Avatar className="h-10 w-10">
+                        {tweet.authorProfileImage ? (
+                          <AvatarImage src={tweet.authorProfileImage} alt={tweet.authorName} />
+                        ) : (
+                          <AvatarFallback>{tweet.authorName.substring(0, 2)}</AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-semibold text-sm">{tweet.authorName}</p>
+                            <p className="text-xs text-muted-foreground">@{tweet.authorUsername}</p>
+                          </div>
+                          <a
+                            href={tweet.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-500 hover:underline"
+                          >
+                            X
+                          </a>
+                        </div>
+                        <p className="text-sm mt-2 whitespace-pre-wrap">
+                          {language === 'zh' && tweet.translatedText 
+                            ? tweet.translatedText 
+                            : tweet.text}
+                        </p>
+                        {language === 'zh' && tweet.translatedText && (
+                          <p className="text-xs text-muted-foreground mt-1 italic">
+                            {t('cryptoTweets.translated')}
+                          </p>
+                        )}
+                        <div className="flex space-x-4 mt-3">
+                          <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                            <MessageCircle className="h-3 w-3" />
+                            <span>{formatNumber(tweet.metrics.replies)}</span>
+                          </div>
+                          <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                            <Repeat2 className="h-3 w-3" />
+                            <span>{formatNumber(tweet.metrics.retweets)}</span>
+                          </div>
+                          <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                            <Heart className="h-3 w-3" />
+                            <span>{formatNumber(tweet.metrics.likes)}</span>
+                          </div>
+                          <div className="flex-grow text-right">
+                            <span className="text-xs text-muted-foreground">
+                              {formatDate(tweet.createdAt)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+          )}
         </TabsContent>
       </Tabs>
       
