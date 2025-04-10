@@ -105,6 +105,8 @@ export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
   createdAt: true,
 });
 
+// 类型定义在下方统一定义
+
 // Newsletter subscribers
 export const subscribers = pgTable("subscribers", {
   id: serial("id").primaryKey(),

@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
-import { Product, ContractAddress } from "@shared/schema";
+import { Product, ContractAddress, Order, OrderItemWithProduct, OrderWithItems } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export default function Manage() {
   const { t } = useLanguage();
@@ -52,6 +54,158 @@ export default function Manage() {
   const [selectedOrderItems, setSelectedOrderItems] = useState<OrderItemWithProduct[]>([]);
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
   const [trackingNumber, setTrackingNumber] = useState("");
+  const [showOrderDialog, setShowOrderDialog] = useState(false);
+  const [showTrackingDialog, setShowTrackingDialog] = useState(false);
+  
+  // 订单状态显示函数
+  const getStatusDisplay = (status: string): string => {
+    const statusMap: Record<string, string> = {
+      pending: "待付款",
+      paid: "已付款",
+      shipped: "已发货",
+      completed: "已完成",
+      cancelled: "已取消"
+    };
+    return statusMap[status] || status;
+  };
+  
+  // 支付方式显示函数
+  const getPaymentMethodDisplay = (method: string): string => {
+    const methodMap: Record<string, string> = {
+      stonks: "STONKS代币",
+      usdt: "USDT",
+      fiat: "法币支付"
+    };
+    return methodMap[method] || method;
+  };
+  
+  // 状态CSS类
+  const getStatusClass = (status: string): string => {
+    const statusClassMap: Record<string, string> = {
+      pending: "px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400",
+      paid: "px-2 py-1 rounded-full bg-green-500/20 text-green-400",
+      shipped: "px-2 py-1 rounded-full bg-blue-500/20 text-blue-400",
+      completed: "px-2 py-1 rounded-full bg-accent/20 text-accent",
+      cancelled: "px-2 py-1 rounded-full bg-red-500/20 text-red-400"
+    };
+    return statusClassMap[status] || "px-2 py-1 rounded-full bg-gray-500/20 text-gray-400";
+  };
+  
+  // 获取订单列表
+  const fetchOrders = async () => {
+    setLoadingOrders(true);
+    try {
+      const response = await apiRequest("GET", "/api/orders");
+      const ordersData = await response.json();
+      setOrders(ordersData);
+    } catch (error) {
+      console.error("获取订单列表错误:", error);
+      toast({
+        title: "获取订单列表失败",
+        description: "无法获取订单列表，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+  
+  // 根据过滤条件获取订单
+  const filteredOrders = orderStatusFilter === "all" 
+    ? orders 
+    : orders.filter(order => order.status === orderStatusFilter);
+  
+  // 获取订单详情
+  const fetchOrderDetails = async (orderId: number) => {
+    try {
+      const response = await apiRequest("GET", `/api/orders/${orderId}/items`);
+      const itemsData = await response.json();
+      setSelectedOrderItems(itemsData);
+      setShowOrderDialog(true);
+    } catch (error) {
+      console.error("获取订单详情错误:", error);
+      toast({
+        title: "获取订单详情失败",
+        description: "无法获取订单详情，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // 更新订单状态
+  const handleOrderStatusChange = async (orderId: number, newStatus: string) => {
+    try {
+      const response = await apiRequest("PUT", `/api/orders/${orderId}/status`, {
+        status: newStatus
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "状态更新成功",
+          description: `订单状态已更新为：${getStatusDisplay(newStatus)}`,
+        });
+        
+        // 刷新订单列表
+        await fetchOrders();
+        
+        // 如果正在查看该订单的详情，关闭详情对话框
+        if (selectedOrder?.id === orderId) {
+          setShowOrderDialog(false);
+          setSelectedOrder(null);
+        }
+      } else {
+        throw new Error("更新订单状态失败");
+      }
+    } catch (error) {
+      console.error("更新订单状态错误:", error);
+      toast({
+        title: "更新订单状态失败",
+        description: "无法更新订单状态，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // 更新物流单号
+  const handleTrackingNumberUpdate = async (orderId: number) => {
+    if (!trackingNumber.trim()) {
+      toast({
+        title: "请输入物流单号",
+        description: "物流单号不能为空",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const response = await apiRequest("PUT", `/api/orders/${orderId}/tracking`, {
+        trackingNumber: trackingNumber.trim()
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "物流单号更新成功",
+          description: "订单已标记为已发货状态",
+        });
+        
+        // 刷新订单列表
+        await fetchOrders();
+        
+        // 关闭对话框
+        setShowTrackingDialog(false);
+        setTrackingNumber("");
+      } else {
+        throw new Error("更新物流单号失败");
+      }
+    } catch (error) {
+      console.error("更新物流单号错误:", error);
+      toast({
+        title: "更新物流单号失败",
+        description: "无法更新物流单号，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
   
   // 获取商品列表
   const fetchProducts = async () => {
