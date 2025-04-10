@@ -68,6 +68,17 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
 function Router() {
   const [location] = useLocation();
   
+  // 监听路由变化，自动滚动到顶部
+  useEffect(() => {
+    // 当路由变化时，滚动到页面顶部，除非URL包含哈希锚点
+    if (!location.includes('#')) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'instant'
+      });
+    }
+  }, [location]);
+  
   return (
     <AnimatePresence mode="wait">
       <Suspense fallback={<PageLoading />}>

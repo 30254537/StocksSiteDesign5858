@@ -59,6 +59,11 @@ export default function Footer() {
                   window.history.pushState({}, '', '/music');
                   // 触发页面内容重新加载，但不是整页刷新
                   window.dispatchEvent(new PopStateEvent('popstate'));
+                  // 滚动到顶部
+                  window.scrollTo({
+                    top: 0,
+                    behavior: 'instant'
+                  });
                 }}
               >
                 <i className="fa-solid fa-music"></i>
