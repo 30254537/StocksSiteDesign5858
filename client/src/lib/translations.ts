@@ -169,6 +169,16 @@ export const translations: Translations = {
     "stonksPrice.converter": "USDT to STONKS Converter",
     "stonksPrice.contract": "Contract Address",
     
+    // Crypto News
+    "nav.cryptoNews": "Crypto News",
+    "cryptoNews.title": "Cryptocurrency News",
+    "cryptoNews.featured": "Featured",
+    "cryptoNews.readMore": "Read More",
+    "cryptoNews.allNews": "All News",
+    "cryptoNews.error": "Error fetching news",
+    "cryptoNews.noNews": "No news available",
+    "cryptoNews.stayUpdated": "Follow us for more crypto updates",
+    
     // Contact Info
     "contact.email": "support@stonksdex.io",
     "contact.address": "Singapore, Blockchain Tower #42-01",
@@ -356,6 +366,16 @@ export const translations: Translations = {
     "stonksPrice.equivalentAmount": "等价金额",
     "stonksPrice.converter": "USDT转STONKS换算器",
     "stonksPrice.contract": "合约地址",
+    
+    // Crypto News
+    "nav.cryptoNews": "加密新闻",
+    "cryptoNews.title": "加密货币新闻",
+    "cryptoNews.featured": "置顶新闻",
+    "cryptoNews.readMore": "阅读更多",
+    "cryptoNews.allNews": "全部新闻",
+    "cryptoNews.error": "获取新闻失败",
+    "cryptoNews.noNews": "暂无可用新闻",
+    "cryptoNews.stayUpdated": "关注我们以获取更多加密货币更新",
     
     // Contact Info
     "contact.email": "support@stonksdex.io",

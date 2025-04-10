@@ -133,7 +133,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   onClose();
                 }}
               >
-                加密新闻
+                {t("nav.cryptoNews")}
               </Link>
             </li>
             <li>

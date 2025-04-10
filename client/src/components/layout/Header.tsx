@@ -151,7 +151,7 @@ export default function Header() {
                     }`}
                     onClick={scrollToTop}
                   >
-                    加密新闻
+                    {t("nav.cryptoNews")}
                   </Link>
                   
                   <a 

@@ -5,13 +5,13 @@ interface LoadingSkeletonProps {
   className?: string;
 }
 
-const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ className }) => {
+const LoadingSkeleton = ({ className }: LoadingSkeletonProps) => {
   return (
     <div 
       className={cn(
-        "animate-pulse bg-gray-800 rounded-lg", 
+        "rounded-md bg-gray-800 animate-pulse", 
         className
-      )}
+      )} 
     />
   );
 };
