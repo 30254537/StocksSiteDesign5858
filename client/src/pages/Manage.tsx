@@ -48,9 +48,12 @@ export default function Manage() {
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const response = await apiRequest("GET", "/api/products");
+      // 添加时间戳参数避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/products?t=${timestamp}`);
       // First convert response to json and then cast to Product[]
       const productData = await response.json();
+      console.log("刷新获取的产品数据:", productData);
       setProducts(productData);
     } catch (error) {
       toast({
