@@ -9,6 +9,7 @@ interface MusicVisualizerProps {
   gap?: number;
   barCount?: number;
   sensitivity?: number;
+  position?: 'top' | 'bottom';
 }
 
 export default function MusicVisualizer({
@@ -18,7 +19,8 @@ export default function MusicVisualizer({
   barWidth = 1, // 默认使用1像素宽度的极细条
   gap = 2, // 默认更大的间隙
   barCount = 150, // 默认更多的条数
-  sensitivity = 1.2 // 调整灵敏度
+  sensitivity = 1.2, // 调整灵敏度
+  position = 'bottom' // 默认将波纹放在底部
 }: MusicVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { isPlaying, beatIntensity } = useAudio();
@@ -51,21 +53,30 @@ export default function MusicVisualizer({
       let phaseOffset = phase;
       
       for (let i = 0; i < barCount; i++) {
-        // 生成不同频率的随机高度
-        // 这些随机高度将被用于创建竖条状的波形
+        // 生成俄罗斯方块式的离散高度数据
+        // 这会创建不连续的高度变化，像俄罗斯方块一样
         let baseValue;
         
-        // 使用更密集的随机生成，使条的分布更自然
-        if (i % 3 === 0) {
-          baseValue = Math.abs(Math.sin(i * 0.12 + phaseOffset)) * 0.7;
-        } else if (i % 3 === 1) {
-          baseValue = Math.abs(Math.cos(i * 0.22 + phaseOffset * 0.7)) * 0.6;
+        // 使用离散的高度级别
+        // 这样可以创建像俄罗斯方块一样的梯形效果
+        if (i % 7 === 0) {
+          baseValue = 0.9; // 很高的块
+        } else if (i % 7 === 1) {
+          baseValue = 0.7; // 高的块
+        } else if (i % 7 === 2) {
+          baseValue = 0.5; // 中等高度的块
+        } else if (i % 7 === 3) {
+          baseValue = 0.3; // 中低高度的块
+        } else if (i % 7 === 4) {
+          baseValue = 0.2; // 较低的块
+        } else if (i % 7 === 5) {
+          baseValue = 0.1; // 很低的块
         } else {
-          baseValue = Math.abs(Math.sin(i * 0.32 + phaseOffset * 1.3)) * 0.8;
+          baseValue = 0.4; // 中等偏低的块
         }
         
-        // 添加小的随机变化使波形更自然
-        const randomness = Math.random() * 0.1;
+        // 添加少量随机变化，但范围要小，保持俄罗斯方块的感觉
+        const randomness = (Math.random() - 0.5) * 0.05;
         
         // 生成最终音频数据
         audioData[i] = Math.floor((baseValue + randomness) * 200);
@@ -95,34 +106,55 @@ export default function MusicVisualizer({
         ctx.shadowColor = color;
       }
       
-      // 先清除画布为纯黑色
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // 先清除画布
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // 绘制黑色背景但只在底部
+      // 如果position为bottom，波纹在黑色背景的底部
+      // 如果position为top，波纹在黑色背景的顶部
+      if (position === 'bottom') {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
       
       for (let i = 0; i < barCount; i++) {
         const x = i * (barWidth + gap);
         
-        // 创建不规则高度的竖条
+        // 创建俄罗斯方块样式长短不一的竖条
         let barHeight;
         
-        // 使用多个频率的正弦波创建更自然的随机高度效果
-        // 这样可以创建类似图中长短不一的竖条效果
-        const seed1 = Math.abs(Math.sin(i * 0.2 + phase * 0.5)); // 慢变化
-        const seed2 = Math.abs(Math.sin(i * 0.7)); // 快变化
-        const seed3 = Math.abs(Math.cos(i * 0.4)); // 中速变化
+        // 使用"阶梯式"随机高度而不是渐变式
+        // 创建更像俄罗斯方块的离散高度变化
+        let blockHeight;
         
-        // 混合不同频率的影响
-        const seed = (seed1 * 0.4 + seed2 * 0.3 + seed3 * 0.3);
+        // 通过取模运算创建不同高度级别的块
+        // 这样会产生更像俄罗斯方块的离散高度效果
+        if (i % 6 === 0) {
+          blockHeight = height * 0.3; // 较高的块
+        } else if (i % 6 === 1) {
+          blockHeight = height * 0.5; // 中等高度的块
+        } else if (i % 6 === 2) {
+          blockHeight = height * 0.2; // 较矮的块
+        } else if (i % 6 === 3) {
+          blockHeight = height * 0.4; // 中高的块
+        } else if (i % 6 === 4) {
+          blockHeight = height * 0.15; // 最矮的块
+        } else {
+          blockHeight = height * 0.25; // 中矮的块
+        }
+        
+        // 添加少量随机变化，使其看起来不那么规则
+        const randomOffset = (Math.random() - 0.5) * height * 0.1;
         
         if (!isPlaying) {
           // 非播放状态时，只显示静态的竖条
-          barHeight = Math.max(5, seed * height * 0.5);
+          barHeight = Math.max(5, blockHeight + randomOffset);
         } else {
           // 播放状态时，结合音频数据和静态高度
           const value = audioData ? audioData[i] || 0 : 0;
           
           // 音频值影响竖条高度，但保持较小的影响
-          const baseHeight = Math.max(5, seed * height * 0.5);
+          const baseHeight = Math.max(5, blockHeight + randomOffset);
           const audioInfluence = (value / 255) * height * 0.3 * sensitivity;
           
           // 结合基础高度和音频影响
@@ -168,7 +200,7 @@ export default function MusicVisualizer({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isPlaying, color, height, barWidth, gap, barCount, sensitivity, beatIntensity]);
+  }, [isPlaying, color, height, barWidth, gap, barCount, sensitivity, beatIntensity, position]);
   
   return (
     <canvas 

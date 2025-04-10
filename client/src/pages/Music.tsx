@@ -134,6 +134,7 @@ export default function MusicPage() {
               barWidth={1} // 极细的条
               gap={1} // 减小间隙使竖条更密集，更接近图片中的效果
               sensitivity={1.8} // 增加灵敏度，使条的高度变化更明显
+              position="bottom" // 将波纹放在底部黑色背景上
             />
           </div>
           
