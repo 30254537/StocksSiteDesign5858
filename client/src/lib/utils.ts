@@ -8,12 +8,14 @@ export function cn(...inputs: ClassValue[]) {
 export function formatCurrency(value: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency
+    currency,
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3
   }).format(value);
 }
 
 export function formatEth(value: number): string {
-  return `⊙ ${value} $STONKS`;
+  return `⊙ ${value.toFixed(3)} $STONKS`;
 }
 
 export function formatPrice(price: number): string {

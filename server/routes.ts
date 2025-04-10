@@ -503,22 +503,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // 全局变量缓存GMGN平台最新价格
+  let cachedStonksPrice: { price: number; lastUpdated: Date } = {
+    price: 0.031, // 初始默认价格
+    lastUpdated: new Date()
+  };
+  
+  // 检查缓存是否过期（15秒）
+  function isCacheExpired(): boolean {
+    const now = new Date();
+    const cacheAge = now.getTime() - cachedStonksPrice.lastUpdated.getTime();
+    return cacheAge > 15000; // 15秒缓存时间
+  }
+  
+  // 从GMGN平台获取实时价格（模拟）
+  async function fetchGmgnPrice(): Promise<number> {
+    try {
+      // 在这里我们应该实际调用GMGN的API
+      // 例如: const response = await fetch('https://api.gmgn.io/price/stonks');
+      // const data = await response.json();
+      // return data.price;
+      
+      // 由于我们没有实际的API，我们使用固定价格0.031
+      // 在实际生产环境中，这里应该替换为真实的API调用
+      return 0.031;
+    } catch (error) {
+      console.error("Error fetching GMGN price:", error);
+      // 如果API调用失败，返回缓存的最后一个有效价格
+      return cachedStonksPrice.price;
+    }
+  }
+  
   // 获取STONKS的实时价格
   app.get("/api/stonks-price", async (req, res) => {
     try {
       // 使用指定STONKS合约地址: 6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump
       const contractAddress = "6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump";
       
-      // 注意：在实际生产环境中，应该用下面的代码替换模拟数据
-      // 通过调用Solana或其他区块链API获取真实价格
-      // const response = await fetch(`https://api.solscan.io/token/meta?token=${contractAddress}`);
-      // const data = await response.json();
-      // const currentPrice = data.priceUsdt;
+      // 如果缓存已过期，则获取新价格
+      if (isCacheExpired()) {
+        const realTimePrice = await fetchGmgnPrice();
+        cachedStonksPrice = {
+          price: realTimePrice,
+          lastUpdated: new Date()
+        };
+      }
       
-      // 根据用户反馈，使用gmgn平台上的实际价格
-      const basePrice = 0.031; // gmgn平台上STONKS的实际价格为0.031美元
-      const fluctuation = Math.random() * 0.002 - 0.001; // 微小波动以模拟市场变化
-      const currentPrice = basePrice + fluctuation;
+      const currentPrice = cachedStonksPrice.price;
       
       res.json({ 
         price: currentPrice,
