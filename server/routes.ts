@@ -508,6 +508,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "未找到产品" });
       }
       
+      // 设置特殊的响应头，指示前端需要刷新翻译缓存
+      res.setHeader('X-Clear-Translation-Cache', `product.name.${id}`);
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       res.json(updatedProduct);
     } catch (error) {
       console.error('更新产品时出错:', error);

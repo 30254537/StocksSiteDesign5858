@@ -44,6 +44,19 @@ export async function apiRequest(
   
   const res = await fetch(url, config);
   await throwIfResNotOk(res);
+  
+  // 检查特殊的缓存控制头，如果存在，则清除相关缓存
+  const clearCacheHeader = res.headers.get('X-Clear-Translation-Cache');
+  if (clearCacheHeader) {
+    // 动态导入并调用清除缓存函数
+    import('./translations').then(({ clearTranslationCache }) => {
+      clearTranslationCache(clearCacheHeader);
+      console.log(`服务器请求清除翻译缓存: ${clearCacheHeader}`);
+    }).catch(err => {
+      console.error('无法导入清除缓存函数:', err);
+    });
+  }
+  
   return res;
 }
 
@@ -55,6 +68,12 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
+      // 添加缓存控制头，防止浏览器缓存
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
@@ -62,6 +81,19 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
+    
+    // 检查特殊的缓存控制头，如果存在，则清除相关缓存
+    const clearCacheHeader = res.headers.get('X-Clear-Translation-Cache');
+    if (clearCacheHeader) {
+      // 动态导入并调用清除缓存函数
+      import('./translations').then(({ clearTranslationCache }) => {
+        clearTranslationCache(clearCacheHeader);
+        console.log(`GET请求服务器清除翻译缓存: ${clearCacheHeader}`);
+      }).catch(err => {
+        console.error('无法导入清除缓存函数:', err);
+      });
+    }
+    
     return await res.json();
   };
 
