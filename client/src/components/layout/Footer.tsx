@@ -42,16 +42,16 @@ export default function Footer() {
             <p className="mb-4 text-sm leading-relaxed">{t("footer.about")}</p>
             <div className="flex space-x-4 text-accent">
               <a href="https://x.com/MyStonks_Org" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
-                <i className="fa-brands fa-x-twitter"></i>
+                <i className="fa-brands fa-x"></i>
               </a>
               <a href="#" className="hover:text-white transition-colors duration-300">
-                <i className="fab fa-discord"></i>
+                <i className="fa-brands fa-discord"></i>
               </a>
               <a href="https://t.me/STONKSOPEN" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
-                <i className="fab fa-telegram"></i>
+                <i className="fa-brands fa-telegram"></i>
               </a>
               <a href="#" className="hover:text-white transition-colors duration-300">
-                <i className="fab fa-medium"></i>
+                <i className="fa-brands fa-medium"></i>
               </a>
             </div>
           </div>
