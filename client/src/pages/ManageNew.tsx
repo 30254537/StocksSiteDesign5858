@@ -202,6 +202,13 @@ export default function Manage() {
     const stockInput = document.getElementById("product-stock") as HTMLInputElement;
     if (stockInput) stockInput.value = product.stock?.toString() || "0";
     
+    // 设置复选框
+    const featuredCheckbox = document.getElementById("product-featured") as HTMLInputElement;
+    if (featuredCheckbox) featuredCheckbox.checked = Boolean(product.featured);
+    
+    const hasSizesCheckbox = document.getElementById("product-hasSizes") as HTMLInputElement;
+    if (hasSizesCheckbox) hasSizesCheckbox.checked = Boolean(product.hasSizes);
+    
     // 滚动到表单
     window.scrollTo({ top: 0, behavior: "smooth" });
     
@@ -402,9 +409,9 @@ export default function Manage() {
                   price,
                   description,
                   stock: isNaN(stock) ? 0 : stock,
-                  featured,
+                  featured: featured ? 1 : 0,  // 转换为整数
                   category,
-                  hasSizes
+                  hasSizes: hasSizes ? 1 : 0   // 转换为整数
                 };
                 
                 // 将产品数据作为JSON字符串添加
