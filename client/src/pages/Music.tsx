@@ -129,8 +129,10 @@ export default function MusicPage() {
             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10"></div>
             <MusicVisualizer 
               className="w-full h-full" 
-              height={isMobile ? 200 : 300}
-              barCount={isMobile ? 40 : 80}
+              height={isMobile ? 120 : 160} // 减小高度，保持小声波纹效果
+              barCount={isMobile ? 60 : 100} // 增加条数，使波纹更细致
+              barWidth={2} // 更细的条
+              gap={1} // 更小的间隙
             />
           </div>
           
@@ -138,8 +140,10 @@ export default function MusicPage() {
             {/* Reactive Logo/Title with Waveform */}
             <div className="relative mb-4 w-full max-w-md mx-auto">
               <ReactiveWaveform 
-                height={50} 
+                height={30} // 减小高度
                 width={isMobile ? 300 : 500}
+                amplitude={5} // 减小波幅
+                frequency={0.03} // 调整频率以获得更紧凑的波纹
                 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full"
               />
               <h1 className="text-4xl md:text-5xl font-bold text-white font-orbitron py-3 relative z-10">

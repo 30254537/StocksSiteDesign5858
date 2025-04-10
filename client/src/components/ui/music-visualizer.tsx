@@ -58,11 +58,11 @@ export default function MusicVisualizer({
         // 保持基本波形的形状和高度
         const amplitude = baseSine;
         
-        // 添加小的随机变化使波形更自然
-        const randomness = Math.random() * 0.2 * beatIntensity;
+        // 添加小的随机变化使波形更自然，但限制幅度
+        const randomness = Math.random() * 0.1; // 减少随机性，不受节拍影响
         
-        // 计算最终值
-        audioData[i] = Math.floor((amplitude + randomness) * 220);
+        // 计算最终值，但限制最大值以保持波形小
+        audioData[i] = Math.floor((amplitude + randomness) * 120); // 降低最大值
       }
       
       return audioData;
@@ -92,16 +92,21 @@ export default function MusicVisualizer({
       for (let i = 0; i < barCount; i++) {
         const x = i * (barWidth + gap);
         
-        // 非播放状态显示静态波形，播放状态显示动态波形
+        // 始终保持小声波纹样式，无论是否播放
         let barHeight;
+        
+        // 创建类似第一张图中的小波纹效果
+        const staticWaveHeight = Math.sin(i * 0.2) * 15 + 20;
+        
         if (!isPlaying) {
-          // 静态波形模式 - 更平滑的弧线
-          barHeight = Math.sin(i * 0.2) * 15 + 20; 
+          barHeight = staticWaveHeight;
         } else {
           const value = audioData ? audioData[i] || 0 : 0;
           
-          // 应用灵敏度但不增加波形高度
-          barHeight = value * sensitivity / 255 * height;
+          // 限制动态波形的高度，保持小声波纹效果
+          // 使用静态波形作为基础，加上少量的音频数据影响
+          const dynamicComponent = (value * sensitivity / 255) * 10; // 限制最大高度
+          barHeight = staticWaveHeight + (dynamicComponent * 0.3); // 减弱动态影响
         }
         
         // 创建渐变效果
