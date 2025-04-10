@@ -626,6 +626,15 @@ export class DatabaseStorage implements IStorage {
     return tweet;
   }
   
+  async updateTweetTranslation(id: number, translatedText: string): Promise<CryptoTweet | undefined> {
+    const [tweet] = await db.update(cryptoTweets)
+      .set({ translatedText })
+      .where(eq(cryptoTweets.id, id))
+      .returning();
+    
+    return tweet;
+  }
+  
   async deleteCryptoTweet(id: number): Promise<boolean> {
     try {
       await db.delete(cryptoTweets).where(eq(cryptoTweets.id, id));
