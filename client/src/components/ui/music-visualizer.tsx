@@ -21,7 +21,7 @@ export default function MusicVisualizer({
   sensitivity = 1.2
 }: MusicVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { audioRef, isPlaying, beatIntensity } = useAudio();
+  const { isPlaying, beatIntensity } = useAudio();
   const animationRef = useRef<number>();
   
   useEffect(() => {
@@ -34,104 +34,70 @@ export default function MusicVisualizer({
     canvas.width = (barWidth + gap) * barCount - gap;
     canvas.height = height;
     
-    let audioContext: AudioContext | null = null;
-    let analyser: AnalyserNode | null = null;
-    let dataArray: Uint8Array;
-    let source: MediaElementAudioSourceNode | null = null;
-    
-    const setupAudio = () => {
-      if (!audioRef.current) return;
+    // 模拟数据数组
+    const generateMockData = () => {
+      const mockData = new Uint8Array(barCount);
       
-      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 256;
+      for (let i = 0; i < barCount; i++) {
+        // 使用节拍强度创建动态波形效果
+        const baseValue = Math.sin(Date.now() * 0.001 + i * 0.15) * 0.5 + 0.5;
+        // 添加随机性和节拍强度的影响
+        mockData[i] = Math.floor((baseValue * 0.6 + beatIntensity * 0.4) * 200 * Math.random() * 0.5 + 55);
+      }
       
-      const bufferLength = analyser.frequencyBinCount;
-      dataArray = new Uint8Array(bufferLength);
-      
-      source = audioContext.createMediaElementSource(audioRef.current);
-      source.connect(analyser);
-      analyser.connect(audioContext.destination);
-      
-      draw();
+      return mockData;
     };
     
     const draw = () => {
-      if (!ctx || !analyser) return;
+      if (!ctx) return;
       
       animationRef.current = requestAnimationFrame(draw);
       
-      // Clear canvas
+      // 清除画布
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      if (!isPlaying) {
-        // Draw static bars when music is paused
-        for (let i = 0; i < barCount; i++) {
-          const x = i * (barWidth + gap);
-          const barHeight = Math.sin(i * 0.2) * 15 + 25; // Static wave pattern
-          
-          // Create gradient
-          const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
-          gradient.addColorStop(0, `${color}80`); // Semi-transparent at top
-          gradient.addColorStop(1, color);
-          
-          ctx.fillStyle = gradient;
-          ctx.fillRect(x, height - barHeight, barWidth, barHeight);
-        }
-        return;
-      }
-      
-      analyser.getByteFrequencyData(dataArray);
+      // 获取模拟数据
+      const mockData = isPlaying ? generateMockData() : null;
       
       for (let i = 0; i < barCount; i++) {
-        // Get data for this bar (scale index to fit dataArray)
-        const dataIndex = Math.floor(i * (dataArray.length / barCount));
-        let value = dataArray[dataIndex] || 0;
-        
-        // Apply sensitivity and beatIntensity factor
-        value = value * sensitivity * (1 + beatIntensity * 0.5);
-        
-        // Calculate bar height based on audio data
-        const barHeight = (value / 255) * height;
         const x = i * (barWidth + gap);
         
-        // Create gradient
+        // 非播放状态显示静态波形，播放状态显示动态波形
+        let barHeight;
+        if (!isPlaying) {
+          barHeight = Math.sin(i * 0.2) * 15 + 15; // 静态波形模式
+        } else {
+          const value = mockData ? mockData[i] || 0 : 0;
+          // 应用灵敏度
+          barHeight = value * sensitivity / 255 * height;
+        }
+        
+        // 创建渐变效果
         const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
-        gradient.addColorStop(0, `${color}80`); // Semi-transparent at top
+        gradient.addColorStop(0, `${color}80`); // 顶部半透明
         gradient.addColorStop(1, color);
         
         ctx.fillStyle = gradient;
         ctx.fillRect(x, height - barHeight, barWidth, barHeight);
         
-        // Add glow effect
-        ctx.shadowBlur = 15;
+        // 添加发光效果
+        ctx.shadowBlur = 10;
         ctx.shadowColor = color;
       }
       
-      // Reset shadow for next frame
+      // 重置阴影效果
       ctx.shadowBlur = 0;
     };
     
-    // Only setup audio if it's playing
-    if (isPlaying && audioRef.current && !audioContext) {
-      setupAudio();
-    } else if (animationRef.current) {
-      // Just update the existing animation
-      draw();
-    }
+    // 开始动画
+    draw();
     
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-      
-      if (source && audioContext) {
-        source.disconnect();
-        analyser?.disconnect();
-        // Don't close audioContext as it might be used elsewhere
-      }
     };
-  }, [isPlaying, audioRef, color, height, barWidth, gap, barCount, sensitivity, beatIntensity]);
+  }, [isPlaying, color, height, barWidth, gap, barCount, sensitivity, beatIntensity]);
   
   return (
     <canvas 
