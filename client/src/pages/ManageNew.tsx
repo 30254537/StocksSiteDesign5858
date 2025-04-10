@@ -236,6 +236,7 @@ export default function Manage() {
           fetchProducts();
           fetchContactInfo();
           fetchContractAddresses();
+          fetchOrders();
         } else {
           toast({
             title: "需要管理员权限",
