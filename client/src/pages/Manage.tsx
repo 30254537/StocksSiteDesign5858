@@ -504,11 +504,13 @@ export default function Manage() {
         </button>
       </div>
       
-      <Card className="shadow-lg mb-8">
-        <CardHeader>
-          <CardTitle>商品管理</CardTitle>
-        </CardHeader>
-        <CardContent>
+      {/* 根据活动选项卡展示不同的卡片 */}
+      {activeTab === "products" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>商品管理</CardTitle>
+          </CardHeader>
+          <CardContent>
           <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
             <h3 className="text-xl mb-4 text-accent">产品表单</h3>
             <form id="product-form" className="space-y-4" encType="multipart/form-data" onSubmit={async (e) => {
@@ -810,11 +812,12 @@ export default function Manage() {
       </Card>
       
       {/* 联系信息管理卡片 */}
-      <Card className="shadow-lg mb-8">
-        <CardHeader>
-          <CardTitle>联系信息管理</CardTitle>
-        </CardHeader>
-        <CardContent>
+      {activeTab === "contact" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>联系信息管理</CardTitle>
+          </CardHeader>
+          <CardContent>
           <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
             <h3 className="text-xl mb-4 text-accent">修改联系信息</h3>
             <form
@@ -904,11 +907,12 @@ export default function Manage() {
       </Card>
 
       {/* 合约地址管理卡片 */}
-      <Card className="shadow-lg mb-8">
-        <CardHeader>
-          <CardTitle>合约地址管理</CardTitle>
-        </CardHeader>
-        <CardContent>
+      {activeTab === "contracts" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>合约地址管理</CardTitle>
+          </CardHeader>
+          <CardContent>
           <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
             <h3 className="text-xl mb-4 text-accent">添加/编辑合约地址</h3>
             <form id="address-form" className="space-y-4" onSubmit={async (e) => {
@@ -1105,6 +1109,113 @@ export default function Manage() {
         </CardContent>
       </Card>
 
+      {/* 推文管理卡片 */}
+      {activeTab === "tweets" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>推文管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl text-accent">加密货币推文</h3>
+                <Button 
+                  variant="outline" 
+                  className="border-accent text-accent"
+                  onClick={handleSyncTweets}
+                  disabled={loadingTweets}
+                >
+                  {loadingTweets ? (
+                    <>
+                      <span className="mr-2">同步中</span>
+                      <div className="animate-spin w-4 h-4 border-2 border-accent border-t-transparent rounded-full"></div>
+                    </>
+                  ) : "同步最新推文"}
+                </Button>
+              </div>
+              
+              {loadingTweets ? (
+                <div className="flex justify-center my-8">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {tweets.length === 0 ? (
+                    <div className="text-center py-12 bg-primary/40 rounded-md">
+                      <p>暂无推文数据</p>
+                      <Button 
+                        variant="ghost" 
+                        className="mt-2 text-accent hover:text-white"
+                        onClick={handleSyncTweets}
+                      >
+                        点击同步推文
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4">
+                      {tweets.map((tweet: any) => (
+                        <div key={tweet.id} className="p-4 bg-primary/40 rounded-md border border-accent/20">
+                          <div className="flex items-start gap-3">
+                            {tweet.authorProfileImage && (
+                              <img 
+                                src={tweet.authorProfileImage} 
+                                alt={tweet.authorName}
+                                className="w-10 h-10 rounded-full"
+                              />
+                            )}
+                            <div className="flex-1">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <p className="font-semibold">{tweet.authorName}</p>
+                                  <p className="text-sm text-gray-400">@{tweet.authorUsername}</p>
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                  {new Date(tweet.createdAt).toLocaleString()}
+                                </div>
+                              </div>
+                              
+                              <div className="mt-2">
+                                <p className="mb-1">原文:</p>
+                                <div className="p-2 bg-primary/50 rounded border border-accent/10 text-white">
+                                  {tweet.text}
+                                </div>
+                                
+                                <div className="mt-3">
+                                  <p className="mb-1">翻译:</p>
+                                  <div className="p-2 bg-primary/50 rounded border border-accent/10 text-white">
+                                    {tweet.translatedText ? (
+                                      tweet.translatedText
+                                    ) : (
+                                      <span className="text-gray-400">暂无翻译</span>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="mt-3 flex justify-end">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-accent border-accent"
+                                    onClick={() => handleTranslateTweet(tweet.id)}
+                                    disabled={loadingTweets}
+                                  >
+                                    {tweet.translatedText ? "重新翻译" : "手动翻译"}
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       <div className="mt-8">
         <Button 
           variant="outline" 
