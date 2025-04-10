@@ -150,16 +150,6 @@ export default function MusicPage() {
                 {showUpload ? <RotateCcw className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
                 {showUpload ? t('music.cancel') : t('music.uploadTitle')}
               </Button>
-              
-              <Button
-                onClick={refreshTracks}
-                variant="outline"
-                size="lg"
-                className="border-accent/40 text-white hover:bg-accent/10"
-              >
-                <RotateCcw className="mr-2 h-5 w-5" />
-                Refresh
-              </Button>
             </div>
           </div>
         </div>

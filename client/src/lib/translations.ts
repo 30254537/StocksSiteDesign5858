@@ -323,7 +323,7 @@ export const translations: Translations = {
     "cart.itemsInCart": "购物车中的商品",
     
     // Music Page
-    "music.title": "STONKS 音乐中心",
+    "music.title": "STONKS 音乐藏库",
     "music.subtitle": "探索区块链的节奏",
     "music.uploadTitle": "上传你的音乐",
     "music.dragDrop": "拖放音频文件至此",
@@ -331,10 +331,10 @@ export const translations: Translations = {
     "music.uploading": "上传中...",
     "music.upload": "上传",
     "music.cancel": "取消",
-    "music.tracksTitle": "精选歌曲",
+    "music.tracksTitle": "精选曲目",
     "music.allTracks": "全部歌曲",
     "music.newReleases": "最新发布",
-    "music.trending": "热门趋势",
+    "music.trending": "热门音乐",
     "music.adminTitle": "音乐管理",
     "music.fileName": "文件名",
     "music.trackTitle": "歌曲名称",
