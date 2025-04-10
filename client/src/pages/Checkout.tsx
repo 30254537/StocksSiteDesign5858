@@ -329,10 +329,7 @@ const OrderSummary = () => {
         <div>{formatCurrency(totalPrice)}</div>
       </div>
       
-      <div className="flex justify-between text-sm text-gray-500">
-        <div>{t('checkout.orCrypto')}</div>
-        <div>{formatEth(totalEthPrice)}</div>
-      </div>
+
       
       {/* 添加STONKS实时价格转换信息 */}
       <div className="mt-4 border-t border-gray-700 pt-4">

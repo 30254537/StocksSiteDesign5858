@@ -108,7 +108,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
                 type="number"
                 value={customAmount}
                 onChange={(e) => setCustomAmount(e.target.value)}
-                placeholder="USD金额"
+                placeholder="USDT金额"
                 className="w-full p-2 bg-slate-900 rounded border border-gray-700"
               />
             </div>
