@@ -189,6 +189,18 @@ export const translations: Translations = {
     "nav.about": "关于我们",
     "nav.community": "社区",
     
+    // Product Names
+    "product.name.1": "KUBE 连帽衫",
+    "product.name.2": "DEX 棒球帽",
+    "product.name.3": "STONKS DEX T恤",
+    "product.name.4": "DEX 贴纸套装",
+    "product.name.5": "STONKS BTC 连帽衫",
+    "product.name.6": "STONKS 海报",
+    "product.name.7": "STONKS 海报",
+    "product.name.8": "限量版 NFT",
+    "product.name.9": "STONKS 连帽衫",
+    "product.name.10": "STONKS DEX 定制运动鞋",
+    
     // Hero Section
     "hero.title": "Trade Decentralized, Wear the Future",
     "hero.subtitle": "探索 STONKS DEX SHOP 独家周边产品",

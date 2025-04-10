@@ -7,7 +7,7 @@ import { formatTime } from '@/lib/utils';
 import { useAudio } from '@/contexts/AudioContext';
 import { MusicTrack } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/translations';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MusicPlayerProps {
   tracks?: MusicTrack[];
@@ -22,7 +22,7 @@ const MusicPlayer = ({
   onTrackChange = () => {},
   minimal = false
 }: MusicPlayerProps) => {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const { isPlaying, togglePlay, audioRef, beatIntensity } = useAudio();
   const progressRef = useRef<HTMLDivElement>(null);

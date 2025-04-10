@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAudio } from '@/contexts/AudioContext';
-import { useTranslation } from '@/lib/translations';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // 导航栏使用的迷你音乐播放器
 export function MiniMusicPlayer() {
