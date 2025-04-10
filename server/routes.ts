@@ -26,6 +26,18 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+// 管理员会话变量
+let adminLoggedIn = false;
+
+// 保护管理路由的中间件
+const requireAdmin = (req: Request, res: Response, next: Function) => {
+  if (adminLoggedIn) {
+    next();
+  } else {
+    res.status(401).json({ message: "需要管理员权限" });
+  }
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // 配置multer用于文件上传
   const uploadsDir = path.join(process.cwd(), 'public/uploads');
@@ -67,59 +79,207 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // 注意：静态文件服务已经在 index.ts 中配置
-  // Get all orders
-  app.get('/api/orders', async (req, res) => {
+  // Get all orders (admin only)
+  app.get('/api/orders', requireAdmin, async (req, res) => {
     try {
-      // In a real app with SQLite, we would use:
-      // db.all('SELECT * FROM orders', [], (err, rows) => {...})
-      // For now, we'll return a mock data set
-      const orders = [
-        {
-          id: 1,
-          items: JSON.stringify([
-            { name: "STONKS T恤", price: 50, quantity: 2 }
-          ]),
-          total: 100,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 2,
-          items: JSON.stringify([
-            { name: "STONKS 帽子", price: 30, quantity: 1 },
-            { name: "STONKS 手机壳", price: 20, quantity: 1 }
-          ]),
-          total: 50,
-          createdAt: new Date(Date.now() - 86400000).toISOString()
-        }
-      ];
+      const orders = await storage.getOrders();
       res.json(orders);
     } catch (error) {
-      res.status(500).json({ error: 'Error fetching orders' });
+      console.error("获取订单列表错误:", error);
+      res.status(500).json({ error: '获取订单列表失败' });
+    }
+  });
+  
+  // Get order by ID (admin only)
+  app.get('/api/orders/:id', requireAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      if (isNaN(orderId)) {
+        return res.status(400).json({ error: '无效的订单ID' });
+      }
+      
+      const order = await storage.getOrderById(orderId);
+      if (!order) {
+        return res.status(404).json({ error: '订单不存在' });
+      }
+      
+      res.json(order);
+    } catch (error) {
+      console.error("获取订单详情错误:", error);
+      res.status(500).json({ error: '获取订单详情失败' });
+    }
+  });
+  
+  // Get order items (admin only)
+  app.get('/api/orders/:id/items', requireAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      if (isNaN(orderId)) {
+        return res.status(400).json({ error: '无效的订单ID' });
+      }
+      
+      const orderWithItems = await storage.getOrderWithItems(orderId);
+      if (!orderWithItems) {
+        return res.status(404).json({ error: '订单不存在' });
+      }
+      
+      res.json(orderWithItems.items);
+    } catch (error) {
+      console.error("获取订单商品错误:", error);
+      res.status(500).json({ error: '获取订单商品失败' });
+    }
+  });
+  
+  // Update order status (admin only)
+  app.put('/api/orders/:id/status', requireAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (isNaN(orderId)) {
+        return res.status(400).json({ error: '无效的订单ID' });
+      }
+      
+      if (!status || !['pending', 'paid', 'shipped', 'completed', 'cancelled'].includes(status)) {
+        return res.status(400).json({ error: '无效的订单状态' });
+      }
+      
+      const updatedOrder = await storage.updateOrderStatus(orderId, status);
+      if (!updatedOrder) {
+        return res.status(404).json({ error: '订单不存在' });
+      }
+      
+      res.json(updatedOrder);
+    } catch (error) {
+      console.error("更新订单状态错误:", error);
+      res.status(500).json({ error: '更新订单状态失败' });
+    }
+  });
+  
+  // Update order tracking number (admin only)
+  app.put('/api/orders/:id/tracking', requireAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      const { trackingNumber } = req.body;
+      
+      if (isNaN(orderId)) {
+        return res.status(400).json({ error: '无效的订单ID' });
+      }
+      
+      if (!trackingNumber || typeof trackingNumber !== 'string') {
+        return res.status(400).json({ error: '无效的物流单号' });
+      }
+      
+      // 获取当前订单
+      const order = await storage.getOrderById(orderId);
+      if (!order) {
+        return res.status(404).json({ error: '订单不存在' });
+      }
+      
+      // 更新物流单号并将状态设为已发货
+      const updatedOrder = await storage.updateOrder(orderId, {
+        trackingNumber,
+        status: 'shipped'
+      });
+      
+      if (!updatedOrder) {
+        return res.status(500).json({ error: '更新物流信息失败' });
+      }
+      
+      res.json(updatedOrder);
+    } catch (error) {
+      console.error("更新物流信息错误:", error);
+      res.status(500).json({ error: '更新物流信息失败' });
+    }
+  });
+  
+  // Get user orders (if authenticated)
+  app.get('/api/user/orders', async (req: Request & { user?: any }, res) => {
+    try {
+      // 如果用户已登录，则获取用户的订单
+      if (req.user) {
+        const orders = await storage.getOrdersByUserId(req.user.id);
+        return res.json(orders);
+      }
+      
+      // 如果用户未登录，但有会话ID，则获取该会话的订单
+      const sessionId = getSessionId(req);
+      const orders = await storage.getOrdersBySessionId(sessionId);
+      res.json(orders);
+    } catch (error) {
+      console.error("获取用户订单错误:", error);
+      res.status(500).json({ error: '获取订单列表失败' });
     }
   });
   
   // Create a new order
-  app.post('/api/orders', (req, res) => {
+  app.post('/api/orders', async (req, res) => {
     try {
-      const { items, total } = req.body;
-      if (!items || !Array.isArray(items) || !total || isNaN(total)) {
-        return res.status(400).json({ error: '无效的订单数据' });
+      const { 
+        items, 
+        total, 
+        ethTotal, 
+        paymentMethod, 
+        shippingAddress,
+        notes 
+      } = req.body;
+      
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ error: '订单必须包含商品' });
       }
       
-      // In a real app, we would save this to a database
-      // For now, just return success response
+      if (!total || isNaN(total) || !ethTotal || isNaN(ethTotal)) {
+        return res.status(400).json({ error: '无效的订单金额' });
+      }
+      
+      if (!paymentMethod || !['stonks', 'usdt', 'fiat'].includes(paymentMethod)) {
+        return res.status(400).json({ error: '无效的支付方式' });
+      }
+      
+      if (!shippingAddress || typeof shippingAddress !== 'string') {
+        return res.status(400).json({ error: '请提供收货地址' });
+      }
+      
+      // 获取用户ID（如果已登录）或会话ID
+      const userId = req.user ? req.user.id : null;
+      const sessionId = getSessionId(req);
+      
+      // 创建订单
+      const orderData = {
+        userId,
+        sessionId: userId ? null : sessionId,
+        total,
+        ethTotal,
+        paymentMethod,
+        status: 'pending',
+        shippingAddress,
+        notes: notes || null
+      };
+      
+      // 准备订单商品
+      const orderItems = items.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.price,
+        ethPrice: item.ethPrice,
+        size: item.size || null
+      }));
+      
+      // 创建订单和订单商品
+      const order = await storage.createOrder(orderData, orderItems);
+      
+      // 清空购物车
+      await storage.clearCart(sessionId);
+      
       res.status(201).json({ 
         message: '订单创建成功', 
-        orderId: Date.now().toString(),
-        createdAt: new Date().toISOString() 
+        order
       });
     } catch (error) {
-      res.status(500).json({ error: '服务器错误' });
+      console.error("创建订单错误:", error);
+      res.status(500).json({ error: '创建订单失败' });
     }
   });
-  
-  // 管理员会话变量
-  let adminLoggedIn = false;
   
   // 管理员登录端点
   app.post('/api/admin-login', async (req, res) => {
@@ -168,14 +328,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(200).json({ message: "已登出" });
   });
   
-  // 保护管理路由的中间件
-  const requireAdmin = (req: Request, res: Response, next: Function) => {
-    if (adminLoggedIn) {
-      next();
-    } else {
-      res.status(401).json({ message: "需要管理员权限" });
-    }
-  };
+
   
   // 获取联系信息
   app.get('/api/contact-info', async (req, res) => {
