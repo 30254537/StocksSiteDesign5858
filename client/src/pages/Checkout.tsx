@@ -185,7 +185,7 @@ const CryptoForm = () => {
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
         </div>
         <p className="mb-4 text-sm">
-          {t('checkout.amountToSend')}: <strong>{formatEth(totalEthPrice)} $STONKS</strong>
+          {t('checkout.amountToSend')}: <strong>{formatEth(totalEthPrice)}</strong>
         </p>
       </div>
       
@@ -293,7 +293,7 @@ const OrderSummary = () => {
       
       <div className="flex justify-between text-sm text-gray-500">
         <div>{t('checkout.orCrypto')}</div>
-        <div>{formatEth(totalEthPrice)} $STONKS</div>
+        <div>{formatEth(totalEthPrice)}</div>
       </div>
     </div>
   );
