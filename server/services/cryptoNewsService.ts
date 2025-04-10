@@ -27,23 +27,40 @@ const NEWS_SOURCES = {
  */
 export async function fetchCoinGeckoNews(): Promise<InsertCryptoNews[]> {
   try {
-    const response = await axios.get(`${NEWS_SOURCES.COINGECKO.url}`, {
+    // CoinGecko需要页码参数
+    const response = await axios.get(`${NEWS_SOURCES.COINGECKO.url}?page=1`, {
       headers: NEWS_SOURCES.COINGECKO.apiKey ? {
         'x-cg-api-key': NEWS_SOURCES.COINGECKO.apiKey
       } : {}
     });
 
     if (response.data && Array.isArray(response.data.data)) {
-      return response.data.data.map((item: any) => ({
-        title: item.title,
-        content: item.description || '未提供详细内容',
-        source: NEWS_SOURCES.COINGECKO.name,
-        sourceUrl: item.url,
-        imageUrl: item.thumb_2x || item.thumb || '',
-        category: item.categories?.join(',') || 'general',
-        isHighlighted: item.is_hot ? 1 : 0,
-        publishedAt: new Date(item.published_at)
-      }));
+      return response.data.data.map((item: any) => {
+        // 确保日期格式正确
+        let publishedAt = new Date();
+        try {
+          if (item.published_at) {
+            publishedAt = new Date(item.published_at);
+            // 验证日期是否有效
+            if (isNaN(publishedAt.getTime())) {
+              publishedAt = new Date(); // 使用当前日期作为后备
+            }
+          }
+        } catch (e) {
+          console.warn('无效的日期格式，使用当前日期:', e);
+        }
+        
+        return {
+          title: item.title,
+          content: item.description || '未提供详细内容',
+          source: NEWS_SOURCES.COINGECKO.name,
+          sourceUrl: item.url,
+          imageUrl: item.thumb_2x || item.thumb || '',
+          category: item.categories?.join(',') || 'general',
+          isHighlighted: item.is_hot ? 1 : 0,
+          publishedAt
+        };
+      });
     }
     return [];
   } catch (error) {

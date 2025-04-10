@@ -1247,6 +1247,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // 加密货币新闻路由
+  app.use('/api', cryptoNewsRoutes);
+  
+  // 初始化加密货币新闻定时获取任务
+  initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
+
   const httpServer = createServer(app);
   return httpServer;
 }
