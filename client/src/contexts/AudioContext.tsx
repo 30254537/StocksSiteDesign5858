@@ -103,31 +103,104 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   };
 
   // 分析音频数据
+  const prevBeatValuesRef = useRef<number[]>([]);
+  const beatHistoryRef = useRef<number[]>([]);
+  const prevTimestampRef = useRef<number>(0);
+  
   const analyzeAudio = () => {
     if (!analyserRef.current || !dataArrayRef.current) return;
+    
+    const timestamp = performance.now();
+    const deltaTime = timestamp - prevTimestampRef.current;
+    prevTimestampRef.current = timestamp;
     
     // 获取频率数据
     analyserRef.current.getByteFrequencyData(dataArrayRef.current);
     
-    // 分析低频(bass)部分，通常包含节拍信息
-    const bassRange = dataArrayRef.current.slice(0, Math.floor(dataArrayRef.current.length * 0.15));
+    // 计算各个频段的能量
+    // 低频(bass)部分 (20-150Hz) - 通常包含低音鼓和贝斯的节拍信息
+    const bassRange = dataArrayRef.current.slice(0, Math.floor(dataArrayRef.current.length * 0.08));
     const bassAverage = bassRange.reduce((acc, val) => acc + val, 0) / bassRange.length;
     
-    // 分析中频部分
+    // 低中频部分 (150-500Hz) - 包含更多节奏元素
+    const lowMidRange = dataArrayRef.current.slice(
+      Math.floor(dataArrayRef.current.length * 0.08),
+      Math.floor(dataArrayRef.current.length * 0.15)
+    );
+    const lowMidAverage = lowMidRange.reduce((acc, val) => acc + val, 0) / lowMidRange.length;
+    
+    // 中频部分 (500Hz-2kHz) - 包含主要和声和旋律
     const midRange = dataArrayRef.current.slice(
       Math.floor(dataArrayRef.current.length * 0.15),
-      Math.floor(dataArrayRef.current.length * 0.5)
+      Math.floor(dataArrayRef.current.length * 0.4)
     );
     const midAverage = midRange.reduce((acc, val) => acc + val, 0) / midRange.length;
     
-    // 计算加权平均值，低频权重更高以强调节拍
-    const weightedAverage = (bassAverage * 0.7) + (midAverage * 0.3);
+    // 保存前几帧的低频值，用于检测节拍
+    if (!prevBeatValuesRef.current) {
+      prevBeatValuesRef.current = [];
+    }
     
-    // 将平均值归一化到0-1范围，增加了响应度
-    const normalizedValue = Math.min(1, weightedAverage / 100);
+    // 存储历史值 (最多30帧)
+    prevBeatValuesRef.current.push(bassAverage);
+    if (prevBeatValuesRef.current.length > 30) {
+      prevBeatValuesRef.current.shift();
+    }
+    
+    // 计算低频的平均值和标准差，用于识别显著的节拍
+    const avgBass = prevBeatValuesRef.current.reduce((acc, val) => acc + val, 0) / prevBeatValuesRef.current.length;
+    const variance = prevBeatValuesRef.current.reduce((acc, val) => acc + Math.pow(val - avgBass, 2), 0) / prevBeatValuesRef.current.length;
+    const stdDev = Math.sqrt(variance);
+    
+    // 节拍检测 - 当当前的低频值显著高于平均值时
+    const beatThreshold = avgBass + (stdDev * 0.8); // 可调整阈值敏感度
+    const isBeat = bassAverage > beatThreshold && bassAverage > 50; // 确保有足够的音量
+    
+    // 创建节拍反应值 - 如果检测到节拍，则迅速增加强度
+    let beatReaction = 0;
+    if (isBeat) {
+      beatReaction = Math.min(1, bassAverage / 200); // 根据低音强度调整节拍反应
+    }
+    
+    // 保存节拍历史以创建衰减效果
+    beatHistoryRef.current.push(beatReaction);
+    if (beatHistoryRef.current.length > 20) { // 调整此值以控制节拍效果的持续时间
+      beatHistoryRef.current.shift();
+    }
+    
+    // 计算当前节拍强度 - 随时间指数衰减
+    const currentBeatStrength = beatHistoryRef.current.length > 0 
+      ? Math.max(...beatHistoryRef.current) 
+      : 0;
+    
+    // 添加平滑渐变效果
+    const fadeSpeed = 0.05; // 值越小，衰减越慢
+    for (let i = 0; i < beatHistoryRef.current.length; i++) {
+      beatHistoryRef.current[i] *= (1 - fadeSpeed);
+    }
+    
+    // 综合加权 - 结合实时频谱分析与节拍检测
+    // 权重较高的低频以强调节拍，同时也加入一定的中频信息以增加反应的丰富性
+    const spectrumWeight = 0.5;
+    const beatWeight = 0.5;
+    
+    const spectrumValue = (
+      (bassAverage * 0.6) + 
+      (lowMidAverage * 0.3) + 
+      (midAverage * 0.1)
+    ) / 255;
+    
+    // 最终的节拍强度计算
+    let finalBeatIntensity = (
+      (spectrumValue * spectrumWeight) + 
+      (currentBeatStrength * beatWeight)
+    );
+    
+    // 确保值在0-1范围内
+    finalBeatIntensity = Math.min(1, Math.max(0, finalBeatIntensity));
     
     // 更新状态
-    setBeatIntensity(normalizedValue);
+    setBeatIntensity(finalBeatIntensity);
     
     // 继续循环
     animationFrameRef.current = requestAnimationFrame(analyzeAudio);

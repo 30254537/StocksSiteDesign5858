@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useAudio } from '@/contexts/AudioContext';
 
 interface MusicVisualizerProps {
@@ -18,11 +18,13 @@ export default function MusicVisualizer({
   barWidth = 4,
   gap = 1,
   barCount = 60,
-  sensitivity = 1.2
+  sensitivity = 1.5 // 增加默认灵敏度
 }: MusicVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { isPlaying, beatIntensity } = useAudio();
   const animationRef = useRef<number>();
+  const [phase, setPhase] = useState(0); // 添加相位变量以创建更流畅的动画
+  const prevBeatIntensityRef = useRef(0); // 用于存储上一帧的beatIntensity值
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -34,18 +36,40 @@ export default function MusicVisualizer({
     canvas.width = (barWidth + gap) * barCount - gap;
     canvas.height = height;
     
-    // 模拟数据数组
-    const generateMockData = () => {
-      const mockData = new Uint8Array(barCount);
+    // 生成音频响应数据
+    const generateAudioData = () => {
+      const audioData = new Uint8Array(barCount);
+      
+      // 计算beatIntensity的变化率，用于创建更强的视觉冲击力
+      const beatDelta = Math.abs(beatIntensity - prevBeatIntensityRef.current);
+      prevBeatIntensityRef.current = beatIntensity;
+      
+      // 计算增强因子 - 当有较大变化时增强效果
+      const enhanceFactor = 1 + (beatDelta * 2);
+      
+      // 更新相位，beatIntensity越高，相位变化越快
+      setPhase(prev => (prev + 0.05 + (beatIntensity * 0.1)) % (2 * Math.PI));
       
       for (let i = 0; i < barCount; i++) {
-        // 使用节拍强度创建动态波形效果
-        const baseValue = Math.sin(Date.now() * 0.001 + i * 0.15) * 0.5 + 0.5;
-        // 添加随机性和节拍强度的影响
-        mockData[i] = Math.floor((baseValue * 0.6 + beatIntensity * 0.4) * 200 * Math.random() * 0.5 + 55);
+        // 基础波形 - 使用正弦波和相位
+        const baseFrequency = 0.15; // 控制波浪的密度
+        const baseSine = Math.sin(phase + i * baseFrequency) * 0.5 + 0.5;
+        
+        // 节拍响应波形 - 中心处峰值更高（模拟声波反应）
+        const centerEffect = 1 - Math.abs((i - barCount/2) / (barCount/2)) * 0.7;
+        const beatEffect = beatIntensity * centerEffect * enhanceFactor;
+        
+        // 组合效果
+        const amplitude = baseSine * (0.4 + beatEffect * 0.6);
+        
+        // 添加小的随机变化使波形更自然
+        const randomness = Math.random() * 0.2 * beatIntensity;
+        
+        // 计算最终值
+        audioData[i] = Math.floor((amplitude + randomness) * 220);
       }
       
-      return mockData;
+      return audioData;
     };
     
     const draw = () => {
@@ -56,8 +80,18 @@ export default function MusicVisualizer({
       // 清除画布
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // 获取模拟数据
-      const mockData = isPlaying ? generateMockData() : null;
+      // 获取音频响应数据
+      const audioData = isPlaying ? generateAudioData() : null;
+      
+      // 设置全局投影，创建整体发光效果
+      if (isPlaying && beatIntensity > 0.5) {
+        // 随着节拍强度增加发光
+        ctx.shadowBlur = 15 + (beatIntensity * 10);
+        ctx.shadowColor = color;
+      } else {
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = color;
+      }
       
       for (let i = 0; i < barCount; i++) {
         const x = i * (barWidth + gap);
@@ -65,24 +99,41 @@ export default function MusicVisualizer({
         // 非播放状态显示静态波形，播放状态显示动态波形
         let barHeight;
         if (!isPlaying) {
-          barHeight = Math.sin(i * 0.2) * 15 + 15; // 静态波形模式
+          // 静态波形模式 - 更平滑的弧线
+          barHeight = Math.sin(i * 0.2) * 15 + 20; 
         } else {
-          const value = mockData ? mockData[i] || 0 : 0;
-          // 应用灵敏度
-          barHeight = value * sensitivity / 255 * height;
+          const value = audioData ? audioData[i] || 0 : 0;
+          
+          // 应用灵敏度和节拍增强
+          const beatBoost = 1 + (beatIntensity * beatIntensity * 0.7); // 非线性增强
+          barHeight = (value * sensitivity / 255 * height) * beatBoost;
         }
         
         // 创建渐变效果
         const gradient = ctx.createLinearGradient(x, height - barHeight, x, height);
-        gradient.addColorStop(0, `${color}80`); // 顶部半透明
+        
+        // 根据beatIntensity修改渐变色，使颜色随节拍变化
+        const alphaTop = 0.5 + (beatIntensity * 0.5); // 顶部透明度随节拍增强
+        gradient.addColorStop(0, `${color}${Math.floor(alphaTop * 255).toString(16).padStart(2, '0')}`);
         gradient.addColorStop(1, color);
         
         ctx.fillStyle = gradient;
         ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+      }
+      
+      // 绘制全局脉动效果 - 在强节拍时添加一个淡淡的背景光晕
+      if (isPlaying && beatIntensity > 0.6) {
+        const pulseRadius = Math.min(canvas.width, canvas.height) * 0.5 * beatIntensity;
+        const pulseGradient = ctx.createRadialGradient(
+          canvas.width/2, canvas.height/2, 0,
+          canvas.width/2, canvas.height/2, pulseRadius
+        );
         
-        // 添加发光效果
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = color;
+        pulseGradient.addColorStop(0, `${color}40`); // 中心淡色
+        pulseGradient.addColorStop(1, 'transparent'); // 边缘透明
+        
+        ctx.fillStyle = pulseGradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
       
       // 重置阴影效果

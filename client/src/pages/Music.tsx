@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import MusicUpload from '@/components/ui/music-upload';
 import MusicTrackCard, { MusicTrack } from '@/components/ui/music-track-card';
 import MusicVisualizer from '@/components/ui/music-visualizer';
+import { ReactiveLogo, ReactiveWaveform } from '@/components/ui/reactive-logo';
 import { queryClient } from '@/lib/queryClient';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -134,9 +135,20 @@ export default function MusicPage() {
           </div>
           
           <div className="relative z-20 p-8 sm:p-12 flex flex-col items-center justify-center text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-orbitron">
-              {t('music.title')}
-            </h1>
+            {/* Reactive Logo/Title with Waveform */}
+            <div className="relative mb-4 w-full max-w-md mx-auto">
+              <ReactiveWaveform 
+                height={50} 
+                width={isMobile ? 300 : 500}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full"
+              />
+              <h1 className="text-4xl md:text-5xl font-bold text-white font-orbitron py-3 relative z-10">
+                <ReactiveLogo>
+                  {t('music.title')}
+                </ReactiveLogo>
+              </h1>
+            </div>
+            
             <p className="text-xl text-gray-300 mb-8 max-w-2xl">
               {t('music.subtitle')}
             </p>
