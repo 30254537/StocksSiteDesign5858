@@ -396,14 +396,19 @@ export default function Manage() {
                   return;
                 }
                 
-                // 添加文本字段
-                formData.append("name", name);
-                formData.append("price", price.toString());
-                formData.append("description", description);
-                formData.append("stock", stock.toString());
-                formData.append("featured", featured.toString());
-                formData.append("category", category);
-                formData.append("hasSizes", hasSizes.toString());
+                // 创建产品数据对象并作为JSON字符串添加到表单
+                const productData = {
+                  name,
+                  price,
+                  description,
+                  stock: isNaN(stock) ? 0 : stock,
+                  featured,
+                  category,
+                  hasSizes
+                };
+                
+                // 将产品数据作为JSON字符串添加
+                formData.append("productData", JSON.stringify(productData));
                 
                 // 添加文件
                 selectedFilesObjects.forEach(file => {
