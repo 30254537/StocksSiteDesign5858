@@ -41,13 +41,13 @@ export default function Footer() {
             <h3 className="text-xl font-orbitron font-medium mb-4 text-white">STONKS DEX</h3>
             <p className="mb-4 text-sm leading-relaxed">{t("footer.about")}</p>
             <div className="flex space-x-4 text-accent">
-              <a href="#" className="hover:text-white transition-colors duration-300">
-                <i className="fab fa-twitter"></i>
+              <a href="https://x.com/MyStonks_Org" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
+                <i className="fa-brands fa-x-twitter"></i>
               </a>
               <a href="#" className="hover:text-white transition-colors duration-300">
                 <i className="fab fa-discord"></i>
               </a>
-              <a href="#" className="hover:text-white transition-colors duration-300">
+              <a href="https://t.me/STONKSOPEN" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
                 <i className="fab fa-telegram"></i>
               </a>
               <a href="#" className="hover:text-white transition-colors duration-300">
@@ -71,7 +71,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors duration-300">
+                <a href="https://t.me/STONKSOPEN" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors duration-300">
                   {t("footer.community")}
                 </a>
               </li>
