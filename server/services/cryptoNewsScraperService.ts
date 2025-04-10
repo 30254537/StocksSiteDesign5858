@@ -355,147 +355,7 @@ export async function fetchTheBlockNews(): Promise<InsertCryptoNews[]> {
   }
 }
 
-/**
- * 从CryptoSlate获取最新的加密货币新闻
- */
-export async function fetchCryptoSlateNews(): Promise<InsertCryptoNews[]> {
-  try {
-    const response = await axios.get('https://cryptoslate.com/news/', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9'
-      },
-      timeout: 10000 // 10秒超时
-    });
-    
-    const $ = cheerio.load(response.data);
-    const articles: InsertCryptoNews[] = [];
-
-    // 尝试多种选择器获取文章
-    const selectors = [
-      '.wp-block-latest-posts__list li', 
-      'article', 
-      '.news-item', 
-      '.post', 
-      '.entry'
-    ];
-    
-    for (const selector of selectors) {
-      $(selector).each((_, element) => {
-        // 查找标题和链接
-        let title = '';
-        let link = '';
-        
-        // 首先查找a标签作为链接和标题
-        const anchorElement = $(element).find('a').first();
-        if (anchorElement.length) {
-          link = anchorElement.attr('href') || '';
-          title = anchorElement.text().trim();
-          
-          // 如果a标签没有文本，尝试查找标题标签
-          if (!title) {
-            const titleElement = $(element).find('h1, h2, h3, h4, h5, .title, .post-title');
-            if (titleElement.length) {
-              title = titleElement.text().trim();
-            }
-          }
-        }
-        
-        // 如果没有找到标题，尝试其他标题选择器
-        if (!title) {
-          const titleElement = $(element).find('h1, h2, h3, h4, h5, .title, .post-title');
-          if (titleElement.length) {
-            title = titleElement.text().trim();
-            
-            // 如果找到了标题但没有链接，尝试在标题中查找链接
-            if (!link) {
-              const titleLink = titleElement.find('a').attr('href');
-              if (titleLink) {
-                link = titleLink;
-              }
-            }
-          }
-        }
-        
-        // 尝试查找图片
-        const imageElement = $(element).find('img');
-        const imageUrl = imageElement.attr('src') || 
-                        imageElement.attr('data-src') || 
-                        imageElement.attr('data-lazy-src') || '';
-        
-        // 如果找到了标题和链接，添加文章
-        if (title && link) {
-          articles.push({
-            title,
-            content: title, // 使用标题作为内容的摘要
-            source: 'CryptoSlate',
-            sourceUrl: link,
-            imageUrl,
-            category: 'general',
-            isHighlighted: 0,
-            publishedAt: new Date()
-          });
-        }
-      });
-      
-      // 如果已经找到了足够的文章，跳出循环
-      if (articles.length >= 10) {
-        break;
-      }
-    }
-    
-    // 如果上述选择器没有找到任何文章，尝试更通用的选择器
-    if (articles.length === 0) {
-      // 寻找所有链接和标题组合
-      $('a').each((_, element) => {
-        const href = $(element).attr('href');
-        
-        // 检查链接是否是新闻链接
-        if (href && (
-          href.includes('/news/') || 
-          href.includes('/article/') || 
-          href.includes('/blog/') ||
-          href.match(/\d{4}\/\d{2}\/\d{2}/)
-        )) {
-          const title = $(element).text().trim();
-          
-          // 如果链接文本看起来像标题（至少5个字），添加文章
-          if (title && title.length > 5) {
-            // 尝试找到与链接相关的图像
-            let imageUrl = '';
-            const parentElement = $(element).parent();
-            const imgElement = parentElement.find('img').first();
-            
-            if (imgElement.length) {
-              imageUrl = imgElement.attr('src') || imgElement.attr('data-src') || '';
-            }
-            
-            articles.push({
-              title,
-              content: title,
-              source: 'CryptoSlate',
-              sourceUrl: href,
-              imageUrl,
-              category: 'general',
-              isHighlighted: 0,
-              publishedAt: new Date()
-            });
-          }
-        }
-      });
-    }
-
-    // 去重
-    const uniqueArticles = articles.filter((article, index, self) =>
-      index === self.findIndex((a) => a.title === article.title)
-    );
-
-    return uniqueArticles.slice(0, 10); // 限制数量
-  } catch (error) {
-    console.error('获取CryptoSlate新闻失败:', error);
-    return [];
-  }
-}
+// CryptoSlate已被移除
 
 /**
  * 从8BTC获取最新的加密货币新闻（中文）
@@ -660,14 +520,6 @@ export async function scrapeAllNews(): Promise<InsertCryptoNews[]> {
       console.error('从TheBlock抓取新闻失败:', error);
     }
     
-    let cryptoSlateNews: InsertCryptoNews[] = [];
-    try {
-      cryptoSlateNews = await fetchCryptoSlateNews();
-      console.log(`成功从CryptoSlate抓取了 ${cryptoSlateNews.length} 条新闻`);
-    } catch (error) {
-      console.error('从CryptoSlate抓取新闻失败:', error);
-    }
-    
     let eightBTCNews: InsertCryptoNews[] = [];
     try {
       eightBTCNews = await fetch8BTCNews();
@@ -681,7 +533,6 @@ export async function scrapeAllNews(): Promise<InsertCryptoNews[]> {
       ...coinDeskNews, 
       ...coinTelegraphNews, 
       ...theBlockNews, 
-      ...cryptoSlateNews, 
       ...eightBTCNews
     ];
     

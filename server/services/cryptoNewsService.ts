@@ -11,11 +11,6 @@ const NEWS_SOURCES = {
     url: 'https://api.coingecko.com/api/v3/news',
     apiKey: process.env.COINGECKO_API_KEY || '',
   },
-  CRYPTOPANIC: {
-    name: 'CryptoPanic',
-    url: 'https://cryptopanic.com/api/v1/posts/',
-    apiKey: process.env.CRYPTOPANIC_API_KEY || '',
-  },
   CRYPTONEWS: {
     name: 'CryptoNews',
     url: 'https://cryptonews-api.com/api/v1/category',
@@ -74,52 +69,7 @@ export async function fetchCoinGeckoNews(): Promise<InsertCryptoNews[]> {
   }
 }
 
-/**
- * 从CryptoPanic获取最新的加密货币新闻
- */
-export async function fetchCryptoPanicNews(): Promise<InsertCryptoNews[]> {
-  if (!NEWS_SOURCES.CRYPTOPANIC.apiKey) {
-    console.warn('未找到CryptoPanic API密钥，跳过此来源');
-    return [];
-  }
-
-  try {
-    const response = await axios.get(`${NEWS_SOURCES.CRYPTOPANIC.url}?auth_token=${NEWS_SOURCES.CRYPTOPANIC.apiKey}&public=true`);
-
-    if (response.data && Array.isArray(response.data.results)) {
-      return response.data.results.map((item: any) => {
-        // 确保日期格式正确
-        let publishedAt = new Date();
-        try {
-          if (item.published_at) {
-            publishedAt = new Date(item.published_at);
-            // 验证日期是否有效
-            if (isNaN(publishedAt.getTime())) {
-              publishedAt = new Date(); // 使用当前日期作为后备
-            }
-          }
-        } catch (e) {
-          console.warn('无效的日期格式，使用当前日期:', e);
-        }
-        
-        return {
-          title: item.title,
-          content: item.metadata?.description || '未提供详细内容',
-          source: NEWS_SOURCES.CRYPTOPANIC.name,
-          sourceUrl: item.url,
-          imageUrl: item.metadata?.image || '',
-          category: item.currencies?.map((c: any) => c.code).join(',') || 'general',
-          isHighlighted: item.votes?.positive > 5 ? 1 : 0,
-          publishedAt
-        };
-      });
-    }
-    return [];
-  } catch (error) {
-    console.error('获取CryptoPanic新闻失败:', error);
-    return [];
-  }
-}
+// CryptoPanic已被移除
 
 /**
  * 从CryptoNews获取最新的加密货币新闻
@@ -182,17 +132,16 @@ export async function fetchAndStoreNews(): Promise<number> {
   
   try {
     // 并行获取所有来源的新闻
-    const [coinGeckoNews, cryptoPanicNews, cryptoNewsApiNews, scrapedNews] = await Promise.all([
+    const [coinGeckoNews, cryptoNewsApiNews, scrapedNews] = await Promise.all([
       fetchCoinGeckoNews(),
-      fetchCryptoPanicNews(),
       fetchCryptoNewsApi(),
-      scrapeAllNews() // 新增：从各大网站抓取新闻
+      scrapeAllNews() // 从各大网站抓取新闻
     ]);
 
-    console.log(`抓取结果: CoinGecko: ${coinGeckoNews.length}, CryptoPanic: ${cryptoPanicNews.length}, CryptoNews API: ${cryptoNewsApiNews.length}, 网站抓取: ${scrapedNews.length}`);
+    console.log(`抓取结果: CoinGecko: ${coinGeckoNews.length}, CryptoNews API: ${cryptoNewsApiNews.length}, 网站抓取: ${scrapedNews.length}`);
 
     // 合并所有来源的新闻
-    const allNews = [...coinGeckoNews, ...cryptoPanicNews, ...cryptoNewsApiNews, ...scrapedNews];
+    const allNews = [...coinGeckoNews, ...cryptoNewsApiNews, ...scrapedNews];
     
     if (allNews.length === 0) {
       console.log('没有找到新的加密货币新闻');
