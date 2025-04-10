@@ -150,7 +150,7 @@ export default function Header() {
             </nav>
             
             {/* 功能控件 - 右侧 */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               {/* 语言切换 */}
               <button
                 className="hidden md:block text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
@@ -172,8 +172,8 @@ export default function Header() {
                 )}
               </button>
               
-              {/* 迷你音乐播放器 - 最后位置 */}
-              <div className="hidden md:block">
+              {/* 迷你音乐播放器 - 最后位置，增加显著的左侧间距 */}
+              <div className="hidden md:block ml-8 pl-2">
                 <MiniMusicPlayer />
               </div>
               
