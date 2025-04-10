@@ -1324,11 +1324,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { lang } = req.query;
       const useZh = lang === 'zh';
       
-      // 返回适当的推文数据
+      // 返回推文数据，始终包含原文和翻译文本
       const formattedTweets = tweets.map(tweet => ({
         id: tweet.id,
         tweetId: tweet.tweetId,
-        text: useZh && tweet.translatedText ? tweet.translatedText : tweet.text,
+        text: tweet.text,
+        translatedText: tweet.translatedText || '',
         authorName: tweet.authorName,
         authorUsername: tweet.authorUsername,
         authorProfileImage: tweet.authorProfileImage,
@@ -1340,7 +1341,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         url: tweet.url,
         createdAt: tweet.createdAt,
-        isTranslated: useZh && !!tweet.translatedText
+        isTranslated: !!tweet.translatedText
       }));
       
       res.json({ data: formattedTweets });
@@ -1363,6 +1364,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('同步X推文失败:', error);
       res.status(500).json({ error: '同步推文失败' });
+    }
+  });
+  
+  // 手动翻译推文（仅管理员）
+  app.post('/api/crypto-tweets/:id/translate', requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: '无效的推文ID' });
+      }
+      
+      // 获取推文
+      const tweet = await storage.getCryptoTweetById(id);
+      if (!tweet) {
+        return res.status(404).json({ error: '未找到推文' });
+      }
+      
+      // 使用翻译服务翻译推文
+      const translatedText = translateTweetText(tweet.text);
+      
+      // 更新翻译文本
+      const updatedTweet = await storage.updateTweetTranslation(id, translatedText);
+      
+      res.status(200).json({
+        success: true,
+        tweet: updatedTweet,
+        message: '推文翻译成功'
+      });
+    } catch (error) {
+      console.error('翻译推文失败:', error);
+      res.status(500).json({ error: '翻译推文失败' });
     }
   });
   
