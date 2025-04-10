@@ -149,7 +149,7 @@ export default function Manage() {
   const handleAddTestContractTweet = async () => {
     try {
       setLoadingTweets(true);
-      const response = await apiRequest("POST", "/api/crypto-tweets/add-test-contract");
+      const response = await apiRequest("POST", "/api/test/add-contract-tweet");
       if (response.ok) {
         const data = await response.json();
         toast({
@@ -1157,7 +1157,7 @@ export default function Manage() {
                 <h3 className="text-xl text-accent">加密货币推文</h3>
                 <div className="flex gap-2">
                   <Button 
-                    variant="accent" 
+                    variant="default" 
                     onClick={() => handleAddTestContractTweet()}
                     disabled={loadingTweets}
                   >
