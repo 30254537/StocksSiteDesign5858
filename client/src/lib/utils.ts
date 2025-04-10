@@ -19,7 +19,7 @@ export function formatEth(value: number): string {
 }
 
 export function formatPrice(price: number): string {
-  return `${price.toFixed(2)}`;
+  return `${price.toFixed(6)}`;
 }
 
 export function truncateText(text: string, maxLength: number): string {
