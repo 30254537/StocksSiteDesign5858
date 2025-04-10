@@ -36,6 +36,16 @@ const CryptoNews: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('all');
   
+  // 打印当前语言状态，用于调试
+  useEffect(() => {
+    console.log(`当前语言状态: ${language}`);
+    // 测试一些翻译键
+    const keys = ['cryptoNews.title', 'cryptoNews.allNews', 'cryptoNews.readMore'];
+    keys.forEach(key => {
+      console.log(`测试翻译 - ${key}: "${t(key)}"`);
+    });
+  }, [language, t]);
+  
   // 计算分页偏移
   const offset = (currentPage - 1) * PAGE_SIZE;
   
@@ -89,8 +99,10 @@ const CryptoNews: React.FC = () => {
     setCurrentPage(1);
   };
   
-  // 为新闻生成图片（确保所有新闻都有图片）
+  // 为新闻生成图片（确保所有新闻都有多样化的图片）
   const getNewsImage = (news: CryptoNewsType) => {
+    console.log("处理图片URL:", news.title, news.imageUrl);
+    
     // 首先检查新闻是否有有效的图片URL
     if (news.imageUrl && 
         news.imageUrl.trim() !== '' && 
@@ -108,36 +120,92 @@ const CryptoNews: React.FC = () => {
       }
     }
     
-    // 根据新闻来源生成不同的默认图片
-    const defaultImages: Record<string, string> = {
-      'CoinGecko': 'https://static.coingecko.com/s/coingecko-logo-8903d34ce19ca4be1c81f0db30e924154750d208683fad7ae6f2ce06c76d0a56.png',
-      'CoinTelegraph': 'https://s2.coinmarketcap.com/static/img/coins/200x200/8996.png',
-      'TheBlock': 'https://pbs.twimg.com/profile_images/1559173535693926400/BV9v1HDo_400x400.jpg',
-      'CoinDesk': 'https://cryptologos.cc/logos/coindesk-cd-logo.png',
-      '8BTC': 'https://pbs.twimg.com/profile_images/1275716146762661890/BP8aHRk2_400x400.jpg'
+    // 使用更多多样化的图片集合 - 按来源和内容匹配
+    // 源特定图片
+    const sourceImages: Record<string, string[]> = {
+      'CoinGecko': [
+        'https://static.coingecko.com/s/coingecko-logo-8903d34ce19ca4be1c81f0db30e924154750d208683fad7ae6f2ce06c76d0a56.png',
+        'https://cryptologos.cc/logos/coingecko-cg-logo.png'
+      ],
+      'CoinTelegraph': [
+        'https://s2.coinmarketcap.com/static/img/coins/200x200/8996.png',
+        'https://cryptologos.cc/logos/cointelegraph-ct-logo.png'
+      ],
+      'TheBlock': [
+        'https://pbs.twimg.com/profile_images/1559173535693926400/BV9v1HDo_400x400.jpg',
+        'https://cryptologos.cc/logos/the-block-block-logo.png'
+      ],
+      'CoinDesk': [
+        'https://cryptologos.cc/logos/coindesk-cd-logo.png',
+        'https://pbs.twimg.com/profile_images/1599803099607384066/UW4sH2ii_400x400.jpg'
+      ],
+      '8BTC': [
+        'https://pbs.twimg.com/profile_images/1275716146762661890/BP8aHRk2_400x400.jpg',
+        'https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/8a/88/bd/8a88bd76-e81f-87b9-0c24-7a29b9b5d9f5/source/512x512bb.jpg'
+      ]
     };
     
-    // 使用来源特定的默认图片
-    if (news.source && defaultImages[news.source]) {
-      return defaultImages[news.source];
+    // 内容相关图片集合
+    const contentImages = {
+      bitcoin: [
+        'https://img.freepik.com/premium-vector/bitcoin-cryptocurrency-golden-coin-3d-icon_116083-4986.jpg',
+        'https://cdn.pixabay.com/photo/2018/01/18/07/31/bitcoin-3089728_1280.jpg',
+        'https://cdn.pixabay.com/photo/2017/01/25/12/31/bitcoin-2007769_1280.jpg'
+      ],
+      ethereum: [
+        'https://img.freepik.com/premium-vector/ethereum-cryptocurrency-golden-3d-coin-icon_116083-4994.jpg',
+        'https://cdn.pixabay.com/photo/2021/05/25/17/51/ethereum-6283367_1280.png',
+        'https://cdn.pixabay.com/photo/2022/03/19/20/17/ethereum-7078201_1280.jpg'
+      ],
+      nft: [
+        'https://img.freepik.com/premium-vector/nft-non-fungible-token-logo-icon-modern-crypto-token_187882-1377.jpg',
+        'https://cdn.pixabay.com/photo/2022/03/01/02/51/nft-7040393_1280.png',
+        'https://cdn.pixabay.com/photo/2022/02/19/10/37/nft-7022358_1280.jpg'
+      ],
+      defi: [
+        'https://img.freepik.com/premium-vector/defi-decentralized-finance-icon-vector-illustration_116137-7975.jpg',
+        'https://cdn.pixabay.com/photo/2022/03/02/10/27/decentralized-7043197_1280.jpg',
+        'https://cdn.pixabay.com/photo/2021/12/06/13/48/defi-6850597_1280.jpg'
+      ],
+      stonks: [
+        'https://i.imgur.com/0YEzUGn.png',
+        'https://cdn.pixabay.com/photo/2021/03/17/01/31/stonks-6101327_1280.png'
+      ],
+      general: [
+        'https://img.freepik.com/premium-vector/cryptocurrency-bitcoin-golden-coin-background_116083-4199.jpg',
+        'https://cdn.pixabay.com/photo/2018/01/19/07/57/crypto-3091905_1280.jpg',
+        'https://cdn.pixabay.com/photo/2017/12/12/13/02/ripple-3014411_1280.jpg',
+        'https://cdn.pixabay.com/photo/2021/05/24/17/23/cryptocurrency-6279754_1280.jpg',
+        'https://cdn.pixabay.com/photo/2018/06/26/23/44/artificial-intelligence-3500208_1280.jpg'
+      ]
+    };
+    
+    // 使用news.id作为随机选择器的种子，使相同的新闻始终使用相同的图片
+    const selectRandom = (arr: string[]) => arr[news.id % arr.length];
+    
+    // 先检查来源是否有特定图片
+    if (news.source && sourceImages[news.source]) {
+      return selectRandom(sourceImages[news.source]);
     }
     
-    // 根据新闻内容选择合适的默认图片
+    // 根据内容选择相应类别的图片
     const title = (news.title || '').toLowerCase();
     const content = (news.content || '').toLowerCase();
     
     if (title.includes('bitcoin') || content.includes('bitcoin') || title.includes('btc') || content.includes('btc')) {
-      return 'https://img.freepik.com/premium-vector/bitcoin-cryptocurrency-golden-coin-3d-icon_116083-4986.jpg';
+      return selectRandom(contentImages.bitcoin);
     } else if (title.includes('ethereum') || content.includes('ethereum') || title.includes('eth') || content.includes('eth')) {
-      return 'https://img.freepik.com/premium-vector/ethereum-cryptocurrency-golden-3d-coin-icon_116083-4994.jpg';
+      return selectRandom(contentImages.ethereum);
     } else if (title.includes('nft') || content.includes('nft')) {
-      return 'https://img.freepik.com/premium-vector/nft-non-fungible-token-logo-icon-modern-crypto-token_187882-1377.jpg';
+      return selectRandom(contentImages.nft);
+    } else if (title.includes('defi') || content.includes('defi')) {
+      return selectRandom(contentImages.defi);
     } else if (title.includes('stonks') || content.includes('stonks')) {
-      return 'https://i.imgur.com/0YEzUGn.png'; // STONKS相关图片
+      return selectRandom(contentImages.stonks);
     }
     
-    // 如果都没匹配到，使用通用的加密货币图片
-    return 'https://img.freepik.com/premium-vector/cryptocurrency-bitcoin-golden-coin-background_116083-4199.jpg';
+    // 使用通用加密货币图片
+    return selectRandom(contentImages.general);
   };
 
   const formatPublishedDate = (date: string) => {
