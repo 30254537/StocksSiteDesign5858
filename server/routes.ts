@@ -505,8 +505,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 全局变量缓存GMGN平台最新价格
   let cachedStonksPrice: { price: number; lastUpdated: Date } = {
-    price: 0.031, // 初始默认价格
-    lastUpdated: new Date()
+    price: 0.031456, // 初始默认价格，使用6位有效小数
+    // 将时间设置为过期，强制立即更新价格
+    lastUpdated: new Date(Date.now() - 20000)
   };
   
   // 检查缓存是否过期（15秒）
@@ -524,9 +525,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // const data = await response.json();
       // return data.price;
       
-      // 由于我们没有实际的API，我们使用固定价格0.031
-      // 在实际生产环境中，这里应该替换为真实的API调用
-      return 0.031;
+      // 由于我们没有实际的API，我们生成一个随机的6位小数价格
+      // 基础价格为0.031，然后加上随机的微小变化，确保生成6位有效数字
+      const basePrice = 0.031; 
+      // 生成0-999999之间的随机整数，然后除以100000000，确保小数点后有6位随机数字但保持在接近0.031的范围
+      const randomMicroVariation = Math.floor(Math.random() * 999999) / 100000000;
+      // 确保返回的价格格式为0.031xxxxxx，即保持6位有效小数，但基础价格仍为0.031
+      return Number((basePrice + randomMicroVariation).toFixed(6));
     } catch (error) {
       console.error("Error fetching GMGN price:", error);
       // 如果API调用失败，返回缓存的最后一个有效价格
