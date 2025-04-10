@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 interface StonksPriceContextType {
   currentPrice: number;
   lastUpdated: string | null;
+  contractAddress: string | null;
   loading: boolean;
   error: string | null;
   convertUsdToStonks: (usdAmount: number) => number;
@@ -14,6 +15,7 @@ const StonksPriceContext = createContext<StonksPriceContextType | null>(null);
 export function StonksPriceProvider({ children }: { children: ReactNode }) {
   const [currentPrice, setCurrentPrice] = useState<number>(0.1); // 默认价格为0.1美元
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [contractAddress, setContractAddress] = useState<string | null>("6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +42,9 @@ export function StonksPriceProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
       setCurrentPrice(data.price);
       setLastUpdated(data.lastUpdated);
+      if (data.contractAddress) {
+        setContractAddress(data.contractAddress);
+      }
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : '未知错误');
@@ -66,6 +71,7 @@ export function StonksPriceProvider({ children }: { children: ReactNode }) {
   const value = {
     currentPrice,
     lastUpdated,
+    contractAddress,
     loading,
     error,
     convertUsdToStonks,

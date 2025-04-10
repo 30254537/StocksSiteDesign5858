@@ -506,11 +506,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 获取STONKS的实时价格
   app.get("/api/stonks-price", async (req, res) => {
     try {
-      // 这里可以集成实际的加密货币价格API
-      // 目前使用模拟数据演示功能
-      // 在实际生产环境中，应该集成如CoinGecko或Binance等API
+      // 使用指定STONKS合约地址: 6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump
+      const contractAddress = "6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump";
       
-      // 模拟价格浮动，实际环境中应替换为真实API调用
+      // 注意：在实际生产环境中，应该用下面的代码替换模拟数据
+      // 通过调用Solana或其他区块链API获取真实价格
+      // const response = await fetch(`https://api.solscan.io/token/meta?token=${contractAddress}`);
+      // const data = await response.json();
+      // const currentPrice = data.priceUsdt;
+      
+      // 临时使用模拟数据，保持一致的价格范围但注明了使用的正确合约
       const basePrice = 0.10; // 基础价格为0.10美元
       const fluctuation = Math.random() * 0.02 - 0.01; // 上下波动1美分
       const currentPrice = basePrice + fluctuation;
@@ -518,6 +523,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         price: currentPrice,
         currency: "USD",
+        contractAddress: contractAddress,
         lastUpdated: new Date().toISOString()
       });
     } catch (error: any) {
