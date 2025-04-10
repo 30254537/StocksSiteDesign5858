@@ -43,7 +43,9 @@ interface TweetsResponse {
 
 const CryptoTweets: React.FC = () => {
   const { t, language } = useTranslation();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('trending');
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   
   // 获取推文数据
   const { data: tweetsData, isLoading, error } = useQuery<TweetsResponse>({
@@ -58,6 +60,31 @@ const CryptoTweets: React.FC = () => {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5分钟
   });
+  
+  // 复制合约地址到剪贴板
+  const copyToClipboard = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopiedAddress(address);
+      toast({
+        title: language === 'zh' ? "已复制合约地址" : "Contract address copied",
+        description: address,
+        duration: 2000,
+      });
+      
+      // 2秒后重置复制状态
+      setTimeout(() => {
+        setCopiedAddress(null);
+      }, 2000);
+    } catch (err) {
+      console.error('复制失败:', err);
+      toast({
+        title: language === 'zh' ? "复制失败" : "Copy failed",
+        description: language === 'zh' ? "请手动复制地址" : "Please copy the address manually",
+        variant: "destructive",
+      });
+    }
+  };
 
   // 格式化日期
   const formatDate = (dateString: string) => {
@@ -303,15 +330,61 @@ const CryptoTweets: React.FC = () => {
                             X
                           </a>
                         </div>
-                        <p className="text-sm mt-2 whitespace-pre-wrap">
-                          {language === 'zh' && tweet.translatedText 
-                            ? tweet.translatedText 
-                            : tweet.text}
-                        </p>
-                        {language === 'zh' && tweet.translatedText && (
-                          <p className="text-xs text-muted-foreground mt-1 italic">
-                            {t('cryptoTweets.translated')}
-                          </p>
+                        {tweet.contractAddress ? (
+                          <div className="mt-2">
+                            <p className="text-sm whitespace-pre-wrap">
+                              {language === 'zh' && tweet.translatedText 
+                                ? tweet.translatedText.replace(tweet.contractAddress, '') 
+                                : tweet.text.replace(tweet.contractAddress, '')}
+                            </p>
+                            
+                            <div className="flex items-center mt-2 bg-primary/10 p-2 rounded-md">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="flex-1 font-mono text-xs text-accent break-all select-all">
+                                      {tweet.contractAddress}
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{language === 'zh' ? '点击复制' : 'Click to copy'}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="ml-1 h-6 w-6 p-0" 
+                                onClick={() => copyToClipboard(tweet.contractAddress || '')}
+                              >
+                                {copiedAddress === tweet.contractAddress ? (
+                                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                ) : (
+                                  <Copy className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                            
+                            {language === 'zh' && tweet.translatedText && (
+                              <p className="text-xs text-muted-foreground mt-1 italic">
+                                {t('cryptoTweets.translated')}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-sm mt-2 whitespace-pre-wrap">
+                              {language === 'zh' && tweet.translatedText 
+                                ? tweet.translatedText 
+                                : tweet.text}
+                            </p>
+                            {language === 'zh' && tweet.translatedText && (
+                              <p className="text-xs text-muted-foreground mt-1 italic">
+                                {t('cryptoTweets.translated')}
+                              </p>
+                            )}
+                          </>
                         )}
                         <div className="flex space-x-4 mt-3">
                           <div className="flex items-center space-x-1 text-xs text-muted-foreground">

@@ -1381,7 +1381,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         url: tweet.url,
         createdAt: tweet.createdAt,
         isTranslated: !!tweet.translatedText,
-        category: 'contract'
+        category: 'contract',
+        contractAddress: tweet.contractAddress
       }));
       
       res.json({ data: formattedTweets });
