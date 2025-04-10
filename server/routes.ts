@@ -15,7 +15,7 @@ import { getAudioDurationInSeconds } from "get-audio-duration";
 import cryptoNewsRoutes from "./routes/cryptoNewsRoutes";
 import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
 import { syncCryptoTweets } from "./services/xService";
-import { syncCryptoTweets } from "./services/xService";
+import * as cron from "node-cron";
 
 // Extend the Express.Session interface to include our custom properties
 declare module 'express-session' {
@@ -1313,8 +1313,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 加密货币新闻路由
   app.use('/api', cryptoNewsRoutes);
   
+  // 加密推文API端点
+  app.get('/api/crypto-tweets', async (req, res) => {
+    try {
+      // 获取最新的X推文，按照热度排序
+      const tweets = await storage.getCryptoTweets();
+      
+      // 根据语言返回不同的字段
+      const { lang } = req.query;
+      const useZh = lang === 'zh';
+      
+      // 返回适当的推文数据
+      const formattedTweets = tweets.map(tweet => ({
+        id: tweet.id,
+        tweetId: tweet.tweetId,
+        text: useZh && tweet.translatedText ? tweet.translatedText : tweet.text,
+        authorName: tweet.authorName,
+        authorUsername: tweet.authorUsername,
+        authorProfileImage: tweet.authorProfileImage,
+        metrics: {
+          likes: tweet.likeCount,
+          retweets: tweet.retweetCount,
+          replies: tweet.replyCount,
+          quotes: tweet.quoteCount
+        },
+        url: tweet.url,
+        createdAt: tweet.createdAt,
+        isTranslated: useZh && !!tweet.translatedText
+      }));
+      
+      res.json({ data: formattedTweets });
+    } catch (error) {
+      console.error('获取X推文失败:', error);
+      res.status(500).json({ error: '获取推文失败' });
+    }
+  });
+  
+  // 手动触发X推文同步（仅管理员）
+  app.post('/api/crypto-tweets/sync', requireAdmin, async (req, res) => {
+    try {
+      // 执行同步操作
+      const newTweetsCount = await syncCryptoTweets();
+      
+      res.status(200).json({
+        success: true,
+        message: `成功同步了 ${newTweetsCount} 条新推文`
+      });
+    } catch (error) {
+      console.error('同步X推文失败:', error);
+      res.status(500).json({ error: '同步推文失败' });
+    }
+  });
+  
   // 初始化加密货币新闻定时获取任务
   initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
+  
+  // 定时同步X推文 (每4小时一次)
+  cron.schedule('0 */4 * * *', async () => {
+    try {
+      console.log('开始定时同步X推文...');
+      const newTweetsCount = await syncCryptoTweets();
+      console.log(`定时任务成功同步了 ${newTweetsCount} 条新推文`);
+    } catch (error) {
+      console.error('定时同步X推文失败:', error);
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

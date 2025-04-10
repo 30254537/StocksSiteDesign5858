@@ -141,7 +141,7 @@ export async function syncCryptoTweets(): Promise<number> {
           replyCount: tweet.public_metrics?.reply_count || 0,
           quoteCount: tweet.public_metrics?.quote_count || 0,
           url: `https://twitter.com/${author.username}/status/${tweet.id}`,
-          createdAt: new Date(tweet.created_at),
+          // createdAt会由defaultNow()自动设置
           source: 'x',
           category: 'crypto',
           language: 'en',
