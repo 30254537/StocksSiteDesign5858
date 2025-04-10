@@ -4,7 +4,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
-import { MusicPlayer } from "@/components/ui/music-player";
+import MusicPlayer from "@/components/ui/music-player";
 import { NeonText } from "@/components/ui/neon-text";
 
 import { useIsMobile } from "@/hooks/use-mobile";

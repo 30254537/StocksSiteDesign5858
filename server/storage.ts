@@ -6,6 +6,7 @@ import {
   orders, type Order, type InsertOrder,
   orderItems, type OrderItem, type InsertOrderItem,
   subscribers, type Subscriber, type InsertSubscriber,
+  musicTracks, type MusicTrack, type InsertMusicTrack,
   type OrderWithItems
 } from "@shared/schema";
 import { db } from "./db";
@@ -66,6 +67,34 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Music methods
+  async getMusicTracks(): Promise<MusicTrack[]> {
+    return await db.select().from(musicTracks).orderBy(desc(musicTracks.createdAt));
+  }
+
+  async getMusicTrackById(id: number): Promise<MusicTrack | undefined> {
+    const [track] = await db.select().from(musicTracks).where(eq(musicTracks.id, id));
+    return track;
+  }
+
+  async createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack> {
+    const [newTrack] = await db.insert(musicTracks).values(track).returning();
+    return newTrack;
+  }
+
+  async updateMusicTrack(id: number, data: Partial<MusicTrack>): Promise<MusicTrack | undefined> {
+    const [track] = await db.update(musicTracks)
+      .set(data)
+      .where(eq(musicTracks.id, id))
+      .returning();
+    
+    return track;
+  }
+
+  async deleteMusicTrack(id: number): Promise<boolean> {
+    const result = await db.delete(musicTracks).where(eq(musicTracks.id, id));
+    return result.count > 0;
+  }
   // User methods
   async getUsers(): Promise<User[]> {
     return await db.select().from(users).orderBy(users.username);

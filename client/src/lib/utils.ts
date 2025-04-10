@@ -74,6 +74,14 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
+ * Format time in seconds to MM:SS format (alias for formatDuration)
+ * @param seconds - Time in seconds
+ */
+export function formatTime(seconds: number): string {
+  return formatDuration(seconds);
+}
+
+/**
  * Get file extension from filename
  */
 export function getFileExtension(filename: string): string {

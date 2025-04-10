@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { MusicPlayer } from "@/components/ui/music-player";
+import MusicPlayer from "@/components/ui/music-player";
 import { NeonText } from "@/components/ui/neon-text";
 
 // 跳转到页面顶部的函数

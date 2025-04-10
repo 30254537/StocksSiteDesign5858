@@ -1,3 +1,5 @@
+import { useState, useEffect, useCallback } from 'react';
+
 type TranslationKey = string;
 
 interface Translations {
@@ -321,4 +323,46 @@ export function getTranslation(key: TranslationKey, language: string): string {
     return key;
   }
   return translations[language][key];
+}
+
+// 获取用户首选语言，默认使用中文
+export function getUserLanguage(): string {
+  const storedLanguage = localStorage.getItem('language');
+  if (storedLanguage && ['en', 'zh'].includes(storedLanguage)) {
+    return storedLanguage;
+  }
+  return defaultLanguage;
+}
+
+// 设置用户语言选择
+export function setUserLanguage(language: string): void {
+  if (['en', 'zh'].includes(language)) {
+    localStorage.setItem('language', language);
+  }
+}
+
+// 翻译Hook
+
+export function useTranslation() {
+  const [language, setLanguage] = useState(getUserLanguage());
+
+  // 加载时读取用户语言设置
+  useEffect(() => {
+    setLanguage(getUserLanguage());
+  }, []);
+
+  // 切换语言
+  const changeLanguage = useCallback((newLanguage: string) => {
+    if (['en', 'zh'].includes(newLanguage)) {
+      setUserLanguage(newLanguage);
+      setLanguage(newLanguage);
+    }
+  }, []);
+
+  // 翻译函数
+  const t = useCallback((key: TranslationKey) => {
+    return getTranslation(key, language);
+  }, [language]);
+
+  return { t, language, changeLanguage };
 }
