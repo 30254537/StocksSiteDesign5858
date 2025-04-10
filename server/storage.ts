@@ -7,6 +7,7 @@ import {
   orderItems, type OrderItem, type InsertOrderItem,
   subscribers, type Subscriber, type InsertSubscriber,
   musicTracks, type MusicTrack, type InsertMusicTrack,
+  contactInfo, type ContactInfo, type InsertContactInfo,
   type OrderWithItems
 } from "@shared/schema";
 import { db } from "./db";
@@ -25,6 +26,11 @@ export interface IStorage {
   updateStripeCustomerId(userId: number, customerId: string): Promise<User>;
   updateUserStripeInfo(userId: number, stripeInfo: {customerId: string, subscriptionId: string}): Promise<User>;
 
+  // Contact Info operations
+  getContactInfo(key: string): Promise<string | null>;
+  getAllContactInfo(): Promise<Record<string, string>>;
+  updateContactInfo(key: string, value: string): Promise<boolean>;
+  
   // Product operations
   getProducts(): Promise<Product[]>;
   getProductById(id: number): Promise<Product | undefined>;
@@ -67,6 +73,40 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Contact Info methods
+  async getContactInfo(key: string): Promise<string | null> {
+    const [info] = await db.select().from(contactInfo).where(eq(contactInfo.key, key));
+    return info ? info.value : null;
+  }
+
+  async getAllContactInfo(): Promise<Record<string, string>> {
+    const infoList = await db.select().from(contactInfo);
+    const result: Record<string, string> = {};
+    
+    for (const info of infoList) {
+      result[info.key] = info.value;
+    }
+    
+    return result;
+  }
+
+  async updateContactInfo(key: string, value: string): Promise<boolean> {
+    // 检查是否已存在
+    const existing = await this.getContactInfo(key);
+    
+    if (existing !== null) {
+      // 更新现有记录
+      await db.update(contactInfo)
+        .set({ value, updatedAt: new Date() })
+        .where(eq(contactInfo.key, key));
+      return true;
+    } else {
+      // 创建新记录
+      await db.insert(contactInfo).values({ key, value });
+      return true;
+    }
+  }
+  
   // Music methods
   async getMusicTracks(): Promise<MusicTrack[]> {
     return await db.select().from(musicTracks).orderBy(desc(musicTracks.createdAt));
@@ -478,6 +518,17 @@ async function seedInitialData() {
     });
     
     console.log("✅ Admin user created");
+  }
+  
+  // 检查并添加默认联系信息
+  const existingContactInfo = await db.select().from(contactInfo);
+  
+  // 如果没有联系信息记录，添加默认数据
+  if (existingContactInfo.length === 0) {
+    await db.insert(contactInfo).values({ key: "email", value: "support@stonksdex.io" });
+    await db.insert(contactInfo).values({ key: "address", value: "新加坡, 区块链大厦 #42-01" });
+    
+    console.log("✅ Default contact information added");
   }
 }
 

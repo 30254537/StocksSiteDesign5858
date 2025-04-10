@@ -160,3 +160,21 @@ export const insertMusicTrackSchema = createInsertSchema(musicTracks).omit({
 
 export type MusicTrack = typeof musicTracks.$inferSelect;
 export type InsertMusicTrack = z.infer<typeof insertMusicTrackSchema>;
+
+// 联系信息相关表
+export const contactInfo = pgTable("contact_info", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull(),  // 键名，如 "email", "address"
+  value: text("value").notNull(), // 键值
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertContactInfoSchema = createInsertSchema(contactInfo).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type ContactInfo = typeof contactInfo.$inferSelect;
+export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
