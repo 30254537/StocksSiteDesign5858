@@ -385,6 +385,28 @@ export const translations: Translations = {
 
 export const defaultLanguage = 'zh';
 
+// 本地缓存已加载的翻译，避免重复获取
+const translationCache: { [key: string]: string } = {};
+
+// 清除翻译缓存的函数，可以清除特定前缀的缓存或全部
+export function clearTranslationCache(keyPrefix?: string): void {
+  if (keyPrefix) {
+    // 清除特定前缀的缓存
+    Object.keys(translationCache).forEach(key => {
+      if (key.includes(keyPrefix)) {
+        delete translationCache[key];
+        console.log(`清除翻译缓存: ${key}`);
+      }
+    });
+  } else {
+    // 清除所有缓存
+    Object.keys(translationCache).forEach(key => {
+      delete translationCache[key];
+    });
+    console.log('已清除所有翻译缓存');
+  }
+}
+
 export function getTranslation(key: TranslationKey, language: string): string {
   // 添加调试信息
   console.log(`获取翻译, 键: ${key}, 语言: ${language}`);
@@ -392,17 +414,43 @@ export function getTranslation(key: TranslationKey, language: string): string {
   // 确保 language 是有效值
   const validLanguage = ['en', 'zh'].includes(language) ? language : defaultLanguage;
   
+  // 生成缓存键
+  const cacheKey = `${validLanguage}:${key}`;
+  
+  // 对于产品名称相关的键，始终跳过缓存
+  if (key.startsWith('product.name.')) {
+    // 对产品名称不使用缓存，始终获取最新数据
+  } 
+  // 其他键使用缓存
+  else if (translationCache[cacheKey] !== undefined) {
+    console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${translationCache[cacheKey]} (缓存)`);
+    return translationCache[cacheKey];
+  }
+  
   // 如果当前语言有此翻译，则返回
   if (translations[validLanguage] && translations[validLanguage][key] !== undefined) {
-    return translations[validLanguage][key];
+    const translation = translations[validLanguage][key];
+    // 只缓存非产品名称的翻译
+    if (!key.startsWith('product.name.')) {
+      translationCache[cacheKey] = translation;
+    }
+    console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${translation}`);
+    return translation;
   }
   
   // 否则尝试使用默认语言
   if (translations[defaultLanguage] && translations[defaultLanguage][key] !== undefined) {
-    return translations[defaultLanguage][key];
+    const translation = translations[defaultLanguage][key];
+    // 只缓存非产品名称的翻译
+    if (!key.startsWith('product.name.')) {
+      translationCache[cacheKey] = translation;
+    }
+    console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${translation} (默认语言)`);
+    return translation;
   }
   
   // 如果都没有，返回键名
+  console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${key} (未找到翻译)`);
   return key;
 }
 

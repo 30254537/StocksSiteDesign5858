@@ -48,6 +48,13 @@ export default function Manage() {
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
+      // 清除产品相关翻译缓存
+      import('@/lib/translations').then(({ clearTranslationCache }) => {
+        // 清除所有产品名称的翻译缓存
+        clearTranslationCache('product.name');
+        console.log("已清除产品名称翻译缓存");
+      });
+      
       // 添加时间戳参数避免缓存问题
       const timestamp = new Date().getTime();
       const response = await apiRequest("GET", `/api/products?t=${timestamp}`, null, {
@@ -237,6 +244,13 @@ export default function Manage() {
   const handleDeleteProduct = async (productId: number) => {
     if (window.confirm("确定要删除此产品吗？此操作无法撤销。")) {
       try {
+        // 清除特定产品的翻译缓存
+        import('@/lib/translations').then(({ clearTranslationCache }) => {
+          // 清除该产品的翻译缓存
+          clearTranslationCache(`product.name.${productId}`);
+          console.log(`已清除产品 ${productId} 的翻译缓存`);
+        });
+        
         // 发送删除请求
         await apiRequest("DELETE", `/api/products/${productId}`);
         
@@ -424,6 +438,13 @@ export default function Manage() {
                 // 如果是编辑模式并且有现有图片列表，添加到数据
                 if (isEditing && editingProduct && editingProduct.imageUrls) {
                   productData.existingImages = editingProduct.imageUrls;
+                  
+                  // 清除正在编辑的产品的翻译缓存
+                  import('@/lib/translations').then(({ clearTranslationCache }) => {
+                    // 清除该产品的翻译缓存
+                    clearTranslationCache(`product.name.${productId.value}`);
+                    console.log(`已清除产品 ${productId.value} 的翻译缓存 (更新表单)`);
+                  });
                 }
                 
                 formData.append('productData', JSON.stringify(productData));
