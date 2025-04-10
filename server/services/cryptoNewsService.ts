@@ -82,16 +82,32 @@ export async function fetchCryptoPanicNews(): Promise<InsertCryptoNews[]> {
     const response = await axios.get(`${NEWS_SOURCES.CRYPTOPANIC.url}?auth_token=${NEWS_SOURCES.CRYPTOPANIC.apiKey}&public=true`);
 
     if (response.data && Array.isArray(response.data.results)) {
-      return response.data.results.map((item: any) => ({
-        title: item.title,
-        content: item.metadata?.description || '未提供详细内容',
-        source: NEWS_SOURCES.CRYPTOPANIC.name,
-        sourceUrl: item.url,
-        imageUrl: item.metadata?.image || '',
-        category: item.currencies?.map((c: any) => c.code).join(',') || 'general',
-        isHighlighted: item.votes.positive > 5 ? 1 : 0,
-        publishedAt: new Date(item.published_at)
-      }));
+      return response.data.results.map((item: any) => {
+        // 确保日期格式正确
+        let publishedAt = new Date();
+        try {
+          if (item.published_at) {
+            publishedAt = new Date(item.published_at);
+            // 验证日期是否有效
+            if (isNaN(publishedAt.getTime())) {
+              publishedAt = new Date(); // 使用当前日期作为后备
+            }
+          }
+        } catch (e) {
+          console.warn('无效的日期格式，使用当前日期:', e);
+        }
+        
+        return {
+          title: item.title,
+          content: item.metadata?.description || '未提供详细内容',
+          source: NEWS_SOURCES.CRYPTOPANIC.name,
+          sourceUrl: item.url,
+          imageUrl: item.metadata?.image || '',
+          category: item.currencies?.map((c: any) => c.code).join(',') || 'general',
+          isHighlighted: item.votes?.positive > 5 ? 1 : 0,
+          publishedAt
+        };
+      });
     }
     return [];
   } catch (error) {
@@ -113,16 +129,32 @@ export async function fetchCryptoNewsApi(): Promise<InsertCryptoNews[]> {
     const response = await axios.get(`${NEWS_SOURCES.CRYPTONEWS.url}?section=general&apiKey=${NEWS_SOURCES.CRYPTONEWS.apiKey}`);
 
     if (response.data && Array.isArray(response.data.data)) {
-      return response.data.data.map((item: any) => ({
-        title: item.title,
-        content: item.text || item.description || '未提供详细内容',
-        source: NEWS_SOURCES.CRYPTONEWS.name,
-        sourceUrl: item.news_url,
-        imageUrl: item.image_url || '',
-        category: item.categories || 'general',
-        isHighlighted: 0,
-        publishedAt: new Date(item.date)
-      }));
+      return response.data.data.map((item: any) => {
+        // 确保日期格式正确
+        let publishedAt = new Date();
+        try {
+          if (item.date) {
+            publishedAt = new Date(item.date);
+            // 验证日期是否有效
+            if (isNaN(publishedAt.getTime())) {
+              publishedAt = new Date(); // 使用当前日期作为后备
+            }
+          }
+        } catch (e) {
+          console.warn('无效的日期格式，使用当前日期:', e);
+        }
+        
+        return {
+          title: item.title,
+          content: item.text || item.description || '未提供详细内容',
+          source: NEWS_SOURCES.CRYPTONEWS.name,
+          sourceUrl: item.news_url,
+          imageUrl: item.image_url || '',
+          category: item.categories || 'general',
+          isHighlighted: 0,
+          publishedAt
+        };
+      });
     }
     return [];
   } catch (error) {
