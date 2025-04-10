@@ -557,6 +557,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
+      // 添加缓存控制头，禁止浏览器缓存
+      res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      });
+      
       const products = await storage.getProducts();
       res.json(products);
     } catch (error) {
@@ -566,6 +574,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/products/category/:category", async (req, res) => {
     try {
+      // 添加缓存控制头，禁止浏览器缓存
+      res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      });
+      
       const { category } = req.params;
       const products = await storage.getProductsByCategory(category);
       res.json(products);
@@ -576,6 +592,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/products/:id", async (req, res) => {
     try {
+      // 添加缓存控制头，禁止浏览器缓存
+      res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      });
+      
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid product ID" });
