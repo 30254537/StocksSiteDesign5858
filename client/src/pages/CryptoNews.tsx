@@ -271,6 +271,137 @@ const CryptoNews: React.FC = () => {
     return key;
   };
 
+  // 处理新闻内容的翻译，对于中文环境，提供标题和内容的翻译
+  const getTranslatedNewsTitle = (originalTitle: string): string => {
+    // 如果不是中文环境，或者标题已经是中文，则直接返回原标题
+    if (language !== 'zh' || /[\u4e00-\u9fa5]/.test(originalTitle)) {
+      return originalTitle;
+    }
+
+    // 为常见的加密货币新闻标题提供中文翻译
+    const newsTranslations: Record<string, string> = {
+      // 常见加密货币相关术语翻译
+      "Bitcoin": "比特币",
+      "BTC": "比特币",
+      "Ethereum": "以太坊",
+      "ETH": "以太坊",
+      "ETF": "ETF交易所交易基金",
+      "staking": "质押",
+      "wallets": "钱包",
+      "wallet": "钱包",
+      "crypto": "加密货币",
+      "cryptocurrency": "加密货币",
+      "blockchain": "区块链",
+      "miners": "矿工",
+      "mining": "挖矿",
+      "token": "代币",
+      "tokens": "代币",
+      "exploit": "漏洞",
+      "cybersecurity": "网络安全",
+      "hack": "黑客攻击",
+      "security": "安全",
+      "NFT": "NFT非同质化代币",
+      "DeFi": "DeFi去中心化金融",
+      "Solana": "索拉纳",
+      "Binance": "币安",
+      "Coinbase": "比特币基地",
+      "exchange": "交易所",
+      "trading": "交易",
+      "trader": "交易者",
+      "investor": "投资者",
+      "investment": "投资",
+      "regulation": "监管",
+      "regulator": "监管机构",
+      "SEC": "美国证券交易委员会",
+      "government": "政府",
+      "adoption": "采用",
+      "digital": "数字",
+      "currency": "货币",
+      "rally": "反弹",
+      "surge": "暴涨",
+      "crash": "暴跌",
+      "volatile": "波动",
+      "volatility": "波动性",
+      "bullish": "看涨",
+      "bearish": "看跌",
+      "could": "可能",
+      "may": "可能",
+      "should": "应该",
+      "future": "未来",
+      "halving": "减半",
+      // 常见新闻标题模式翻译
+      "Analysis": "分析",
+      "Report": "报告",
+      "Breaking": "重大新闻",
+      "Price": "价格",
+      "prices": "价格",
+      "Market": "市场",
+      "Markets": "市场",
+      "Research": "研究",
+      "Study": "研究",
+      "Survey": "调查",
+      "Guide": "指南",
+      "Explained": "解释",
+      "Update": "更新",
+      "New": "新的",
+      "First": "首个",
+      "Latest": "最新",
+      "Top": "顶级",
+      "Best": "最佳",
+      "Worst": "最差",
+      "record": "记录",
+      "high": "高点",
+      "low": "低点",
+      "drop": "下跌",
+      "rise": "上涨",
+      "gain": "上涨",
+      "lose": "下跌",
+      "loss": "损失",
+      "profit": "利润",
+    };
+
+    // 简单替换常见术语
+    let translatedTitle = originalTitle;
+    Object.entries(newsTranslations).forEach(([en, zh]) => {
+      // 使用正则表达式进行替换，保证只替换完整的单词
+      const regex = new RegExp(`\\b${en}\\b`, 'gi');
+      translatedTitle = translatedTitle.replace(regex, zh);
+    });
+
+    return translatedTitle;
+  };
+
+  // 处理新闻内容的翻译
+  const getTranslatedNewsContent = (originalContent: string): string => {
+    // 如果不是中文环境，或者内容已经是中文，则直接返回原内容
+    if (language !== 'zh' || /[\u4e00-\u9fa5]/.test(originalContent)) {
+      return originalContent;
+    }
+
+    // 如果内容太长，返回一个简短的中文说明
+    if (originalContent.length > 100) {
+      return "此为英文原文新闻内容，点击可查看完整报道。";
+    }
+
+    // 否则尝试进行简单替换翻译
+    const contentTranslations: Record<string, string> = {
+      // 常见短语翻译
+      "Read more": "阅读更多",
+      "Click to view": "点击查看",
+      "View full article": "查看完整文章",
+      "Learn more": "了解更多",
+    };
+
+    // 简单替换常见短语
+    let translatedContent = originalContent;
+    Object.entries(contentTranslations).forEach(([en, zh]) => {
+      const regex = new RegExp(`\\b${en}\\b`, 'gi');
+      translatedContent = translatedContent.replace(regex, zh);
+    });
+
+    return translatedContent || "点击查看英文原文";
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -313,7 +444,7 @@ const CryptoNews: React.FC = () => {
                       </Badge>
                       <Badge variant="outline">{news.source}</Badge>
                     </div>
-                    <CardTitle className="text-lg mt-2 line-clamp-2">{news.title}</CardTitle>
+                    <CardTitle className="text-lg mt-2 line-clamp-2">{getTranslatedNewsTitle(news.title)}</CardTitle>
                   </CardHeader>
                   <CardFooter className="pt-0 flex justify-between mt-auto">
                     <span className="text-xs text-gray-400">
@@ -395,9 +526,9 @@ const CryptoNews: React.FC = () => {
                                 {formatPublishedDate(news.publishedAt)}
                               </span>
                             </div>
-                            <CardTitle className="text-xl">{news.title}</CardTitle>
+                            <CardTitle className="text-xl">{getTranslatedNewsTitle(news.title)}</CardTitle>
                             <CardDescription className="line-clamp-2 mt-2">
-                              {news.content}
+                              {getTranslatedNewsContent(news.content)}
                             </CardDescription>
                           </CardHeader>
                           <CardFooter className="mt-auto">
