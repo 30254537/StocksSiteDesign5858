@@ -51,8 +51,11 @@ export default function Manage() {
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const response = await apiRequest("GET", "/api/products");
+      // 添加时间戳参数避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/products?t=${timestamp}`);
       const productData = await response.json();
+      console.log("刷新获取的产品数据:", productData);
       setProducts(productData);
     } catch (error) {
       toast({
@@ -467,7 +470,16 @@ export default function Manage() {
                       body: formData,
                     });
                   } else {
-                    // 新增模式
+                    // 新增模式，确保至少有一个图片
+                    if (selectedFilesObjects.length === 0) {
+                      toast({
+                        title: "缺少图片",
+                        description: "请至少上传一张商品图片",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    console.log("提交新产品表单数据:", formData);
                     response = await fetch("/api/products", {
                       method: "POST",
                       body: formData,
