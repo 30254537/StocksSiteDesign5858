@@ -159,7 +159,15 @@ export const translations: Translations = {
     "music.uploadSuccess": "Music uploaded successfully",
     "music.uploadError": "Failed to upload music",
     "music.defaultTitle": "STONKS Music",
-    "music.defaultArtist": "DEX Music Lab"
+    "music.defaultArtist": "DEX Music Lab",
+    
+    // STONKS Price
+    "stonksPrice.loading": "Loading...",
+    "stonksPrice.error": "Price unavailable",
+    "stonksPrice.currentPrice": "Current Price",
+    "stonksPrice.equivalentAmount": "Equivalent",
+    "stonksPrice.converter": "USD to STONKS Converter",
+    "stonksPrice.contract": "Contract Address"
   },
   zh: {
     // Navigation
@@ -311,7 +319,15 @@ export const translations: Translations = {
     "music.uploadSuccess": "音乐上传成功",
     "music.uploadError": "音乐上传失败",
     "music.defaultTitle": "STONKS 音乐",
-    "music.defaultArtist": "DEX 音乐实验室"
+    "music.defaultArtist": "DEX 音乐实验室",
+    
+    // STONKS Price
+    "stonksPrice.loading": "加载中...",
+    "stonksPrice.error": "价格不可用",
+    "stonksPrice.currentPrice": "当前价格",
+    "stonksPrice.equivalentAmount": "等价金额",
+    "stonksPrice.converter": "美元转STONKS换算器",
+    "stonksPrice.contract": "合约地址"
   }
 };
 

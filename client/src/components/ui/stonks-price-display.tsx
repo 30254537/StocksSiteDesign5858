@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 // STONKS价格显示组件 - 简洁模式，用于顶部导航栏
 export function StonksPriceIndicator() {
-  const { currentPrice, loading, error } = useStonksPrice();
+  const { currentPrice, contractAddress, loading, error } = useStonksPrice();
   const { t } = useLanguage();
 
   if (loading) {
@@ -27,9 +27,15 @@ export function StonksPriceIndicator() {
   }
 
   return (
-    <div className="flex items-center text-sm font-mono">
+    <div className="flex items-center text-sm font-mono group relative">
       <span className="text-primary mr-1">$STONKS:</span>
       <span className="font-semibold">{formatCurrency(currentPrice)}</span>
+      
+      {/* 悬停显示合约地址 */}
+      <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-slate-900 p-2 rounded shadow-lg z-50 text-xs border border-accent/30 max-w-[300px] break-all">
+        <div className="text-gray-400 mb-1">{t('stonksPrice.contract')}:</div>
+        <code className="font-mono text-accent">{contractAddress}</code>
+      </div>
     </div>
   );
 }
@@ -41,7 +47,7 @@ interface StonksPriceDisplayProps {
 }
 
 export function StonksPriceDisplay({ amount, showConverter = false }: StonksPriceDisplayProps) {
-  const { currentPrice, loading, error, convertUsdToStonks } = useStonksPrice();
+  const { currentPrice, contractAddress, loading, error, convertUsdToStonks } = useStonksPrice();
   const { t } = useLanguage();
   const [customAmount, setCustomAmount] = React.useState<string>(amount?.toString() || '');
   
@@ -87,6 +93,12 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
         </div>
       )}
 
+      {/* 显示合约地址 */}
+      <div className="flex flex-col text-xs">
+        <div className="text-gray-400 mb-1">{t('stonksPrice.contract')}:</div>
+        <div className="font-mono text-accent break-all">{contractAddress}</div>
+      </div>
+      
       {showConverter && (
         <div className="mt-4 pt-3 border-t border-gray-700">
           <h4 className="text-sm mb-2">{t('stonksPrice.converter')}</h4>
