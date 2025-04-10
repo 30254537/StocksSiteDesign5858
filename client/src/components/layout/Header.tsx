@@ -108,27 +108,23 @@ export default function Header() {
               </Link>
             </div>
             
-            {/* 主导航 - 中间 - 波浪形倾斜排列 */}
+            {/* 主导航 - 中间 - 错落设计 */}
             <nav className="hidden md:flex flex-1 justify-center">
-              <div className="flex items-end gap-x-10">
-                {/* 第一列 - 偏上 */}
-                <div className="flex flex-col items-center -translate-y-2">
+              <div className="flex flex-col items-center">
+                <div className="flex items-center space-x-16 mb-3">
                   <Link 
                     href="/" 
-                    className={`font-medium text-lg transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
                       location === "/" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
                   >
                     {t("nav.home")}
                   </Link>
-                </div>
-                
-                {/* 第二列 - 偏下 */}
-                <div className="flex flex-col items-center translate-y-2">
+                  
                   <Link 
                     href="/about" 
-                    className={`font-medium text-lg transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
                       location === "/about" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
@@ -137,25 +133,21 @@ export default function Header() {
                   </Link>
                 </div>
                 
-                {/* 第三列 - 偏上 */}
-                <div className="flex flex-col items-center -translate-y-2">
+                <div className="flex items-center space-x-16 mt-3">
                   <a 
                     href="/#products" 
-                    className={`font-medium text-lg transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
                       location.includes("#products") ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={handleProductsClick}
                   >
                     {t("nav.products")}
                   </a>
-                </div>
-                
-                {/* 第四列 - 偏下 */}
-                <div className="flex flex-col items-center translate-y-2">
+                  
                   <a 
                     href="https://t.me/STONKSOPEN" 
                     target="_blank"
-                    className="font-medium text-lg text-white hover:text-accent transition-colors duration-300 whitespace-nowrap"
+                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 whitespace-nowrap"
                   >
                     {t("nav.community")}
                   </a>
