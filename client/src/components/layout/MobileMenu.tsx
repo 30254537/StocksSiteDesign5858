@@ -30,16 +30,10 @@ const handleProductsClick = (e: React.MouseEvent, onClose: () => void) => {
     }
   } else {
     // 如果不在首页，使用前端路由而不是重新加载页面
+    sessionStorage.setItem('scrollToProducts', 'true');
     window.history.pushState({}, '', '/');
-    setTimeout(() => {
-      const productsSection = document.getElementById('products');
-      if (productsSection) {
-        window.scrollTo({
-          top: productsSection.offsetTop - 100,
-          behavior: 'smooth'
-        });
-      }
-    }, 100);
+    // 触发路由变化事件以使前端路由更新
+    window.dispatchEvent(new PopStateEvent('popstate'));
   }
 };
 
@@ -156,9 +150,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <span className={language === 'en' ? 'text-accent font-bold' : 'text-white'}>EN</span>
               </div>
               
-              {/* Music Player */}
-              <div className="flex items-center">
-                <MusicPlayer />
+              {/* Music Player - 使用内联音乐控制而不是完整播放器 */}
+              <div className="flex items-center" onClick={(e) => e.preventDefault()}>
+                <MusicPlayer minimal={true} />
               </div>
             </div>
           </div>

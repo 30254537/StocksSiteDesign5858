@@ -9,7 +9,11 @@ export function MiniMusicPlayer() {
   return (
     <div 
       className="flex items-center cursor-pointer" 
-      onClick={togglePlay}
+      onClick={(e) => {
+        e.preventDefault(); // 防止链接点击导航
+        e.stopPropagation(); // 阻止事件冒泡
+        togglePlay();
+      }}
     >
       <div className="w-7 h-7 bg-accent/10 rounded-full flex items-center justify-center overflow-hidden">
         <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center">

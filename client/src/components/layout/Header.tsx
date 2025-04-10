@@ -31,9 +31,12 @@ const handleProductsClick = (e: React.MouseEvent) => {
       });
     }
   } else {
-    // 如果不在首页，先设置标记，然后使用历史API导航到首页
+    // 如果不在首页，先设置标记，然后使用前端路由导航到首页
     sessionStorage.setItem('scrollToProducts', 'true');
-    window.location.href = "/";
+    // 使用前端路由导航而不是刷新页面
+    window.history.pushState({}, '', '/');
+    // 触发页面内容重新加载，但不是整页刷新
+    window.dispatchEvent(new PopStateEvent('popstate'));
   }
 };
 

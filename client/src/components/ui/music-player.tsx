@@ -13,12 +13,14 @@ interface MusicPlayerProps {
   tracks?: MusicTrack[];
   currentTrackIndex?: number;
   onTrackChange?: (index: number) => void;
+  minimal?: boolean; // 简化版模式，仅显示播放/暂停按钮
 }
 
 const MusicPlayer = ({ 
   tracks = [], 
   currentTrackIndex = 0, 
-  onTrackChange = () => {} 
+  onTrackChange = () => {},
+  minimal = false
 }: MusicPlayerProps) => {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -126,7 +128,39 @@ const MusicPlayer = ({
   };
 
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
+
+  // 如果是精简模式，只显示播放/暂停按钮
+  if (minimal) {
+    return (
+      <div className="flex items-center space-x-2">
+        <Button 
+          size="icon"
+          variant="ghost"
+          onClick={(e) => {
+            e.preventDefault(); // 防止链接导航
+            togglePlay();
+          }}
+          className={`rounded-full bg-primary/10 border-primary/30 hover:bg-primary/20 text-primary transition-all duration-300 ${
+            beatIntensity > 0.6 ? 'scale-110' : ''
+          }`}
+          style={{
+            boxShadow: `0 0 ${5 + beatIntensity * 10}px ${beatIntensity * 5}px rgba(0, 255, 204, ${beatIntensity * 0.4})`
+          }}
+        >
+          {isPlaying ? (
+            <Pause size={16} className="text-accent" />
+          ) : (
+            <Play size={16} className="text-accent ml-0.5" />
+          )}
+        </Button>
+        <span className="text-xs text-accent">
+          {currentTrack?.title || t('music.defaultTitle')}
+        </span>
+      </div>
+    );
+  }
   
+  // 完整播放器模式
   return (
     <Card className="w-full bg-background/80 backdrop-blur-sm border-primary/20 overflow-hidden">
       <CardContent className="p-4">
