@@ -190,11 +190,6 @@ const CryptoForm = () => {
         <p className="mb-4 text-sm">
           {t('checkout.amountToSend')}: <strong>{formatEth(totalEthPrice)}</strong>
         </p>
-        
-        {/* 显示STONKS实时价格信息 */}
-        <div className="mt-4 mb-4">
-          <StonksPriceDisplay amount={totalEthPrice} showConverter={true} />
-        </div>
       </div>
       
       <div className="mb-6">
@@ -307,7 +302,7 @@ const OrderSummary = () => {
       
       {/* 添加STONKS实时价格转换信息 */}
       <div className="mt-4 border-t border-gray-700 pt-4">
-        <StonksPriceDisplay amount={totalPrice} showConverter={true} />
+        <StonksPriceDisplay amount={totalPrice} showConverter={false} />
       </div>
     </div>
   );
