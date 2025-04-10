@@ -167,7 +167,7 @@ const CryptoForm = () => {
   const [transactionHash, setTransactionHash] = useState('');
   const [, setLocation] = useLocation();
   const { t } = useLanguage();
-  const { cartItems, totalEthPrice, clearCart } = useCart();
+  const { cartItems, totalEthPrice, totalPrice, clearCart } = useCart();
   const { toast } = useToast();
   const { currentPrice, convertUsdToStonks } = useStonksPrice();
   const [shippingAddress, setShippingAddress] = useState('');
@@ -222,7 +222,7 @@ const CryptoForm = () => {
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
         </div>
         <p className="mb-4 text-sm">
-          {t('checkout.amountToSend')}: <strong>{formatEth(totalEthPrice)}</strong>
+          {t('checkout.amountToSend')}: <strong>⊙ {convertUsdToStonks(totalPrice).toFixed(6)} $STONKS</strong>
         </p>
       </div>
       
