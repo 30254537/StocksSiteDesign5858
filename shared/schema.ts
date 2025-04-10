@@ -137,3 +137,26 @@ export type InsertSubscriber = z.infer<typeof insertSubscriberSchema>;
 export type CartItemWithProduct = CartItem & { product: Product };
 export type OrderWithItems = Order & { items: (OrderItem & { product: Product })[] };
 export type OrderItemWithProduct = OrderItem & { product: Product };
+
+// Music Models
+export const musicTracks = pgTable("music_tracks", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  artist: text("artist").default("Unknown Artist"),
+  filename: text("filename").notNull(),
+  url: text("url").notNull(),
+  duration: doublePrecision("duration").notNull().default(0),
+  isPublic: integer("is_public").default(1),
+  createdBy: integer("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertMusicTrackSchema = createInsertSchema(musicTracks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type MusicTrack = typeof musicTracks.$inferSelect;
+export type InsertMusicTrack = z.infer<typeof insertMusicTrackSchema>;

@@ -59,3 +59,31 @@ export function calculateCartTotals(cartItems: any[]) {
     totalItems: cartItems.reduce((sum, item) => sum + item.quantity, 0)
   };
 }
+
+/**
+ * Format seconds into MM:SS format
+ * @param seconds - Duration in seconds
+ */
+export function formatDuration(seconds: number): string {
+  if (!seconds || isNaN(seconds)) return '0:00';
+  
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Get file extension from filename
+ */
+export function getFileExtension(filename: string): string {
+  return filename.split('.').pop()?.toLowerCase() || '';
+}
+
+/**
+ * Check if file is an audio file
+ */
+export function isAudioFile(filename: string): boolean {
+  const ext = getFileExtension(filename);
+  return ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'].includes(ext);
+}

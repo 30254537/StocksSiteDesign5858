@@ -130,7 +130,32 @@ export const translations: Translations = {
     "audio.save": "Save",
     "audio.localMusic": "Local Music (Default)",
     "audio.youtubeMusic": "YouTube Music",
-    "cart.itemsInCart": "Items in your cart"
+    "cart.itemsInCart": "Items in your cart",
+    
+    // Music Page
+    "music.title": "STONKS Music Hub",
+    "music.subtitle": "Discover the rhythm of blockchain",
+    "music.uploadTitle": "Upload Your Tracks",
+    "music.dragDrop": "Drag and drop audio files here",
+    "music.browse": "Browse Files",
+    "music.uploading": "Uploading...",
+    "music.upload": "Upload",
+    "music.cancel": "Cancel",
+    "music.tracksTitle": "Featured Tracks",
+    "music.allTracks": "All Tracks",
+    "music.newReleases": "New Releases",
+    "music.trending": "Trending",
+    "music.adminTitle": "Music Management",
+    "music.fileName": "File Name",
+    "music.trackTitle": "Track Title",
+    "music.artist": "Artist",
+    "music.duration": "Duration",
+    "music.actions": "Actions",
+    "music.delete": "Delete",
+    "music.edit": "Edit",
+    "music.save": "Save Changes",
+    "music.uploadSuccess": "Music uploaded successfully",
+    "music.uploadError": "Failed to upload music"
   },
   zh: {
     // Navigation
@@ -255,7 +280,32 @@ export const translations: Translations = {
     "audio.save": "保存",
     "audio.localMusic": "本地音乐 (默认)",
     "audio.youtubeMusic": "YouTube 音乐",
-    "cart.itemsInCart": "购物车中的商品"
+    "cart.itemsInCart": "购物车中的商品",
+    
+    // Music Page
+    "music.title": "STONKS 音乐中心",
+    "music.subtitle": "探索区块链的节奏",
+    "music.uploadTitle": "上传你的音乐",
+    "music.dragDrop": "拖放音频文件至此",
+    "music.browse": "浏览文件",
+    "music.uploading": "上传中...",
+    "music.upload": "上传",
+    "music.cancel": "取消",
+    "music.tracksTitle": "精选歌曲",
+    "music.allTracks": "全部歌曲",
+    "music.newReleases": "最新发布",
+    "music.trending": "热门趋势",
+    "music.adminTitle": "音乐管理",
+    "music.fileName": "文件名",
+    "music.trackTitle": "歌曲名称",
+    "music.artist": "艺术家",
+    "music.duration": "时长",
+    "music.actions": "操作",
+    "music.delete": "删除",
+    "music.edit": "编辑",
+    "music.save": "保存更改",
+    "music.uploadSuccess": "音乐上传成功",
+    "music.uploadError": "音乐上传失败"
   }
 };
 

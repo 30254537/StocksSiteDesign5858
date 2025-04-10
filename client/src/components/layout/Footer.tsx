@@ -50,8 +50,8 @@ export default function Footer() {
               <a href="https://t.me/STONKSOPEN" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
                 <i className="fa-brands fa-telegram"></i>
               </a>
-              <a href="#" className="hover:text-white transition-colors duration-300">
-                <i className="fa-brands fa-medium"></i>
+              <a href="/music" className="hover:text-white transition-colors duration-300">
+                <i className="fa-solid fa-music"></i>
               </a>
             </div>
           </div>
