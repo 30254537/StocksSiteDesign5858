@@ -28,12 +28,12 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// 管理员会话变量
-let adminLoggedIn = false;
+// 管理员会话变量 (使用全局变量以便其他模块可以访问)
+global.adminLoggedIn = false;
 
 // 保护管理路由的中间件
 const requireAdmin = (req: Request, res: Response, next: Function) => {
-  if (adminLoggedIn) {
+  if (global.adminLoggedIn) {
     next();
   } else {
     res.status(401).json({ message: "需要管理员权限" });
@@ -302,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 验证密码 (在真实应用中，我们会使用 bcrypt 比较哈希密码)
       if (password === "123456") {
         // 设置管理员会话
-        adminLoggedIn = true;
+        global.adminLoggedIn = true;
         
         // 响应
         res.status(200).json({ message: "登录成功" });
@@ -317,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 检查管理员认证状态
   app.get('/api/check-admin-auth', (req, res) => {
-    if (adminLoggedIn) {
+    if (global.adminLoggedIn) {
       res.status(200).json({ authenticated: true });
     } else {
       res.status(401).json({ authenticated: false });
@@ -326,7 +326,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 管理员登出端点
   app.post('/api/admin-logout', (req, res) => {
-    adminLoggedIn = false;
+    global.adminLoggedIn = false;
     res.status(200).json({ message: "已登出" });
   });
   

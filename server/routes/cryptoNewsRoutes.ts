@@ -1,6 +1,20 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { storage } from '../storage';
 import { fetchAndStoreNews } from '../services/cryptoNewsService';
+
+// 引入全局管理员变量(这里使用声明扩展接口的方式)
+declare global {
+  var adminLoggedIn: boolean;
+}
+
+// 管理员权限检查中间件
+const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (global.adminLoggedIn) {
+    next();
+  } else {
+    res.status(401).json({ success: false, message: "需要管理员权限" });
+  }
+};
 
 const router = Router();
 
@@ -71,17 +85,25 @@ router.get('/news/:id', async (req: Request, res: Response) => {
 });
 
 // 手动触发新闻获取 (仅限管理员)
-router.post('/news/fetch', async (req: Request, res: Response) => {
+router.post('/news/fetch', requireAdmin, async (req: Request, res: Response) => {
   try {
-    // 这里应该添加管理员权限检查，但为简单起见，暂时不添加
+    console.log('管理员请求手动获取加密货币新闻');
     const addedCount = await fetchAndStoreNews();
+    
+    // 记录抓取结果
+    console.log(`管理员手动获取成功，添加了 ${addedCount} 条新的加密货币新闻`);
+    
     res.json({ 
       success: true, 
       message: `成功获取并添加 ${addedCount} 条新的加密货币新闻` 
     });
   } catch (error) {
-    console.error('手动获取加密货币新闻失败:', error);
-    res.status(500).json({ error: '获取加密货币新闻时发生错误' });
+    console.error('管理员手动获取加密货币新闻失败:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: '获取加密货币新闻时发生错误',
+      message: error instanceof Error ? error.message : String(error)
+    });
   }
 });
 
