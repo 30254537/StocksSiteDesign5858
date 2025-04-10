@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import OrderManagement from "@/components/OrderManagement";
+import { X } from "lucide-react";
 
 export default function Manage() {
   const { t } = useLanguage();
@@ -202,6 +203,29 @@ export default function Manage() {
     const stockInput = document.getElementById("product-stock") as HTMLInputElement;
     if (stockInput) stockInput.value = product.stock?.toString() || "0";
     
+    // 设置类别
+    try {
+      const categoryTrigger = document.querySelector('[data-id="product-category"]');
+      if (categoryTrigger) {
+        // 更新 data-value 属性
+        categoryTrigger.setAttribute('data-value', product.category || 'clothing');
+        
+        // 更新显示文本
+        const valueElement = categoryTrigger.querySelector('[data-radix-select-value-id]');
+        if (valueElement) {
+          const categoryMap: {[key: string]: string} = {
+            'clothing': '服装',
+            'accessories': '配件',
+            'collectibles': '收藏品',
+            'other': '其他'
+          };
+          valueElement.textContent = categoryMap[product.category] || '服装';
+        }
+      }
+    } catch (e) {
+      console.error("设置类别选择器失败:", e);
+    }
+    
     // 设置复选框
     const featuredCheckbox = document.getElementById("product-featured") as HTMLInputElement;
     if (featuredCheckbox) featuredCheckbox.checked = Boolean(product.featured);
@@ -389,7 +413,7 @@ export default function Manage() {
                 const description = (document.getElementById("product-description") as HTMLTextAreaElement).value;
                 const stock = parseInt((document.getElementById("product-stock") as HTMLInputElement).value || "0");
                 const featured = (document.getElementById("product-featured") as HTMLInputElement).checked;
-                const categoryElement = document.querySelector('[data-value]');
+                const categoryElement = document.querySelector('[data-id="product-category"]');
                 const category = categoryElement ? categoryElement.getAttribute('data-value') || 'clothing' : 'clothing';
                 const hasSizes = (document.getElementById("product-hasSizes") as HTMLInputElement).checked;
                 
@@ -404,7 +428,7 @@ export default function Manage() {
                 }
                 
                 // 创建产品数据对象并作为JSON字符串添加到表单
-                const productData = {
+                const productData: any = {
                   name,
                   price,
                   description,
@@ -413,6 +437,15 @@ export default function Manage() {
                   category,
                   hasSizes: hasSizes ? 1 : 0   // 转换为整数
                 };
+                
+                // 添加现有图片信息 (编辑模式需要)
+                if (editingProduct) {
+                  // 保留现有图片信息
+                  productData.existingImages = editingProduct.imageUrls || [];
+                  if (editingProduct.imageUrl && !productData.existingImages.includes(editingProduct.imageUrl)) {
+                    productData.existingImages.unshift(editingProduct.imageUrl);
+                  }
+                }
                 
                 // 将产品数据作为JSON字符串添加
                 formData.append("productData", JSON.stringify(productData));
@@ -607,22 +640,66 @@ export default function Manage() {
                     <div className="mt-4">
                       <p className="text-sm font-medium mb-2">当前图片:</p>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="relative w-24 h-24 bg-primary/30 rounded overflow-hidden">
+                        {/* 主图 */}
+                        <div className="relative w-24 h-24 bg-primary/30 rounded overflow-hidden group">
                           <img
                             src={editingProduct.imageUrl}
                             alt={editingProduct.name}
                             className="w-full h-full object-cover"
                           />
+                          <button
+                            type="button"
+                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity"
+                            onClick={() => {
+                              // 确认删除
+                              if (!window.confirm('确定要删除此图片吗？这将影响产品展示')) return;
+                              
+                              const newImages = editingProduct.imageUrls?.filter(img => img !== editingProduct.imageUrl) || [];
+                              
+                              // 更新编辑中的产品
+                              setEditingProduct({
+                                ...editingProduct,
+                                imageUrl: newImages.length > 0 ? newImages[0] : '',
+                                imageUrls: newImages
+                              });
+                            }}
+                          >
+                            <X size={18} />
+                          </button>
                         </div>
-                        {editingProduct.imageUrls && editingProduct.imageUrls.map((img: string, idx: number) => (
-                          <div key={idx} className="relative w-24 h-24 bg-primary/30 rounded overflow-hidden">
-                            <img
-                              src={img}
-                              alt={`${editingProduct.name} ${idx + 2}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ))}
+                        
+                        {/* 其他图片 */}
+                        {editingProduct.imageUrls && editingProduct.imageUrls
+                          .filter(img => img !== editingProduct.imageUrl) 
+                          .map((img: string, idx: number) => (
+                            <div key={idx} className="relative w-24 h-24 bg-primary/30 rounded overflow-hidden group">
+                              <img
+                                src={img}
+                                alt={`${editingProduct.name} ${idx + 2}`}
+                                className="w-full h-full object-cover"
+                              />
+                              <button
+                                type="button"
+                                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity"
+                                onClick={() => {
+                                  // 确认删除
+                                  if (!window.confirm('确定要删除此图片吗？')) return;
+                                  
+                                  // 从图片列表中移除该图片
+                                  const newImages = editingProduct.imageUrls?.filter(image => image !== img) || [];
+                                  
+                                  // 更新编辑中的产品
+                                  setEditingProduct({
+                                    ...editingProduct,
+                                    imageUrls: newImages
+                                  });
+                                }}
+                              >
+                                <X size={18} />
+                              </button>
+                            </div>
+                          ))
+                        }
                       </div>
                     </div>
                   )}
