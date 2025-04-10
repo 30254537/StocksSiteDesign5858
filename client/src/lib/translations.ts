@@ -169,6 +169,10 @@ export const translations: Translations = {
     "stonksPrice.converter": "USD to STONKS Converter",
     "stonksPrice.contract": "Contract Address",
     
+    // Contact Info
+    "contact.email": "support@stonksdex.io",
+    "contact.address": "Singapore, Blockchain Tower #42-01",
+    
     // Product Names
     "product.name.1": "KUBE Hoodie",
     "product.name.2": "DEX Baseball Cap",
@@ -351,7 +355,11 @@ export const translations: Translations = {
     "stonksPrice.currentPrice": "当前价格",
     "stonksPrice.equivalentAmount": "等价金额",
     "stonksPrice.converter": "美元转STONKS换算器",
-    "stonksPrice.contract": "合约地址"
+    "stonksPrice.contract": "合约地址",
+    
+    // Contact Info
+    "contact.email": "support@stonksdex.io",
+    "contact.address": "新加坡, 区块链大厦 #42-01"
   }
 };
 

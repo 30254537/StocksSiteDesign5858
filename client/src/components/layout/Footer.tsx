@@ -109,11 +109,11 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-start">
                 <i className="fas fa-envelope mt-1 mr-2 text-accent"></i>
-                <span>support@stonksdex.io</span>
+                <span>{t("contact.email")}</span>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-2 text-accent"></i>
-                <span>新加坡, 区块链大厦 #42-01</span>
+                <span>{t("contact.address")}</span>
               </li>
             </ul>
           </div>
