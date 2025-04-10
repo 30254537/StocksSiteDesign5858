@@ -382,7 +382,8 @@ export default function Manage() {
                 const description = (document.getElementById("product-description") as HTMLTextAreaElement).value;
                 const stock = parseInt((document.getElementById("product-stock") as HTMLInputElement).value || "0");
                 const featured = (document.getElementById("product-featured") as HTMLInputElement).checked;
-                const category = (document.getElementById("product-category") as HTMLSelectElement).value;
+                const categoryElement = document.querySelector('[data-value]');
+                const category = categoryElement ? categoryElement.getAttribute('data-value') || 'clothing' : 'clothing';
                 const hasSizes = (document.getElementById("product-hasSizes") as HTMLInputElement).checked;
                 
                 // 基本验证
@@ -503,8 +504,8 @@ export default function Manage() {
                   <label htmlFor="product-category" className="block text-sm font-medium">
                     产品类别
                   </label>
-                  <Select defaultValue="clothing" id="product-category">
-                    <SelectTrigger className="bg-primary/50 border-accent">
+                  <Select defaultValue="clothing">
+                    <SelectTrigger className="bg-primary/50 border-accent" data-id="product-category">
                       <SelectValue placeholder="选择类别" />
                     </SelectTrigger>
                     <SelectContent>
@@ -601,7 +602,7 @@ export default function Manage() {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        {editingProduct.additionalImages?.map((img, idx) => (
+                        {editingProduct.imageUrls && editingProduct.imageUrls.map((img: string, idx: number) => (
                           <div key={idx} className="relative w-24 h-24 bg-primary/30 rounded overflow-hidden">
                             <img
                               src={img}
@@ -756,8 +757,10 @@ export default function Manage() {
                 
                 // 获取表单数据
                 const addressId = document.getElementById("address-id")?.getAttribute("value");
-                const network = (document.getElementById("address-network") as HTMLSelectElement).value;
-                const coinType = (document.getElementById("address-coin-type") as HTMLSelectElement).value;
+                const networkElement = document.querySelector('[data-id="address-network"]');
+                const network = networkElement ? networkElement.getAttribute('data-value') || 'solana' : 'solana';
+                const coinTypeElement = document.querySelector('[data-id="address-coin-type"]');
+                const coinType = coinTypeElement ? coinTypeElement.getAttribute('data-value') || 'stonks' : 'stonks';
                 const address = (document.getElementById("address-value") as HTMLInputElement).value;
                 
                 // 基本验证
@@ -821,8 +824,8 @@ export default function Manage() {
                   <label htmlFor="address-network" className="block text-sm font-medium">
                     区块链网络
                   </label>
-                  <Select defaultValue="solana" id="address-network">
-                    <SelectTrigger className="bg-primary/50 border-accent">
+                  <Select defaultValue="solana">
+                    <SelectTrigger className="bg-primary/50 border-accent" data-id="address-network">
                       <SelectValue placeholder="选择网络" />
                     </SelectTrigger>
                     <SelectContent>
@@ -839,8 +842,8 @@ export default function Manage() {
                   <label htmlFor="address-coin-type" className="block text-sm font-medium">
                     币种类型
                   </label>
-                  <Select defaultValue="stonks" id="address-coin-type">
-                    <SelectTrigger className="bg-primary/50 border-accent">
+                  <Select defaultValue="stonks">
+                    <SelectTrigger className="bg-primary/50 border-accent" data-id="address-coin-type">
                       <SelectValue placeholder="选择币种" />
                     </SelectTrigger>
                     <SelectContent>
