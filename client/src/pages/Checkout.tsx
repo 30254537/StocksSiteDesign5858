@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, CreditCard, Bitcoin, RefreshCw } from 'lucide-react';
+import { Loader2, Bitcoin, RefreshCw, DollarSign } from 'lucide-react';
 import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
 
 // USDT到STONKS换算器组件
@@ -53,8 +53,8 @@ const UsdtToStonksConverter = () => {
 // Make sure to use environment variable to get public key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-// Credit card checkout form
-const CreditCardForm = () => {
+// USDT checkout form
+const UsdtForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -121,6 +121,20 @@ const CreditCardForm = () => {
     setIsLoading(false);
   };
 
+  // 添加USDT链选择
+  const [selectedUsdtChain, setSelectedUsdtChain] = useState('trc20');
+  
+  // USDT链选项
+  const usdtChains = [
+    { id: 'trc20', name: 'TRC20 (TRON)', logo: '⚡️', address: 'TNVaUw4sDHsVzsHx7ZQKGQQGbM12QyR4TF' },
+    { id: 'erc20', name: 'ERC20 (Ethereum)', logo: '🔷', address: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' },
+    { id: 'bep20', name: 'BEP20 (BSC)', logo: '🟡', address: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' },
+    { id: 'sol', name: 'Solana', logo: '🟣', address: '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump' }
+  ];
+  
+  // 获取当前选择的链的地址
+  const currentChainAddress = usdtChains.find(chain => chain.id === selectedUsdtChain)?.address || '';
+  
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-6">
@@ -133,6 +147,36 @@ const CreditCardForm = () => {
           value={shippingAddress}
           onChange={(e) => setShippingAddress(e.target.value)}
         />
+      </div>
+      
+      {/* USDT链选择 */}
+      <div className="mb-6">
+        <label className="block mb-2 text-sm font-medium">
+          选择USDT网络
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          {usdtChains.map(chain => (
+            <div 
+              key={chain.id}
+              className={`p-3 rounded-md cursor-pointer border transition-all duration-200 ${
+                selectedUsdtChain === chain.id 
+                  ? 'border-accent bg-accent/10 text-white' 
+                  : 'border-gray-700 hover:border-gray-500'
+              }`}
+              onClick={() => setSelectedUsdtChain(chain.id)}
+            >
+              <div className="flex items-center">
+                <span className="mr-2">{chain.logo}</span>
+                <span>{chain.name}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <div className="mt-4 p-3 bg-slate-800 rounded-md font-mono text-sm break-all">
+          <p className="text-xs text-gray-400 mb-1">USDT {t('checkout.receiveAddress')} ({usdtChains.find(c => c.id === selectedUsdtChain)?.name}):</p>
+          {currentChainAddress}
+        </div>
       </div>
       
       <PaymentElement className="mb-6" />
@@ -151,7 +195,7 @@ const CreditCardForm = () => {
           </>
         ) : (
           <>
-            <CreditCard className="mr-2 h-4 w-4" />
+            <DollarSign className="mr-2 h-4 w-4" />
             {t('checkout.payNow')}
           </>
         )}
@@ -422,7 +466,7 @@ export default function Checkout() {
             <Tabs defaultValue="card">
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="card">
-                  <CreditCard className="mr-2 h-4 w-4" />
+                  <DollarSign className="mr-2 h-4 w-4" />
                   {t('checkout.creditCard')}
                 </TabsTrigger>
                 <TabsTrigger value="crypto">
@@ -445,7 +489,7 @@ export default function Checkout() {
                       } 
                     }}
                   >
-                    <CreditCardForm />
+                    <UsdtForm />
                   </Elements>
                 ) : (
                   <div className="flex items-center justify-center py-6">
