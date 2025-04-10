@@ -56,6 +56,13 @@ export interface IStorage {
   getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
   createSubscriber(subscriber: InsertSubscriber): Promise<Subscriber>;
   unsubscribe(email: string): Promise<boolean>;
+  
+  // Music operations
+  getMusicTracks(): Promise<MusicTrack[]>;
+  getMusicTrackById(id: number): Promise<MusicTrack | undefined>;
+  createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack>;
+  updateMusicTrack(id: number, track: Partial<MusicTrack>): Promise<MusicTrack | undefined>;
+  deleteMusicTrack(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
