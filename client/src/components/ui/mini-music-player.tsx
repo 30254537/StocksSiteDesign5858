@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 // 导航栏使用的迷你音乐播放器
 export function MiniMusicPlayer() {
   const { isPlaying, togglePlay } = useAudio();
+  const { language } = useLanguage();
   
   return (
     <div 
@@ -21,7 +22,9 @@ export function MiniMusicPlayer() {
         </div>
       </div>
       <div className="ml-1.5">
-        <span className="text-xs text-accent">STONKS MUSIC</span>
+        <span className={`text-xs text-accent ${language === 'en' ? 'whitespace-nowrap min-w-[90px]' : ''}`}>
+          STONKS MUSIC
+        </span>
       </div>
     </div>
   );

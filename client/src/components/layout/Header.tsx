@@ -109,7 +109,7 @@ export default function Header() {
             </div>
             
             {/* 主导航 - 中间 */}
-            <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
+            <nav className="hidden md:flex items-center space-x-8 flex-1 justify-center">
               <Link 
                 href="/" 
                 className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
@@ -150,15 +150,15 @@ export default function Header() {
             </nav>
             
             {/* 功能控件 - 右侧 */}
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-8">
               {/* 迷你音乐播放器 */}
-              <div className="hidden md:block">
+              <div className="hidden md:block mr-2">
                 <MiniMusicPlayer />
               </div>
               
               {/* 购物车按钮（仅桌面端） */}
               <button
-                className="relative hidden md:flex items-center justify-center text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer ml-4"
+                className="relative hidden md:flex items-center justify-center text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 onClick={openCart}
               >
                 <i className="fas fa-shopping-cart text-lg"></i>
@@ -171,7 +171,7 @@ export default function Header() {
               
               {/* 语言切换 - 右侧角落 */}
               <button
-                className="hidden md:block text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer ml-4"
+                className="hidden md:block text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 onClick={toggleLanguage}
               >
                 {language === 'en' ? 'EN' : '中文'}
