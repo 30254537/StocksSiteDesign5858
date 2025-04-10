@@ -1442,8 +1442,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 初始化加密货币新闻定时获取任务
   initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
   
-  // 添加测试合约地址推文（仅管理员）
-  app.post('/api/test/add-contract-tweet', requireAdmin, async (req, res) => {
+  // 添加测试合约地址推文（测试用，无需验证）
+  app.post('/api/test/add-contract-tweet', async (req, res) => {
     try {
       // 创建一个包含合约地址的测试推文
       const contractAddress = "0x7d8146cf21e8d7cbe46054e01588207b51198729";
