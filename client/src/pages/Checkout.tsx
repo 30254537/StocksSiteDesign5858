@@ -179,13 +179,13 @@ const CryptoForm = () => {
     <form onSubmit={handleSubmit}>
       <div className="mb-6">
         <p className="mb-4 text-sm">
-          {t('checkout.sendEthToAddress')}:
+          {t('checkout.sendTokensToAddress')}:
         </p>
         <div className="bg-slate-800 p-3 rounded-md font-mono text-sm mb-4 break-all">
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
         </div>
         <p className="mb-4 text-sm">
-          {t('checkout.amountToSend')}: <strong>{formatEth(totalEthPrice)} ETH</strong>
+          {t('checkout.amountToSend')}: <strong>{formatEth(totalEthPrice)} $STONKS</strong>
         </p>
       </div>
       
@@ -292,8 +292,8 @@ const OrderSummary = () => {
       </div>
       
       <div className="flex justify-between text-sm text-gray-500">
-        <div>{t('checkout.orEthereum')}</div>
-        <div>{formatEth(totalEthPrice)} ETH</div>
+        <div>{t('checkout.orCrypto')}</div>
+        <div>{formatEth(totalEthPrice)} $STONKS</div>
       </div>
     </div>
   );
