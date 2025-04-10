@@ -9,9 +9,9 @@ import {
   CardFooter, 
   CardHeader, 
   CardTitle 
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+} from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
+import { Button } from '../components/ui/button';
 import {
   Pagination,
   PaginationContent,
@@ -19,15 +19,15 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Layout from '@/components/layout/Layout';
-import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
-import LoadingSkeleton from '@/components/ui/loading-skeleton';
-import { CryptoNewsType } from '@/types';
+} from "../components/ui/pagination";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import Layout from '../components/layout/Layout';
+import { StonksPriceDisplay } from '../components/ui/stonks-price-display';
+import LoadingSkeleton from '../components/ui/loading-skeleton';
+import { CryptoNewsType } from '../types';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const PAGE_SIZE = 10;
 
@@ -106,7 +106,7 @@ const CryptoNews: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-teal-400">
-            {t('CryptoNews.title', '加密货币新闻')}
+            {t('cryptoNews.title')}
           </h1>
           <StonksPriceDisplay />
         </div>
@@ -134,7 +134,7 @@ const CryptoNews: React.FC = () => {
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <Badge className="bg-teal-500 hover:bg-teal-600">
-                      {t('CryptoNews.featured', '置顶')}
+                      {t('cryptoNews.featured')}
                     </Badge>
                     <Badge variant="outline">{news.source}</Badge>
                   </div>
@@ -146,7 +146,7 @@ const CryptoNews: React.FC = () => {
                   </span>
                   <Button variant="link" asChild>
                     <a href={news.sourceUrl} target="_blank" rel="noopener noreferrer">
-                      {t('CryptoNews.readMore', '阅读更多')}
+                      {t('cryptoNews.readMore')}
                     </a>
                   </Button>
                 </CardFooter>
@@ -159,7 +159,7 @@ const CryptoNews: React.FC = () => {
         <Tabs defaultValue="all" className="mb-6">
           <TabsList className="mb-4">
             <TabsTrigger value="all" onClick={() => handleCategoryChange('all')}>
-              {t('CryptoNews.allNews', '全部新闻')}
+              {t('cryptoNews.allNews')}
             </TabsTrigger>
             <TabsTrigger value="bitcoin" onClick={() => handleCategoryChange('bitcoin')}>
               Bitcoin
@@ -185,13 +185,13 @@ const CryptoNews: React.FC = () => {
             ) : error ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-red-400">
-                  {t('CryptoNews.error', '获取新闻时出错')}
+                  {t('cryptoNews.error')}
                 </p>
               </div>
             ) : newsData && newsData.data.length === 0 ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-gray-400">
-                  {t('CryptoNews.noNews', '暂无新闻')}
+                  {t('cryptoNews.noNews')}
                 </p>
               </div>
             ) : (
@@ -224,7 +224,7 @@ const CryptoNews: React.FC = () => {
                         <CardFooter className="mt-auto">
                           <Button variant="link" asChild className="ml-auto">
                             <a href={news.sourceUrl} target="_blank" rel="noopener noreferrer">
-                              {t('CryptoNews.readMore', '阅读更多')}
+                              {t('cryptoNews.readMore')}
                             </a>
                           </Button>
                         </CardFooter>
