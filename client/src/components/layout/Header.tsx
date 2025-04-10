@@ -48,20 +48,7 @@ const handleProductsClick = (e: React.MouseEvent) => {
   }
 };
 
-// 音频控制按钮组件
-// 创建一个独立的组件来管理音频控制和播放状态
-function AudioControlButton() {
-  const { isPlaying, togglePlay } = useAudio();
-  
-  return (
-    <button
-      onClick={togglePlay}
-      className="w-8 h-8 rounded-full flex items-center justify-center bg-accent/20 text-accent hover:bg-accent/30 transition-colors"
-    >
-      <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'} text-sm`}></i>
-    </button>
-  );
-}
+// 音频控制已集成到迷你音乐播放器组件中
 
 export default function Header() {
   const [location] = useLocation();
@@ -163,13 +150,7 @@ export default function Header() {
             </nav>
             
             {/* 功能控件 - 右侧 */}
-            <div className="flex items-center space-x-3">
-              {/* 音频控制按钮和迷你音乐播放器组 */}
-              <div className="hidden md:flex items-center space-x-2">
-                <AudioControlButton />
-                <MiniMusicPlayer />
-              </div>
-              
+            <div className="flex items-center space-x-4">
               {/* 语言切换 */}
               <button
                 className="hidden md:block text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
@@ -190,6 +171,11 @@ export default function Header() {
                   </span>
                 )}
               </button>
+              
+              {/* 迷你音乐播放器 */}
+              <div className="hidden md:block">
+                <MiniMusicPlayer />
+              </div>
               
               {/* 移动菜单按钮 */}
               <button
