@@ -13,7 +13,7 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const productId = parseInt(id || '0');
   const { addToCart } = useCart();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -176,7 +176,11 @@ export default function ProductDetail() {
           
           {/* Product Details */}
           <div>
-            <h1 className="text-3xl font-orbitron font-bold mb-4">{product.name}</h1>
+            <h1 className="text-3xl font-orbitron font-bold mb-4">
+              {t(`product.name.${product.id}`) !== `product.name.${product.id}` 
+                ? t(`product.name.${product.id}`) 
+                : product.name}
+            </h1>
             
             {/* Price */}
             <div className="mb-6">

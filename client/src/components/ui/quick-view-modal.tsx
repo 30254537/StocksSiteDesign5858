@@ -20,7 +20,7 @@ interface QuickViewModalProps {
 
 export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
   const { addToCart } = useCart();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
 
@@ -57,7 +57,11 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
             
             {/* Product Details */}
             <div>
-              <DialogTitle className="text-2xl font-orbitron font-bold mb-4">{product.name}</DialogTitle>
+              <DialogTitle className="text-2xl font-orbitron font-bold mb-4">
+                {t(`product.name.${product.id}`) !== `product.name.${product.id}` 
+                  ? t(`product.name.${product.id}`) 
+                  : product.name}
+              </DialogTitle>
               
               {/* Price */}
               <div className="mb-6">

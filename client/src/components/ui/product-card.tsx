@@ -13,7 +13,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const { addToCart } = useCart();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -60,7 +60,9 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         <div className="p-4">
           <Link href={`/product/${product.id}`}>
             <h3 className="font-orbitron text-lg font-medium mb-2 hover:text-accent transition-colors cursor-pointer">
-              {product.name}
+              {t(`product.name.${product.id}`) !== `product.name.${product.id}` 
+                ? t(`product.name.${product.id}`) 
+                : product.name}
             </h3>
           </Link>
           <div className="flex justify-between items-center">
