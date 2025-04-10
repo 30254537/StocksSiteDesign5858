@@ -412,6 +412,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         productData.imageUrl = imageUrls[0]; // 第一张图片作为主图
       }
       
+      // 获取当前STONKS价格并计算ethPrice
+      if (isCacheExpired()) {
+        const realTimePrice = await fetchGmgnPrice();
+        cachedStonksPrice = {
+          price: realTimePrice,
+          lastUpdated: new Date()
+        };
+      }
+      
+      // 使用当前STONKS价格计算ethPrice
+      const stonksPrice = cachedStonksPrice.price;
+      productData.ethPrice = productData.price / stonksPrice;
+      console.log(`USD价格: ${productData.price}, STONKS价格: ${stonksPrice}, ethPrice: ${productData.ethPrice}`);
+      
       const product = await storage.createProduct(productData);
       res.status(201).json(product);
     } catch (error) {
@@ -470,6 +484,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // 删除临时属性
         delete productData.existingImages;
+      }
+      
+      // 如果价格有更新，需要重新计算ethPrice
+      if (productData.price !== undefined) {
+        // 获取当前STONKS价格
+        if (isCacheExpired()) {
+          const realTimePrice = await fetchGmgnPrice();
+          cachedStonksPrice = {
+            price: realTimePrice,
+            lastUpdated: new Date()
+          };
+        }
+        
+        // 使用当前STONKS价格计算ethPrice
+        const stonksPrice = cachedStonksPrice.price;
+        productData.ethPrice = productData.price / stonksPrice;
+        console.log(`USD价格: ${productData.price}, STONKS价格: ${stonksPrice}, ethPrice: ${productData.ethPrice}`);
       }
       
       const updatedProduct = await storage.updateProduct(id, productData);
