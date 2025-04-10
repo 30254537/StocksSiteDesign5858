@@ -167,7 +167,19 @@ export const translations: Translations = {
     "stonksPrice.currentPrice": "Current Price",
     "stonksPrice.equivalentAmount": "Equivalent",
     "stonksPrice.converter": "USD to STONKS Converter",
-    "stonksPrice.contract": "Contract Address"
+    "stonksPrice.contract": "Contract Address",
+    
+    // Product Names
+    "product.name.1": "KUBE Hoodie",
+    "product.name.2": "DEX Baseball Cap",
+    "product.name.3": "STONKS DEX T-shirt",
+    "product.name.4": "DEX Sticker Set",
+    "product.name.5": "STONKS BTC Hoodie",
+    "product.name.6": "STONKS Poster",
+    "product.name.7": "STONKS Poster",
+    "product.name.8": "Limited NFT",
+    "product.name.9": "STONKS Hoodie",
+    "product.name.10": "STONKS DEX Custom Sneakers"
   },
   zh: {
     // Navigation

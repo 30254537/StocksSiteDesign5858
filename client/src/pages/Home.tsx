@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { NeonText } from "@/components/ui/neon-text";
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   // 增强版滚动功能 - 支持URL哈希和会话存储标记
@@ -122,7 +122,7 @@ export default function Home() {
             {/* Product Filter Banner */}
             <div className="mb-8 mx-auto text-center">
               <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
-                <NeonText>STONKS DEX 周边产品</NeonText>
+                <NeonText>{language === 'en' ? "STONKS DEX Merchandise" : "STONKS DEX 周边产品"}</NeonText>
               </div>
             </div>
             
