@@ -29,6 +29,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     // 首先通过 getTranslation 尝试获取翻译
     const translation = getTranslation(key, language);
     
+    // 添加详细调试日志
+    console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${translation}`);
+    
     // 如果翻译与键相同（说明翻译不存在），则返回回退值或键本身
     if (translation === key) {
       return fallback || key;

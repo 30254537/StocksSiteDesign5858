@@ -529,12 +529,47 @@ export async function scrapeAllNews(): Promise<InsertCryptoNews[]> {
     }
     
     // 合并所有来源的新闻
-    const allNews: InsertCryptoNews[] = [
+    let allNews: InsertCryptoNews[] = [
       ...coinDeskNews, 
       ...coinTelegraphNews, 
       ...theBlockNews, 
       ...eightBTCNews
     ];
+    
+    // 验证并修复图片URL
+    allNews = allNews.map(news => {
+      // 如果图片URL无效或为空，提供默认图片
+      if (!news.imageUrl || 
+          news.imageUrl === 'undefined' || 
+          news.imageUrl === 'null' || 
+          !news.imageUrl.startsWith('http')) {
+        
+        // 根据新闻来源设置默认图片
+        const defaultImages: Record<string, string> = {
+          'CoinDesk': 'https://cryptologos.cc/logos/coindesk-cd-logo.png',
+          'CoinTelegraph': 'https://s2.coinmarketcap.com/static/img/coins/200x200/8996.png',
+          'TheBlock': 'https://pbs.twimg.com/profile_images/1559173535693926400/BV9v1HDo_400x400.jpg',
+          '8BTC': 'https://pbs.twimg.com/profile_images/1275716146762661890/BP8aHRk2_400x400.jpg'
+        };
+        
+        if (defaultImages[news.source]) {
+          news.imageUrl = defaultImages[news.source];
+        } else if (news.title.toLowerCase().includes('bitcoin') || news.title.toLowerCase().includes('btc')) {
+          news.imageUrl = 'https://img.freepik.com/premium-vector/bitcoin-cryptocurrency-golden-coin-3d-icon_116083-4986.jpg';
+        } else if (news.title.toLowerCase().includes('ethereum') || news.title.toLowerCase().includes('eth')) {
+          news.imageUrl = 'https://img.freepik.com/premium-vector/ethereum-cryptocurrency-golden-3d-coin-icon_116083-4994.jpg';
+        } else if (news.title.toLowerCase().includes('nft')) {
+          news.imageUrl = 'https://img.freepik.com/premium-vector/nft-non-fungible-token-logo-icon-modern-crypto-token_187882-1377.jpg';
+        } else if (news.title.toLowerCase().includes('stonks')) {
+          news.imageUrl = 'https://i.imgur.com/0YEzUGn.png';
+        } else {
+          // 通用加密货币图片
+          news.imageUrl = 'https://img.freepik.com/premium-vector/cryptocurrency-bitcoin-golden-coin-background_116083-4199.jpg';
+        }
+      }
+      
+      return news;
+    });
     
     console.log(`总共从网站抓取了 ${allNews.length} 条新闻`);
     return allNews;
