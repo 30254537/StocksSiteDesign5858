@@ -5,7 +5,7 @@ const DEFAULT_MUSIC_URL = "/uploads/hz9gl-thdkf.mp3";
 const FALLBACK_MUSIC_URL = "/uploads/stonks-music.mp3";
 
 // 定义音频上下文类型
-interface AudioContextType {
+interface MusicContextType {
   isPlaying: boolean;
   togglePlay: () => void;
   audioRef: React.RefObject<HTMLAudioElement | null>;
@@ -13,14 +13,14 @@ interface AudioContextType {
 }
 
 // 创建上下文
-const AudioContext = createContext<AudioContextType | null>(null);
+const MusicContext = createContext<MusicContextType | null>(null);
 
 // 提供器组件
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioContextRef = useRef<any>(null); // 使用any类型避免与Web Audio API的AudioContext冲突
   const dataArrayRef = useRef<Uint8Array | null>(null);
   const [beatIntensity, setBeatIntensity] = useState(0);
   const animationFrameRef = useRef<number | null>(null);
@@ -225,15 +225,15 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AudioContext.Provider value={{ isPlaying, togglePlay, audioRef, beatIntensity }}>
+    <MusicContext.Provider value={{ isPlaying, togglePlay, audioRef, beatIntensity }}>
       {children}
-    </AudioContext.Provider>
+    </MusicContext.Provider>
   );
 }
 
 // 创建稳定的引用以支持HMR
 export const useAudio = function useAudioHook() {
-  const context = useContext(AudioContext);
+  const context = useContext(MusicContext);
   if (!context) {
     throw new Error('useAudio必须在AudioProvider内部使用');
   }
