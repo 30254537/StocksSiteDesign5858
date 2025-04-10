@@ -92,22 +92,34 @@ const CryptoNews: React.FC = () => {
   // 为新闻生成图片（确保所有新闻都有图片）
   const getNewsImage = (news: CryptoNewsType) => {
     // 首先检查新闻是否有有效的图片URL
-    if (news.imageUrl && news.imageUrl.trim() !== '' && 
+    if (news.imageUrl && 
+        news.imageUrl.trim() !== '' && 
+        news.imageUrl !== 'undefined' && 
+        news.imageUrl !== 'null' && 
         !news.imageUrl.includes('undefined') && 
-        !news.imageUrl.includes('null')) {
-      return news.imageUrl;
+        !news.imageUrl.includes('null') &&
+        news.imageUrl.startsWith('http')) {
+      // 验证URL格式是否正确
+      try {
+        new URL(news.imageUrl);
+        return news.imageUrl;
+      } catch (e) {
+        console.log(`图片URL格式错误: ${news.imageUrl}`);
+      }
     }
     
     // 根据新闻来源生成不同的默认图片
-    const defaultImages = {
+    const defaultImages: Record<string, string> = {
       'CoinGecko': 'https://static.coingecko.com/s/coingecko-logo-8903d34ce19ca4be1c81f0db30e924154750d208683fad7ae6f2ce06c76d0a56.png',
-      'CryptoPanic': 'https://cryptopanic.com/static/images/cryptopanic-logo-vert.png',
-      'CryptoNews': 'https://cdn.coinranking.com/assets/343204ced712cae2b1e4c2e5/cryptonews.png'
+      'CoinTelegraph': 'https://s2.coinmarketcap.com/static/img/coins/200x200/8996.png',
+      'TheBlock': 'https://pbs.twimg.com/profile_images/1559173535693926400/BV9v1HDo_400x400.jpg',
+      'CoinDesk': 'https://cryptologos.cc/logos/coindesk-cd-logo.png',
+      '8BTC': 'https://pbs.twimg.com/profile_images/1275716146762661890/BP8aHRk2_400x400.jpg'
     };
     
     // 使用来源特定的默认图片
-    if (news.source && defaultImages[news.source as keyof typeof defaultImages]) {
-      return defaultImages[news.source as keyof typeof defaultImages];
+    if (news.source && defaultImages[news.source]) {
+      return defaultImages[news.source];
     }
     
     // 根据新闻内容选择合适的默认图片
@@ -120,6 +132,8 @@ const CryptoNews: React.FC = () => {
       return 'https://img.freepik.com/premium-vector/ethereum-cryptocurrency-golden-3d-coin-icon_116083-4994.jpg';
     } else if (title.includes('nft') || content.includes('nft')) {
       return 'https://img.freepik.com/premium-vector/nft-non-fungible-token-logo-icon-modern-crypto-token_187882-1377.jpg';
+    } else if (title.includes('stonks') || content.includes('stonks')) {
+      return 'https://i.imgur.com/0YEzUGn.png'; // STONKS相关图片
     }
     
     // 如果都没匹配到，使用通用的加密货币图片
@@ -148,7 +162,7 @@ const CryptoNews: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-teal-400">
-            {language === 'zh' ? '加密货币新闻' : 'Cryptocurrency News'}
+            {t('cryptoNews.title')}
           </h1>
           <StonksPriceDisplay />
         </div>
@@ -181,7 +195,7 @@ const CryptoNews: React.FC = () => {
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <Badge className="bg-teal-500 hover:bg-teal-600">
-                        {language === 'zh' ? '置顶新闻' : 'Featured'}
+                        {t('cryptoNews.featured')}
                       </Badge>
                       <Badge variant="outline">{news.source}</Badge>
                     </div>
@@ -192,7 +206,7 @@ const CryptoNews: React.FC = () => {
                       {formatPublishedDate(news.publishedAt)}
                     </span>
                     <Button variant="link">
-                      {language === 'zh' ? '阅读更多' : 'Read More'}
+                      {t('cryptoNews.readMore')}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -205,7 +219,7 @@ const CryptoNews: React.FC = () => {
         <Tabs defaultValue="all" className="mb-6">
           <TabsList className="mb-4">
             <TabsTrigger value="all" onClick={() => handleCategoryChange('all')}>
-              {language === 'zh' ? '全部新闻' : 'All News'}
+              {t('cryptoNews.allNews')}
             </TabsTrigger>
             <TabsTrigger value="bitcoin" onClick={() => handleCategoryChange('bitcoin')}>
               Bitcoin
@@ -231,13 +245,13 @@ const CryptoNews: React.FC = () => {
             ) : error ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-red-400">
-                  {language === 'zh' ? '获取新闻失败' : 'Error fetching news'}
+                  {t('cryptoNews.error')}
                 </p>
               </div>
             ) : newsData && newsData.data.length === 0 ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-gray-400">
-                  {language === 'zh' ? '暂无加密货币新闻' : 'No cryptocurrency news available'}
+                  {t('cryptoNews.noNews')}
                 </p>
               </div>
             ) : (
@@ -274,7 +288,7 @@ const CryptoNews: React.FC = () => {
                           </CardHeader>
                           <CardFooter className="mt-auto">
                             <Button variant="link" className="ml-auto">
-                              {language === 'zh' ? '阅读更多' : 'Read More'}
+                              {t('cryptoNews.readMore')}
                             </Button>
                           </CardFooter>
                         </div>
@@ -350,7 +364,7 @@ const CryptoNews: React.FC = () => {
         {/* 社交媒体链接 */}
         <div className="mt-12 text-center">
           <h3 className="text-xl font-semibold mb-4 text-teal-400">
-            {language === 'zh' ? '关注最新动态' : 'Stay Updated'}
+            {t('cryptoNews.stayUpdated')}
           </h3>
           <div className="flex justify-center space-x-6">
             <a 
