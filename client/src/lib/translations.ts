@@ -412,7 +412,7 @@ export function useTranslation() {
   }, []);
 
   // 翻译函数
-  const t = useCallback((key: TranslationKey) => {
+  const t = useCallback((key: TranslationKey, fallback?: string) => {
     return getTranslation(key, language);
   }, [language]);
 

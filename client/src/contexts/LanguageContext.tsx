@@ -4,7 +4,7 @@ import { getTranslation, defaultLanguage } from '@/lib/translations';
 interface LanguageContextType {
   language: string;
   toggleLanguage: () => void;
-  t: (key: string) => string;
+  t: (key: string, fallback?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -25,7 +25,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLanguage(prevLang => prevLang === 'en' ? 'zh' : 'en');
   };
 
-  const t = (key: string): string => {
+  const t = (key: string, fallback?: string): string => {
     return getTranslation(key, language);
   };
 

@@ -133,7 +133,7 @@ export default function Header() {
                   </Link>
                 </div>
                 
-                <div className="flex items-center space-x-16 mt-3">
+                <div className="flex items-center space-x-12 mt-3">
                   <a 
                     href="/#products" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
@@ -143,6 +143,16 @@ export default function Header() {
                   >
                     {t("nav.products")}
                   </a>
+                  
+                  <Link 
+                    href="/crypto-news" 
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                      location === "/crypto-news" ? "text-accent" : "text-white hover:text-accent"
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    加密新闻
+                  </Link>
                   
                   <a 
                     href="https://t.me/STONKSOPEN" 
