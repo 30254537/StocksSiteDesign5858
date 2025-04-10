@@ -119,7 +119,7 @@ export default function MusicPage() {
   return (
     <div 
       ref={pageRef}
-      className="min-h-screen bg-gradient-to-b from-background to-background/95 py-20 px-4 sm:px-6"
+      className="min-h-screen bg-gradient-to-b from-background to-background/95 pt-32 pb-20 px-4 sm:px-6"
     >
       <div className="max-w-6xl mx-auto">
         {/* Header with Visualizer */}

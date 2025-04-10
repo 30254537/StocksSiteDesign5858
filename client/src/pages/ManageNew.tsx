@@ -1047,7 +1047,7 @@ export default function Manage() {
             <CardTitle>音乐管理</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex justify-center items-center py-16">
+            <div className="flex justify-center items-center py-24 my-4">
               <p className="text-gray-400">音乐管理功能正在开发中...</p>
             </div>
           </CardContent>
