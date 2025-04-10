@@ -151,8 +151,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteMusicTrack(id: number): Promise<boolean> {
-    const result = await db.delete(musicTracks).where(eq(musicTracks.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(musicTracks).where(eq(musicTracks.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除音乐曲目时出错:', error);
+      return false;
+    }
   }
   // User methods
   async getUsers(): Promise<User[]> {
@@ -195,8 +200,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUser(id: number): Promise<boolean> {
-    const result = await db.delete(users).where(eq(users.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(users).where(eq(users.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除用户时出错:', error);
+      return false;
+    }
   }
 
   async updateStripeCustomerId(userId: number, customerId: string): Promise<User> {
