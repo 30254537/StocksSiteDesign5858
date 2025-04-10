@@ -77,7 +77,7 @@ export default function Header() {
             <StonksPriceIndicator />
           </div>
           
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex items-center justify-between h-16 md:h-24">
             {/* LOGO区域 - 左侧 */}
             <div className="flex-shrink-0">
               <Link 
@@ -111,7 +111,7 @@ export default function Header() {
             {/* 主导航 - 中间 - 错落设计 */}
             <nav className="hidden md:flex flex-1 justify-center">
               <div className="flex flex-col items-center">
-                <div className="flex items-center space-x-10 mb-1">
+                <div className="flex items-center space-x-16 mb-3">
                   <Link 
                     href="/" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
@@ -133,7 +133,7 @@ export default function Header() {
                   </Link>
                 </div>
                 
-                <div className="flex items-center space-x-10 mt-1">
+                <div className="flex items-center space-x-16 mt-3">
                   <a 
                     href="/#products" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
@@ -159,7 +159,7 @@ export default function Header() {
             <div className="flex items-center">
               {/* 桌面端控件 */}
               <div className="hidden md:flex flex-col items-center space-y-2 pr-4">
-                <div className="flex items-center space-x-8">
+                <div className="flex items-center space-x-5">
                   {/* 迷你音乐播放器 */}
                   <div>
                     <MiniMusicPlayer />

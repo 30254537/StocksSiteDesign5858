@@ -9,20 +9,20 @@ export function MiniMusicPlayer() {
   
   return (
     <div 
-      className="flex flex-col items-center cursor-pointer" 
+      className="flex items-center cursor-pointer group" 
       onClick={(e) => {
         e.preventDefault(); // 防止链接点击导航
         e.stopPropagation(); // 阻止事件冒泡
         togglePlay();
       }}
     >
-      <div className="w-7 h-7 bg-accent/10 rounded-full flex items-center justify-center overflow-hidden mb-0.5">
-        <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center">
+      <div className="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center overflow-hidden mr-2 group-hover:bg-accent/20 transition-colors duration-300">
+        <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center group-hover:bg-accent/30 transition-colors duration-300">
           <i className={`fas ${isPlaying ? 'fa-music' : 'fa-pause'} text-accent text-xs`}></i>
         </div>
       </div>
       <div>
-        <span className="text-xs text-accent whitespace-nowrap">
+        <span className="text-xs text-accent whitespace-nowrap font-medium">
           STONKS MUSIC
         </span>
       </div>
