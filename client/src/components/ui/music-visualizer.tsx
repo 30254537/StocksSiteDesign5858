@@ -15,10 +15,10 @@ export default function MusicVisualizer({
   className = '',
   color = '#00ffcc',
   height = 120,
-  barWidth = 4,
-  gap = 1,
-  barCount = 60,
-  sensitivity = 1.5 // 增加默认灵敏度
+  barWidth = 1, // 默认使用1像素宽度的极细条
+  gap = 2, // 默认更大的间隙
+  barCount = 150, // 默认更多的条数
+  sensitivity = 1.2 // 调整灵敏度
 }: MusicVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { isPlaying, beatIntensity } = useAudio();
@@ -49,8 +49,9 @@ export default function MusicVisualizer({
       
       for (let i = 0; i < barCount; i++) {
         // 基础波形 - 使用正弦波和相位
-        const baseFrequency = 0.15; // 控制波浪的密度
-        const baseSine = Math.sin(phase + i * baseFrequency) * 0.5 + 0.5;
+        // 减小baseFrequency使波纹更细密
+        const baseFrequency = 0.05; // 降低频率，使波形更加平滑
+        const baseSine = Math.sin(phase + i * baseFrequency) * 0.3 + 0.5; // 减小振幅
         
         // 节拍响应 - 只改变颜色和发光效果，不改变波形高度
         const centerEffect = 1 - Math.abs((i - barCount/2) / (barCount/2)) * 0.7;
@@ -95,8 +96,9 @@ export default function MusicVisualizer({
         // 始终保持小声波纹样式，无论是否播放
         let barHeight;
         
-        // 创建类似第一张图中的小波纹效果
-        const staticWaveHeight = Math.sin(i * 0.2) * 15 + 20;
+        // 创建更细的声波纹效果
+        // 使用更小的振幅和频率
+        const staticWaveHeight = Math.sin(i * 0.05) * 10 + 15;
         
         if (!isPlaying) {
           barHeight = staticWaveHeight;

@@ -130,9 +130,9 @@ export default function MusicPage() {
             <MusicVisualizer 
               className="w-full h-full" 
               height={isMobile ? 120 : 160} // 减小高度，保持小声波纹效果
-              barCount={isMobile ? 60 : 100} // 增加条数，使波纹更细致
-              barWidth={2} // 更细的条
-              gap={1} // 更小的间隙
+              barCount={isMobile ? 100 : 200} // 大幅增加条数，创建细条效果
+              barWidth={1} // 极细的条
+              gap={2} // 增加间隙使波形更分散
             />
           </div>
           
