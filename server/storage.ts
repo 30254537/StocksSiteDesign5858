@@ -10,6 +10,7 @@ import {
   contactInfo, type ContactInfo, type InsertContactInfo,
   contractAddresses, type ContractAddress, type InsertContractAddress,
   cryptoNews, type CryptoNews, type InsertCryptoNews,
+  cryptoTweets, type CryptoTweet, type InsertCryptoTweet,
   type OrderWithItems
 } from "@shared/schema";
 import { db } from "./db";
@@ -89,6 +90,14 @@ export interface IStorage {
   updateCryptoNews(id: number, news: Partial<CryptoNews>): Promise<CryptoNews | undefined>;
   deleteCryptoNews(id: number): Promise<boolean>;
   getCryptoNewsCount(): Promise<number>;
+  
+  // Crypto Tweets operations
+  getCryptoTweets(limit?: number): Promise<CryptoTweet[]>;
+  getCryptoTweetById(id: number): Promise<CryptoTweet | undefined>;
+  getCryptoTweetByTweetId(tweetId: string): Promise<CryptoTweet | undefined>;
+  createCryptoTweet(tweet: InsertCryptoTweet): Promise<CryptoTweet>;
+  updateCryptoTweet(id: number, tweet: Partial<CryptoTweet>): Promise<CryptoTweet | undefined>;
+  deleteCryptoTweet(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -580,6 +589,51 @@ export class DatabaseStorage implements IStorage {
   async getCryptoNewsCount(): Promise<number> {
     const result = await db.select({ count: sql`count(*)` }).from(cryptoNews);
     return Number(result[0].count);
+  }
+  
+  // Crypto Tweets methods
+  async getCryptoTweets(limit: number = 20): Promise<CryptoTweet[]> {
+    return await db.select().from(cryptoTweets)
+      .orderBy(
+        desc(cryptoTweets.likeCount),
+        desc(cryptoTweets.retweetCount),
+        desc(cryptoTweets.createdAt)
+      )
+      .limit(limit);
+  }
+  
+  async getCryptoTweetById(id: number): Promise<CryptoTweet | undefined> {
+    const [tweet] = await db.select().from(cryptoTweets).where(eq(cryptoTweets.id, id));
+    return tweet;
+  }
+  
+  async getCryptoTweetByTweetId(tweetId: string): Promise<CryptoTweet | undefined> {
+    const [tweet] = await db.select().from(cryptoTweets).where(eq(cryptoTweets.tweetId, tweetId));
+    return tweet;
+  }
+  
+  async createCryptoTweet(tweet: InsertCryptoTweet): Promise<CryptoTweet> {
+    const [newTweet] = await db.insert(cryptoTweets).values(tweet).returning();
+    return newTweet;
+  }
+  
+  async updateCryptoTweet(id: number, data: Partial<CryptoTweet>): Promise<CryptoTweet | undefined> {
+    const [tweet] = await db.update(cryptoTweets)
+      .set(data)
+      .where(eq(cryptoTweets.id, id))
+      .returning();
+    
+    return tweet;
+  }
+  
+  async deleteCryptoTweet(id: number): Promise<boolean> {
+    try {
+      await db.delete(cryptoTweets).where(eq(cryptoTweets.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除推文时出错:', error);
+      return false;
+    }
   }
 }
 

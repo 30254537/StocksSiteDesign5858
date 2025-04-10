@@ -15,6 +15,7 @@ import { getAudioDurationInSeconds } from "get-audio-duration";
 import cryptoNewsRoutes from "./routes/cryptoNewsRoutes";
 import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
 import { syncCryptoTweets } from "./services/xService";
+import { syncCryptoTweets } from "./services/xService";
 
 // Extend the Express.Session interface to include our custom properties
 declare module 'express-session' {
