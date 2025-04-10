@@ -13,8 +13,42 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, CreditCard, Bitcoin } from 'lucide-react';
+import { Loader2, CreditCard, Bitcoin, RefreshCw } from 'lucide-react';
 import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
+
+// USDT到STONKS换算器组件
+const UsdtToStonksConverter = () => {
+  const [usdtAmount, setUsdtAmount] = useState<string>('0.00900000000000000001');
+  const { convertUsdToStonks } = useStonksPrice();
+  const { t, language } = useLanguage();
+  
+  // 计算等值的STONKS数量
+  const stonksAmount = !isNaN(parseFloat(usdtAmount)) 
+    ? convertUsdToStonks(parseFloat(usdtAmount)) 
+    : 0;
+    
+  return (
+    <div className="w-full flex items-center space-x-2">
+      <div className="flex-1">
+        <input
+          type="text"
+          value={usdtAmount}
+          onChange={(e) => setUsdtAmount(e.target.value)}
+          className="w-full p-2 bg-slate-900 rounded border border-gray-700 font-mono text-sm"
+        />
+      </div>
+      <span className="text-gray-400">=</span>
+      <div className="flex-1 relative">
+        <div className="p-2 bg-slate-900 rounded border border-gray-700 font-mono text-sm flex items-center">
+          <RefreshCw className="h-3 w-3 mr-2 text-accent" /> 
+          <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+            ⊙ {stonksAmount.toFixed(6)} $STONKS
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Make sure to use environment variable to get public key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -303,6 +337,14 @@ const OrderSummary = () => {
       {/* 添加STONKS实时价格转换信息 */}
       <div className="mt-4 border-t border-gray-700 pt-4">
         <StonksPriceDisplay amount={totalPrice} showConverter={false} />
+        
+        {/* USDT到STONKS换算器 */}
+        <div className="mt-4 pt-3 border-t border-gray-700">
+          <h4 className="text-sm mb-2">{t('stonksPrice.converter')}</h4>
+          <div className="flex items-center space-x-2">
+            <UsdtToStonksConverter />
+          </div>
+        </div>
       </div>
     </div>
   );
