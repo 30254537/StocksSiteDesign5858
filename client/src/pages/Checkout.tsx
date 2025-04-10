@@ -89,7 +89,7 @@ const UsdtDirectForm = () => {
     <form onSubmit={handleSubmit}>
       <div className="mb-6">
         <p className="mb-4 text-sm">
-          {t('checkout.sendTokensToAddress')}:
+          发送USDT到地址:
         </p>
         
         {/* USDT链选择 */}
@@ -273,7 +273,7 @@ const CryptoForm = () => {
     <form onSubmit={handleSubmit}>
       <div className="mb-6">
         <p className="mb-4 text-sm">
-          {t('checkout.sendTokensToAddress')}:
+          发送USDT到地址:
         </p>
         <div className="bg-slate-800 p-3 rounded-md font-mono text-sm mb-4 break-all">
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
@@ -395,7 +395,7 @@ const OrderSummary = () => {
         
         {/* USDT到STONKS换算器 */}
         <div className="mt-4 pt-3 border-t border-gray-700">
-          <h4 className="text-sm mb-2">{t('stonksPrice.converter')}</h4>
+          <h4 className="text-sm mb-2 text-center text-accent font-semibold">{t('stonksPrice.converter')}</h4>
           <div className="flex items-center space-x-2">
             <UsdtToStonksConverter />
           </div>
@@ -455,7 +455,7 @@ export default function Checkout() {
                 </TabsTrigger>
                 <TabsTrigger value="crypto">
                   <Bitcoin className="mr-2 h-4 w-4" />
-                  加密货币 (STONKS)
+                  $ STONKS
                 </TabsTrigger>
               </TabsList>
               
