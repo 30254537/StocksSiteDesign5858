@@ -89,9 +89,9 @@ export default function Header() {
         isScrolled ? 'bg-primary/90' : 'glass-effect'
       } border-b border-accent/30`}>
         <div className="container mx-auto px-4">
-          <div className="flex items-center h-16 md:h-20">
-            {/* Brand - Left side */}
-            <div className="flex items-center mr-4">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* LOGO区域 - 左侧 */}
+            <div className="flex-shrink-0">
               <Link 
                 href="/" 
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
@@ -104,7 +104,6 @@ export default function Header() {
                   fill="none" 
                   xmlns="http://www.w3.org/2000/svg"
                   className="mr-1 text-accent"
-                  style={{ verticalAlign: 'middle' }}
                 >
                   <path 
                     d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
@@ -121,8 +120,8 @@ export default function Header() {
               </Link>
             </div>
             
-            {/* Navigation - Horizontal layout */}
-            <div className="hidden md:flex items-center space-x-6">
+            {/* 主导航 - 中间 */}
+            <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
               <Link 
                 href="/" 
                 className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
@@ -160,31 +159,31 @@ export default function Header() {
               >
                 {t("nav.community")}
               </a>
-            </div>
+            </nav>
             
-            {/* Controls - Right side */}
-            <div className="flex items-center gap-4 ml-auto">
-              {/* Audio Control Button */}
-              <div className="hidden md:flex items-center">
+            {/* 功能控件 - 右侧 */}
+            <div className="flex items-center space-x-3">
+              {/* 音频控制按钮 */}
+              <div className="hidden md:block">
                 <AudioControlButton />
               </div>
               
-              {/* Music Player (mini) */}
-              <div className="hidden md:block">
+              {/* 音乐播放器（迷你） */}
+              <div className="hidden md:block mr-2">
                 <MusicPlayer />
               </div>
               
-              {/* Language Switcher */}
+              {/* 语言切换 */}
               <button
-                className="text-white font-medium hover:text-accent py-1 px-2 transition-duration-300 bg-transparent border-none cursor-pointer"
+                className="hidden md:block text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 onClick={toggleLanguage}
               >
                 {language === 'en' ? 'EN' : '中文'}
               </button>
               
-              {/* Cart Button (desktop only) */}
+              {/* 购物车按钮（仅桌面端） */}
               <button
-                className="relative hidden md:flex py-1 px-2 text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
+                className="relative hidden md:flex items-center justify-center text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 onClick={openCart}
               >
                 <i className="fas fa-shopping-cart text-lg"></i>
@@ -195,7 +194,7 @@ export default function Header() {
                 )}
               </button>
               
-              {/* Mobile Menu Button */}
+              {/* 移动菜单按钮 */}
               <button
                 className="md:hidden text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer p-2"
                 onClick={toggleMobileMenu}
