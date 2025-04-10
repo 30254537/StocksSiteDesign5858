@@ -254,8 +254,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProduct(id: number): Promise<boolean> {
-    const result = await db.delete(products).where(eq(products.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(products).where(eq(products.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除产品时出错:', error);
+      return false;
+    }
   }
 
   async getFeaturedProducts(): Promise<Product[]> {
@@ -320,13 +325,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteCartItem(id: number): Promise<boolean> {
-    const result = await db.delete(cartItems).where(eq(cartItems.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(cartItems).where(eq(cartItems.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除购物车项目时出错:', error);
+      return false;
+    }
   }
 
   async clearCart(sessionId: string): Promise<boolean> {
-    const result = await db.delete(cartItems).where(eq(cartItems.sessionId, sessionId));
-    return result.count > 0;
+    try {
+      await db.delete(cartItems).where(eq(cartItems.sessionId, sessionId));
+      return true;
+    } catch (error) {
+      console.error('清空购物车时出错:', error);
+      return false;
+    }
   }
 
   // Order methods
@@ -437,11 +452,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async unsubscribe(email: string): Promise<boolean> {
-    const result = await db.update(subscribers)
-      .set({ active: 0 })
-      .where(eq(subscribers.email, email));
-    
-    return result.count > 0;
+    try {
+      await db.update(subscribers)
+        .set({ active: 0 })
+        .where(eq(subscribers.email, email));
+      return true;
+    } catch (error) {
+      console.error('取消订阅时出错:', error);
+      return false;
+    }
   }
   
   // Contract Address methods
@@ -483,11 +502,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteContractAddress(id: number): Promise<boolean> {
-    const result = await db.update(contractAddresses)
-      .set({ isActive: 0 })
-      .where(eq(contractAddresses.id, id));
-    
-    return result.count > 0;
+    try {
+      await db.update(contractAddresses)
+        .set({ isActive: 0 })
+        .where(eq(contractAddresses.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除合约地址时出错:', error);
+      return false;
+    }
   }
   
   // Crypto News methods
@@ -535,8 +558,13 @@ export class DatabaseStorage implements IStorage {
   }
   
   async deleteCryptoNews(id: number): Promise<boolean> {
-    const result = await db.delete(cryptoNews).where(eq(cryptoNews.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(cryptoNews).where(eq(cryptoNews.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除加密新闻时出错:', error);
+      return false;
+    }
   }
   
   async getCryptoNewsCount(): Promise<number> {
