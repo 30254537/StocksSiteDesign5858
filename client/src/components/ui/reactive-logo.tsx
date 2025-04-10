@@ -15,18 +15,12 @@ export function ReactiveLogo({
   children
 }: ReactiveLogoProps) {
   const { beatIntensity } = useAudio();
-  const [scale, setScale] = useState(1);
   const [glowIntensity, setGlowIntensity] = useState(10);
   
-  // 使用beatIntensity来更新scale和glowIntensity
+  // 只更新发光效果，不改变文字大小
   useEffect(() => {
-    // 根据节拍强度计算缩放比例，节拍越强，缩放越大
-    const newScale = 1 + (beatIntensity * 0.05);
-    
     // 更新发光强度，节拍越强，发光越强
     const newGlowIntensity = 10 + (beatIntensity * 25);
-    
-    setScale(newScale);
     setGlowIntensity(newGlowIntensity);
   }, [beatIntensity]);
   
@@ -34,9 +28,8 @@ export function ReactiveLogo({
     <div 
       className={`reactive-logo ${className}`}
       style={{
-        transform: `scale(${scale})`,
-        transition: 'transform 0.1s ease-out',
         textShadow: `0 0 ${glowIntensity}px ${glowColor}`,
+        transition: 'text-shadow 0.1s ease-out',
       }}
     >
       {children}
@@ -87,8 +80,8 @@ export function ReactiveWaveform({
       // 清除画布
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // 计算当前振幅 - 根据节拍强度进行调整
-      const currentAmplitude = amplitude * (1 + beatIntensity * 1.5);
+      // 保持振幅稳定，不随节拍强度放大
+      const currentAmplitude = amplitude;
       
       // 创建波浪路径
       ctx.beginPath();

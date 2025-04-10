@@ -44,23 +44,19 @@ export default function MusicVisualizer({
       const beatDelta = Math.abs(beatIntensity - prevBeatIntensityRef.current);
       prevBeatIntensityRef.current = beatIntensity;
       
-      // 计算增强因子 - 当有较大变化时增强效果
-      const enhanceFactor = 1 + (beatDelta * 2);
-      
-      // 更新相位，beatIntensity越高，相位变化越快
-      setPhase(prev => (prev + 0.05 + (beatIntensity * 0.1)) % (2 * Math.PI));
+      // 更新相位，但不随节拍强度变化太快
+      setPhase(prev => (prev + 0.05) % (2 * Math.PI));
       
       for (let i = 0; i < barCount; i++) {
         // 基础波形 - 使用正弦波和相位
         const baseFrequency = 0.15; // 控制波浪的密度
         const baseSine = Math.sin(phase + i * baseFrequency) * 0.5 + 0.5;
         
-        // 节拍响应波形 - 中心处峰值更高（模拟声波反应）
+        // 节拍响应 - 只改变颜色和发光效果，不改变波形高度
         const centerEffect = 1 - Math.abs((i - barCount/2) / (barCount/2)) * 0.7;
-        const beatEffect = beatIntensity * centerEffect * enhanceFactor;
         
-        // 组合效果
-        const amplitude = baseSine * (0.4 + beatEffect * 0.6);
+        // 保持基本波形的形状和高度
+        const amplitude = baseSine;
         
         // 添加小的随机变化使波形更自然
         const randomness = Math.random() * 0.2 * beatIntensity;
@@ -104,9 +100,8 @@ export default function MusicVisualizer({
         } else {
           const value = audioData ? audioData[i] || 0 : 0;
           
-          // 应用灵敏度和节拍增强
-          const beatBoost = 1 + (beatIntensity * beatIntensity * 0.7); // 非线性增强
-          barHeight = (value * sensitivity / 255 * height) * beatBoost;
+          // 应用灵敏度但不增加波形高度
+          barHeight = value * sensitivity / 255 * height;
         }
         
         // 创建渐变效果
