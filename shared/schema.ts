@@ -226,3 +226,31 @@ export const insertCryptoNewsSchema = createInsertSchema(cryptoNews).omit({
 
 export type CryptoNews = typeof cryptoNews.$inferSelect;
 export type InsertCryptoNews = z.infer<typeof insertCryptoNewsSchema>;
+
+// X推文模型
+export const cryptoTweets = pgTable("crypto_tweets", {
+  id: serial("id").primaryKey(),
+  tweetId: text("tweet_id").notNull().unique(), // X平台原始推文ID
+  text: text("text").notNull(), // 推文内容
+  authorName: text("author_name").notNull(), // 作者名称
+  authorUsername: text("author_username").notNull(), // 作者用户名
+  authorProfileImage: text("author_profile_image"), // 作者头像URL
+  likeCount: integer("like_count").default(0), // 点赞数
+  retweetCount: integer("retweet_count").default(0), // 转发数
+  replyCount: integer("reply_count").default(0), // 回复数
+  quoteCount: integer("quote_count").default(0), // 引用数
+  url: text("url").notNull(), // 推文URL
+  createdAt: timestamp("created_at").defaultNow(), // 创建时间
+  source: text("source").default("x"), // 来源，默认为X
+  category: text("category").default("crypto"), // 分类
+  language: text("language").default("en"), // 语言
+  translatedText: text("translated_text"), // 翻译后的内容
+});
+
+export const insertCryptoTweetSchema = createInsertSchema(cryptoTweets).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type CryptoTweet = typeof cryptoTweets.$inferSelect;
+export type InsertCryptoTweet = z.infer<typeof insertCryptoTweetSchema>;
