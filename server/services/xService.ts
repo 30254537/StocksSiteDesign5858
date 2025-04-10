@@ -57,9 +57,9 @@ export async function fetchCryptoTweets() {
     // 设置API参数
     const baseUrl = 'https://api.twitter.com/2/tweets/search/recent';
     const params = new URLSearchParams({
-      // 加密货币相关关键词查询
-      'query': '(crypto OR bitcoin OR ethereum OR blockchain OR defi OR web3 OR #crypto OR #bitcoin OR #ethereum OR #blockchain OR #defi OR #web3 OR stonks) -is:retweet -is:reply lang:en',
-      'max_results': '30', // 最多返回30条推文
+      // 加密货币相关关键词查询，特别关注包含合约地址(CA:)的推文
+      'query': '(CA: OR "contract address" OR "合约地址" OR "new token" OR "new coin" OR "just launched" OR "airdrop" OR "presale") min_retweets:50 -is:retweet -is:reply lang:en',
+      'max_results': '50', // 增加结果数量
       'tweet.fields': 'public_metrics,created_at',
       'user.fields': 'name,username,profile_image_url',
       'expansions': 'author_id',
