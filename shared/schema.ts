@@ -178,3 +178,24 @@ export const insertContactInfoSchema = createInsertSchema(contactInfo).omit({
 
 export type ContactInfo = typeof contactInfo.$inferSelect;
 export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
+
+// 加密货币合约地址表
+export const contractAddresses = pgTable("contract_addresses", {
+  id: serial("id").primaryKey(),
+  network: text("network").notNull(),  // 网络，如 "TRC20", "ERC20", "BEP20", "SOL"
+  coinType: text("coin_type").notNull(), // 币种类型，如 "USDT", "STONKS"
+  address: text("address").notNull(),  // 合约地址
+  isActive: integer("is_active").default(1).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertContractAddressSchema = createInsertSchema(contractAddresses).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  isActive: true
+});
+
+export type ContractAddress = typeof contractAddresses.$inferSelect;
+export type InsertContractAddress = z.infer<typeof insertContractAddressSchema>;

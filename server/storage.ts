@@ -8,6 +8,7 @@ import {
   subscribers, type Subscriber, type InsertSubscriber,
   musicTracks, type MusicTrack, type InsertMusicTrack,
   contactInfo, type ContactInfo, type InsertContactInfo,
+  contractAddresses, type ContractAddress, type InsertContractAddress,
   type OrderWithItems
 } from "@shared/schema";
 import { db } from "./db";
@@ -70,6 +71,13 @@ export interface IStorage {
   createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack>;
   updateMusicTrack(id: number, track: Partial<MusicTrack>): Promise<MusicTrack | undefined>;
   deleteMusicTrack(id: number): Promise<boolean>;
+  
+  // Contract Address operations
+  getContractAddresses(): Promise<ContractAddress[]>;
+  getContractAddressByNetwork(network: string, coinType: string): Promise<ContractAddress | undefined>;
+  createContractAddress(contractAddress: InsertContractAddress): Promise<ContractAddress>;
+  updateContractAddress(id: number, contractAddress: Partial<ContractAddress>): Promise<ContractAddress | undefined>;
+  deleteContractAddress(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -409,6 +417,52 @@ export class DatabaseStorage implements IStorage {
     const result = await db.update(subscribers)
       .set({ active: 0 })
       .where(eq(subscribers.email, email));
+    
+    return result.count > 0;
+  }
+  
+  // Contract Address methods
+  async getContractAddresses(): Promise<ContractAddress[]> {
+    return await db.select().from(contractAddresses)
+      .where(eq(contractAddresses.isActive, 1))
+      .orderBy(contractAddresses.network);
+  }
+
+  async getContractAddressByNetwork(network: string, coinType: string): Promise<ContractAddress | undefined> {
+    const [contractAddress] = await db.select().from(contractAddresses)
+      .where(and(
+        eq(contractAddresses.network, network),
+        eq(contractAddresses.coinType, coinType),
+        eq(contractAddresses.isActive, 1)
+      ));
+    
+    return contractAddress;
+  }
+
+  async createContractAddress(contractAddress: InsertContractAddress): Promise<ContractAddress> {
+    const [newContractAddress] = await db.insert(contractAddresses)
+      .values(contractAddress)
+      .returning();
+    
+    return newContractAddress;
+  }
+
+  async updateContractAddress(id: number, data: Partial<ContractAddress>): Promise<ContractAddress | undefined> {
+    const [contractAddress] = await db.update(contractAddresses)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(contractAddresses.id, id))
+      .returning();
+    
+    return contractAddress;
+  }
+
+  async deleteContractAddress(id: number): Promise<boolean> {
+    const result = await db.update(contractAddresses)
+      .set({ isActive: 0 })
+      .where(eq(contractAddresses.id, id));
     
     return result.count > 0;
   }

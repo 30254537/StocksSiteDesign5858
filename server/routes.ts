@@ -572,8 +572,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 获取STONKS的实时价格
   app.get("/api/stonks-price", async (req, res) => {
     try {
-      // 使用指定STONKS合约地址: 6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump
-      const contractAddress = "6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump";
+      // 从数据库获取STONKS合约地址，如果不存在则使用默认地址
+      let contractAddress = "6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump"; // 默认地址
+      
+      // 尝试从数据库获取STONKS合约地址
+      try {
+        const stonksContract = await storage.getContractAddressByNetwork("SOL", "STONKS");
+        if (stonksContract) {
+          contractAddress = stonksContract.address;
+        }
+      } catch (dbError) {
+        console.warn("无法从数据库获取STONKS合约地址，使用默认地址:", dbError);
+      }
       
       // 如果缓存已过期，则获取新价格
       if (isCacheExpired()) {
