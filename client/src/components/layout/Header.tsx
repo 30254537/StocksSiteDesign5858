@@ -6,6 +6,7 @@ import { useAudio } from "@/contexts/AudioContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
 import MusicPlayer from "@/components/ui/music-player";
+import MiniMusicPlayer from "@/components/ui/mini-music-player";
 import { NeonText } from "@/components/ui/neon-text";
 
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -163,14 +164,10 @@ export default function Header() {
             
             {/* 功能控件 - 右侧 */}
             <div className="flex items-center space-x-3">
-              {/* 音频控制按钮 */}
-              <div className="hidden md:block">
+              {/* 音频控制按钮和迷你音乐播放器组 */}
+              <div className="hidden md:flex items-center space-x-2">
                 <AudioControlButton />
-              </div>
-              
-              {/* 音乐播放器（迷你） */}
-              <div className="hidden md:block mr-2">
-                <MusicPlayer />
+                <MiniMusicPlayer />
               </div>
               
               {/* 语言切换 */}

@@ -157,7 +157,9 @@ export const translations: Translations = {
     "music.edit": "Edit",
     "music.save": "Save Changes",
     "music.uploadSuccess": "Music uploaded successfully",
-    "music.uploadError": "Failed to upload music"
+    "music.uploadError": "Failed to upload music",
+    "music.defaultTitle": "STONKS Music",
+    "music.defaultArtist": "DEX Music Lab"
   },
   zh: {
     // Navigation
@@ -307,7 +309,9 @@ export const translations: Translations = {
     "music.edit": "编辑",
     "music.save": "保存更改",
     "music.uploadSuccess": "音乐上传成功",
-    "music.uploadError": "音乐上传失败"
+    "music.uploadError": "音乐上传失败",
+    "music.defaultTitle": "STONKS 音乐",
+    "music.defaultArtist": "DEX 音乐实验室"
   }
 };
 

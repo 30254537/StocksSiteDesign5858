@@ -209,8 +209,8 @@ const MusicPlayer = ({
             </div>
             
             <div className="text-right flex-1 hidden sm:block">
-              <h3 className="text-sm font-medium truncate">{currentTrack?.title || t('unknownTrack')}</h3>
-              <p className="text-xs text-muted-foreground truncate">{currentTrack?.artist || t('unknownArtist')}</p>
+              <h3 className="text-sm font-medium truncate">{currentTrack?.title || t('music.defaultTitle')}</h3>
+              <p className="text-xs text-muted-foreground truncate">{currentTrack?.artist || t('music.defaultArtist')}</p>
             </div>
           </div>
         </div>
