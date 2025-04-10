@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
-import { SiTwitter, SiTelegram, SiDiscord } from 'react-icons/si';
+import { FaTwitter, FaTelegram, FaDiscord } from 'react-icons/fa';
 import { 
   Card, 
   CardContent, 
@@ -22,17 +22,17 @@ import {
 } from "@/components/ui/pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Layout from '@/components/layout/Layout';
-import StonksPriceDisplay from '@/components/ui/stonks-price-display';
+import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
 import LoadingSkeleton from '@/components/ui/loading-skeleton';
 import { CryptoNewsType } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
-import { useLanguage } from '@/hooks/use-language';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const PAGE_SIZE = 10;
 
 const CryptoNews: React.FC = () => {
-  const { lang, t } = useLanguage();
+  const { language, t } = useLanguage();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('all');
   
@@ -94,7 +94,7 @@ const CryptoNews: React.FC = () => {
     try {
       return formatDistanceToNow(new Date(date), { 
         addSuffix: true,
-        locale: lang === 'zh' ? zhCN : enUS 
+        locale: language === 'zh' ? zhCN : enUS 
       });
     } catch (e) {
       return '';
@@ -309,7 +309,7 @@ const CryptoNews: React.FC = () => {
               rel="noopener noreferrer"
               className="text-3xl text-gray-400 hover:text-teal-400 transition-colors"
             >
-              <SiTwitter />
+              <FaTwitter />
             </a>
             <a 
               href="https://t.me/StonksDEX" 
@@ -317,7 +317,7 @@ const CryptoNews: React.FC = () => {
               rel="noopener noreferrer"
               className="text-3xl text-gray-400 hover:text-teal-400 transition-colors"
             >
-              <SiTelegram />
+              <FaTelegram />
             </a>
             <a 
               href="https://discord.gg/StonksDEX" 
@@ -325,7 +325,7 @@ const CryptoNews: React.FC = () => {
               rel="noopener noreferrer"
               className="text-3xl text-gray-400 hover:text-teal-400 transition-colors"
             >
-              <SiDiscord />
+              <FaDiscord />
             </a>
           </div>
         </div>

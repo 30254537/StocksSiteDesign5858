@@ -21,6 +21,7 @@ const Terms = lazy(() => import("@/pages/Terms"));
 const AdminLogin = lazy(() => import("@/pages/AdminLogin"));
 const About = lazy(() => import("@/pages/About"));
 const Music = lazy(() => import("@/pages/Music"));
+const CryptoNews = lazy(() => import("@/pages/CryptoNews"));
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartModal from "@/components/ui/cart-modal";
@@ -144,6 +145,13 @@ function Router() {
             {() => (
               <PageWrapper>
                 <Music />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/crypto-news">
+            {() => (
+              <PageWrapper>
+                <CryptoNews />
               </PageWrapper>
             )}
           </Route>
