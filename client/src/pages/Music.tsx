@@ -6,7 +6,6 @@ import { useToast } from '@/hooks/use-toast';
 import MusicUpload from '@/components/ui/music-upload';
 import MusicTrackCard, { MusicTrack } from '@/components/ui/music-track-card';
 import MusicVisualizer from '@/components/ui/music-visualizer';
-import { ReactiveWaveform, ReactiveLogo } from '@/components/ui/reactive-logo';
 import { queryClient } from '@/lib/queryClient';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -123,22 +122,21 @@ export default function MusicPage() {
       className="min-h-screen bg-gradient-to-b from-background to-background/95 pt-32 pb-20 px-4 sm:px-6"
     >
       <div className="max-w-6xl mx-auto">
-        {/* Header with Reactive Visualizer */}
+        {/* Header with Visualizer */}
         <div className="relative mb-12">
           <div className="absolute inset-0 z-0 overflow-hidden rounded-xl">
             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10"></div>
-            {/* 使用ReactiveWaveform代替原来的MusicVisualizer */}
-            <ReactiveWaveform
-              className="w-full h-full"
+            <MusicVisualizer 
+              className="w-full h-full" 
               height={isMobile ? 200 : 300}
-              color="#00ffcc"
-              logoText={t('music.title')}
-              logoClassName="text-4xl md:text-5xl font-bold font-orbitron"
+              barCount={isMobile ? 40 : 80}
             />
           </div>
           
-          <div className="relative z-20 p-8 sm:p-12 flex flex-col items-center justify-center text-center mt-16">
-            {/* 移除原来的h1标题，因为ReactiveLogo已经显示了标题 */}
+          <div className="relative z-20 p-8 sm:p-12 flex flex-col items-center justify-center text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-orbitron">
+              {t('music.title')}
+            </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl">
               {t('music.subtitle')}
             </p>
