@@ -237,7 +237,7 @@ const CryptoNews: React.FC = () => {
             ) : newsData && newsData.data.length === 0 ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-gray-400">
-                  {t('cryptoNews.noNews')}
+                  {language === 'zh' ? '暂无加密货币新闻' : 'No cryptocurrency news available'}
                 </p>
               </div>
             ) : (
@@ -350,7 +350,7 @@ const CryptoNews: React.FC = () => {
         {/* 社交媒体链接 */}
         <div className="mt-12 text-center">
           <h3 className="text-xl font-semibold mb-4 text-teal-400">
-            {t('cryptoNews.stayUpdated')}
+            {language === 'zh' ? '关注最新动态' : 'Stay Updated'}
           </h3>
           <div className="flex justify-center space-x-6">
             <a 

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { CryptoNews, InsertCryptoNews } from '@shared/schema';
 import { storage } from '../storage';
 import * as cron from 'node-cron';
+import { scrapeAllNews } from './cryptoNewsScraperService';
 
 // 主要加密货币新闻API来源
 const NEWS_SOURCES = {
@@ -19,6 +20,10 @@ const NEWS_SOURCES = {
     name: 'CryptoNews',
     url: 'https://cryptonews-api.com/api/v1/category',
     apiKey: process.env.CRYPTONEWS_API_KEY || '',
+  },
+  SCRAPED_SOURCES: {
+    name: 'ScrapedSources',
+    enabled: true
   }
 };
 
@@ -177,14 +182,17 @@ export async function fetchAndStoreNews(): Promise<number> {
   
   try {
     // 并行获取所有来源的新闻
-    const [coinGeckoNews, cryptoPanicNews, cryptoNewsApiNews] = await Promise.all([
+    const [coinGeckoNews, cryptoPanicNews, cryptoNewsApiNews, scrapedNews] = await Promise.all([
       fetchCoinGeckoNews(),
       fetchCryptoPanicNews(),
-      fetchCryptoNewsApi()
+      fetchCryptoNewsApi(),
+      scrapeAllNews() // 新增：从各大网站抓取新闻
     ]);
 
+    console.log(`抓取结果: CoinGecko: ${coinGeckoNews.length}, CryptoPanic: ${cryptoPanicNews.length}, CryptoNews API: ${cryptoNewsApiNews.length}, 网站抓取: ${scrapedNews.length}`);
+
     // 合并所有来源的新闻
-    const allNews = [...coinGeckoNews, ...cryptoPanicNews, ...cryptoNewsApiNews];
+    const allNews = [...coinGeckoNews, ...cryptoPanicNews, ...cryptoNewsApiNews, ...scrapedNews];
     
     if (allNews.length === 0) {
       console.log('没有找到新的加密货币新闻');
