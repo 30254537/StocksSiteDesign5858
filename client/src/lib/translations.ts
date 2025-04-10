@@ -73,7 +73,7 @@ export const translations: Translations = {
     "checkout.shipping": "Shipping",
     "checkout.free": "Free",
     "checkout.total": "Total",
-    "checkout.orCrypto": "Or pay with STONKS",
+    "checkout.orCrypto": "",
     "checkout.shippingAddress": "Shipping Address",
     "checkout.enterShippingAddress": "Enter your shipping address",
     "checkout.sendTokensToAddress": "Send STONKS to address",
@@ -166,7 +166,7 @@ export const translations: Translations = {
     "stonksPrice.error": "Price unavailable",
     "stonksPrice.currentPrice": "Current Price",
     "stonksPrice.equivalentAmount": "Equivalent",
-    "stonksPrice.converter": "USD to STONKS Converter",
+    "stonksPrice.converter": "USDT to STONKS Converter",
     "stonksPrice.contract": "Contract Address",
     
     // Contact Info
@@ -261,7 +261,7 @@ export const translations: Translations = {
     "checkout.shipping": "运费",
     "checkout.free": "免费",
     "checkout.total": "总计",
-    "checkout.orCrypto": "或使用STONKS支付",
+    "checkout.orCrypto": "",
     "checkout.shippingAddress": "收货地址",
     "checkout.enterShippingAddress": "请输入您的收货地址",
     "checkout.sendTokensToAddress": "发送STONKS到地址",
@@ -354,7 +354,7 @@ export const translations: Translations = {
     "stonksPrice.error": "价格不可用",
     "stonksPrice.currentPrice": "当前价格",
     "stonksPrice.equivalentAmount": "等价金额",
-    "stonksPrice.converter": "美元转STONKS换算器",
+    "stonksPrice.converter": "USDT转STONKS换算器",
     "stonksPrice.contract": "合约地址",
     
     // Contact Info
