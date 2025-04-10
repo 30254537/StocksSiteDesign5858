@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAudio } from "@/contexts/AudioContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
 import MusicPlayer from "@/components/ui/music-player";
@@ -46,6 +47,21 @@ const handleProductsClick = (e: React.MouseEvent) => {
   }
 };
 
+// 音频控制按钮组件
+// 创建一个独立的组件来管理音频控制和播放状态
+function AudioControlButton() {
+  const { isPlaying, togglePlay } = useAudio();
+  
+  return (
+    <button
+      onClick={togglePlay}
+      className="w-8 h-8 rounded-full flex items-center justify-center bg-accent/20 text-accent hover:bg-accent/30 transition-colors"
+    >
+      <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'} text-sm`}></i>
+    </button>
+  );
+}
+
 export default function Header() {
   const [location] = useLocation();
   const { openCart, totalItems } = useCart();
@@ -74,89 +90,86 @@ export default function Header() {
       } border-b border-accent/30`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center h-16 md:h-20">
-            {/* Left side - Brand text only */}
-            <div className="flex items-center mr-8">
-              {/* Brand text */}
+            {/* Brand - Left side */}
+            <div className="flex items-center mr-4">
               <Link 
                 href="/" 
-                className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center flex-col md:flex-row"
+                className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <span className="flex items-center">
-                  <svg 
-                    width="30" 
-                    height="30" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="mr-1 text-accent"
-                    style={{ verticalAlign: 'middle' }}
-                  >
-                    <path 
-                      d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
-                      stroke="#00FFCC" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                <svg 
+                  width="30" 
+                  height="30" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-1 text-accent"
+                  style={{ verticalAlign: 'middle' }}
+                >
+                  <path 
+                    d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
+                    stroke="#00FFCC" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
-                </span>
-                <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
+                  <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
+                </div>
               </Link>
             </div>
             
-            {/* Navigation - Now placed to the right of the brand */}
-            <nav className="hidden md:flex flex-grow items-center justify-center">
-              <ul className="flex items-center space-x-5 px-3">
-                <li>
-                  <Link 
-                    href="/" 
-                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 whitespace-nowrap ${
-                      location === "/" ? "text-accent" : "text-white hover:text-accent"
-                    }`}
-                    onClick={scrollToTop}
-                  >
-                    {t("nav.home")}
-                  </Link>
-                </li>
-                <li>
-                  <a 
-                    href="/#products" 
-                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 whitespace-nowrap ${
-                      location.includes("#products") ? "text-accent" : "text-white hover:text-accent"
-                    }`}
-                    onClick={handleProductsClick}
-                  >
-                    {t("nav.products")}
-                  </a>
-                </li>
-                <li>
-                  <Link 
-                    href="/about" 
-                    className={`font-medium text-base transition-colors duration-300 px-2 py-1 whitespace-nowrap ${
-                      location === "/about" ? "text-accent" : "text-white hover:text-accent"
-                    }`}
-                    onClick={scrollToTop}
-                  >
-                    {t("nav.about")}
-                  </Link>
-                </li>
-                <li>
-                  <a 
-                    href="https://t.me/STONKSOPEN" 
-                    target="_blank"
-                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 px-2 py-1 whitespace-nowrap"
-                  >
-                    {t("nav.community")}
-                  </a>
-                </li>
-              </ul>
-            </nav>
+            {/* Navigation - Horizontal layout */}
+            <div className="hidden md:flex items-center space-x-6">
+              <Link 
+                href="/" 
+                className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                  location === "/" ? "text-accent" : "text-white hover:text-accent"
+                }`}
+                onClick={scrollToTop}
+              >
+                {t("nav.home")}
+              </Link>
+              
+              <a 
+                href="/#products" 
+                className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                  location.includes("#products") ? "text-accent" : "text-white hover:text-accent"
+                }`}
+                onClick={handleProductsClick}
+              >
+                {t("nav.products")}
+              </a>
+              
+              <Link 
+                href="/about" 
+                className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                  location === "/about" ? "text-accent" : "text-white hover:text-accent"
+                }`}
+                onClick={scrollToTop}
+              >
+                {t("nav.about")}
+              </Link>
+              
+              <a 
+                href="https://t.me/STONKSOPEN" 
+                target="_blank"
+                className="font-medium text-base text-white hover:text-accent transition-colors duration-300 whitespace-nowrap"
+              >
+                {t("nav.community")}
+              </a>
+            </div>
             
-            {/* Right side - Controls - Now pushed to the far right */}
-            <div className="flex items-center gap-3 ml-auto">
-              {/* Music Player */}
+            {/* Controls - Right side */}
+            <div className="flex items-center gap-4 ml-auto">
+              {/* Audio Control Button */}
+              <div className="hidden md:flex items-center">
+                <AudioControlButton />
+              </div>
+              
+              {/* Music Player (mini) */}
               <div className="hidden md:block">
                 <MusicPlayer />
               </div>
