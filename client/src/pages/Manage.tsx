@@ -21,6 +21,16 @@ export default function Manage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
+  // 联系信息状态
+  const [contactInfo, setContactInfo] = useState<{
+    email: string;
+    address: string;
+  }>({
+    email: '',
+    address: ''
+  });
+  const [loadingContactInfo, setLoadingContactInfo] = useState(false);
+  
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
@@ -48,6 +58,8 @@ export default function Manage() {
         if (response.ok) {
           setIsAuthenticated(true);
           fetchProducts();
+          // 获取联系信息
+          fetchContactInfo();
         } else {
           // 未经授权，重定向到登录页面
           toast({
@@ -67,6 +79,28 @@ export default function Manage() {
 
     checkAuth();
   }, [setLocation, toast]);
+  
+  // 获取联系信息
+  const fetchContactInfo = async () => {
+    setLoadingContactInfo(true);
+    try {
+      const response = await apiRequest("GET", "/api/contact-info");
+      const data = await response.json();
+      setContactInfo({
+        email: data.email || '',
+        address: data.address || ''
+      });
+    } catch (error) {
+      console.error("获取联系信息失败:", error);
+      toast({
+        title: "获取联系信息失败",
+        description: "无法获取联系信息，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingContactInfo(false);
+    }
+  };
   
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
@@ -491,6 +525,100 @@ export default function Manage() {
               </Table>
             </div>
           )}
+        </CardContent>
+      </Card>
+      
+      {/* 联系信息管理卡片 */}
+      <Card className="shadow-lg mb-8">
+        <CardHeader>
+          <CardTitle>联系信息管理</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
+            <h3 className="text-xl mb-4 text-accent">修改联系信息</h3>
+            <form
+              id="contact-form"
+              className="space-y-4"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                const emailInput = document.getElementById("contact-email") as HTMLInputElement;
+                const addressInput = document.getElementById("contact-address") as HTMLTextAreaElement;
+                
+                if (!emailInput.value || !addressInput.value) {
+                  toast({
+                    title: "表单验证失败",
+                    description: "请填写所有字段",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                try {
+                  // 更新电子邮箱
+                  await apiRequest("PUT", "/api/contact-info/email", {
+                    value: emailInput.value
+                  });
+                  
+                  // 更新地址
+                  await apiRequest("PUT", "/api/contact-info/address", {
+                    value: addressInput.value
+                  });
+                  
+                  // 更新本地状态
+                  setContactInfo({
+                    email: emailInput.value,
+                    address: addressInput.value
+                  });
+                  
+                  toast({
+                    title: "更新成功",
+                    description: "联系信息已更新",
+                  });
+                } catch (error) {
+                  console.error("更新联系信息失败:", error);
+                  toast({
+                    title: "更新失败",
+                    description: "无法更新联系信息，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <div className="space-y-2">
+                <label htmlFor="contact-email" className="block text-sm">电子邮箱:</label>
+                <Input 
+                  id="contact-email" 
+                  className="bg-primary/50 border-accent"
+                  required 
+                  defaultValue={contactInfo.email}
+                  placeholder="company@example.com"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="contact-address" className="block text-sm">地址:</label>
+                <Textarea 
+                  id="contact-address" 
+                  className="bg-primary/50 border-accent"
+                  required 
+                  defaultValue={contactInfo.address}
+                  placeholder="公司地址"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="flex justify-end">
+                <Button 
+                  type="submit"
+                  className="bg-accent text-primary hover:bg-accent/80"
+                  disabled={loadingContactInfo}
+                >
+                  {loadingContactInfo ? "更新中..." : "更新联系信息"}
+                </Button>
+              </div>
+            </form>
+          </div>
         </CardContent>
       </Card>
 
