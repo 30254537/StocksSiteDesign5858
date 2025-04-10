@@ -9,6 +9,7 @@ import {
   musicTracks, type MusicTrack, type InsertMusicTrack,
   contactInfo, type ContactInfo, type InsertContactInfo,
   contractAddresses, type ContractAddress, type InsertContractAddress,
+  cryptoNews, type CryptoNews, type InsertCryptoNews,
   type OrderWithItems
 } from "@shared/schema";
 import { db } from "./db";
@@ -78,6 +79,16 @@ export interface IStorage {
   createContractAddress(contractAddress: InsertContractAddress): Promise<ContractAddress>;
   updateContractAddress(id: number, contractAddress: Partial<ContractAddress>): Promise<ContractAddress | undefined>;
   deleteContractAddress(id: number): Promise<boolean>;
+  
+  // Crypto News operations
+  getCryptoNews(limit?: number, offset?: number): Promise<CryptoNews[]>;
+  getCryptoNewsById(id: number): Promise<CryptoNews | undefined>;
+  getCryptoNewsByCategory(category: string, limit?: number): Promise<CryptoNews[]>;
+  getHighlightedCryptoNews(limit?: number): Promise<CryptoNews[]>;
+  createCryptoNews(news: InsertCryptoNews): Promise<CryptoNews>;
+  updateCryptoNews(id: number, news: Partial<CryptoNews>): Promise<CryptoNews | undefined>;
+  deleteCryptoNews(id: number): Promise<boolean>;
+  getCryptoNewsCount(): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -477,6 +488,60 @@ export class DatabaseStorage implements IStorage {
       .where(eq(contractAddresses.id, id));
     
     return result.count > 0;
+  }
+  
+  // Crypto News methods
+  async getCryptoNews(limit: number = 20, offset: number = 0): Promise<CryptoNews[]> {
+    return await db.select().from(cryptoNews)
+      .orderBy(desc(cryptoNews.publishedAt))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async getCryptoNewsById(id: number): Promise<CryptoNews | undefined> {
+    const [news] = await db.select().from(cryptoNews).where(eq(cryptoNews.id, id));
+    return news;
+  }
+  
+  async getCryptoNewsByCategory(category: string, limit: number = 10): Promise<CryptoNews[]> {
+    return await db.select().from(cryptoNews)
+      .where(eq(cryptoNews.category, category))
+      .orderBy(desc(cryptoNews.publishedAt))
+      .limit(limit);
+  }
+  
+  async getHighlightedCryptoNews(limit: number = 5): Promise<CryptoNews[]> {
+    return await db.select().from(cryptoNews)
+      .where(eq(cryptoNews.isHighlighted, 1))
+      .orderBy(desc(cryptoNews.publishedAt))
+      .limit(limit);
+  }
+  
+  async createCryptoNews(news: InsertCryptoNews): Promise<CryptoNews> {
+    const [newNews] = await db.insert(cryptoNews).values(news).returning();
+    return newNews;
+  }
+  
+  async updateCryptoNews(id: number, data: Partial<CryptoNews>): Promise<CryptoNews | undefined> {
+    const [news] = await db.update(cryptoNews)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(cryptoNews.id, id))
+      .returning();
+    
+    return news;
+  }
+  
+  async deleteCryptoNews(id: number): Promise<boolean> {
+    const result = await db.delete(cryptoNews).where(eq(cryptoNews.id, id));
+    return result.count > 0;
+  }
+  
+  async getCryptoNewsCount(): Promise<number> {
+    const result = await db.select({ count: sql`count(*)` }).from(cryptoNews);
+    return Number(result[0].count);
   }
 }
 

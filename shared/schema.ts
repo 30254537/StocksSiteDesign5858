@@ -201,3 +201,27 @@ export const insertContractAddressSchema = createInsertSchema(contractAddresses)
 
 export type ContractAddress = typeof contractAddresses.$inferSelect;
 export type InsertContractAddress = z.infer<typeof insertContractAddressSchema>;
+
+// 加密快讯模型
+export const cryptoNews = pgTable("crypto_news", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  source: text("source").notNull(), // 新闻来源网站
+  sourceUrl: text("source_url").notNull(), // 原始链接
+  imageUrl: text("image_url"), // 可选的新闻图片
+  category: text("category").default("general"), // 分类如：比特币、以太坊、DeFi等
+  isHighlighted: integer("is_highlighted").default(0), // 是否为重点新闻
+  publishedAt: timestamp("published_at").notNull(), // 原始发布时间
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertCryptoNewsSchema = createInsertSchema(cryptoNews).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type CryptoNews = typeof cryptoNews.$inferSelect;
+export type InsertCryptoNews = z.infer<typeof insertCryptoNewsSchema>;
