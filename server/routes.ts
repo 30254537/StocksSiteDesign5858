@@ -177,6 +177,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
   
+  // 获取联系信息
+  app.get('/api/contact-info', async (req, res) => {
+    try {
+      const contactInfo = await storage.getAllContactInfo();
+      res.status(200).json(contactInfo);
+    } catch (error) {
+      console.error('获取联系信息错误:', error);
+      res.status(500).json({ message: "获取联系信息失败" });
+    }
+  });
+  
+  // 更新联系信息（需要管理员权限）
+  app.put('/api/contact-info/:key', requireAdmin, async (req, res) => {
+    try {
+      const { key } = req.params;
+      const { value } = req.body;
+      
+      if (!value) {
+        return res.status(400).json({ message: "值不能为空" });
+      }
+      
+      await storage.updateContactInfo(key, value);
+      res.status(200).json({ message: "联系信息已更新", key, value });
+    } catch (error) {
+      console.error('更新联系信息错误:', error);
+      res.status(500).json({ message: "更新联系信息失败" });
+    }
+  });
+  
   // 图片上传端点
   app.post('/api/upload', requireAdmin, upload.array('images', 10), (req, res) => {
     try {
