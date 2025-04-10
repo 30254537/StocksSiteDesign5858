@@ -90,6 +90,22 @@ const CryptoNews: React.FC = () => {
   };
   
   // 格式化发布日期
+  // 为不带图片的新闻生成默认图片
+  const getNewsImage = (news: CryptoNewsType) => {
+    if (news.imageUrl) return news.imageUrl;
+    
+    // 根据新闻来源生成不同的默认图片
+    const defaultImages = {
+      'CoinGecko': 'https://static.coingecko.com/s/coingecko-logo-8903d34ce19ca4be1c81f0db30e924154750d208683fad7ae6f2ce06c76d0a56.png',
+      'CryptoPanic': 'https://cryptopanic.com/static/images/cryptopanic-logo-vert.png',
+      'CryptoNews': 'https://cdn.coinranking.com/assets/343204ced712cae2b1e4c2e5/cryptonews.png'
+    };
+    
+    // 如果有匹配的来源，使用对应的默认图片，否则使用一个通用的加密货币图片
+    return defaultImages[news.source as keyof typeof defaultImages] || 
+      'https://img.freepik.com/premium-vector/cryptocurrency-bitcoin-golden-coin-background_116083-4199.jpg';
+  };
+
   const formatPublishedDate = (date: string) => {
     try {
       return formatDistanceToNow(new Date(date), { 
@@ -97,7 +113,7 @@ const CryptoNews: React.FC = () => {
         locale: language === 'zh' ? zhCN : enUS 
       });
     } catch (e) {
-      return '';
+      return language === 'zh' ? '最近' : 'recently';
     }
   };
 
@@ -121,36 +137,40 @@ const CryptoNews: React.FC = () => {
         ) : highlightedNews && highlightedNews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {highlightedNews.map((news) => (
-              <Card key={news.id} className="overflow-hidden border-teal-500/20 shadow-lg bg-gray-900">
-                {news.imageUrl && (
+              <a 
+                key={news.id} 
+                href={news.sourceUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <Card className="overflow-hidden border-teal-500/20 shadow-lg bg-gray-900 hover:bg-gray-800 transition-colors cursor-pointer h-full transform hover:scale-[1.02] transition-transform">
                   <div className="w-full h-40 overflow-hidden">
                     <img 
-                      src={news.imageUrl} 
+                      src={getNewsImage(news)} 
                       alt={news.title} 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                )}
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <Badge className="bg-teal-500 hover:bg-teal-600">
-                      {t('cryptoNews.featured')}
-                    </Badge>
-                    <Badge variant="outline">{news.source}</Badge>
-                  </div>
-                  <CardTitle className="text-lg mt-2 line-clamp-2">{news.title}</CardTitle>
-                </CardHeader>
-                <CardFooter className="pt-0 flex justify-between">
-                  <span className="text-xs text-gray-400">
-                    {formatPublishedDate(news.publishedAt)}
-                  </span>
-                  <Button variant="link" asChild>
-                    <a href={news.sourceUrl} target="_blank" rel="noopener noreferrer">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <Badge className="bg-teal-500 hover:bg-teal-600">
+                        {t('cryptoNews.featured')}
+                      </Badge>
+                      <Badge variant="outline">{news.source}</Badge>
+                    </div>
+                    <CardTitle className="text-lg mt-2 line-clamp-2">{news.title}</CardTitle>
+                  </CardHeader>
+                  <CardFooter className="pt-0 flex justify-between mt-auto">
+                    <span className="text-xs text-gray-400">
+                      {formatPublishedDate(news.publishedAt)}
+                    </span>
+                    <Button variant="link">
                       {t('cryptoNews.readMore')}
-                    </a>
-                  </Button>
-                </CardFooter>
-              </Card>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </a>
             ))}
           </div>
         ) : null}
@@ -197,40 +217,44 @@ const CryptoNews: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {newsData?.data.map((news) => (
-                  <Card key={news.id} className="overflow-hidden border-gray-700 bg-gray-800/50 hover:bg-gray-800 transition-colors">
-                    <div className="flex flex-col md:flex-row">
-                      {news.imageUrl && (
+                  <a 
+                    key={news.id} 
+                    href={news.sourceUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <Card className="overflow-hidden border-gray-700 bg-gray-800/50 hover:bg-gray-800 transition-colors cursor-pointer transform hover:scale-[1.01] transition-transform">
+                      <div className="flex flex-col md:flex-row">
                         <div className="w-full md:w-1/4 h-40 md:h-auto overflow-hidden">
                           <img 
-                            src={news.imageUrl} 
+                            src={getNewsImage(news)} 
                             alt={news.title} 
                             className="w-full h-full object-cover"
                           />
                         </div>
-                      )}
-                      <div className={`flex-1 flex flex-col ${news.imageUrl ? 'md:w-3/4' : 'w-full'}`}>
-                        <CardHeader>
-                          <div className="flex justify-between items-center mb-2">
-                            <Badge variant="outline">{news.source}</Badge>
-                            <span className="text-xs text-gray-400">
-                              {formatPublishedDate(news.publishedAt)}
-                            </span>
-                          </div>
-                          <CardTitle className="text-xl">{news.title}</CardTitle>
-                          <CardDescription className="line-clamp-2 mt-2">
-                            {news.content}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardFooter className="mt-auto">
-                          <Button variant="link" asChild className="ml-auto">
-                            <a href={news.sourceUrl} target="_blank" rel="noopener noreferrer">
+                        <div className="flex-1 flex flex-col md:w-3/4">
+                          <CardHeader>
+                            <div className="flex justify-between items-center mb-2">
+                              <Badge variant="outline">{news.source}</Badge>
+                              <span className="text-xs text-gray-400">
+                                {formatPublishedDate(news.publishedAt)}
+                              </span>
+                            </div>
+                            <CardTitle className="text-xl">{news.title}</CardTitle>
+                            <CardDescription className="line-clamp-2 mt-2">
+                              {news.content}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardFooter className="mt-auto">
+                            <Button variant="link" className="ml-auto">
                               {t('cryptoNews.readMore')}
-                            </a>
-                          </Button>
-                        </CardFooter>
+                            </Button>
+                          </CardFooter>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
+                    </Card>
+                  </a>
                 ))}
               </div>
             )}
