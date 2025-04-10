@@ -129,10 +129,11 @@ export default function MusicPage() {
             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10"></div>
             <MusicVisualizer 
               className="w-full h-full" 
-              height={isMobile ? 120 : 160} // 减小高度，保持小声波纹效果
-              barCount={isMobile ? 100 : 200} // 大幅增加条数，创建细条效果
+              height={isMobile ? 100 : 120} // 更小的高度，类似图片中的效果
+              barCount={isMobile ? 120 : 240} // 进一步增加条数，使竖条更密集
               barWidth={1} // 极细的条
-              gap={2} // 增加间隙使波形更分散
+              gap={1} // 减小间隙使竖条更密集，更接近图片中的效果
+              sensitivity={1.8} // 增加灵敏度，使条的高度变化更明显
             />
           </div>
           
