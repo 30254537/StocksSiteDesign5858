@@ -13,14 +13,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function Manage() {
   const { t } = useLanguage();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+
+  // 管理选项卡切换状态
+  const [activeTab, setActiveTab] = useState<string>("products");
+  
+  // 通用状态
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  
+  // 产品管理状态
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [selectedFilesObjects, setSelectedFilesObjects] = useState<File[]>([]);
   
   // 联系信息状态
   const [contactInfo, setContactInfo] = useState<{
@@ -232,8 +240,7 @@ export default function Manage() {
     }
   };
   
-  // 存储选择的文件对象引用
-  const [selectedFilesObjects, setSelectedFilesObjects] = useState<File[]>([]);
+  // 文件处理函数
   
   // 处理文件选择变化
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -284,9 +291,9 @@ export default function Manage() {
 
   return (
     <div className="container mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-accent">STONKS DEX 后台管理系统</h1>
-      
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-accent">STONKS DEX 后台管理系统</h1>
+        
         <Button 
           variant="ghost" 
           className="text-accent hover:text-white hover:bg-primary/50"
@@ -305,6 +312,64 @@ export default function Manage() {
         >
           退出登录
         </Button>
+      </div>
+      
+      {/* 管理导航选项卡 */}
+      <div className="flex flex-wrap border-b border-accent/30 mb-8">
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "products" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("products")}
+        >
+          商品管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "contracts" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("contracts")}
+        >
+          合约地址管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "contact" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("contact")}
+        >
+          联系信息管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "music" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("music")}
+        >
+          音乐管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "orders" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("orders")}
+        >
+          订单管理
+        </button>
       </div>
       
       <Card className="shadow-lg mb-8">
