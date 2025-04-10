@@ -6,12 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
-import { Product, ContractAddress, Order, OrderItemWithProduct, OrderWithItems } from "@shared/schema";
+import { Product, ContractAddress } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import OrderManagement from "@/components/OrderManagement";
 
 export default function Manage() {
   const { t } = useLanguage();
@@ -1291,9 +1290,8 @@ export default function Manage() {
                             variant="outline" 
                             className="border-accent text-accent"
                             onClick={() => handleTrackingNumberUpdate(selectedOrder.id)}
-                            disabled={!trackingNumber.trim()}
                           >
-                            保存物流信息
+                            提交并发货
                           </Button>
                         </div>
                       </div>
@@ -1301,12 +1299,64 @@ export default function Manage() {
                     
                     {selectedOrder.trackingNumber && (
                       <div className="mb-6">
-                        <h4 className="font-medium text-accent mb-2">物流信息</h4>
+                        <h4 className="font-medium text-accent mb-2">物流单号</h4>
                         <div className="bg-primary/20 p-3 rounded border border-accent/30">
-                          <p>物流单号: {selectedOrder.trackingNumber}</p>
+                          <p>{selectedOrder.trackingNumber}</p>
                         </div>
                       </div>
                     )}
+                    
+                    <div>
+                      <h4 className="font-medium text-accent mb-2">订单商品</h4>
+                      <div className="rounded-md border border-accent/30 overflow-hidden">
+                        <Table>
+                          <TableHeader className="bg-primary/50">
+                            <TableRow>
+                              <TableHead className="text-accent">商品</TableHead>
+                              <TableHead className="text-accent">数量</TableHead>
+                              <TableHead className="text-accent">单价</TableHead>
+                              <TableHead className="text-accent">小计</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {selectedOrderItems.map((item, index) => (
+                              <TableRow key={index}>
+                                <TableCell>
+                                  <div className="flex items-center gap-3">
+                                    {item.product?.imageUrl && (
+                                      <div className="w-12 h-12 bg-primary/30 rounded overflow-hidden">
+                                        <img 
+                                          src={item.product.imageUrl} 
+                                          alt={item.product?.name || '产品图片'} 
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    )}
+                                    <div>
+                                      <p>{item.product?.name || '未知商品'}</p>
+                                      {item.size && <p className="text-xs text-gray-400">尺码: {item.size}</p>}
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                <TableCell>{item.quantity}</TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span className="text-accent">⊙ {item.ethPrice.toFixed(6)}</span>
+                                    <span className="text-xs text-gray-400">${item.price.toFixed(2)}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span className="text-accent">⊙ {(item.ethPrice * item.quantity).toFixed(6)}</span>
+                                    <span className="text-xs text-gray-400">${(item.price * item.quantity).toFixed(2)}</span>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
                     
                     <div>
                       <h4 className="font-medium text-accent mb-2">订单商品</h4>
