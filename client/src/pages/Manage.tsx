@@ -23,6 +23,10 @@ export default function Manage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   
+  // 推文管理状态
+  const [tweets, setTweets] = useState<any[]>([]);
+  const [loadingTweets, setLoadingTweets] = useState(false);
+  
   // 产品管理状态
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,6 +92,89 @@ export default function Manage() {
     }
   };
 
+  // 获取推文数据
+  const fetchTweets = async () => {
+    setLoadingTweets(true);
+    try {
+      const response = await apiRequest("GET", "/api/crypto-tweets");
+      const data = await response.json();
+      setTweets(data.data || []);
+    } catch (error) {
+      console.error("获取推文失败:", error);
+      toast({
+        title: "获取推文失败",
+        description: "无法获取推文数据，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingTweets(false);
+    }
+  };
+  
+  // 处理推文翻译
+  const handleTranslateTweet = async (tweetId: number) => {
+    try {
+      const response = await apiRequest("POST", `/api/crypto-tweets/${tweetId}/translate`);
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "翻译成功",
+          description: "推文已成功翻译",
+        });
+        
+        // 更新推文列表中的翻译
+        setTweets(prevTweets => 
+          prevTweets.map(tweet => 
+            tweet.id === tweetId ? { ...tweet, translatedText: data.tweet.translatedText, isTranslated: true } : tweet
+          )
+        );
+      } else {
+        toast({
+          title: "翻译失败",
+          description: "无法翻译推文，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("翻译推文错误:", error);
+      toast({
+        title: "翻译失败",
+        description: "无法翻译推文，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // 处理刷新推文
+  const handleSyncTweets = async () => {
+    try {
+      const response = await apiRequest("POST", "/api/crypto-tweets/sync");
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "同步成功",
+          description: data.message || "推文已成功同步",
+        });
+        
+        // 重新获取推文列表
+        await fetchTweets();
+      } else {
+        toast({
+          title: "同步失败",
+          description: "无法同步推文，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("同步推文错误:", error);
+      toast({
+        title: "同步失败",
+        description: "无法同步推文，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
+  
   // 检查管理员身份验证
   useEffect(() => {
     const checkAuth = async () => {
@@ -101,6 +188,8 @@ export default function Manage() {
           fetchContactInfo();
           // 获取合约地址列表
           fetchContractAddresses();
+          // 获取推文数据
+          fetchTweets();
         } else {
           // 未经授权，重定向到登录页面
           toast({
@@ -401,6 +490,17 @@ export default function Manage() {
           onClick={() => setActiveTab("orders")}
         >
           订单管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "tweets" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("tweets")}
+        >
+          推文管理
         </button>
       </div>
       

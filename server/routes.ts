@@ -14,7 +14,7 @@ import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 import cryptoNewsRoutes from "./routes/cryptoNewsRoutes";
 import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
-import { translateAllUntranslatedTweets, initTweetTranslationScheduler } from "./services/translationService";
+import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
 import { syncCryptoTweets } from "./services/xService";
 import * as cron from "node-cron";
 
