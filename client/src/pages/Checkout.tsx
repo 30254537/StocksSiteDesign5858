@@ -371,19 +371,19 @@ const OrderSummary = () => {
       <Separator className="my-4" />
       
       <div className="flex justify-between mb-2">
-        <div>{t('checkout.subtotal')}</div>
+        <div>{t('checkout.subtotal')}:</div>
         <div>{formatCurrency(totalPrice)}</div>
       </div>
       
       <div className="flex justify-between mb-4">
-        <div>{t('checkout.shipping')}</div>
+        <div>{t('checkout.shipping')}:</div>
         <div>{t('checkout.free')}</div>
       </div>
       
       <Separator className="my-4" />
       
       <div className="flex justify-between font-bold mb-2">
-        <div>{t('checkout.total')}</div>
+        <div>{t('checkout.total')}:</div>
         <div>{formatCurrency(totalPrice)}</div>
       </div>
       
@@ -454,7 +454,6 @@ export default function Checkout() {
                   USDT
                 </TabsTrigger>
                 <TabsTrigger value="crypto">
-                  <Bitcoin className="mr-2 h-4 w-4" />
                   $ STONKS
                 </TabsTrigger>
               </TabsList>
@@ -469,9 +468,7 @@ export default function Checkout() {
             </Tabs>
           </CardContent>
           <CardFooter className="flex flex-col items-start">
-            <p className="text-xs text-gray-500">
-              {t('checkout.securePayment')}
-            </p>
+            
           </CardFooter>
         </Card>
       </div>
