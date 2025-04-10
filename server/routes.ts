@@ -1318,7 +1318,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/crypto-tweets', async (req, res) => {
     try {
       // 获取最新的X推文，按照热度排序
-      const tweets = await storage.getCryptoTweets();
+      const { category } = req.query;
+      const tweets = await storage.getCryptoTweets(undefined, category as string);
       
       // 根据语言返回不同的字段
       const { lang } = req.query;
@@ -1341,13 +1342,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         url: tweet.url,
         createdAt: tweet.createdAt,
-        isTranslated: !!tweet.translatedText
+        isTranslated: !!tweet.translatedText,
+        category: tweet.category || 'crypto'
       }));
       
       res.json({ data: formattedTweets });
     } catch (error) {
       console.error('获取X推文失败:', error);
       res.status(500).json({ error: '获取推文失败' });
+    }
+  });
+  
+  // 获取合约地址推文API端点
+  app.get('/api/contract-tweets', async (req, res) => {
+    try {
+      // 专门获取category为contract的推文
+      const tweets = await storage.getCryptoTweets(10, 'contract');
+      
+      // 根据语言返回不同的字段
+      const { lang } = req.query;
+      const useZh = lang === 'zh';
+      
+      // 返回推文数据，始终包含原文和翻译文本
+      const formattedTweets = tweets.map(tweet => ({
+        id: tweet.id,
+        tweetId: tweet.tweetId,
+        text: tweet.text,
+        translatedText: tweet.translatedText || '',
+        authorName: tweet.authorName,
+        authorUsername: tweet.authorUsername,
+        authorProfileImage: tweet.authorProfileImage,
+        metrics: {
+          likes: tweet.likeCount,
+          retweets: tweet.retweetCount,
+          replies: tweet.replyCount,
+          quotes: tweet.quoteCount
+        },
+        url: tweet.url,
+        createdAt: tweet.createdAt,
+        isTranslated: !!tweet.translatedText,
+        category: 'contract'
+      }));
+      
+      res.json({ data: formattedTweets });
+    } catch (error) {
+      console.error('获取合约地址推文失败:', error);
+      res.status(500).json({ error: '获取合约地址推文失败' });
     }
   });
   

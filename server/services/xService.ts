@@ -122,12 +122,39 @@ export async function syncCryptoTweets(): Promise<number> {
           continue;
         }
         
+        // 筛选推文：只保留转发量在50-1000之间，且创建时间在过去30分钟内的推文
+        const tweetCreatedAt = new Date(tweet.created_at);
+        const now = new Date();
+        const minutesAgo = (now.getTime() - tweetCreatedAt.getTime()) / (1000 * 60);
+        const retweetCount = tweet.public_metrics?.retweet_count || 0;
+        
+        // 推文必须是10分钟-30分钟内，转发量在50-1000之间的
+        if (minutesAgo > 30 || minutesAgo < 10 || retweetCount < 50 || retweetCount > 1000) {
+          console.log(`推文 ${tweet.id} 不符合条件: ${minutesAgo.toFixed(2)}分钟前, ${retweetCount}转发`);
+          continue;
+        }
+        
         // 获取作者信息
         const author = usersMap.get(tweet.author_id);
         if (!author) {
           console.log(`找不到作者信息，作者ID: ${tweet.author_id}`);
           continue;
         }
+        
+        // 进一步分析推文内容，确认是否包含合约地址
+        const hasContractAddress = tweet.text.includes('CA:') || 
+                                  tweet.text.toLowerCase().includes('contract address') || 
+                                  tweet.text.includes('0x') ||
+                                  /contract\s*:\s*0x[a-fA-F0-9]{40}/i.test(tweet.text) ||
+                                  /address\s*:\s*0x[a-fA-F0-9]{40}/i.test(tweet.text);
+                                  
+        // 如果不含合约地址，可以跳过
+        if (!hasContractAddress) {
+          console.log(`推文 ${tweet.id} 不含合约地址信息`);
+          continue;
+        }
+        
+        console.log(`找到符合条件的推文: ${retweetCount}转发, ${minutesAgo.toFixed(2)}分钟前, 作者: ${author.username}`);
         
         // 创建新的推文记录
         const newTweet: InsertCryptoTweet = {
@@ -143,7 +170,7 @@ export async function syncCryptoTweets(): Promise<number> {
           url: `https://twitter.com/${author.username}/status/${tweet.id}`,
           // createdAt会由defaultNow()自动设置
           source: 'x',
-          category: 'crypto',
+          category: 'contract', // 将类别标记为合约地址
           language: 'en',
           translatedText: null
         };
