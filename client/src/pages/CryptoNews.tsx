@@ -29,6 +29,38 @@ import { formatDistanceToNow } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
 import { useLanguage } from '../contexts/LanguageContext';
 
+// 定义硬编码的翻译，以确保在翻译系统失败时仍能正确显示
+const translations = {
+  "cryptoNews.title": {
+    en: "Cryptocurrency News",
+    zh: "加密货币新闻"
+  },
+  "cryptoNews.featured": {
+    en: "Featured",
+    zh: "置顶新闻"
+  },
+  "cryptoNews.readMore": {
+    en: "Read More",
+    zh: "阅读更多"
+  },
+  "cryptoNews.allNews": {
+    en: "All News",
+    zh: "全部新闻"
+  },
+  "cryptoNews.error": {
+    en: "Error fetching news",
+    zh: "获取新闻失败"
+  },
+  "cryptoNews.noNews": {
+    en: "No news available",
+    zh: "暂无可用新闻"
+  },
+  "cryptoNews.stayUpdated": {
+    en: "Follow us for more crypto updates",
+    zh: "关注我们以获取更多加密货币更新"
+  }
+};
+
 const PAGE_SIZE = 10;
 
 const CryptoNews: React.FC = () => {
@@ -225,12 +257,20 @@ const CryptoNews: React.FC = () => {
     console.log(`翻译测试: ${t('cryptoNews.title')}`);
   }, [language]);
   
+  // 使用硬编码的翻译，而不是 t 函数
+  const getLocalTranslation = (key: keyof typeof translations): string => {
+    if (translations[key] && translations[key][language]) {
+      return translations[key][language];
+    }
+    return key;
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-teal-400">
-            {t('cryptoNews.title')}
+            {getLocalTranslation('cryptoNews.title')}
           </h1>
           <StonksPriceDisplay />
         </div>
@@ -263,7 +303,7 @@ const CryptoNews: React.FC = () => {
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <Badge className="bg-teal-500 hover:bg-teal-600">
-                        {t('cryptoNews.featured')}
+                        {getLocalTranslation('cryptoNews.featured')}
                       </Badge>
                       <Badge variant="outline">{news.source}</Badge>
                     </div>
@@ -274,7 +314,7 @@ const CryptoNews: React.FC = () => {
                       {formatPublishedDate(news.publishedAt)}
                     </span>
                     <Button variant="link">
-                      {t('cryptoNews.readMore')}
+                      {getLocalTranslation('cryptoNews.readMore')}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -287,7 +327,7 @@ const CryptoNews: React.FC = () => {
         <Tabs defaultValue="all" className="mb-6">
           <TabsList className="mb-4">
             <TabsTrigger value="all" onClick={() => handleCategoryChange('all')}>
-              {t('cryptoNews.allNews')}
+              {getLocalTranslation('cryptoNews.allNews')}
             </TabsTrigger>
             <TabsTrigger value="bitcoin" onClick={() => handleCategoryChange('bitcoin')}>
               Bitcoin
