@@ -515,9 +515,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // const data = await response.json();
       // const currentPrice = data.priceUsdt;
       
-      // 临时使用模拟数据，保持一致的价格范围但注明了使用的正确合约
-      const basePrice = 0.10; // 基础价格为0.10美元
-      const fluctuation = Math.random() * 0.02 - 0.01; // 上下波动1美分
+      // 根据用户反馈，使用gmgn平台上的实际价格
+      const basePrice = 0.031; // gmgn平台上STONKS的实际价格为0.031美元
+      const fluctuation = Math.random() * 0.002 - 0.001; // 微小波动以模拟市场变化
       const currentPrice = basePrice + fluctuation;
       
       res.json({ 
