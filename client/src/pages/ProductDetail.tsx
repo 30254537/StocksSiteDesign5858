@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { formatCurrency, formatEth, formatPrice } from "@/lib/utils";
+import { useStonksPrice } from "@/contexts/StonksPriceContext";
+import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { Product } from "@shared/schema";
 import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
@@ -14,6 +15,7 @@ export default function ProductDetail() {
   const productId = parseInt(id || '0');
   const { addToCart } = useCart();
   const { t, language } = useLanguage();
+  const { currentPrice } = useStonksPrice();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -186,7 +188,7 @@ export default function ProductDetail() {
             <div className="mb-6">
               <p className="text-gray-400 mb-1">{t("products.price")}</p>
               <div className="flex items-center">
-                <span className="text-2xl font-medium text-accent">{formatEth(product.ethPrice)}</span>
+                <span className="text-2xl font-medium text-accent">{formatUsdToStonks(product.price, currentPrice)}</span>
               </div>
             </div>
             

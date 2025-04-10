@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { formatCurrency, formatEth, formatPrice } from "@/lib/utils";
+import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib/utils";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useStonksPrice } from "@/contexts/StonksPriceContext";
 import { Button } from "@/components/ui/button";
 import { Product } from "@shared/schema";
 
@@ -14,6 +15,7 @@ interface ProductCardProps {
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const { addToCart } = useCart();
   const { t, language } = useLanguage();
+  const { currentPrice } = useStonksPrice();
   const [isHovered, setIsHovered] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -69,7 +71,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             <div>
               <p className="text-gray-300 text-sm mb-1">{t("products.price")}</p>
               <div className="flex items-center">
-                <span className="text-accent">{formatEth(product.ethPrice)}</span>
+                <span className="text-accent">{formatUsdToStonks(product.price, currentPrice)}</span>
               </div>
             </div>
             <Button 

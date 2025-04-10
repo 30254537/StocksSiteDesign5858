@@ -18,6 +18,13 @@ export function formatEth(value: number): string {
   return `⊙ ${value.toFixed(6)} $STONKS`;
 }
 
+// 将美元价格转换成STONKS代币价格并格式化显示
+export function formatUsdToStonks(usdPrice: number, stonksPrice: number): string {
+  if (!stonksPrice || stonksPrice === 0) return `⊙ 0.000000 $STONKS`;
+  const stonksAmount = usdPrice / stonksPrice;
+  return `⊙ ${stonksAmount.toFixed(6)} $STONKS`;
+}
+
 export function formatPrice(price: number): string {
   return `${price.toFixed(6)}`;
 }
