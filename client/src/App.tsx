@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { CartProvider } from "@/contexts/CartContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AudioProvider } from "@/contexts/AudioContext";
+import { StonksPriceProvider } from "@/contexts/StonksPriceContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { lazy, Suspense, useEffect, useState } from "react";
 
@@ -186,15 +187,17 @@ function App() {
       <LanguageProvider>
         <CartProvider>
           <AudioProvider>
-            <div className="flex flex-col min-h-screen bg-nightblue">
-              <Header />
-              <main className="flex-grow">
-                <Router />
-              </main>
-              <Footer />
-              <CartModal />
-            </div>
-            <Toaster />
+            <StonksPriceProvider>
+              <div className="flex flex-col min-h-screen bg-nightblue">
+                <Header />
+                <main className="flex-grow">
+                  <Router />
+                </main>
+                <Footer />
+                <CartModal />
+              </div>
+              <Toaster />
+            </StonksPriceProvider>
           </AudioProvider>
         </CartProvider>
       </LanguageProvider>

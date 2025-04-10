@@ -503,6 +503,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // 获取STONKS的实时价格
+  app.get("/api/stonks-price", async (req, res) => {
+    try {
+      // 这里可以集成实际的加密货币价格API
+      // 目前使用模拟数据演示功能
+      // 在实际生产环境中，应该集成如CoinGecko或Binance等API
+      
+      // 模拟价格浮动，实际环境中应替换为真实API调用
+      const basePrice = 0.10; // 基础价格为0.10美元
+      const fluctuation = Math.random() * 0.02 - 0.01; // 上下波动1美分
+      const currentPrice = basePrice + fluctuation;
+      
+      res.json({ 
+        price: currentPrice,
+        currency: "USD",
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error("Error fetching STONKS price:", error);
+      res.status(500).json({ message: `Error fetching STONKS price: ${error.message}` });
+    }
+  });
+
   // Create payment intent for Stripe
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
