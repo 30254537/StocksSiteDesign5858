@@ -1,7 +1,4 @@
 import { useEffect, useState } from 'react';
-// 移除Stripe依赖
-// import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
-// import { loadStripe } from '@stripe/stripe-js';
 import { useCart } from '@/contexts/CartContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStonksPrice } from '@/contexts/StonksPriceContext';
@@ -16,6 +13,172 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Bitcoin, RefreshCw, DollarSign } from 'lucide-react';
 import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
+
+// USDT直接支付表单
+const UsdtDirectForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [, setLocation] = useLocation();
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const { clearCart, totalPrice } = useCart();
+  const [shippingAddress, setShippingAddress] = useState('');
+  const [transactionHash, setTransactionHash] = useState('');
+
+  // 添加USDT链选择
+  const [selectedUsdtChain, setSelectedUsdtChain] = useState('trc20');
+  
+  // USDT链选项
+  const usdtChains = [
+    { id: 'trc20', name: 'TRC20 (TRON)', logo: '⚡️', address: 'TNVaUw4sDHsVzsHx7ZQKGQQGbM12QyR4TF' },
+    { id: 'erc20', name: 'ERC20 (Ethereum)', logo: '🔷', address: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' },
+    { id: 'bep20', name: 'BEP20 (BSC)', logo: '🟡', address: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' },
+    { id: 'sol', name: 'Solana', logo: '🟣', address: '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump' }
+  ];
+  
+  // 获取当前选择的链的地址
+  const currentChainAddress = usdtChains.find(chain => chain.id === selectedUsdtChain)?.address || '';
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!transactionHash) {
+      setError(t('checkout.transactionHashRequired'));
+      return;
+    }
+    
+    if (!shippingAddress) {
+      setError(t('checkout.shippingAddressRequired'));
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // 提交USDT支付详情
+      await apiRequest('POST', '/api/crypto-checkout', {
+        paymentMethod: 'usdt',
+        transactionHash,
+        shippingAddress,
+        network: selectedUsdtChain
+      });
+      
+      toast({
+        title: t('checkout.paymentSuccessful'),
+        description: t('checkout.orderPlacedSuccessfully'),
+      });
+      
+      // 清空购物车并重定向到成功页面
+      await clearCart();
+      setLocation('/checkout-success');
+    } catch (err) {
+      console.error('Error processing USDT payment:', err);
+      setError(t('checkout.cryptoPaymentError'));
+      toast({
+        title: t('checkout.paymentError'),
+        description: t('checkout.unableToProcessPayment'),
+        variant: 'destructive',
+      });
+    }
+    
+    setIsLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mb-6">
+        <p className="mb-4 text-sm">
+          {t('checkout.sendTokensToAddress')}:
+        </p>
+        
+        {/* USDT链选择 */}
+        <div className="mb-6">
+          <label className="block mb-2 text-sm font-medium text-accent">
+            选择USDT网络
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {usdtChains.map(chain => (
+              <div 
+                key={chain.id}
+                className={`p-3 rounded-md cursor-pointer border transition-all duration-200 ${
+                  selectedUsdtChain === chain.id 
+                    ? 'border-accent bg-accent/10 text-white' 
+                    : 'border-gray-700 hover:border-gray-500'
+                }`}
+                onClick={() => setSelectedUsdtChain(chain.id)}
+              >
+                <div className="flex items-center">
+                  <span className="mr-2">{chain.logo}</span>
+                  <span>{chain.name}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-4 p-3 bg-slate-800 rounded-md font-mono text-sm break-all">
+            <p className="text-xs text-gray-400 mb-1">USDT {t('checkout.receiveAddress')} ({usdtChains.find(c => c.id === selectedUsdtChain)?.name}):</p>
+            {currentChainAddress}
+          </div>
+        </div>
+        
+        <p className="mt-6 mb-4 text-sm">
+          {t('checkout.amountToSend')}: <strong className="text-accent font-mono">{formatCurrency(totalPrice)} USDT</strong>
+        </p>
+      </div>
+      
+      <div className="mb-6">
+        <label className="block mb-2 text-sm font-medium text-accent">
+          {t('checkout.transactionHash')}
+        </label>
+        <input
+          type="text"
+          className="w-full p-2 border border-gray-700 bg-slate-800 rounded-md"
+          placeholder="0x..."
+          value={transactionHash}
+          onChange={(e) => setTransactionHash(e.target.value)}
+          required
+        />
+        <p className="mt-1 text-xs text-gray-500">
+          {t('checkout.enterTransactionHash')}
+        </p>
+      </div>
+      
+      <div className="mb-6">
+        <label className="block mb-2 text-sm font-medium text-accent">
+          {t('checkout.shippingAddress')}
+        </label>
+        <Textarea
+          placeholder={t('checkout.enterShippingAddress')}
+          className="mb-4 border-gray-700 bg-slate-800"
+          value={shippingAddress}
+          onChange={(e) => setShippingAddress(e.target.value)}
+          required
+        />
+      </div>
+      
+      {error && (
+        <div className="p-3 mb-4 text-sm text-red-500 bg-red-900/20 rounded-md border border-red-800">
+          {error}
+        </div>
+      )}
+      
+      <Button disabled={isLoading} className="w-full" type="submit">
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {t('checkout.processing')}
+          </>
+        ) : (
+          <>
+            <DollarSign className="mr-2 h-4 w-4" />
+            {t('checkout.confirmPayment')}
+          </>
+        )}
+      </Button>
+    </form>
+  );
+};
 
 // USDT到STONKS换算器组件
 const UsdtToStonksConverter = () => {
@@ -51,159 +214,8 @@ const UsdtToStonksConverter = () => {
   );
 };
 
-// 移除Stripe
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
-// USDT checkout form
-const UsdtForm = () => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [, setLocation] = useLocation();
-  const { t } = useLanguage();
-  const { toast } = useToast();
-  const { clearCart } = useCart();
-  const [shippingAddress, setShippingAddress] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      // Stripe.js hasn't loaded yet
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    // Confirm the payment
-    const { error: submitError, paymentIntent } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout-success`,
-      },
-      redirect: 'if_required',
-    });
-
-    if (submitError) {
-      setError(submitError.message || t('checkout.paymentError'));
-      setIsLoading(false);
-      return;
-    }
-
-    // If we get here, payment succeeded but didn't require redirect
-    if (paymentIntent && paymentIntent.status === 'succeeded') {
-      try {
-        // Record the order in our database
-        await apiRequest('POST', '/api/complete-order', {
-          paymentIntentId: paymentIntent.id,
-          shippingAddress
-        });
-
-        toast({
-          title: t('checkout.paymentSuccessful'),
-          description: t('checkout.orderPlacedSuccessfully'),
-        });
-
-        // Clear cart and redirect to success page
-        await clearCart();
-        setLocation('/checkout-success');
-      } catch (err) {
-        console.error('Error completing order:', err);
-        toast({
-          title: t('checkout.orderError'),
-          description: t('checkout.paymentSuccessButOrderError'),
-          variant: 'destructive',
-        });
-      }
-    }
-
-    setIsLoading(false);
-  };
-
-  // 添加USDT链选择
-  const [selectedUsdtChain, setSelectedUsdtChain] = useState('trc20');
-  
-  // USDT链选项
-  const usdtChains = [
-    { id: 'trc20', name: 'TRC20 (TRON)', logo: '⚡️', address: 'TNVaUw4sDHsVzsHx7ZQKGQQGbM12QyR4TF' },
-    { id: 'erc20', name: 'ERC20 (Ethereum)', logo: '🔷', address: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' },
-    { id: 'bep20', name: 'BEP20 (BSC)', logo: '🟡', address: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' },
-    { id: 'sol', name: 'Solana', logo: '🟣', address: '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump' }
-  ];
-  
-  // 获取当前选择的链的地址
-  const currentChainAddress = usdtChains.find(chain => chain.id === selectedUsdtChain)?.address || '';
-  
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium">
-          {t('checkout.shippingAddress')}
-        </label>
-        <Textarea
-          placeholder={t('checkout.enterShippingAddress')}
-          className="mb-4"
-          value={shippingAddress}
-          onChange={(e) => setShippingAddress(e.target.value)}
-        />
-      </div>
-      
-      {/* USDT链选择 */}
-      <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium">
-          选择USDT网络
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {usdtChains.map(chain => (
-            <div 
-              key={chain.id}
-              className={`p-3 rounded-md cursor-pointer border transition-all duration-200 ${
-                selectedUsdtChain === chain.id 
-                  ? 'border-accent bg-accent/10 text-white' 
-                  : 'border-gray-700 hover:border-gray-500'
-              }`}
-              onClick={() => setSelectedUsdtChain(chain.id)}
-            >
-              <div className="flex items-center">
-                <span className="mr-2">{chain.logo}</span>
-                <span>{chain.name}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        <div className="mt-4 p-3 bg-slate-800 rounded-md font-mono text-sm break-all">
-          <p className="text-xs text-gray-400 mb-1">USDT {t('checkout.receiveAddress')} ({usdtChains.find(c => c.id === selectedUsdtChain)?.name}):</p>
-          {currentChainAddress}
-        </div>
-      </div>
-      
-      <PaymentElement className="mb-6" />
-      
-      {error && (
-        <div className="p-3 mb-4 text-sm text-red-500 bg-red-50 rounded-md">
-          {error}
-        </div>
-      )}
-      
-      <Button disabled={isLoading || !stripe} className="w-full" type="submit">
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {t('checkout.processing')}
-          </>
-        ) : (
-          <>
-            <DollarSign className="mr-2 h-4 w-4" />
-            {t('checkout.payNow')}
-          </>
-        )}
-      </Button>
-    </form>
-  );
-};
+// 旧的基于Stripe的USDT表单已被移除
+// 替换为了全新的UsdtDirectForm组件
 
 // Crypto checkout form
 const CryptoForm = () => {
@@ -267,17 +279,17 @@ const CryptoForm = () => {
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
         </div>
         <p className="mb-4 text-sm">
-          {t('checkout.amountToSend')}: <strong>⊙ {convertUsdToStonks(totalPrice).toFixed(6)} $STONKS</strong>
+          {t('checkout.amountToSend')}: <strong className="text-accent font-mono">⊙ {convertUsdToStonks(totalPrice).toFixed(6)} $STONKS</strong>
         </p>
       </div>
       
       <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium">
+        <label className="block mb-2 text-sm font-medium text-accent">
           {t('checkout.transactionHash')}
         </label>
         <input
           type="text"
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 border border-gray-700 bg-slate-800 rounded-md"
           placeholder="0x..."
           value={transactionHash}
           onChange={(e) => setTransactionHash(e.target.value)}
@@ -289,19 +301,20 @@ const CryptoForm = () => {
       </div>
       
       <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium">
+        <label className="block mb-2 text-sm font-medium text-accent">
           {t('checkout.shippingAddress')}
         </label>
         <Textarea
           placeholder={t('checkout.enterShippingAddress')}
-          className="mb-4"
+          className="mb-4 border-gray-700 bg-slate-800"
           value={shippingAddress}
           onChange={(e) => setShippingAddress(e.target.value)}
+          required
         />
       </div>
       
       {error && (
-        <div className="p-3 mb-4 text-sm text-red-500 bg-red-50 rounded-md">
+        <div className="p-3 mb-4 text-sm text-red-500 bg-red-900/20 rounded-md border border-red-800">
           {error}
         </div>
       )}
@@ -393,8 +406,7 @@ const OrderSummary = () => {
 };
 
 export default function Checkout() {
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useLanguage();
   const { totalPrice, cartItems } = useCart();
   const [, setLocation] = useLocation();
@@ -410,36 +422,7 @@ export default function Checkout() {
       setLocation('/');
       return;
     }
-    
-    // Create payment intent when the page loads
-    const getPaymentIntent = async () => {
-      try {
-        setIsLoading(true);
-        const response = await apiRequest('POST', '/api/create-payment-intent');
-        const data = await response.json();
-        setClientSecret(data.clientSecret);
-      } catch (error) {
-        console.error('Error creating payment intent:', error);
-        toast({
-          title: t('checkout.errorCreatingPayment'),
-          description: t('checkout.pleaseTryAgainLater'),
-          variant: 'destructive',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    getPaymentIntent();
   }, [cartItems.length, setLocation, toast, t]);
-  
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
   
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
