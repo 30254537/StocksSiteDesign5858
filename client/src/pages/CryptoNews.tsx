@@ -137,12 +137,18 @@ const CryptoNews: React.FC = () => {
     }
   };
 
+  // 调试语言状态
+  useEffect(() => {
+    console.log(`当前语言: ${language}, 支持的键: cryptoNews.title`);
+    console.log(`翻译测试: ${t('cryptoNews.title')}`);
+  }, [language]);
+  
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-teal-400">
-            {t('cryptoNews.title')}
+            {language === 'zh' ? '加密货币新闻' : 'Cryptocurrency News'}
           </h1>
           <StonksPriceDisplay />
         </div>
@@ -175,7 +181,7 @@ const CryptoNews: React.FC = () => {
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <Badge className="bg-teal-500 hover:bg-teal-600">
-                        {t('cryptoNews.featured')}
+                        {language === 'zh' ? '置顶新闻' : 'Featured'}
                       </Badge>
                       <Badge variant="outline">{news.source}</Badge>
                     </div>
@@ -186,7 +192,7 @@ const CryptoNews: React.FC = () => {
                       {formatPublishedDate(news.publishedAt)}
                     </span>
                     <Button variant="link">
-                      {t('cryptoNews.readMore')}
+                      {language === 'zh' ? '阅读更多' : 'Read More'}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -199,7 +205,7 @@ const CryptoNews: React.FC = () => {
         <Tabs defaultValue="all" className="mb-6">
           <TabsList className="mb-4">
             <TabsTrigger value="all" onClick={() => handleCategoryChange('all')}>
-              {t('cryptoNews.allNews')}
+              {language === 'zh' ? '全部新闻' : 'All News'}
             </TabsTrigger>
             <TabsTrigger value="bitcoin" onClick={() => handleCategoryChange('bitcoin')}>
               Bitcoin
@@ -225,7 +231,7 @@ const CryptoNews: React.FC = () => {
             ) : error ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-red-400">
-                  {t('cryptoNews.error')}
+                  {language === 'zh' ? '获取新闻失败' : 'Error fetching news'}
                 </p>
               </div>
             ) : newsData && newsData.data.length === 0 ? (
@@ -268,7 +274,7 @@ const CryptoNews: React.FC = () => {
                           </CardHeader>
                           <CardFooter className="mt-auto">
                             <Button variant="link" className="ml-auto">
-                              {t('cryptoNews.readMore')}
+                              {language === 'zh' ? '阅读更多' : 'Read More'}
                             </Button>
                           </CardFooter>
                         </div>

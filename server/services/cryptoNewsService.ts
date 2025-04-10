@@ -128,6 +128,12 @@ export async function fetchCryptoNewsApi(): Promise<InsertCryptoNews[]> {
   try {
     const response = await axios.get(`${NEWS_SOURCES.CRYPTONEWS.url}?section=general&apiKey=${NEWS_SOURCES.CRYPTONEWS.apiKey}`);
 
+    // 检查API错误响应
+    if (response.data && response.data.title === 'Crypto News API' && response.data.text && response.data.text.includes('API Token inactive')) {
+      console.warn('CryptoNews API Token无效，请检查API密钥是否正确');
+      return [];
+    }
+
     if (response.data && Array.isArray(response.data.data)) {
       return response.data.data.map((item: any) => {
         // 确保日期格式正确
