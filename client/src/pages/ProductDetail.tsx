@@ -179,9 +179,8 @@ export default function ProductDetail() {
           {/* Product Details */}
           <div>
             <h1 className="text-3xl font-orbitron font-bold mb-4">
-              {t(`product.name.${product.id}`) !== `product.name.${product.id}` 
-                ? t(`product.name.${product.id}`) 
-                : product.name}
+              {/* 始终优先使用产品的实际名称 */}
+              {product.name || t(`product.name.${product.id}`)}
             </h1>
             
             {/* Price */}

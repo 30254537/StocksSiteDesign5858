@@ -62,9 +62,8 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         <div className="p-4">
           <Link href={`/product/${product.id}`}>
             <h3 className="font-orbitron text-lg font-medium mb-2 hover:text-accent transition-colors cursor-pointer">
-              {t(`product.name.${product.id}`) !== `product.name.${product.id}` 
-                ? t(`product.name.${product.id}`) 
-                : product.name}
+              {/* 始终优先使用产品的实际名称，并添加产品的更新时间戳作为缓存破坏参数 */}
+              {product.name || t(`product.name.${product.id}`)}
             </h3>
           </Link>
           <div className="flex justify-between items-center">

@@ -60,9 +60,8 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
             {/* Product Details */}
             <div>
               <DialogTitle className="text-2xl font-orbitron font-bold mb-4">
-                {t(`product.name.${product.id}`) !== `product.name.${product.id}` 
-                  ? t(`product.name.${product.id}`) 
-                  : product.name}
+                {/* 始终优先使用产品的实际名称 */}
+                {product.name || t(`product.name.${product.id}`)}
               </DialogTitle>
               
               {/* Price */}
