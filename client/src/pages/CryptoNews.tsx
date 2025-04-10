@@ -30,7 +30,12 @@ import { zhCN, enUS } from 'date-fns/locale';
 import { useLanguage } from '../contexts/LanguageContext';
 
 // 定义硬编码的翻译，以确保在翻译系统失败时仍能正确显示
-const translations = {
+type TranslationLanguage = 'en' | 'zh';
+type TranslationEntry = {
+  [key in TranslationLanguage]: string;
+};
+
+const translations: Record<string, TranslationEntry> = {
   "cryptoNews.title": {
     en: "Cryptocurrency News",
     zh: "加密货币新闻"
@@ -259,8 +264,9 @@ const CryptoNews: React.FC = () => {
   
   // 使用硬编码的翻译，而不是 t 函数
   const getLocalTranslation = (key: keyof typeof translations): string => {
-    if (translations[key] && translations[key][language]) {
-      return translations[key][language];
+    if (translations[key]) {
+      const lang = language as 'en' | 'zh';
+      return translations[key][lang] || key;
     }
     return key;
   };
@@ -353,13 +359,13 @@ const CryptoNews: React.FC = () => {
             ) : error ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-red-400">
-                  {t('cryptoNews.error')}
+                  {getLocalTranslation('cryptoNews.error')}
                 </p>
               </div>
             ) : newsData && newsData.data.length === 0 ? (
               <div className="p-8 text-center">
                 <p className="text-lg text-gray-400">
-                  {t('cryptoNews.noNews')}
+                  {getLocalTranslation('cryptoNews.noNews')}
                 </p>
               </div>
             ) : (
@@ -396,7 +402,7 @@ const CryptoNews: React.FC = () => {
                           </CardHeader>
                           <CardFooter className="mt-auto">
                             <Button variant="link" className="ml-auto">
-                              {t('cryptoNews.readMore')}
+                              {getLocalTranslation('cryptoNews.readMore')}
                             </Button>
                           </CardFooter>
                         </div>
@@ -472,7 +478,7 @@ const CryptoNews: React.FC = () => {
         {/* 社交媒体链接 */}
         <div className="mt-12 text-center">
           <h3 className="text-xl font-semibold mb-4 text-teal-400">
-            {t('cryptoNews.stayUpdated')}
+            {getLocalTranslation('cryptoNews.stayUpdated')}
           </h3>
           <div className="flex justify-center space-x-6">
             <a 
