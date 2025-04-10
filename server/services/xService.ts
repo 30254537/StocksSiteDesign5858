@@ -142,17 +142,42 @@ export async function syncCryptoTweets(): Promise<number> {
         }
         
         // 进一步分析推文内容，确认是否包含合约地址
-        const hasContractAddress = tweet.text.includes('CA:') || 
-                                  tweet.text.toLowerCase().includes('contract address') || 
-                                  tweet.text.includes('0x') ||
-                                  /contract\s*:\s*0x[a-fA-F0-9]{40}/i.test(tweet.text) ||
-                                  /address\s*:\s*0x[a-fA-F0-9]{40}/i.test(tweet.text);
-                                  
+        // 使用更强大的正则表达式匹配各种常见合约地址格式
+        const contractRegexPatterns = [
+          /CA\s*:?\s*0x[a-fA-F0-9]{40}/i,                 // CA: 0x...
+          /contract\s*:?\s*0x[a-fA-F0-9]{40}/i,           // contract: 0x...
+          /address\s*:?\s*0x[a-fA-F0-9]{40}/i,            // address: 0x...
+          /0x[a-fA-F0-9]{40}/,                            // 单独的0x...格式地址
+          /\bCA\s*:?\s*[a-zA-Z0-9]{32,45}\b/i,            // 其他区块链CA格式，如Solana
+          /token\s*:?\s*0x[a-fA-F0-9]{40}/i,              // token: 0x...
+          /\bcontract\s*:?\s*[a-zA-Z0-9]{32,45}\b/i       // 非以太坊的合约地址
+        ];
+        
+        // 尝试从推文中提取合约地址
+        let contractAddress: string | null = null;
+        let hasContractAddress = false;
+        
+        for (const regex of contractRegexPatterns) {
+          const match = tweet.text.match(regex);
+          if (match) {
+            hasContractAddress = true;
+            // 尝试提取合约地址本身
+            const matchText = match[0];
+            const addrMatch = matchText.match(/0x[a-fA-F0-9]{40}|[a-zA-Z0-9]{32,45}/);
+            if (addrMatch) {
+              contractAddress = addrMatch[0];
+            }
+            break;
+          }
+        }
+        
         // 如果不含合约地址，可以跳过
         if (!hasContractAddress) {
           console.log(`推文 ${tweet.id} 不含合约地址信息`);
           continue;
         }
+        
+        console.log(`找到合约地址: ${contractAddress || '未能提取'}`)
         
         console.log(`找到符合条件的推文: ${retweetCount}转发, ${minutesAgo.toFixed(2)}分钟前, 作者: ${author.username}`);
         
