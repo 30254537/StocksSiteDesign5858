@@ -5,21 +5,19 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAudio } from "@/contexts/AudioContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
-import MusicPlayer from "@/components/ui/music-player";
 import MiniMusicPlayer from "@/components/ui/mini-music-player";
 import { NeonText } from "@/components/ui/neon-text";
-
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// 跳转到页面顶部的函数
+// 简单的滚动到顶部函数
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
-    behavior: "instant" // 使用"instant"而不是"smooth"以实现立即跳转
+    behavior: "smooth" // 使用平滑滚动
   });
 };
 
-// 处理产品部分链接的点击
+// 简化的产品部分链接点击处理
 const handleProductsClick = (e: React.MouseEvent) => {
   e.preventDefault();
   
@@ -27,24 +25,15 @@ const handleProductsClick = (e: React.MouseEvent) => {
   if (window.location.pathname === "/") {
     const productsSection = document.getElementById('products');
     if (productsSection) {
-      // 使用更平滑的滚动
-      window.scrollTo({
-        top: productsSection.offsetTop - 100, // 留出一些顶部空间
-        behavior: 'smooth'
+      productsSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
       });
     }
   } else {
-    // 如果不在首页，使用前端路由而不是重新加载页面
-    window.history.pushState({}, '', '/');
-    setTimeout(() => {
-      const productsSection = document.getElementById('products');
-      if (productsSection) {
-        window.scrollTo({
-          top: productsSection.offsetTop - 100,
-          behavior: 'smooth'
-        });
-      }
-    }, 100);
+    // 如果不在首页，先设置标记，然后使用历史API导航到首页
+    sessionStorage.setItem('scrollToProducts', 'true');
+    window.location.href = "/";
   }
 };
 

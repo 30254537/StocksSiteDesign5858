@@ -9,13 +9,30 @@ export default function Home() {
   const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Scroll to products section when URL has #products
+  // 增强版滚动功能 - 支持URL哈希和会话存储标记
   useEffect(() => {
-    if (window.location.hash === '#products') {
-      const productsSection = document.getElementById('products');
-      if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'instant' }); // 使用立即滚动而不是平滑滚动
+    // 检查URL哈希或会话存储中的标记
+    const shouldScrollToProducts = 
+      window.location.hash === '#products' || 
+      sessionStorage.getItem('scrollToProducts') === 'true';
+    
+    if (shouldScrollToProducts) {
+      // 清除会话存储中的标记
+      if (sessionStorage.getItem('scrollToProducts')) {
+        sessionStorage.removeItem('scrollToProducts');
       }
+      
+      // 稍微延迟以确保DOM完全加载
+      setTimeout(() => {
+        const productsSection = document.getElementById('products');
+        if (productsSection) {
+          // 使用平滑滚动以提供更好的用户体验
+          productsSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 100);
     }
   }, []);
 
