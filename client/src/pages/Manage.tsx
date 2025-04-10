@@ -145,9 +145,43 @@ export default function Manage() {
     }
   };
   
+  // 添加测试合约地址推文
+  const handleAddTestContractTweet = async () => {
+    try {
+      setLoadingTweets(true);
+      const response = await apiRequest("POST", "/api/crypto-tweets/add-test-contract");
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "添加成功",
+          description: "测试合约地址推文已添加",
+        });
+        
+        // 重新获取推文列表
+        await fetchTweets();
+      } else {
+        toast({
+          title: "添加失败",
+          description: "无法添加测试合约地址推文，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("添加测试合约地址推文错误:", error);
+      toast({
+        title: "添加失败",
+        description: "无法添加测试合约地址推文，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingTweets(false);
+    }
+  };
+
   // 处理刷新推文
   const handleSyncTweets = async () => {
     try {
+      setLoadingTweets(true);
       const response = await apiRequest("POST", "/api/crypto-tweets/sync");
       if (response.ok) {
         const data = await response.json();
@@ -172,6 +206,8 @@ export default function Manage() {
         description: "无法同步推文，请稍后再试",
         variant: "destructive",
       });
+    } finally {
+      setLoadingTweets(false);
     }
   };
   
@@ -1119,19 +1155,28 @@ export default function Manage() {
             <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl text-accent">加密货币推文</h3>
-                <Button 
-                  variant="outline" 
-                  className="border-accent text-accent"
-                  onClick={handleSyncTweets}
-                  disabled={loadingTweets}
-                >
-                  {loadingTweets ? (
-                    <>
-                      <span className="mr-2">同步中</span>
-                      <div className="animate-spin w-4 h-4 border-2 border-accent border-t-transparent rounded-full"></div>
-                    </>
-                  ) : "同步最新推文"}
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="accent" 
+                    onClick={() => handleAddTestContractTweet()}
+                    disabled={loadingTweets}
+                  >
+                    添加测试合约推文
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="border-accent text-accent"
+                    onClick={handleSyncTweets}
+                    disabled={loadingTweets}
+                  >
+                    {loadingTweets ? (
+                      <>
+                        <span className="mr-2">同步中</span>
+                        <div className="animate-spin w-4 h-4 border-2 border-accent border-t-transparent rounded-full"></div>
+                      </>
+                    ) : "同步最新推文"}
+                  </Button>
+                </div>
               </div>
               
               {loadingTweets ? (
