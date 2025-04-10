@@ -46,6 +46,13 @@ const CryptoTweets: React.FC = () => {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5分钟
   });
+  
+  // 获取合约地址推文数据
+  const { data: contractTweetsData, isLoading: isContractLoading } = useQuery<TweetsResponse>({
+    queryKey: ['/api/contract-tweets', { lang: language }],
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5分钟
+  });
 
   // 格式化日期
   const formatDate = (dateString: string) => {

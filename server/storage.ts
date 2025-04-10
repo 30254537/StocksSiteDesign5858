@@ -92,7 +92,7 @@ export interface IStorage {
   getCryptoNewsCount(): Promise<number>;
   
   // Crypto Tweets operations
-  getCryptoTweets(limit?: number): Promise<CryptoTweet[]>;
+  getCryptoTweets(limit?: number, category?: string): Promise<CryptoTweet[]>;
   getCryptoTweetById(id: number): Promise<CryptoTweet | undefined>;
   getCryptoTweetByTweetId(tweetId: string): Promise<CryptoTweet | undefined>;
   createCryptoTweet(tweet: InsertCryptoTweet): Promise<CryptoTweet>;
@@ -593,7 +593,20 @@ export class DatabaseStorage implements IStorage {
   }
   
   // Crypto Tweets methods
-  async getCryptoTweets(limit: number = 20): Promise<CryptoTweet[]> {
+  async getCryptoTweets(limit: number = 20, category?: string): Promise<CryptoTweet[]> {
+    // 如果指定了类别，则按类别筛选
+    if (category) {
+      return await db.select().from(cryptoTweets)
+        .where(eq(cryptoTweets.category, category))
+        .orderBy(
+          desc(cryptoTweets.retweetCount),
+          desc(cryptoTweets.likeCount),
+          desc(cryptoTweets.createdAt)
+        )
+        .limit(limit);
+    }
+    
+    // 否则返回所有推文
     return await db.select().from(cryptoTweets)
       .orderBy(
         desc(cryptoTweets.likeCount),
