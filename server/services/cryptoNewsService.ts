@@ -69,7 +69,13 @@ export async function fetchCoinGeckoNews(): Promise<InsertCryptoNews[]> {
   }
 }
 
-// CryptoPanic已被移除
+/**
+ * CryptoPanic已被移除
+ * 此函数只是一个存根，保持API兼容性，永远返回空数组
+ */
+export async function fetchCryptoPanicNews(): Promise<InsertCryptoNews[]> {
+  return [];
+}
 
 /**
  * 从CryptoNews获取最新的加密货币新闻
