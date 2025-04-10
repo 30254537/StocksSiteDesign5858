@@ -3,11 +3,14 @@ import { Link, useLocation } from "wouter";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAudio } from "@/contexts/AudioContext";
+import { useStonksPrice } from "@/contexts/StonksPriceContext";
 import MobileMenu from "./MobileMenu";
 import { Button } from "@/components/ui/button";
 import MiniMusicPlayer from "@/components/ui/mini-music-player";
 import { NeonText } from "@/components/ui/neon-text";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { StonksPriceIndicator } from "@/components/ui/stonks-price-display";
+import { formatCurrency } from "@/lib/utils";
 
 // 简单的滚动到顶部函数
 const scrollToTop = () => {
@@ -69,6 +72,11 @@ export default function Header() {
         isScrolled ? 'bg-primary/90' : 'glass-effect'
       } border-b border-accent/30`}>
         <div className="container mx-auto px-4">
+          {/* STONKS 价格顶部条 */}
+          <div className="hidden md:flex justify-start py-1 border-b border-accent/10">
+            <StonksPriceIndicator />
+          </div>
+          
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* LOGO区域 - 左侧 */}
             <div className="flex-shrink-0">

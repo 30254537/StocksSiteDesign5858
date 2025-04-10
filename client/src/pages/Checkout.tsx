@@ -3,6 +3,7 @@ import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-
 import { loadStripe } from '@stripe/stripe-js';
 import { useCart } from '@/contexts/CartContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useStonksPrice } from '@/contexts/StonksPriceContext';
 import { formatCurrency, formatEth } from '@/lib/utils';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, CreditCard, Bitcoin } from 'lucide-react';
+import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
 
 // Make sure to use environment variable to get public key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -133,6 +135,7 @@ const CryptoForm = () => {
   const { t } = useLanguage();
   const { cartItems, totalEthPrice, clearCart } = useCart();
   const { toast } = useToast();
+  const { currentPrice, convertUsdToStonks } = useStonksPrice();
   const [shippingAddress, setShippingAddress] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -187,6 +190,11 @@ const CryptoForm = () => {
         <p className="mb-4 text-sm">
           {t('checkout.amountToSend')}: <strong>{formatEth(totalEthPrice)}</strong>
         </p>
+        
+        {/* 显示STONKS实时价格信息 */}
+        <div className="mt-4 mb-4">
+          <StonksPriceDisplay amount={totalPrice} showConverter={true} />
+        </div>
       </div>
       
       <div className="mb-6">
@@ -245,6 +253,7 @@ const CryptoForm = () => {
 const OrderSummary = () => {
   const { cartItems, totalItems, totalPrice, totalEthPrice } = useCart();
   const { t, language } = useLanguage();
+  const { currentPrice } = useStonksPrice();
 
   if (cartItems.length === 0) {
     return (
