@@ -172,7 +172,7 @@ export default function Header() {
                 )}
               </button>
               
-              {/* 迷你音乐播放器 */}
+              {/* 迷你音乐播放器 - 最后位置 */}
               <div className="hidden md:block">
                 <MiniMusicPlayer />
               </div>
