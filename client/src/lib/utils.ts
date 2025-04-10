@@ -9,13 +9,13 @@ export function formatCurrency(value: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3
+    minimumFractionDigits: 6,
+    maximumFractionDigits: 6
   }).format(value);
 }
 
 export function formatEth(value: number): string {
-  return `⊙ ${value.toFixed(3)} $STONKS`;
+  return `⊙ ${value.toFixed(6)} $STONKS`;
 }
 
 export function formatPrice(price: number): string {

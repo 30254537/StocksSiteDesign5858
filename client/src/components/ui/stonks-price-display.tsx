@@ -88,7 +88,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
         <div className="flex justify-between items-center">
           <span className="text-gray-400">{t('stonksPrice.equivalentAmount')}</span>
           <span className="font-mono font-semibold">
-            {formatCurrency(amount)} = ⊙ {stonksEquivalent.toFixed(3)} $STONKS
+            {formatCurrency(amount)} = ⊙ {stonksEquivalent.toFixed(6)} $STONKS
           </span>
         </div>
       )}
@@ -115,7 +115,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
             <span>=</span>
             <div className="flex-1">
               <div className="p-2 bg-slate-900 rounded border border-gray-700 font-mono">
-                ⊙ {!isNaN(customStonksEquivalent) ? customStonksEquivalent.toFixed(3) : '0.000'} $STONKS
+                ⊙ {!isNaN(customStonksEquivalent) ? customStonksEquivalent.toFixed(6) : '0.000000'} $STONKS
               </div>
             </div>
           </div>
