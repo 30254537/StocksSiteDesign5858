@@ -231,19 +231,75 @@ const CryptoNews: React.FC = () => {
       return selectRandom(sourceImages[news.source]);
     }
     
-    // 根据内容选择相应类别的图片
+    // 定义更完整的内容与图片类别匹配规则
     const title = (news.title || '').toLowerCase();
     const content = (news.content || '').toLowerCase();
     
-    if (title.includes('bitcoin') || content.includes('bitcoin') || title.includes('btc') || content.includes('btc')) {
+    // 钱包与安全相关
+    if (title.includes('wallet') || content.includes('wallet') || 
+        title.includes('exodus') || content.includes('exodus') ||
+        title.includes('atomic') || content.includes('atomic')) {
+      // 添加专门针对钱包新闻的图片
+      const walletImages = [
+        'https://cdn.pixabay.com/photo/2018/01/28/10/31/bitcoin-3113503_1280.jpg',
+        'https://cdn.pixabay.com/photo/2018/01/23/18/54/crypto-currency-3101917_1280.jpg',
+        'https://cdn.pixabay.com/photo/2018/01/18/21/34/cryptocurrency-3091785_1280.jpg'
+      ];
+      return selectRandom(walletImages);
+    }
+    
+    // 网络安全相关
+    if (title.includes('exploit') || content.includes('exploit') ||
+        title.includes('cybersecurity') || content.includes('cybersecurity') ||
+        title.includes('hack') || content.includes('hack') ||
+        title.includes('security') || content.includes('security')) {
+      // 添加专门针对安全相关新闻的图片
+      const securityImages = [
+        'https://cdn.pixabay.com/photo/2018/04/15/16/17/cyber-security-3321717_1280.jpg',
+        'https://cdn.pixabay.com/photo/2017/05/24/02/29/hacking-2339031_1280.jpg',
+        'https://cdn.pixabay.com/photo/2017/11/19/23/54/hacking-2964100_1280.jpg'
+      ];
+      return selectRandom(securityImages);
+    }
+    
+    // ETF和质押相关
+    if ((title.includes('etf') || content.includes('etf')) &&
+        (title.includes('staking') || content.includes('staking'))) {
+      // 添加专门针对ETF和质押相关新闻的图片
+      const stakingImages = [
+        'https://cdn.pixabay.com/photo/2021/11/12/13/13/ethereum-6788950_1280.jpg',
+        'https://cdn.pixabay.com/photo/2018/01/23/14/56/ethereum-3100862_1280.jpg',
+        'https://cdn.pixabay.com/photo/2018/01/23/14/57/ethereum-3100865_1280.jpg'
+      ];
+      return selectRandom(stakingImages);
+    }
+    
+    // 比特币相关
+    if (title.includes('bitcoin') || content.includes('bitcoin') || 
+        title.includes('btc') || content.includes('btc')) {
       return selectRandom(contentImages.bitcoin);
-    } else if (title.includes('ethereum') || content.includes('ethereum') || title.includes('eth') || content.includes('eth')) {
+    } 
+    
+    // 以太坊相关
+    if (title.includes('ethereum') || content.includes('ethereum') || 
+        title.includes('eth') || content.includes('eth')) {
       return selectRandom(contentImages.ethereum);
-    } else if (title.includes('nft') || content.includes('nft')) {
+    } 
+    
+    // NFT相关
+    if (title.includes('nft') || content.includes('nft') ||
+        title.includes('non-fungible') || content.includes('non-fungible')) {
       return selectRandom(contentImages.nft);
-    } else if (title.includes('defi') || content.includes('defi')) {
+    } 
+    
+    // DeFi相关
+    if (title.includes('defi') || content.includes('defi') ||
+        title.includes('decentralized finance') || content.includes('decentralized finance')) {
       return selectRandom(contentImages.defi);
-    } else if (title.includes('stonks') || content.includes('stonks')) {
+    }
+    
+    // Stonks相关
+    if (title.includes('stonks') || content.includes('stonks')) {
       return selectRandom(contentImages.stonks);
     }
     
