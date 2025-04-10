@@ -171,6 +171,15 @@ export const translations: Translations = {
     
     // Crypto News
     "nav.cryptoNews": "Crypto News",
+    
+    // Crypto Tweets
+    "cryptoTweets.title": "Trending Crypto Tweets",
+    "cryptoTweets.trending": "Latest Tweets",
+    "cryptoTweets.popular": "Popular",
+    "cryptoTweets.noTweets": "No tweets found",
+    "cryptoTweets.error": "Failed to load tweets",
+    "cryptoTweets.viewAll": "View All Tweets",
+    "cryptoTweets.translated": "Translated from English",
     "cryptoNews.title": "Cryptocurrency News",
     "cryptoNews.featured": "Featured",
     "cryptoNews.readMore": "Read More",
@@ -366,6 +375,15 @@ export const translations: Translations = {
     "stonksPrice.equivalentAmount": "等价金额",
     "stonksPrice.converter": "USDT转STONKS换算器",
     "stonksPrice.contract": "合约地址",
+    
+    // Crypto Tweets
+    "cryptoTweets.title": "热门加密推文",
+    "cryptoTweets.trending": "最新推文",
+    "cryptoTweets.popular": "热门推文",
+    "cryptoTweets.noTweets": "暂无推文",
+    "cryptoTweets.error": "无法加载推文",
+    "cryptoTweets.viewAll": "查看全部",
+    "cryptoTweets.translated": "已从英文翻译",
     
     // Crypto News
     "nav.cryptoNews": "加密新闻",
