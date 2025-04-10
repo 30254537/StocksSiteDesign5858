@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+// 移除Stripe依赖
+// import { useStripe, useElements, PaymentElement, Elements } from '@stripe/react-stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import { useCart } from '@/contexts/CartContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStonksPrice } from '@/contexts/StonksPriceContext';
@@ -50,8 +51,8 @@ const UsdtToStonksConverter = () => {
   );
 };
 
-// Make sure to use environment variable to get public key
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+// 移除Stripe
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 // USDT checkout form
 const UsdtForm = () => {
@@ -467,35 +468,16 @@ export default function Checkout() {
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="card">
                   <DollarSign className="mr-2 h-4 w-4" />
-                  {t('checkout.creditCard')}
+                  USDT
                 </TabsTrigger>
                 <TabsTrigger value="crypto">
                   <Bitcoin className="mr-2 h-4 w-4" />
-                  {t('checkout.cryptocurrency')}
+                  加密货币 (STONKS)
                 </TabsTrigger>
               </TabsList>
               
               <TabsContent value="card">
-                {clientSecret ? (
-                  <Elements 
-                    stripe={stripePromise} 
-                    options={{ 
-                      clientSecret,
-                      appearance: { 
-                        theme: 'night',
-                        variables: {
-                          colorPrimary: '#00ffcc',
-                        }
-                      } 
-                    }}
-                  >
-                    <UsdtForm />
-                  </Elements>
-                ) : (
-                  <div className="flex items-center justify-center py-6">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                )}
+                <UsdtDirectForm />
               </TabsContent>
               
               <TabsContent value="crypto">
