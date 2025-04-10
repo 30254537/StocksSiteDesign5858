@@ -15,7 +15,7 @@ const Home = lazy(() => import("@/pages/Home"));
 const ProductDetail = lazy(() => import("@/pages/ProductDetail"));
 const Checkout = lazy(() => import("@/pages/Checkout"));
 const CheckoutSuccess = lazy(() => import("@/pages/CheckoutSuccess"));
-const Manage = lazy(() => import("@/pages/Manage"));
+const Manage = lazy(() => import("@/pages/ManageNew"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
 const Terms = lazy(() => import("@/pages/Terms"));
 const AdminLogin = lazy(() => import("@/pages/AdminLogin"));
