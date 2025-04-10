@@ -14,7 +14,7 @@ interface MusicUploadProps {
 }
 
 export default function MusicUpload({ onSuccess, className = '' }: MusicUploadProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [files, setFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -29,8 +29,10 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
     
     if (audioFiles.length !== selectedFiles.length) {
       toast({
-        title: "Invalid files",
-        description: "Only audio files (.mp3, .wav, .ogg, .m4a, .flac, .aac) are allowed",
+        title: language === 'en' ? "Invalid files" : "无效的文件",
+        description: language === 'en' 
+          ? "Only audio files (.mp3, .wav, .ogg, .m4a, .flac, .aac) are allowed" 
+          : "只允许上传音频文件 (.mp3, .wav, .ogg, .m4a, .flac, .aac)",
         variant: "destructive"
       });
     }
@@ -58,8 +60,10 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
     
     if (audioFiles.length !== droppedFiles.length) {
       toast({
-        title: "Invalid files",
-        description: "Only audio files (.mp3, .wav, .ogg, .m4a, .flac, .aac) are allowed",
+        title: language === 'en' ? "Invalid files" : "无效的文件",
+        description: language === 'en' 
+          ? "Only audio files (.mp3, .wav, .ogg, .m4a, .flac, .aac) are allowed" 
+          : "只允许上传音频文件 (.mp3, .wav, .ogg, .m4a, .flac, .aac)",
         variant: "destructive"
       });
     }
@@ -192,7 +196,7 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
       
       {files.length > 0 && (
         <div className="mb-4">
-          <h3 className="text-sm font-medium mb-2 text-white/80">Selected Files:</h3>
+          <h3 className="text-sm font-medium mb-2 text-white/80">{language === 'en' ? "Selected Files:" : "已选择文件:"}</h3>
           <div className="max-h-32 overflow-y-auto space-y-2 pr-2">
             {files.map((file, index) => (
               <div 
@@ -222,23 +226,23 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
       
       <div className="grid gap-4 mb-4">
         <div>
-          <Label htmlFor="trackTitle" className="text-white/80">Track Title</Label>
+          <Label htmlFor="trackTitle" className="text-white/80">{t('music.trackTitle')}</Label>
           <Input 
             id="trackTitle"
             value={trackTitle}
             onChange={(e) => setTrackTitle(e.target.value)}
-            placeholder="Enter track title"
+            placeholder={language === 'en' ? "Enter track title" : "输入歌曲名称"}
             className="bg-background/60 border-accent/30 text-white"
           />
         </div>
         
         <div>
-          <Label htmlFor="artist" className="text-white/80">Artist</Label>
+          <Label htmlFor="artist" className="text-white/80">{t('music.artist')}</Label>
           <Input 
             id="artist"
             value={artist}
             onChange={(e) => setArtist(e.target.value)}
-            placeholder="Enter artist name (optional)"
+            placeholder={language === 'en' ? "Enter artist name (optional)" : "输入艺术家名称（可选）"}
             className="bg-background/60 border-accent/30 text-white"
           />
         </div>
