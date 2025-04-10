@@ -78,7 +78,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
   return (
     <div className="flex flex-col space-y-3 p-4 bg-slate-800 rounded-lg">
       <div className="flex justify-between items-center">
-        <span className="text-gray-400">{t('stonksPrice.currentPrice')}</span>
+        <span className="text-gray-400">{t('stonksPrice.currentPrice')}:</span>
         <span className="font-mono font-semibold">
           1 $STONKS = {formatCurrency(currentPrice)}
         </span>
@@ -86,7 +86,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
       
       {amount !== undefined && (
         <div className="flex justify-between items-center">
-          <span className="text-gray-400">{t('stonksPrice.equivalentAmount')}</span>
+          <span className="text-gray-400">{t('stonksPrice.equivalentAmount')}:</span>
           <span className="font-mono font-semibold">
             {formatCurrency(amount)} = ⊙ {stonksEquivalent.toFixed(6)} $STONKS
           </span>
@@ -96,12 +96,12 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
       {/* 显示合约地址 */}
       <div className="flex flex-col text-xs">
         <div className="text-gray-400 mb-1">{t('stonksPrice.contract')}:</div>
-        <div className="font-mono text-accent break-all">{contractAddress}</div>
+        <div className="font-mono text-accent break-all user-select-all">{contractAddress}</div>
       </div>
       
       {showConverter && (
         <div className="mt-4 pt-3 border-t border-gray-700">
-          <h4 className="text-sm mb-2">{t('stonksPrice.converter')}</h4>
+          <h4 className="text-sm mb-2">{t('stonksPrice.converter')}:</h4>
           <div className="flex items-center space-x-2">
             <div className="flex-1">
               <input

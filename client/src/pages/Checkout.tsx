@@ -95,7 +95,7 @@ const UsdtDirectForm = () => {
         {/* USDT链选择 */}
         <div className="mb-6">
           <label className="block mb-2 text-sm font-medium text-accent">
-            选择USDT网络
+            选择USDT网络:
           </label>
           <div className="grid grid-cols-2 gap-2">
             {usdtChains.map(chain => (
@@ -116,7 +116,7 @@ const UsdtDirectForm = () => {
             ))}
           </div>
           
-          <div className="mt-4 p-3 bg-slate-800 rounded-md font-mono text-sm break-all">
+          <div className="mt-4 p-3 bg-slate-800 rounded-md font-mono text-sm break-all user-select-all">
             <p className="text-xs text-gray-400 mb-1">USDT {t('checkout.receiveAddress')} ({usdtChains.find(c => c.id === selectedUsdtChain)?.name}):</p>
             {currentChainAddress}
           </div>
@@ -129,7 +129,7 @@ const UsdtDirectForm = () => {
       
       <div className="mb-6">
         <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.transactionHash')}
+          {t('checkout.transactionHash')}:
         </label>
         <input
           type="text"
@@ -146,7 +146,7 @@ const UsdtDirectForm = () => {
       
       <div className="mb-6">
         <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.shippingAddress')}
+          {t('checkout.shippingAddress')}:
         </label>
         <Textarea
           placeholder={t('checkout.enterShippingAddress')}
@@ -275,7 +275,7 @@ const CryptoForm = () => {
         <p className="mb-4 text-sm">
           发送USDT到地址:
         </p>
-        <div className="bg-slate-800 p-3 rounded-md font-mono text-sm mb-4 break-all">
+        <div className="bg-slate-800 p-3 rounded-md font-mono text-sm mb-4 break-all user-select-all">
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
         </div>
         <p className="mb-4 text-sm">
@@ -285,7 +285,7 @@ const CryptoForm = () => {
       
       <div className="mb-6">
         <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.transactionHash')}
+          {t('checkout.transactionHash')}:
         </label>
         <input
           type="text"
@@ -302,7 +302,7 @@ const CryptoForm = () => {
       
       <div className="mb-6">
         <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.shippingAddress')}
+          {t('checkout.shippingAddress')}:
         </label>
         <Textarea
           placeholder={t('checkout.enterShippingAddress')}
