@@ -89,10 +89,14 @@ const CryptoNews: React.FC = () => {
     setCurrentPage(1);
   };
   
-  // 格式化发布日期
-  // 为不带图片的新闻生成默认图片
+  // 为新闻生成图片（确保所有新闻都有图片）
   const getNewsImage = (news: CryptoNewsType) => {
-    if (news.imageUrl) return news.imageUrl;
+    // 首先检查新闻是否有有效的图片URL
+    if (news.imageUrl && news.imageUrl.trim() !== '' && 
+        !news.imageUrl.includes('undefined') && 
+        !news.imageUrl.includes('null')) {
+      return news.imageUrl;
+    }
     
     // 根据新闻来源生成不同的默认图片
     const defaultImages = {
@@ -101,9 +105,25 @@ const CryptoNews: React.FC = () => {
       'CryptoNews': 'https://cdn.coinranking.com/assets/343204ced712cae2b1e4c2e5/cryptonews.png'
     };
     
-    // 如果有匹配的来源，使用对应的默认图片，否则使用一个通用的加密货币图片
-    return defaultImages[news.source as keyof typeof defaultImages] || 
-      'https://img.freepik.com/premium-vector/cryptocurrency-bitcoin-golden-coin-background_116083-4199.jpg';
+    // 使用来源特定的默认图片
+    if (news.source && defaultImages[news.source as keyof typeof defaultImages]) {
+      return defaultImages[news.source as keyof typeof defaultImages];
+    }
+    
+    // 根据新闻内容选择合适的默认图片
+    const title = (news.title || '').toLowerCase();
+    const content = (news.content || '').toLowerCase();
+    
+    if (title.includes('bitcoin') || content.includes('bitcoin') || title.includes('btc') || content.includes('btc')) {
+      return 'https://img.freepik.com/premium-vector/bitcoin-cryptocurrency-golden-coin-3d-icon_116083-4986.jpg';
+    } else if (title.includes('ethereum') || content.includes('ethereum') || title.includes('eth') || content.includes('eth')) {
+      return 'https://img.freepik.com/premium-vector/ethereum-cryptocurrency-golden-3d-coin-icon_116083-4994.jpg';
+    } else if (title.includes('nft') || content.includes('nft')) {
+      return 'https://img.freepik.com/premium-vector/nft-non-fungible-token-logo-icon-modern-crypto-token_187882-1377.jpg';
+    }
+    
+    // 如果都没匹配到，使用通用的加密货币图片
+    return 'https://img.freepik.com/premium-vector/cryptocurrency-bitcoin-golden-coin-background_116083-4199.jpg';
   };
 
   const formatPublishedDate = (date: string) => {

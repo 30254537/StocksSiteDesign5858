@@ -386,15 +386,24 @@ export const translations: Translations = {
 export const defaultLanguage = 'zh';
 
 export function getTranslation(key: TranslationKey, language: string): string {
-  if (!translations[language] || !translations[language][key]) {
-    // Fallback to the default language
-    if (translations[defaultLanguage] && translations[defaultLanguage][key]) {
-      return translations[defaultLanguage][key];
-    }
-    // Return the key if translation is not found
-    return key;
+  // 添加调试信息
+  console.log(`获取翻译, 键: ${key}, 语言: ${language}`);
+  
+  // 确保 language 是有效值
+  const validLanguage = ['en', 'zh'].includes(language) ? language : defaultLanguage;
+  
+  // 如果当前语言有此翻译，则返回
+  if (translations[validLanguage] && translations[validLanguage][key] !== undefined) {
+    return translations[validLanguage][key];
   }
-  return translations[language][key];
+  
+  // 否则尝试使用默认语言
+  if (translations[defaultLanguage] && translations[defaultLanguage][key] !== undefined) {
+    return translations[defaultLanguage][key];
+  }
+  
+  // 如果都没有，返回键名
+  return key;
 }
 
 // 获取用户首选语言，默认使用中文
