@@ -10,11 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { formatCurrency, formatEth, formatPrice } from "@/lib/utils";
+import { useStonksPrice } from "@/contexts/StonksPriceContext";
+import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib/utils";
 
 export default function CartModal() {
   const { cartItems, totalPrice, totalEthPrice, isCartOpen, closeCart, removeCartItem, updateCartItem } = useCart();
   const { t } = useLanguage();
+  const { currentPrice } = useStonksPrice();
 
   const handleRemoveItem = (itemId: number) => {
     removeCartItem(itemId);
@@ -99,7 +101,7 @@ export default function CartModal() {
                         </button>
                       </div>
                       <div className="text-accent text-sm">
-                        {formatEth(item.product.ethPrice * item.quantity)}
+                        {formatUsdToStonks(item.product.price * item.quantity, currentPrice)}
                       </div>
                     </div>
                     <button 
@@ -121,7 +123,7 @@ export default function CartModal() {
               <div className="flex justify-between mb-4">
                 <span className="font-medium">{t("cart.total")}</span>
                 <div className="text-right">
-                  <div className="font-medium text-accent">{formatEth(totalEthPrice)}</div>
+                  <div className="font-medium text-accent">{formatUsdToStonks(totalPrice, currentPrice)}</div>
                 </div>
               </div>
               
