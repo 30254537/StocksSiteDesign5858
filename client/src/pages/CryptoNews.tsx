@@ -300,7 +300,7 @@ const CryptoNews: React.FC = () => {
         {/* 社交媒体链接 */}
         <div className="mt-12 text-center">
           <h3 className="text-xl font-semibold mb-4 text-teal-400">
-            {t('CryptoNews.stayUpdated', '关注我们获取更多加密货币资讯')}
+            {t('cryptoNews.stayUpdated')}
           </h3>
           <div className="flex justify-center space-x-6">
             <a 
