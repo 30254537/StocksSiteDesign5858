@@ -44,7 +44,7 @@ export default function Footer() {
               <a href="https://x.com/MyStonks_Org" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
                 <i className="fa-brands fa-x"></i>
               </a>
-              <a href="#" className="hover:text-white transition-colors duration-300">
+              <a href="https://discord.com/invite/YfBHj2Qc" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
                 <i className="fa-brands fa-discord"></i>
               </a>
               <a href="https://t.me/STONKSOPEN" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
