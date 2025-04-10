@@ -66,7 +66,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors duration-300">
+                <a href="https://mystonks.org/pc/index.html" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors duration-300">
                   {t("footer.nftMarketplace")}
                 </a>
               </li>
