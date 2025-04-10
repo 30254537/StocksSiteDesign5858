@@ -50,9 +50,19 @@ export default function Footer() {
               <a href="https://t.me/STONKSOPEN" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
                 <i className="fa-brands fa-telegram"></i>
               </a>
-              <a href="/music" className="hover:text-white transition-colors duration-300">
+              <Link 
+                to="/music" 
+                className="hover:text-white transition-colors duration-300"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // 使用前端路由导航而不是刷新页面
+                  window.history.pushState({}, '', '/music');
+                  // 触发页面内容重新加载，但不是整页刷新
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                }}
+              >
                 <i className="fa-solid fa-music"></i>
-              </a>
+              </Link>
             </div>
           </div>
           
