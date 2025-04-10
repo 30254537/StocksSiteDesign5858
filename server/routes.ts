@@ -12,6 +12,8 @@ import path from "path";
 import fs from "fs";
 import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
+import cryptoNewsRoutes from "./routes/cryptoNewsRoutes";
+import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
 
 // Extend the Express.Session interface to include our custom properties
 declare module 'express-session' {
