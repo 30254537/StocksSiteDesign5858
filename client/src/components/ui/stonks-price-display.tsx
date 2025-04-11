@@ -5,6 +5,48 @@ import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// 数字翻动组件 - 只有当数字变化时才会翻动
+const FlipDigit = ({ 
+  digit, 
+  prevDigit, 
+  direction 
+}: { 
+  digit: string; 
+  prevDigit: string; 
+  direction: 'up' | 'down' | null 
+}) => {
+  // 只有当数字发生变化时才应用动画
+  const hasChanged = digit !== prevDigit;
+  
+  if (!hasChanged) {
+    return <span>{digit}</span>;
+  }
+  
+  return (
+    <span className="inline-block relative overflow-hidden" style={{ width: '0.6em', height: '1.2em' }}>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={digit}
+          initial={{ 
+            y: direction === 'up' ? 16 : (direction === 'down' ? -16 : 0),
+            opacity: 0
+          }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ 
+            y: direction === 'up' ? -16 : (direction === 'down' ? 16 : 0),
+            opacity: 0,
+            position: 'absolute'
+          }}
+          transition={{ duration: 0.3 }}
+          className="inline-block"
+        >
+          {digit}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+};
+
 // STONKS价格显示组件 - 简洁模式，用于顶部导航栏
 export function StonksPriceIndicator() {
   const { currentPrice, contractAddress, loading, error } = useStonksPrice();
@@ -13,6 +55,10 @@ export function StonksPriceIndicator() {
   const [priceDirection, setPriceDirection] = useState<'up' | 'down' | null>(null);
   const priceRef = useRef(currentPrice);
 
+  // 将价格转换为带前缀的格式化字符串
+  const formattedCurrentPrice = formatCurrency(currentPrice);
+  const formattedPrevPrice = formatCurrency(prevPrice || currentPrice);
+  
   // 监测价格变化并设置方向
   useEffect(() => {
     if (currentPrice !== priceRef.current) {
@@ -20,7 +66,7 @@ export function StonksPriceIndicator() {
       setPrevPrice(priceRef.current);
       priceRef.current = currentPrice;
       
-      // 0.5秒后重置方向
+      // 1.5秒后重置方向
       const timer = setTimeout(() => {
         setPriceDirection(null);
       }, 1500);
@@ -33,7 +79,7 @@ export function StonksPriceIndicator() {
   // 如果是全新加载（没有缓存的价格），则短暂显示加载状态
   if (loading && prevPrice === 0) {
     return (
-      <div className="flex items-center text-sm font-mono group relative h-4">
+      <div className="flex items-center text-sm font-mono group relative h-5">
         <span className="text-primary mr-1">$STONKS:</span>
         <span className="text-[#00ffcc] font-semibold">---.--</span>
       </div>
@@ -42,39 +88,39 @@ export function StonksPriceIndicator() {
 
   if (error) {
     return (
-      <div className="flex items-center text-sm font-mono group relative">
+      <div className="flex items-center text-sm font-mono group relative h-5">
         <span className="text-primary mr-1">$STONKS:</span>
         <span className="text-[#00ffcc] font-semibold opacity-70">{formatCurrency(prevPrice || 0.032834)}</span>
       </div>
     );
   }
 
-  // 价格数字翻动动画
+  // 拆分价格字符串为单个字符，包括美元符号、小数点等
+  const currentPriceChars = formattedCurrentPrice.split('');
+  const prevPriceChars = formattedPrevPrice.split('');
+  
+  // 确保两个数组长度相同
+  while (prevPriceChars.length < currentPriceChars.length) {
+    prevPriceChars.push(currentPriceChars[prevPriceChars.length]);
+  }
+  while (currentPriceChars.length < prevPriceChars.length) {
+    currentPriceChars.push(prevPriceChars[currentPriceChars.length]);
+  }
+
+  // 渲染具有单独翻动数字的价格
   return (
-    <div className="flex items-center text-sm font-mono group relative h-4">
+    <div className="flex items-center text-sm font-mono group relative h-5">
       <span className="text-primary mr-1">$STONKS:</span>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentPrice}
-          initial={{ 
-            y: priceDirection === 'up' ? 10 : (priceDirection === 'down' ? -10 : 0),
-            opacity: 0.5
-          }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ 
-            y: priceDirection === 'up' ? -10 : (priceDirection === 'down' ? 10 : 0),
-            opacity: 0,
-            position: 'absolute'
-          }}
-          transition={{ duration: 0.3 }}
-          className={`font-semibold text-[#00ffcc] ${
-            priceDirection === 'up' ? 'text-[#00ffcc]' : 
-            priceDirection === 'down' ? 'text-[#ffaa00]' : 'text-[#00ffcc]'
-          }`}
-        >
-          {formatCurrency(currentPrice)}
-        </motion.div>
-      </AnimatePresence>
+      <span className={`font-semibold text-[#00ffcc]`}>
+        {currentPriceChars.map((char, index) => (
+          <FlipDigit 
+            key={index} 
+            digit={char} 
+            prevDigit={prevPriceChars[index]} 
+            direction={priceDirection}
+          />
+        ))}
+      </span>
       
       {/* 悬停显示合约地址 */}
       <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-slate-900 p-2 rounded shadow-lg z-50 text-xs border border-accent/30 max-w-[300px] break-all">
