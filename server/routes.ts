@@ -22,6 +22,8 @@ import * as cron from "node-cron";
 import { telegramService } from "./services/telegramService";
 import * as twitterService from "./services/twitterService";
 import * as financeNewsService from "./services/financeNewsService";
+import * as blockBeatsService from "./services/blockBeatsService";
+import * as cryptoTwitterService from "./services/cryptoTwitterService";
 import { db } from "./db";
 import { desc, eq, and, or, like, ilike, isNull, isNotNull, SQL, sql, lt, gt, asc } from "drizzle-orm";
 

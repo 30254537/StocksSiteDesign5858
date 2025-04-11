@@ -159,7 +159,7 @@ export async function storeCryptoKolTweets(limit: number = 5): Promise<any[]> {
     // 清除旧的KOL推文记录
     for (const sender of koLSenders) {
       await db.delete(telegramMessages)
-        .where(telegramMessages.sender.equals(sender));
+        .where(eq(telegramMessages.sender, sender));
     }
     
     // 插入新的KOL推文

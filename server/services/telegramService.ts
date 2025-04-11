@@ -88,14 +88,64 @@ class TelegramService {
   }
   
   /**
+   * 获取并整合所有来源的加密资讯
+   */
+  private async getAllCryptoNews(): Promise<InsertTelegramMessage[]> {
+    try {
+      const allNews: InsertTelegramMessage[] = [];
+      
+      // 1. 获取金色财经和火星财经资讯
+      const financeNews = await this.getFinanceNews();
+      if (financeNews && financeNews.length > 0) {
+        console.log(`成功获取 ${financeNews.length} 条金色财经和火星财经资讯`);
+        allNews.push(...financeNews);
+      }
+      
+      // 2. 获取律动BlockBeats资讯
+      try {
+        const blockBeatsNews = await blockBeatsService.fetchBlockBeatsNews(8);
+        if (blockBeatsNews && blockBeatsNews.length > 0) {
+          console.log(`成功获取 ${blockBeatsNews.length} 条律动BlockBeats资讯`);
+          allNews.push(...blockBeatsNews);
+        }
+      } catch (blockBeatsError) {
+        console.error('获取律动BlockBeats资讯失败:', blockBeatsError);
+      }
+      
+      // 3. 获取加密KOL的X推文
+      try {
+        const cryptoTweets = await cryptoTwitterService.fetchCryptoKolTweets(5);
+        if (cryptoTweets && cryptoTweets.length > 0) {
+          console.log(`成功获取 ${cryptoTweets.length} 条加密KOL的X推文`);
+          allNews.push(...cryptoTweets);
+        }
+      } catch (twitterError) {
+        console.error('获取加密KOL的X推文失败:', twitterError);
+      }
+      
+      // 如果没有获取到任何资讯，则使用基本模拟数据
+      if (allNews.length === 0) {
+        console.log('没有获取到任何类型的加密资讯，使用基本模拟数据');
+        return this.createBasicMockMessages();
+      }
+      
+      console.log(`总共获取到 ${allNews.length} 条来自所有来源的加密资讯`);
+      return allNews;
+    } catch (error) {
+      console.error('整合所有加密资讯失败:', error);
+      return this.createBasicMockMessages();
+    }
+  }
+  
+  /**
    * 获取并存储最新加密快讯到数据库
    */
   async fetchAndStoreMessages(): Promise<InsertTelegramMessage[]> {
     try {
-      // 直接使用财经快讯服务获取最新资讯
-      const financeNews = await this.getFinanceNews();
+      // 整合所有来源的加密资讯
+      const allNews = await this.getAllCryptoNews();
       
-      if (financeNews.length === 0) {
+      if (allNews.length === 0) {
         console.log('没有获取到任何加密快讯，使用基本模拟数据');
         const basicMessages = this.createBasicMockMessages();
         
@@ -112,14 +162,14 @@ class TelegramService {
       }
       
       // 对新闻进行去重处理，避免重复内容
-      const uniqueNews = this.deduplicateNews(financeNews);
-      console.log(`对 ${financeNews.length} 条快讯进行去重后，剩余 ${uniqueNews.length} 条唯一快讯`);
+      const uniqueNews = this.deduplicateNews(allNews);
+      console.log(`对 ${allNews.length} 条快讯进行去重后，剩余 ${uniqueNews.length} 条唯一快讯`);
       
       // 清空现有消息记录，确保每次都能显示最新内容
       await db.delete(telegramMessages);
       console.log('已清空现有快讯记录');
       
-      console.log(`准备存储 ${uniqueNews.length} 条金色财经和火星财经的最新资讯`);
+      console.log(`准备存储 ${uniqueNews.length} 条来自多个来源的加密资讯`);
       
       // 按时间排序（从新到旧）
       uniqueNews.sort((a, b) => {
@@ -138,6 +188,12 @@ class TelegramService {
             newsWithUrl.sourceUrl = 'https://www.jinse.cn/';
           } else if (newsWithUrl.sender && newsWithUrl.sender.includes('火星财经')) {
             newsWithUrl.sourceUrl = 'https://news.marsbit.co/';
+          } else if (newsWithUrl.sender && newsWithUrl.sender.includes('律动')) {
+            newsWithUrl.sourceUrl = 'https://www.theblockbeats.info/';
+          } else if (newsWithUrl.sender && newsWithUrl.sender.includes('CoinDesk')) {
+            newsWithUrl.sourceUrl = 'https://www.coindesk.com/';
+          } else if (newsWithUrl.sender && newsWithUrl.sender.includes('CryptoSlate')) {
+            newsWithUrl.sourceUrl = 'https://cryptoslate.com/';
           } else {
             newsWithUrl.sourceUrl = 'https://www.cryptonews.com/';
           }
@@ -150,7 +206,7 @@ class TelegramService {
         .values(newsWithUrls)
         .returning();
       
-      console.log(`成功存储 ${insertedMessages.length} 条加密快讯资讯`);
+      console.log(`成功存储 ${insertedMessages.length} 条加密资讯`);
       return insertedMessages;
     } catch (error) {
       console.error('获取并存储加密快讯失败:', error);
