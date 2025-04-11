@@ -221,14 +221,14 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                   <span className="text-gray-400">{formatMessageDate(message.date, language)}</span>
                 </div>
                 
-                <h3 className="font-bold text-white text-lg mb-3 group-hover:text-gray-100 transition-colors">
+                <h3 className="font-bold text-teal-400 text-sm mb-3 group-hover:text-teal-300 transition-colors">
                   {title}
                 </h3>
                 
                 {expandedContent && (
                   <div className="space-y-3">
                     {firstParagraph && (
-                      <div className="text-teal-400 text-sm font-medium">
+                      <div className="text-white text-lg font-medium">
                         {firstParagraph}
                       </div>
                     )}
@@ -236,7 +236,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                     {remainingParagraphs.length > 0 && (
                       <div className="space-y-2">
                         {remainingParagraphs.map((paragraph, i) => (
-                          <p key={i} className="text-teal-300/90 text-sm">
+                          <p key={i} className="text-gray-100 text-base">
                             {paragraph}
                           </p>
                         ))}
