@@ -4,7 +4,8 @@ import { formatCurrency } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-// 数字翻动组件 - 使用CSS动画实现丝滑翻动效果
+// 创建一个模拟树叶落下动作的丝滑数字翻动组件
+// 使用内联样式和CSS变量确保动画过程中数字保持对齐
 const FlipDigit = ({ 
   digit, 
   prevDigit, 
@@ -14,55 +15,61 @@ const FlipDigit = ({
   prevDigit: string; 
   direction: 'up' | 'down' | null 
 }) => {
-  // 只有当数字发生变化时才应用动画
+  // 判断数字是否发生变化
   const hasChanged = digit !== prevDigit;
   
-  // 特殊处理点号、美元符等非数字字符，避免它们不必要的翻动
+  // 特殊处理点号、美元符等非数字字符，这些字符不应该有翻动效果
   const isSpecialChar = !(/^\d$/.test(digit));
   
-  const digitRef = useRef<HTMLDivElement>(null);
-  const prevDigitRef = useRef<HTMLDivElement>(null);
-  
-  // 使用 CSS 动画，在 DOM 更新后手动添加类
-  useEffect(() => {
-    if (hasChanged && !isSpecialChar && digitRef.current && prevDigitRef.current) {
-      // 添加动画类
-      digitRef.current.classList.add('animate-in');
-      prevDigitRef.current.classList.add('animate-out');
-      
-      // 清理动画类
-      const timer = setTimeout(() => {
-        if (digitRef.current) {
-          digitRef.current.classList.remove('animate-in');
-        }
-        if (prevDigitRef.current) {
-          prevDigitRef.current.classList.remove('animate-out');
-        }
-      }, 500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [digit, hasChanged, isSpecialChar]);
-  
-  // 如果是特殊字符或未变化，就只显示静态数字
+  // 如果是特殊字符或数字没有变化，就只显示静态数字
   if (isSpecialChar || !hasChanged) {
     return (
-      <div className="flip-digit-container">
-        <div className="flip-digit-static">{digit}</div>
-      </div>
+      <span style={{
+        display: 'inline-block',
+        width: isSpecialChar ? '0.5em' : '0.65em',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {digit}
+      </span>
     );
   }
   
-  // 对数字执行翻动动画
+  // 创建丝滑的树叶落下式数字翻动动画
   return (
-    <div className="flip-digit-container">
-      <div ref={digitRef} className={`flip-digit-current ${direction === 'up' ? 'from-top' : 'from-bottom'}`}>
+    <span style={{
+      display: 'inline-block',
+      width: '0.65em',
+      textAlign: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+      height: '1.5em'
+    }}>
+      {/* 新数字动画 - 从顶部/底部滑入 */}
+      <span 
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          animation: `${direction === 'up' ? 'leafDropIn' : 'leafRiseIn'} 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards`
+        }}
+      >
         {digit}
-      </div>
-      <div ref={prevDigitRef} className={`flip-digit-prev ${direction === 'up' ? 'to-bottom' : 'to-top'}`}>
+      </span>
+      
+      {/* 旧数字动画 - 滑出 */}
+      <span 
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          animation: `${direction === 'up' ? 'leafDropOut' : 'leafRiseOut'} 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.175) forwards`
+        }}
+      >
         {prevDigit}
-      </div>
-    </div>
+      </span>
+    </span>
   );
 };
 
