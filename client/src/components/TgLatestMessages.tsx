@@ -1,11 +1,15 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FaTelegram, FaBell, FaMoneyBillWave, FaFileContract, FaChartBar, FaClock, FaUsers, FaExchangeAlt, FaSearchDollar, FaExclamationTriangle, FaChartLine } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { FaTelegram, FaBell, FaMoneyBillWave, FaFileContract, FaChartBar, FaClock, FaUsers, FaExchangeAlt, FaSearchDollar, FaExclamationTriangle, FaChartLine, FaSync } from "react-icons/fa";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 // 日期格式化
 const formatMessageDate = (dateString: string, language: string) => {
@@ -14,194 +18,74 @@ const formatMessageDate = (dateString: string, language: string) => {
   return format(date, 'yyyy/MM/dd HH:mm:ss', { locale });
 };
 
-// 使用正则表达式识别金狗监测格式数据
+// 使用正则表达式识别金狗监测格式数据 - 简化版本
 const parseGoldenDogMessage = (text: string) => {
   console.log("正在解析消息:", text.substring(0, 50) + "...");
   
-  // 检查消息类型 - 增强匹配能力
-  const isOldFormat = text.includes("🔔 金狗监测提醒") || 
-                      text.includes("金狗监测提醒") || 
-                      (text.includes("代币名称") && text.includes("合约地址")) ||
-                      (text.includes("市值") && text.includes("合约地址"));
+  // 更简单的解析逻辑，只提取代币名称和合约地址
   
-  // 特殊处理 STONKS 代币信息
-  const isStonksFormat = text.includes("$STONKS") && 
-                        (text.includes("价格:") || text.includes("市值:") || 
-                         text.includes("合约:"));
-                         
-  const isNewFormat = ((text.includes("🚀 金狗监测") || text.includes("金狗监测")) && 
-                      (text.includes("代币:") || text.includes("代币：") || 
-                       text.includes("价格:") || text.includes("价格：") ||
-                       text.includes("合约:") || text.includes("合约："))) ||
-                      (text.includes("🟢") && (text.includes("CA:") || text.includes("建仓"))) ||
-                      (text.includes("Ghibli") && text.includes("价格")) ||
-                      isStonksFormat;
+  // 尝试提取代币名称
+  let tokenName = "";
+  const tokenNameMatch = text.match(/代币名称[:：]\s*(.+?)(?:\n|$)/i) ||
+                         text.match(/代币[:：]\s*(.+?)(?:\n|$)/i) ||
+                         text.match(/\$([A-Za-z0-9_]+)/);
   
-  // 如果既不是旧格式也不是新格式，返回null
-  if (!isOldFormat && !isNewFormat) {
-    console.log("消息不符合任何已知格式");
+  if (tokenNameMatch) {
+    tokenName = tokenNameMatch[1] ? tokenNameMatch[1].trim() : tokenNameMatch[0].trim();
+  }
+  
+  if (text.includes("$STONKS")) {
+    tokenName = "STONKS";
+  }
+  
+  if (text.includes("$TrashCoin")) {
+    tokenName = "TrashCoin";
+  }
+  
+  // 尝试提取合约地址
+  let contractAddress = "";
+  const contractMatch = text.match(/合约地址[:：]\s*(.+?)(?:\n|$)/i) ||
+                        text.match(/合约[:：]\s*(.+?)(?:\n|$)/i) ||
+                        text.match(/CA[:：]?\s*(.+?)(?:\n|$)/i);
+  
+  if (contractMatch && contractMatch[1]) {
+    contractAddress = contractMatch[1].trim();
+  }
+  
+  // 判断是否找到了有效信息
+  const isValid = tokenName || contractAddress;
+  
+  if (!isValid) {
+    console.log("无法从消息中提取代币名称或合约地址");
     return null;
   }
   
-  console.log("消息类型:", isOldFormat ? "旧格式" : "新格式");
-
-  // 根据不同格式进行解析
-  if (isNewFormat) {
-    // 解析新格式
-    // 尝试提取代币名称 (新格式可能在 🟢 后面或有单独的名称标记)
-    let tokenName = "";
-    
-    // 特别处理STONKS代币格式
-    if (text.includes("$STONKS")) {
-      tokenName = "STONKS";
-    } else {
-      const nameMatch = text.match(/\🟢\s*(.+?)(?:\s*\n|\s*价格|\s*CA:)/i) || 
-                        text.match(/代币名称[:：]\s*(.+?)(?:\s*\n|$)/i) ||
-                        text.match(/代币[:：]\s*(.+?)(?:\s*\n|$)/i) ||
-                        text.match(/\$([A-Za-z0-9_]+)/) ||
-                        text.match(/\s*(.+?)(?:\s*价格|\s*CA:)/i);
-      if (nameMatch) {
-        tokenName = nameMatch[1].trim();
-      }
-    }
-    
-    // 提取合约地址
-    const contractMatch = text.match(/CA:\s*(.+?)(?:\n|$)/i) || 
-                         text.match(/合约[地址]*[:：]\s*(.+?)(?:\n|$)/i);
-    
-    // 提取价格信息
-    const priceMatch = text.match(/价格[:：]?\s*(.+?)(?:\n|$)/i) ||
-                      text.match(/(\$[\d\.]+)/) ||
-                      text.match(/([\d\.]+\s*usdt)/i);
-    
-    // 提取市值
-    const marketCapMatch = text.match(/市值[:：]?\s*(.+?)(?:\n|$)/i) ||
-                           text.match(/mcap[:：]?\s*(.+?)(?:\n|$)/i);
-    
-    // 提取持有者信息
-    let holders = "";
-    const holdersMatch = text.match(/持有者[:：]?\s*(.+?)(?:\n|$)/i) ||
-                         text.match(/holders[:：]?\s*(.+?)(?:\n|$)/i); 
-    if (holdersMatch) {
-      holders = holdersMatch[1].trim();
-    }
-                           
-    // 提取24h涨幅
-    let priceChange = "";
-    const priceChangeMatch = text.match(/24h涨幅[:：]?\s*(.+?)(?:\n|$)/i) ||
-                             text.match(/涨幅[:：]?\s*(.+?)(?:\n|$)/i);
-    if (priceChangeMatch) {
-      priceChange = priceChangeMatch[1].trim();
-    }
-    
-    // 提取其他可能有的信息
-    const liquidityMatch = text.match(/流动性[:：]?\s*(.+?)(?:\n|$)/i) ||
-                           text.match(/lp[:：]?\s*(.+?)(?:\n|$)/i);
-    
-    const buyTaxMatch = text.match(/买入税[:：]?\s*(.+?)(?:\n|$)/i) ||
-                        text.match(/buy\s*tax[:：]?\s*(.+?)(?:\n|$)/i);
-    
-    const sellTaxMatch = text.match(/卖出税[:：]?\s*(.+?)(?:\n|$)/i) ||
-                         text.match(/sell\s*tax[:：]?\s*(.+?)(?:\n|$)/i);
-    
-    const telegramMatch = text.match(/TG[:：]?\s*(.+?)(?:\n|$)/i) ||
-                          text.match(/telegram[:：]?\s*(.+?)(?:\n|$)/i) ||
-                          text.match(/查看更多[:：]?\s*(.+?)(?:\n|$)/i);
-
-    // 提取风险等级
-    let riskLevel = "";
-    const riskLevelMatch = text.match(/风险等级[:：]?\s*(.+?)(?:\n|$)/i);
-    if (riskLevelMatch) {
-      riskLevel = riskLevelMatch[1].trim();
-    }
-    
-    // 提取当前动作
-    let currentAction = "";
-    const currentActionMatch = text.match(/当前动作[:：]?\s*(.+?)(?:\n|$)/i);
-    if (currentActionMatch) {
-      currentAction = currentActionMatch[1].trim();
-    }
-                           
-    return {
-      tokenName: tokenName || "",
-      contractAddress: contractMatch?.[1]?.trim() || "",
-      price: priceMatch?.[1]?.trim() || "",
-      marketCap: marketCapMatch?.[1]?.trim() || "",
-      liquidity: liquidityMatch?.[1]?.trim() || "",
-      buyTax: buyTaxMatch?.[1]?.trim() || "",
-      sellTax: sellTaxMatch?.[1]?.trim() || "",
-      telegram: telegramMatch?.[1]?.trim() || "",
-      // 更新一些旧字段以支持STONKS代币格式
-      top10Holding: "",
-      holders: holders,
-      volume24h: "",
-      priceChange: priceChange,
-      creationTime: "",
-      bundleAnalysis: "",
-      tweetAuthors: "",
-      blueVerified: "",
-      riskLevel: riskLevel,
-      currentAction: currentAction,
-      rawText: text,
-      isGoldenDogFormat: true,
-      isNewFormat: true
-    };
-  } else {
-    // 旧格式解析 - 支持不同的表达方式和标点符号，增强解析能力
-    const tokenNameMatch = text.match(/💰?\s*代币名称[:：](.+?)(\n|$)/) || 
-                         text.match(/代币名称[:：]\s*(.+?)(\n|$)/) ||
-                         text.match(/\$([A-Za-z0-9_]+)/);
-                         
-    const contractMatch = text.match(/📝?\s*合约地址[:：]\s*(.+?)(\n|$)/) ||
-                         text.match(/合约地址[:：]\s*(.+?)(\n|$)/) ||
-                         text.match(/合约[:：]\s*(.+?)(\n|$)/);
-                         
-    const marketCapMatch = text.match(/👺?市值[:：](.+?)(\n|$)/) ||
-                         text.match(/市值[:：]\s*(.+?)(\n|$)/);
-                         
-    const top10HoldingMatch = text.match(/⏳?前十持仓[:：](.+?)(\n|$)/);
-    
-    const holdersMatch = text.match(/👥?持有者数量[:：]\s*(.+?)(\n|$)/) ||
-                        text.match(/持有者[:：]\s*(.+?)(\n|$)/);
-                        
-    const volumeMatch = text.match(/📊?24h交易量[:：]\s*(.+?)(\n|$)/) ||
-                       text.match(/交易量[:：]\s*(.+?)(\n|$)/);
-                       
-    const priceChangeMatch = text.match(/📈?.+价格变化[:：]\s*(.+?)(\n|$)/) ||
-                            text.match(/(?:前1小时|24h|6小时)?涨幅[:：]?\s*(.+?)(\n|$)/);
-                            
-    const creationTimeMatch = text.match(/🕒?创建时间[:：]\s*(.+?)(\n|$)/);
-    
-    const bundleAnalysisMatch = text.match(/🔍?捆绑分析[:：]\s*(.+?)(\n|$)/) ||
-                               text.match(/市场分析[:：]\s*(.+?)(\n|$)/);
-                               
-    const tweetAuthorsMatch = text.match(/📬?有关推文作者数量[:：]\s*(.+?)(\n|$)/) ||
-                              text.match(/有关此文件查看数量[:：]?\s*(.+?)(\n|$)/);
-                              
-    const blueVerifiedMatch = text.match(/🛜?蓝V用户[:：]\s*(.+?)(\n|$)/);
-
-    return {
-      tokenName: tokenNameMatch?.[1]?.trim() || "",
-      contractAddress: contractMatch?.[1]?.trim() || "",
-      marketCap: marketCapMatch?.[1]?.trim() || "",
-      top10Holding: top10HoldingMatch?.[1]?.trim() || "",
-      holders: holdersMatch?.[1]?.trim() || "",
-      volume24h: volumeMatch?.[1]?.trim() || "",
-      priceChange: priceChangeMatch?.[1]?.trim() || "",
-      creationTime: creationTimeMatch?.[1]?.trim() || "",
-      bundleAnalysis: bundleAnalysisMatch?.[1]?.trim() || "",
-      tweetAuthors: tweetAuthorsMatch?.[1]?.trim() || "",
-      blueVerified: blueVerifiedMatch?.[1]?.trim() || "",
-      price: "",
-      liquidity: "",
-      buyTax: "",
-      sellTax: "",
-      telegram: "",
-      rawText: text,
-      isGoldenDogFormat: true,
-      isNewFormat: false
-    };
-  }
+  console.log(`已提取信息 - 代币名称: ${tokenName}, 合约地址: ${contractAddress}`);
+  
+  return {
+    tokenName: tokenName,
+    contractAddress: contractAddress,
+    rawText: text,
+    isGoldenDogFormat: true,
+    // 下面是为了兼容旧代码，但我们不会使用这些字段
+    isNewFormat: true,
+    price: "",
+    marketCap: "",
+    top10Holding: "",
+    holders: "",
+    volume24h: "",
+    priceChange: "",
+    creationTime: "",
+    bundleAnalysis: "",
+    tweetAuthors: "",
+    blueVerified: "",
+    liquidity: "",
+    buyTax: "",
+    sellTax: "",
+    telegram: "",
+    riskLevel: "",
+    currentAction: ""
+  };
 };
 
 // 定义 Telegram 消息接口
@@ -224,7 +108,38 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   showTitle = true 
 }) => {
   const { language } = useLanguage();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isSyncing, setIsSyncing] = useState(false);
   
+  // 用于手动同步Telegram消息的mutation
+  const syncMutation = useMutation({
+    mutationFn: async () => {
+      setIsSyncing(true);
+      const res = await apiRequest("POST", "/api/sync-telegram-messages");
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: language === 'zh' ? "同步成功" : "Synchronization successful",
+        description: language === 'zh' ? "已成功同步最新消息" : "Successfully synchronized the latest messages",
+        variant: "default",
+      });
+      // 刷新消息数据
+      queryClient.invalidateQueries({ queryKey: ['/api/telegram-messages'] });
+      setIsSyncing(false);
+    },
+    onError: (error) => {
+      toast({
+        title: language === 'zh' ? "同步失败" : "Synchronization failed", 
+        description: (error as Error).message || (language === 'zh' ? "请稍后再试" : "Please try again later"),
+        variant: "destructive",
+      });
+      setIsSyncing(false);
+    }
+  });
+  
+  // 获取Telegram消息列表
   const { data: telegramData, isLoading, error } = useQuery<{ data: TelegramMessage[] }>({
     queryKey: ['/api/telegram-messages'],
     staleTime: 60 * 1000, // 1分钟

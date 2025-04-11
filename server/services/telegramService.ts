@@ -4,44 +4,17 @@ import { db } from '../db';
 import { telegramMessages, InsertTelegramMessage } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-// 检查是否为金狗监测格式，使用更宽松的匹配逻辑
+// 简化后的金狗监测格式检查，只关注代币名称和合约地址
 function isGoldenDogFormat(text: string): boolean {
-  // 消息关键词列表，更新了更多格式的关键词
-  const keywords = [
-    "金狗", "代币", "合约", "CA", "市值", "持有", "持仓", "交易量", "价格", 
-    "监测", "提醒", "全狗", "推特", "分析", "捆绑", "交易", "风险", "动作",
-    "创建时间", "买税", "卖税", "持有人", "LP", "风险等级", "流动性", 
-    "SOL", "Solana", "金狗监测", "买入成本", "$", "小时", "涨幅", "TrashCoin"
-  ];
+  // 简化为只检查代币名称和合约地址
+  const hasTokenName = text.includes('代币名称') || text.includes('$') || text.includes('代币:') || text.includes('代币：');
+  const hasContract = text.includes('合约地址') || text.includes('合约:') || text.includes('合约：') || text.includes('CA:') || text.includes('0x');
   
-  // 计算匹配的关键词数量
-  let matchCount = 0;
-  for (const keyword of keywords) {
-    if (text.includes(keyword)) {
-      matchCount++;
-    }
-  }
-  
-  // 自动检测橙子消息格式
-  if (text.includes('买币渠道') || 
-      text.includes('代币名称:') || 
-      text.includes('代币名称：') || 
-      text.includes('代码: BLORB') || 
-      text.includes('市值:') ||
-      text.includes('$TrashCoin')) {
-    matchCount += 5; // 更可能是我们想要的消息
-  }
-  
-  // 自动检测STONKS相关消息
-  if (text.includes('STONKS') || text.includes('$STONKS')) {
-    matchCount += 3;
-  }
-  
-  // 如果包含2个或以上关键词，认为是符合条件的消息
-  const isMatch = matchCount >= 2;
+  // 只要包含代币名称或合约地址中的一个即符合条件
+  const isMatch = hasTokenName || hasContract;
   
   // 记录日志以便调试
-  console.log(`消息关键词匹配: ${matchCount}个, 是否匹配: ${isMatch}`);
+  console.log(`消息匹配结果 - 包含代币名称: ${hasTokenName}, 包含合约地址: ${hasContract}, 是否匹配: ${isMatch}`);
   console.log(`消息内容预览: ${text.substring(0, 50)}...`);
   
   return isMatch;
@@ -136,6 +109,8 @@ https://gmgn.ai/sol/token/l2XlXD4b_Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
       name: '金狗监测频道',
       url: 'https://t.me/s/chengzi_golden',
       alternativeUrl: 'https://t.me/chengzi_golden'
+      // 注意：由于Telegram限制，可能无法通过Web直接抓取消息
+      // 因此我们提供模拟数据作为备份
     },
     {
       name: 'GoldDogAlpha频道',
