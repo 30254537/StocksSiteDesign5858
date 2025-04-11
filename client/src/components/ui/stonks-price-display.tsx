@@ -3,9 +3,8 @@ import { useStonksPrice } from '@/contexts/StonksPriceContext';
 import { formatCurrency } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { motion, AnimatePresence } from 'framer-motion';
 
-// 数字翻动组件 - 只有当数字变化时才会翻动
+// 数字翻动组件 - 使用CSS动画实现丝滑翻动效果
 const FlipDigit = ({ 
   digit, 
   prevDigit, 
@@ -21,56 +20,49 @@ const FlipDigit = ({
   // 特殊处理点号、美元符等非数字字符，避免它们不必要的翻动
   const isSpecialChar = !(/^\d$/.test(digit));
   
-  // 容器样式 - 固定宽度确保所有数字对齐
-  const containerStyle = { 
-    width: isSpecialChar ? '0.5em' : '0.65em', 
-    height: '1.5em', 
-    textAlign: 'center' as const, 
-    display: 'inline-flex', 
-    justifyContent: 'center',
-    alignItems: 'center'
-  };
+  const digitRef = useRef<HTMLDivElement>(null);
+  const prevDigitRef = useRef<HTMLDivElement>(null);
   
-  // 如果是特殊字符或未变化，就不执行动画
+  // 使用 CSS 动画，在 DOM 更新后手动添加类
+  useEffect(() => {
+    if (hasChanged && !isSpecialChar && digitRef.current && prevDigitRef.current) {
+      // 添加动画类
+      digitRef.current.classList.add('animate-in');
+      prevDigitRef.current.classList.add('animate-out');
+      
+      // 清理动画类
+      const timer = setTimeout(() => {
+        if (digitRef.current) {
+          digitRef.current.classList.remove('animate-in');
+        }
+        if (prevDigitRef.current) {
+          prevDigitRef.current.classList.remove('animate-out');
+        }
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [digit, hasChanged, isSpecialChar]);
+  
+  // 如果是特殊字符或未变化，就只显示静态数字
   if (isSpecialChar || !hasChanged) {
     return (
-      <span className="inline-flex justify-center items-center" style={containerStyle}>
-        <span>{digit}</span>
-      </span>
+      <div className="flip-digit-container">
+        <div className="flip-digit-static">{digit}</div>
+      </div>
     );
   }
   
-  // 对数字执行平滑的翻动动画
+  // 对数字执行翻动动画
   return (
-    <span className="inline-flex relative overflow-hidden justify-center items-center" style={containerStyle}>
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={digit}
-          initial={{ 
-            y: direction === 'up' ? 20 : -20,
-            opacity: 0
-          }}
-          animate={{ 
-            y: 0, 
-            opacity: 1 
-          }}
-          exit={{ 
-            y: direction === 'up' ? -20 : 20,
-            opacity: 0,
-            position: 'absolute'
-          }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 400, 
-            damping: 20, 
-            duration: 0.3 
-          }}
-          className="inline-flex absolute"
-        >
-          {digit}
-        </motion.span>
-      </AnimatePresence>
-    </span>
+    <div className="flip-digit-container">
+      <div ref={digitRef} className={`flip-digit-current ${direction === 'up' ? 'from-top' : 'from-bottom'}`}>
+        {digit}
+      </div>
+      <div ref={prevDigitRef} className={`flip-digit-prev ${direction === 'up' ? 'to-bottom' : 'to-top'}`}>
+        {prevDigit}
+      </div>
+    </div>
   );
 };
 
