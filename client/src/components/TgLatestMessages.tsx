@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { FaTelegram, FaBell, FaSync, FaNewspaper, FaExternalLinkAlt } from "react-icons/fa";
+import { FaSync } from "react-icons/fa";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
@@ -16,7 +16,7 @@ import { useLocation } from 'wouter';
 const formatMessageDate = (dateString: string, language: string) => {
   const date = new Date(dateString);
   const locale = language === 'zh' ? zhCN : enUS;
-  return format(date, 'yyyy/MM/dd HH:mm:ss', { locale });
+  return format(date, 'yyyy/MM/dd HH:mm', { locale });
 };
 
 // 定义 Telegram 消息接口
@@ -81,9 +81,9 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <Skeleton className="h-32 w-full bg-gray-700 rounded-md" />
-        <Skeleton className="h-32 w-full bg-gray-700 rounded-md" />
-        <Skeleton className="h-32 w-full bg-gray-700 rounded-md" />
+        <Skeleton className="h-24 w-full bg-gray-700 rounded-md" />
+        <Skeleton className="h-24 w-full bg-gray-700 rounded-md" />
+        <Skeleton className="h-24 w-full bg-gray-700 rounded-md" />
       </div>
     );
   }
@@ -106,7 +106,6 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
       <Card className="bg-gray-800/50 border-gray-700">
         <CardContent className="pt-4">
           <div className="text-center text-gray-400">
-            <FaNewspaper className="mx-auto text-2xl mb-2 text-blue-400" />
             <p className="mb-2">{language === 'zh' ? '暂无加密快讯' : 'No crypto news'}</p>
           </div>
         </CardContent>
@@ -117,23 +116,17 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   // 截取限制数量的消息
   const messagesWithLimit = telegramData.data.slice(0, limit);
   
-  // 打印原始消息以便调试
-  console.log('原始消息列表:', telegramData?.data);
-  
   return (
-    <div className="space-y-5">
+    <div className="pb-8">
       {showTitle && (
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center space-x-2">
-            <FaNewspaper className="text-yellow-400 text-xl" />
-            <h3 className="text-lg font-medium text-teal-400">
-              {language === 'zh' ? '加密快讯' : 'Crypto News'}
-            </h3>
-          </div>
+        <div className="flex items-center justify-between border-b border-gray-700 pb-2 mb-6">
+          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300">
+            {language === 'zh' ? '加密快讯' : 'Crypto News'}
+          </h2>
           <Button 
             variant="outline" 
             size="sm" 
-            className="text-xs h-8 px-3 bg-gray-800/60 border-teal-800 hover:bg-gray-800 hover:text-teal-400"
+            className="rounded-full px-3 bg-gray-800/60 border-teal-800 hover:bg-gray-800 hover:text-teal-400 transition-all"
             onClick={() => syncMutation.mutate()}
             disabled={isSyncing || syncMutation.isPending}
           >
@@ -145,124 +138,71 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
             ) : (
               <>
                 <FaSync className="mr-1 h-3 w-3" />
-                {language === 'zh' ? '刷新消息' : 'Refresh'}
+                {language === 'zh' ? '实时更新' : 'Update'}
               </>
             )}
           </Button>
         </div>
       )}
       
-      {messagesWithLimit.map((message: TelegramMessage) => {
-        // 更精确地提取标题和内容
-        const lines = message.text.split('\n').filter(line => line.trim() !== '');
-        
-        // 第一行通常是标题标记（如"🔥 火星财经快讯"）
-        // 第二行是实际的新闻标题/内容
-        // 最后一行通常是日期
-        
-        let title = '';
-        let content = '';
-        
-        if (lines.length >= 3) {
-          // 第一行作为来源标记
-          title = lines[1]; // 第二行是实际的新闻标题
-          // 排除第一行和最后一行
-          const contentLines = lines.slice(2, -1);
-          content = contentLines.join('\n');
-        } else if (lines.length === 2) {
-          title = lines[0];
-          content = lines[1];
-        } else if (lines.length === 1) {
-          title = '加密快讯';
-          content = lines[0];
-        } else {
-          title = '加密快讯';
-          content = '查看详细内容请点击阅读全文';
-        }
-        
-        // 移除可能包含的日期时间信息
-        content = content.replace(/\d{4}\/\d{1,2}\/\d{1,2}\s\d{1,2}:\d{1,2}(:\d{1,2})?/g, '').trim();
-        
-        // 确保内容不为空
-        if (!content) {
-          content = '查看详细内容请点击阅读全文';
-        }
-        
-        return (
-          <Card 
-            key={message.id} 
-            className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10 cursor-pointer relative"
-            onClick={() => {
-              // 导航到站内新闻详情页面
-              setLocation(`/news/${message.id}`);
-            }}
-          >
-            {/* 右上角阅读标志 */}
-            <div className="absolute top-0 right-0 bg-teal-600 text-white text-xs px-2 py-1 rounded-bl-md">
-              <FaNewspaper className="h-3 w-3" />
-            </div>
-            
-            <CardContent className="pt-4 pb-3">
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center space-x-2">
-                  <FaNewspaper className="text-yellow-400" />
-                  <span className="font-bold text-yellow-400">
-                    {message.channelTitle || "🟢 加密快讯"}
-                  </span>
+      <div className="grid gap-4">
+        {messagesWithLimit.map((message: TelegramMessage, index) => {
+          // 提取标题和内容
+          const lines = message.text.split('\n').filter(line => line.trim() !== '');
+          
+          let title = '';
+          let content = '';
+          
+          if (lines.length >= 3) {
+            title = lines[1]; // 第二行是实际的新闻标题
+            const contentLines = lines.slice(2, -1);
+            content = contentLines.join('\n');
+          } else if (lines.length === 2) {
+            title = lines[0];
+            content = lines[1];
+          } else if (lines.length === 1) {
+            title = '加密快讯';
+            content = lines[0];
+          } else {
+            title = '加密快讯';
+            content = '';
+          }
+          
+          // 移除可能包含的日期时间信息
+          content = content.replace(/\d{4}\/\d{1,2}\/\d{1,2}\s\d{1,2}:\d{1,2}(:\d{1,2})?/g, '').trim();
+          
+          // 确保内容不为空
+          if (!content) {
+            content = '';
+          }
+          
+          return (
+            <Card 
+              key={message.id} 
+              className="overflow-hidden bg-gray-900/70 border-gray-800 hover:bg-gray-800 cursor-pointer relative group transition-colors"
+              onClick={() => setLocation(`/news/${message.id}`)}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center mb-2 opacity-50 text-xs">
+                  <span className="text-gray-400">{formatMessageDate(message.date, language)}</span>
                 </div>
-                <span className="text-xs text-gray-400">
-                  {formatMessageDate(message.date, language)}
-                </span>
-              </div>
-              
-              {/* 标题内容 - 以更突出的形式显示 */}
-              <h3 className="font-bold text-white text-lg mt-2">
-                {title}
-              </h3>
-              
-              {/* 消息内容 - 以正文形式显示，格式化后更易阅读 */}
-              <div className="mt-2 whitespace-pre-wrap break-words text-gray-300 text-sm">
-                {content}
-              </div>
-              
-              <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
-                <span className="text-xs text-gray-500">
-                  {message.sender ? `来源: ${message.sender}` : "加密资讯频道"}
-                </span>
                 
-                <div className="flex gap-2">
-                  {/* 站内阅读按钮 */}
-                  <button
-                    className="text-xs bg-teal-700 hover:bg-teal-600 text-white px-2 py-1 rounded flex items-center transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation(); // 阻止冒泡，避免触发Card的点击事件
-                      setLocation(`/news/${message.id}`);
-                    }}
-                  >
-                    {language === 'zh' ? '站内阅读' : 'Read Article'} 
-                  </button>
-                  
-                  {/* 源站访问按钮（可选） */}
-                  {message.sourceUrl && (
-                    <a 
-                      href={message.sourceUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded flex items-center transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation(); // 阻止冒泡，避免触发Card的点击事件
-                      }}
-                    >
-                      {language === 'zh' ? '源站' : 'Source'} 
-                      <FaExternalLinkAlt className="ml-1 h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+                <h3 className="font-bold text-teal-400 text-lg mb-2 hover:translate-x-1 transition-transform group-hover:text-teal-300">
+                  {title}
+                </h3>
+                
+                {content && (
+                  <div className="text-gray-300 text-sm">
+                    {content}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };
