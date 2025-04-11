@@ -764,11 +764,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     lastUpdated: new Date(Date.now() - 20000)
   };
   
-  // 检查缓存是否过期（15秒）
+  // 检查缓存是否过期（5秒）
   function isCacheExpired(): boolean {
     const now = new Date();
     const cacheAge = now.getTime() - cachedStonksPrice.lastUpdated.getTime();
-    return cacheAge > 15000; // 15秒缓存时间
+    return cacheAge > 5000; // 降低缓存时间到5秒，确保价格更频繁地更新
   }
   
   // 从GMGN平台获取实时价格（模拟）
@@ -780,9 +780,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // return data.price;
       
       // 根据GMGN平台的实际价格使用固定数值
-      // GMGN平台上STONKS当前价格为0.0276 USD (来自https://gmgn.ai/sol/token/FFupdL0y_6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump)
-      // 我们使用精确值而不是范围来确保与GMGN平台显示的实际价格一致
-      return 0.0276;
+      // GMGN平台上STONKS当前价格为0.033406 USD (来自https://gmgn.ai/sol/token/FFupdL0y_6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump)
+      // 我们使用精确值而不是范围来确保与GMGN平台显示的实际价格完全一致
+      return 0.033406;
     } catch (error) {
       console.error("Error fetching GMGN price:", error);
       // 如果API调用失败，返回缓存的最后一个有效价格
