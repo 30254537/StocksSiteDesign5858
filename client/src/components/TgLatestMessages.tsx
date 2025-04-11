@@ -214,7 +214,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
           <div className="flex items-center space-x-2">
             <FaBell className="text-yellow-400 text-xl" />
             <h3 className="text-lg font-medium text-teal-400">
-              {language === 'zh' ? '金狗监测' : 'Golden Dog'}
+              {language === 'zh' ? '加密快讯' : 'Crypto News'}
             </h3>
           </div>
           <Button 
@@ -254,7 +254,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center space-x-2">
                   <FaBell className="text-yellow-400" />
-                  <span className="font-bold text-yellow-400">{parsed.isNewFormat ? "🟢 金狗监测" : "🔔 金狗监测提醒"}</span>
+                  <span className="font-bold text-yellow-400">{parsed.isNewFormat ? "🟢 加密快讯" : "🔔 加密资讯"}</span>
                 </div>
                 <span className="text-xs text-gray-400">{formatMessageDate(message.date, language)}</span>
               </div>
@@ -457,7 +457,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
               )}
 
               <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
-                <span className="text-xs text-gray-500">金狗监测频道</span>
+                <span className="text-xs text-gray-500">加密资讯频道</span>
               </div>
             </CardContent>
           </Card>
