@@ -19,6 +19,7 @@ class TelegramService {
         sender: '加密快讯 × 金色财经',
         channelTitle: '加密资讯频道',
         mediaUrl: null,
+        sourceUrl: 'https://www.jinse.cn/',
         date: currentDate,
         isDisplayed: true
       },
@@ -28,6 +29,7 @@ class TelegramService {
         sender: '加密快讯 × 火星财经',
         channelTitle: '加密资讯频道',
         mediaUrl: null,
+        sourceUrl: 'https://news.marsbit.co/',
         date: currentDate,
         isDisplayed: true
       },
@@ -37,6 +39,7 @@ class TelegramService {
         sender: '加密快讯 × 金色财经',
         channelTitle: '加密资讯频道',
         mediaUrl: null,
+        sourceUrl: 'https://www.jinse.cn/',
         date: currentDate,
         isDisplayed: true
       }
@@ -63,17 +66,19 @@ class TelegramService {
       console.log(`成功获取 ${allNews.length} 条金色财经与火星财经的实时资讯`);
       
       // 将所有快讯格式化为加密快讯格式
-      return allNews.map((news, index) => ({
-        messageId: 200000 + index,
-        text: news.text,
-        sender: news.sender.includes('金色财经') 
-          ? '加密快讯 × 金色财经' 
-          : '加密快讯 × 火星财经',
-        channelTitle: '加密资讯频道',
-        mediaUrl: news.mediaUrl,
-        date: news.date || new Date(),
-        isDisplayed: true
-      }));
+      return allNews.map((news, index) => {
+        const isJinse = news.sender.includes('金色财经');
+        return {
+          messageId: 200000 + index,
+          text: news.text,
+          sender: isJinse ? '加密快讯 × 金色财经' : '加密快讯 × 火星财经',
+          channelTitle: '加密资讯频道',
+          mediaUrl: news.mediaUrl,
+          sourceUrl: news.sourceUrl || (isJinse ? 'https://www.jinse.cn/' : 'https://news.marsbit.co/'),
+          date: news.date || new Date(),
+          isDisplayed: true
+        };
+      });
     } catch (error) {
       console.error('获取财经实时资讯失败:', error);
       return this.createBasicMockMessages();
@@ -123,16 +128,19 @@ class TelegramService {
       
       // 确保每条消息都有sourceUrl
       const newsWithUrls = uniqueNews.map(news => {
-        if (!news.sourceUrl) {
-          if (news.sender.includes('金色财经')) {
-            news.sourceUrl = 'https://www.jinse.cn/';
-          } else if (news.sender.includes('火星财经')) {
-            news.sourceUrl = 'https://news.marsbit.co/';
+        // 使用类型断言确保TypeScript知道我们在添加sourceUrl属性
+        const newsWithUrl = news as InsertTelegramMessage & { sourceUrl?: string };
+        
+        if (!newsWithUrl.sourceUrl) {
+          if (newsWithUrl.sender && newsWithUrl.sender.includes('金色财经')) {
+            newsWithUrl.sourceUrl = 'https://www.jinse.cn/';
+          } else if (newsWithUrl.sender && newsWithUrl.sender.includes('火星财经')) {
+            newsWithUrl.sourceUrl = 'https://news.marsbit.co/';
           } else {
-            news.sourceUrl = 'https://www.cryptonews.com/';
+            newsWithUrl.sourceUrl = 'https://www.cryptonews.com/';
           }
         }
-        return news;
+        return newsWithUrl;
       });
       
       // 存储到数据库
