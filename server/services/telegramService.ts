@@ -22,86 +22,139 @@ function isGoldenDogFormat(text: string): boolean {
 
 // Telegram服务类
 class TelegramService {
-  // 手动添加一些测试消息用于显示，包括新的TrashCoin格式
-  private mockMessages: InsertTelegramMessage[] = [
-    {
-      messageId: 1001,
-      text: `🔔 金狗监测提醒
-代币名称: $pablo
-市值: $17K
-前1小时涨幅: 28.9%
-24h交易量: $36K
-创建时间: 2025/4/11 15:59:54
-合约地址: 0x6dbz5txzT3xHwB3JX2Lf8bQeqcYUkrTabCeGfS7Tpump
-市场分析: 🔴 31.80%
-有关此文件查看数量: 7`,
-      sender: '金狗监测频道',
-      channelTitle: '金狗监测频道',
-      mediaUrl: null,
-      date: new Date(),
-      isDisplayed: true
-    },
-    {
-      messageId: 1002,
-      text: `🚀 金狗监测
+  // 从财经快讯创建金狗监测格式的消息
+  private async createMockMessagesFromFinanceNews(): Promise<InsertTelegramMessage[]> {
+    try {
+      // 导入 financeNewsService
+      const { scrapeJinseNews, scrapeMarsbitNews } = require('./financeNewsService');
       
-代币: $STONKS
-价格: 0.031 USDT
-24h涨幅: +15.4%
-市值: $31M
-持有者: 9521
+      // 获取最新的财经快讯
+      const jinseNews = await scrapeJinseNews(3);
+      const marsbitNews = await scrapeMarsbitNews(2);
       
-🔄 当前动作: 建仓中
-⚠️ 风险等级: 中等
+      // 合并所有快讯
+      const allNews = [...jinseNews, ...marsbitNews];
       
-合约: 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56
+      if (!allNews || allNews.length === 0) {
+        console.log('没有找到财经快讯数据，创建基本模拟消息');
+        return this.createBasicMockMessages();
+      }
       
-👉 交易: https://app.uniswap.org/#/swap?outputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56
+      console.log(`获取到 ${allNews.length} 条财经快讯，转换为金狗监测格式`);
       
-🔗 查看更多: t.me/GoldDogAlpha`,
-      sender: 'GoldDogAlpha频道',
-      channelTitle: 'GoldDogAlpha频道',
-      mediaUrl: null,
-      date: new Date(),
-      isDisplayed: true
-    },
-    {
-      messageId: 1003,
-      text: `买币渠道
-代币: BLORB 涨幅: 2120.22% 合约地址: Azf..,
-现在上线: uniswap | MEXC | Bybit | Huobi | ByDFI | OKX | Gate | Binance | HTX
-
-#SOL #Solana #金狗监测
-
-⚠ 金狗监测高度提醒
-💰 代币名称:$TrashCoin TrashCoin
-📝 合约地址:
-Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
-
-🪙 K线链接:
-https://gmgn.ai/sol/token/l2XlXD4b_Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
-
-💴 市值$21K
-💵 前十持仓:30.9%
-👨‍👨‍👧‍👦持有者数量: 117
-📈24h交易量: $34K
-💶6小时价格变化: 543%
-⏰创建时间:2025/4/11 17:41:25
-🔮市场分析: 🔴 40.12%
-
-👨‍💻有关此文件查看数量: 7
-📡蓝V用户: 0
-
-⚠ 推荐信息:无推特
-
-⚠ 笔记:`,
-      sender: '金狗监测频道',
-      channelTitle: '金狗监测频道',
-      mediaUrl: null,
-      date: new Date(),
-      isDisplayed: true
+      // 创建模拟代币名称和合约地址
+      const tokenNames = ['$STONKS', '$BTC', '$ETH', '$BNB', '$SOL'];
+      const contractAddresses = [
+        '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+        '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
+        '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
+        '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+        '0x55d398326f99059fF775485246999027B3197955'
+      ];
+      
+      // 将财经快讯转换为金狗监测格式的消息
+      return allNews.map((news, index) => {
+        // 从财经快讯中提取标题和内容
+        const content = news.text;
+        
+        // 生成随机数据
+        const tokenName = tokenNames[index % tokenNames.length];
+        const contractAddress = contractAddresses[index % contractAddresses.length];
+        const marketCap = ['$10K', '$500K', '$2.3M', '$47M', '$1.2B'][Math.floor(Math.random() * 5)];
+        const priceChange = (Math.random() * 30).toFixed(2) + '%';
+        const volume = ['$50K', '$320K', '$1.5M', '$25M', '$120M'][Math.floor(Math.random() * 5)];
+        const holders = ['120', '580', '2.3K', '12K', '45K'][Math.floor(Math.random() * 5)];
+        const riskLevel = ['低', '中', '高'][Math.floor(Math.random() * 3)];
+        
+        // 创建一个类似金狗监测的消息，同时包含财经快讯内容
+        return {
+          messageId: news.messageId || 10000 + index,
+          text: `🔔 金狗监测 × ${news.sender}\n
+💰 代币名称: ${tokenName}
+\n📝 合约地址: ${contractAddress}
+\n👺市值: ${marketCap}
+⏳前十持仓: ${(Math.random() * 40).toFixed(1)}%
+👥持有者数量: ${holders}
+📊24h交易量: ${volume}
+📈6小时价格变化: ${priceChange}
+🕒创建时间: ${new Date().toLocaleString('zh-CN')}
+🔍捆绑分析: 🟠 ${(Math.random() * 50).toFixed(2)}%
+\n🗣️相关资讯: ${content}`,
+          sender: '金狗监测 × ' + news.sender,
+          channelTitle: '金狗监测与财经快讯',
+          mediaUrl: null,
+          date: news.date || new Date(),
+          isDisplayed: true
+        };
+      });
+    } catch (error) {
+      console.error('创建财经快讯金狗监测消息失败:', error);
+      return this.createBasicMockMessages();
     }
-  ];
+  }
+  
+  // 创建基本的模拟消息
+  private createBasicMockMessages(): InsertTelegramMessage[] {
+    return [
+      {
+        messageId: 1001,
+        text: `🔔 金狗监测 × 金色财经\n
+💰 代币名称: $BTC
+\n📝 合约地址: 0x2170Ed0880ac9A755fd29B2688956BD959F933F8
+\n👺市值: $1.2B
+⏳前十持仓: 32.5%
+👥持有者数量: 45K
+📊24h交易量: $120M
+📈6小时价格变化: 5.23%
+🕒创建时间: ${new Date().toLocaleString('zh-CN')}
+🔍捆绑分析: 🟠 25.12%
+\n🗣️相关资讯: 🔔 金色财经快讯\n\n比特币在过去24小时内上涨5.2%，目前交易价格为64,324美元\n\n${new Date().toLocaleString('zh-CN')}`,
+        sender: '金狗监测 × 金色财经',
+        channelTitle: '金狗监测与财经快讯',
+        mediaUrl: null,
+        date: new Date(),
+        isDisplayed: true
+      },
+      {
+        messageId: 1002,
+        text: `🔔 金狗监测 × 火星财经\n
+💰 代币名称: $STONKS
+\n📝 合约地址: 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56
+\n👺市值: $31M
+⏳前十持仓: 15.2%
+👥持有者数量: 9521
+📊24h交易量: $2.3M
+📈6小时价格变化: 15.4%
+🕒创建时间: ${new Date().toLocaleString('zh-CN')}
+🔍捆绑分析: 🟠 18.35%
+\n🗣️相关资讯: 🔥 火星财经快讯\n\nSTONKS代币在DEX交易平台成交量突破500万美元\n\n${new Date().toLocaleString('zh-CN')}`,
+        sender: '金狗监测 × 火星财经',
+        channelTitle: '金狗监测与财经快讯',
+        mediaUrl: null,
+        date: new Date(),
+        isDisplayed: true
+      },
+      {
+        messageId: 1003,
+        text: `🔔 金狗监测 × 金色财经\n
+💰 代币名称: $ETH
+\n📝 合约地址: 0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c
+\n👺市值: $540M
+⏳前十持仓: 22.7%
+👥持有者数量: 12K
+📊24h交易量: $47M
+📈6小时价格变化: 3.8%
+🕒创建时间: ${new Date().toLocaleString('zh-CN')}
+🔍捆绑分析: 🟠 21.53%
+\n🗣️相关资讯: 📊 金色财经7x24H\n\n以太坊生态系统DeFi锁仓量突破550亿美元\n\n${new Date().toLocaleString('zh-CN')}`,
+        sender: '金狗监测 × 金色财经',
+        channelTitle: '金狗监测与财经快讯',
+        mediaUrl: null,
+        date: new Date(),
+        isDisplayed: true
+      }
+    ];
+  }
 
   // 支持多个频道同时抓取 - 使用多种URL格式提高成功率
   private channels = [
@@ -272,13 +325,22 @@ https://gmgn.ai/sol/token/l2XlXD4b_Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
   // 获取并存储消息到数据库
   async fetchAndStoreMessages(): Promise<InsertTelegramMessage[]> {
     try {
-      // 尝试获取真实消息
-      let messages = await this.fetchMessages();
+      // 通过模拟的TG爬取API尝试获取消息
+      const telegramMessages = await this.fetchMessages();
       
-      // 如果没有找到消息，使用模拟数据作为备用选项
+      // 同时从财经快讯获取消息
+      const financeMessages = await this.createMockMessagesFromFinanceNews();
+      
+      // 合并两组消息
+      let messages = [...telegramMessages];
+      
+      // 如果没有找到TG消息，只使用财经快讯格式化的消息
       if (messages.length === 0) {
-        console.log('没有找到真实消息，使用模拟数据');
-        messages = this.mockMessages;
+        console.log('没有找到金狗监测真实消息，使用财经快讯数据');
+        messages = financeMessages;
+      } else {
+        // 如果有TG消息，将财经快讯添加到列表中
+        messages = [...messages, ...financeMessages];
       }
       
       // 清空现有消息记录，确保每次都能正确展示
@@ -289,7 +351,7 @@ https://gmgn.ai/sol/token/l2XlXD4b_Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
         console.error('清空消息记录失败:', error);
       }
       
-      console.log(`准备存储 ${messages.length} 条消息`);
+      console.log(`准备存储 ${messages.length} 条金狗监测与财经快讯消息`);
       
       // 按时间排序（从新到旧）
       messages.sort((a, b) => {
@@ -308,21 +370,24 @@ https://gmgn.ai/sol/token/l2XlXD4b_Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
     } catch (error) {
       console.error('获取并存储消息失败:', error);
       
-      // 出错时尝试返回模拟数据
+      // 出错时使用基本模拟数据
       try {
-        console.log('尝试使用模拟数据');
+        console.log('获取消息失败，使用基本模拟数据');
         // 清空现有消息
         await db.delete(telegramMessages);
         
-        // 插入模拟数据
+        // 获取基本模拟消息
+        const basicMessages = this.createBasicMockMessages();
+        
+        // 插入基本模拟数据
         const insertedMessages = await db.insert(telegramMessages)
-          .values(this.mockMessages)
+          .values(basicMessages)
           .returning();
         
-        console.log(`成功存储 ${insertedMessages.length} 条模拟消息`);
+        console.log(`成功存储 ${insertedMessages.length} 条基本模拟消息`);
         return insertedMessages;
       } catch (mockError) {
-        console.error('存储模拟消息失败:', mockError);
+        console.error('存储基本模拟消息失败:', mockError);
         return [];
       }
     }
