@@ -221,14 +221,14 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                   <span className="text-gray-400">{formatMessageDate(message.date, language)}</span>
                 </div>
                 
-                <h3 className="font-bold text-teal-400 text-sm mb-3 group-hover:text-teal-300 transition-colors">
+                <h3 className="font-bold text-teal-400 text-base mb-3 group-hover:text-teal-300 transition-colors">
                   {title}
                 </h3>
                 
                 {expandedContent && (
                   <div className="space-y-3">
                     {firstParagraph && (
-                      <div className="text-white text-lg font-medium">
+                      <div className="text-white text-base font-medium">
                         {firstParagraph}
                       </div>
                     )}
