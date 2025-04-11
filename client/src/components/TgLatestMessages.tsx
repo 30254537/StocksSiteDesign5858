@@ -98,11 +98,19 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   const syncMutation = useMutation({
     mutationFn: async (date?: string) => {
       setIsSyncing(true);
-      const res = await apiRequest("POST", "/api/sync-telegram-messages", date ? { date } : undefined);
+      console.log('开始同步Telegram消息，日期:', date);
+      
+      // 构建请求体对象，确保日期参数正确传递
+      const requestBody = date ? { date } : {};
+      
+      // 发送POST请求到新的端点
+      const res = await apiRequest("POST", "/api/sync-telegram-messages", requestBody);
       return await res.json();
     },
     onSuccess: (data, variables) => {
       const isApril11 = variables === '2025-04-11';
+      console.log('同步结果:', data, '是否为4月11日:', isApril11);
+      
       toast({
         title: language === 'zh' ? "同步成功" : "Synchronization successful",
         description: isApril11 
