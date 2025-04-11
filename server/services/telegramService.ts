@@ -177,32 +177,52 @@ class TelegramService {
   }
   
   /**
-   * 对快讯进行去重处理
-   * 根据新闻内容进行去重，而不仅仅是ID
+   * 对快讯进行去重处理 - 增强版
+   * 通过提取核心内容进行去重，更精确地识别重复消息
    */
   private deduplicateNews(news: InsertTelegramMessage[]): InsertTelegramMessage[] {
-    // 用于存储已处理的消息内容的集合
-    const uniqueContents = new Set<string>();
+    // 用于存储已处理的核心内容指纹
+    const uniqueFingerprints = new Set<string>();
     const uniqueNews: InsertTelegramMessage[] = [];
     
+    // 更准确的内容提取逻辑
     for (const item of news) {
-      // 提取实际的新闻内容，去除时间戳和前缀等
-      let content = '';
-      const textLines = item.text.split('\n');
+      const textLines = item.text.split('\n').filter(line => line.trim() !== '');
       
-      // 找到实际内容行（不包括第一行标题和最后一行时间）
+      // 提取核心内容，主要关注第二行的实际新闻内容
+      let coreContent = '';
+      
       if (textLines.length >= 3) {
-        // 排除第一行和最后一行，通常是标题和时间戳
-        content = textLines.slice(1, -1).join(' ').trim();
+        // 通常第二行是核心内容
+        coreContent = textLines[1].trim();
+      } else if (textLines.length === 2) {
+        coreContent = textLines[1].trim();
+      } else if (textLines.length === 1) {
+        coreContent = textLines[0].trim();
       } else {
-        content = item.text; // 如果格式不符合预期，使用整个文本
+        // 如果没有内容行，跳过此条目
+        continue;
       }
       
-      // 如果这个内容还没有处理过，添加到结果中
-      if (!uniqueContents.has(content) && content.length > 0) {
-        uniqueContents.add(content);
+      // 从核心内容中移除额外符号和日期信息
+      coreContent = coreContent
+        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '') // 只保留中英文和数字
+        .toLowerCase(); // 转为小写以忽略大小写差异
+      
+      // 创建消息指纹 - 使用核心内容
+      const contentFingerprint = coreContent;
+      
+      // 进行重复检查
+      if (!uniqueFingerprints.has(contentFingerprint) && contentFingerprint.length > 5) {
+        uniqueFingerprints.add(contentFingerprint);
         uniqueNews.push(item);
       }
+    }
+    
+    // 确保结果中至少有数据
+    if (uniqueNews.length === 0 && news.length > 0) {
+      // 如果所有消息被过滤掉了，至少返回第一条
+      return [news[0]];
     }
     
     return uniqueNews;

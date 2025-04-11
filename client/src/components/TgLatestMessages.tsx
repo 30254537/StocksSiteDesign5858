@@ -154,23 +154,32 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
         // 更精确地提取标题和内容
         const lines = message.text.split('\n').filter(line => line.trim() !== '');
         
-        // 首行通常是带有emoji的标题
-        const title = lines.length > 0 ? lines[0] : '加密快讯';
+        // 第一行通常是标题标记（如"🔥 火星财经快讯"）
+        // 第二行是实际的新闻标题/内容
+        // 最后一行通常是日期
         
-        // 中间几行是实际内容，移除表情符号
+        let title = '';
         let content = '';
-        if (lines.length > 1) {
-          // 跳过第一行（标题）
-          const contentLines = lines.slice(1);
-          
-          // 如果最后一行是日期格式，也跳过
-          const lastLine = contentLines[contentLines.length - 1];
-          const isDateLine = /^\d{4}\/\d{1,2}\/\d{1,2}/.test(lastLine);
-          
-          content = isDateLine ? 
-            contentLines.slice(0, contentLines.length - 1).join('\n') : 
-            contentLines.join('\n');
+        
+        if (lines.length >= 3) {
+          // 第一行作为来源标记
+          title = lines[1]; // 第二行是实际的新闻标题
+          // 排除第一行和最后一行
+          const contentLines = lines.slice(2, -1);
+          content = contentLines.join('\n');
+        } else if (lines.length === 2) {
+          title = lines[0];
+          content = lines[1];
+        } else if (lines.length === 1) {
+          title = '加密快讯';
+          content = lines[0];
+        } else {
+          title = '加密快讯';
+          content = '查看详细内容请点击阅读全文';
         }
+        
+        // 移除可能包含的日期时间信息
+        content = content.replace(/\d{4}\/\d{1,2}\/\d{1,2}\s\d{1,2}:\d{1,2}(:\d{1,2})?/g, '').trim();
         
         // 确保内容不为空
         if (!content) {
