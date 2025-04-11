@@ -228,8 +228,18 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
     });
   }
   
+  // 当按下4月11日按钮时，增加显示数量
+  const isApril11Mode = processedMessages.some(msg => {
+    const msgDate = new Date(msg.date);
+    return msgDate.getFullYear() === 2025 && msgDate.getMonth() === 3 && msgDate.getDate() === 11;
+  });
+  
+  // 如果是4月11日模式，显示更多消息
+  const actualLimit = isApril11Mode ? 15 : limit;
+  console.log('当前显示模式:', isApril11Mode ? '4月11日历史' : '最新消息', '显示数量:', actualLimit);
+  
   // 截取限制数量的消息
-  const displayMessages = processedMessages.slice(0, limit);
+  const displayMessages = processedMessages.slice(0, actualLimit);
   
   return (
     <div className="pb-8">
@@ -291,23 +301,50 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
           // 首先检查原始消息文本是否包含完整内容
           const textLines = message.text.split('\n').filter(line => line.trim() !== '');
           
-          // 除去标题和日期行，剩下的就是真正内容
+          // 处理内容，解决重复问题
           let realContent = '';
           
-          if (textLines.length >= 4) {
-            // 跳过第一行(标题信息) + 可能的空行 + 最后一行(日期)
-            const contentLines = textLines.slice(1, textLines.length - 1);
-            realContent = contentLines.join('\n');
-          } else if (textLines.length === 3) {
-            // 可能是标题+内容+日期的模式
-            realContent = textLines[1];
-          } else if (textLines.length <= 2) {
-            // 至少保留一些内容
-            realContent = textLines.join('\n');
+          // 识别并处理特殊格式的消息（例如律动BlockBeats）
+          if (message.sender === '律动BlockBeats' && message.text.includes('📢 律动BlockBeats快讯')) {
+            // 找到标题之后的真实内容
+            const content = message.text.replace(/📢 律动BlockBeats快讯\n\n/g, '');
+            // 移除最后一行日期
+            const contentWithoutDate = content.replace(/\d{4}\/\d{1,2}\/\d{1,2}\s\d{1,2}:\d{1,2}(:\d{1,2})?/g, '');
+            // 如果是重复的两段格式，只取第一段
+            const duplicateParts = contentWithoutDate.split(/\n+/).filter(p => p.trim());
+            if (duplicateParts.length >= 2) {
+              const firstPart = duplicateParts[0];
+              const secondPart = duplicateParts[1];
+              
+              // 检查两段内容是否相似
+              const similarity = calculateStringSimilarity(firstPart, secondPart);
+              if (similarity > 0.7) {
+                // 如果相似度高，只使用第一段
+                realContent = firstPart.trim();
+              } else {
+                // 如果不相似，保留全部内容
+                realContent = contentWithoutDate.trim();
+              }
+            } else {
+              realContent = contentWithoutDate.trim();
+            }
+          } else {
+            // 处理一般消息
+            if (textLines.length >= 4) {
+              // 跳过第一行(标题信息) + 可能的空行 + 最后一行(日期)
+              const contentLines = textLines.slice(1, textLines.length - 1);
+              realContent = contentLines.join('\n');
+            } else if (textLines.length === 3) {
+              // 可能是标题+内容+日期的模式
+              realContent = textLines[1];
+            } else if (textLines.length <= 2) {
+              // 至少保留一些内容
+              realContent = textLines.join('\n');
+            }
+            
+            // 移除可能包含的日期时间信息
+            realContent = realContent.replace(/\d{4}\/\d{1,2}\/\d{1,2}\s\d{1,2}:\d{1,2}(:\d{1,2})?/g, '').trim();
           }
-          
-          // 移除可能包含的日期时间信息
-          realContent = realContent.replace(/\d{4}\/\d{1,2}\/\d{1,2}\s\d{1,2}:\d{1,2}(:\d{1,2})?/g, '').trim();
           
           // 使用消息ID确保不同消息有不同的内容
           const messageId = message.id || message.messageId;
