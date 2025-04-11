@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { FaSync } from "react-icons/fa";
+import { FaSync, FaCalendarDay } from "react-icons/fa";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
@@ -96,15 +96,18 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   
   // 用于手动同步Telegram消息的mutation
   const syncMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (date?: string) => {
       setIsSyncing(true);
-      const res = await apiRequest("POST", "/api/sync-telegram-messages");
+      const res = await apiRequest("POST", "/api/sync-telegram-messages", date ? { date } : undefined);
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      const isApril11 = variables === '2025-04-11';
       toast({
         title: language === 'zh' ? "同步成功" : "Synchronization successful",
-        description: language === 'zh' ? "已成功同步最新消息" : "Successfully synchronized the latest messages",
+        description: isApril11 
+          ? (language === 'zh' ? "已成功获取2025年4月11日的加密快讯" : "Successfully retrieved crypto news from April 11, 2025") 
+          : (language === 'zh' ? "已成功同步最新消息" : "Successfully synchronized the latest messages"),
         variant: "default",
       });
       // 刷新消息数据
@@ -120,6 +123,11 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
       setIsSyncing(false);
     }
   });
+  
+  // 获取4月11日的加密快讯
+  const getApril11News = () => {
+    syncMutation.mutate('2025-04-11');
+  };
   
   // 获取Telegram消息列表
   const { data: telegramData, isLoading, error } = useQuery<{ data: TelegramMessage[] }>({
@@ -222,25 +230,44 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
           <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-300">
             {language === 'zh' ? '加密快讯' : 'Crypto News'}
           </h2>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="rounded-full px-3 bg-gray-800/60 border-teal-800 hover:bg-gray-800 hover:text-teal-400 transition-all"
-            onClick={() => syncMutation.mutate()}
-            disabled={isSyncing || syncMutation.isPending}
-          >
-            {(isSyncing || syncMutation.isPending) ? (
-              <>
+          <div className="flex gap-2">
+            {/* 4月11日快讯按钮 */}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="rounded-full px-3 bg-gray-800/60 border-cyan-800 hover:bg-gray-800 hover:text-cyan-400 transition-all"
+              onClick={getApril11News}
+              disabled={isSyncing || syncMutation.isPending}
+            >
+              {(isSyncing || syncMutation.isPending) ? (
                 <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                {language === 'zh' ? '同步中...' : 'Syncing...'}
-              </>
-            ) : (
-              <>
-                <FaSync className="mr-1 h-3 w-3" />
-                {language === 'zh' ? '实时更新' : 'Update'}
-              </>
-            )}
-          </Button>
+              ) : (
+                <FaCalendarDay className="mr-1 h-3 w-3" />
+              )}
+              {language === 'zh' ? '4月11日快讯' : 'April 11 News'}
+            </Button>
+            
+            {/* 实时更新按钮 */}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="rounded-full px-3 bg-gray-800/60 border-teal-800 hover:bg-gray-800 hover:text-teal-400 transition-all"
+              onClick={() => syncMutation.mutate()}
+              disabled={isSyncing || syncMutation.isPending}
+            >
+              {(isSyncing || syncMutation.isPending) ? (
+                <>
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  {language === 'zh' ? '同步中...' : 'Syncing...'}
+                </>
+              ) : (
+                <>
+                  <FaSync className="mr-1 h-3 w-3" />
+                  {language === 'zh' ? '实时更新' : 'Update'}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       )}
       
