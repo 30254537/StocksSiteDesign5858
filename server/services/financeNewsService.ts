@@ -4,10 +4,10 @@ import { eq, desc, or, and } from 'drizzle-orm';
 import { telegramMessages } from '@shared/schema';
 
 // 使用API端点而不是直接爬取网页
-// 金色财经API URL（模拟数据）
-const JINSE_API_URL = 'https://api.jinse.cn/noah/v2/lives?limit=20&reading=false&source=web';
-// 火星财经API URL（模拟数据）
-const MARSBIT_API_URL = 'https://api.marsbit.co/hotevents/list?size=20';
+// 金色财经API URL（实时数据）- 更新为更可靠的公开接口
+const JINSE_API_URL = 'https://www.jinse.cn/spot/api/front/lives/list?page=1&limit=30&reading=false&flag=down';
+// 火星财经API URL（实时数据）- 更新为更可靠的公开接口 
+const MARSBIT_API_URL = 'https://www.marsbit.co/api/v3/frontend/search?channel_id=0&pn=1&ps=30';
 
 // 生成符合PostgreSQL整数范围的ID
 function generateUniqueId(index: number = 0, source: string = ''): number {
@@ -47,16 +47,22 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
     // 检查API响应
     const newsItems: any[] = [];
     
-    if (response.data && response.data.data && response.data.data.list) {
+    // 适配新版金色财经API格式
+    if (response.data && response.data.data && Array.isArray(response.data.data.lives)) {
       // 解析API响应的JSON数据
-      const newsData = response.data.data.list.slice(0, limit);
+      const newsData = response.data.data.lives.slice(0, limit);
       
       newsData.forEach((item: any, index: number) => {
-        const content = item.content || '无内容';
-        const timeText = new Date(item.created_at * 1000).toLocaleString('zh-CN');
+        // 适配新API格式
+        const content = item.content || item.summary || item.title || '无内容';
+        // 确保时间戳存在
+        const timestamp = item.addtime || item.created_at || Math.floor(Date.now() / 1000);
+        const timeText = new Date(timestamp * 1000).toLocaleString('zh-CN');
+        
         // 生成符合PostgreSQL integer范围的唯一ID
         const newsId = generateUniqueId(index, 'jinse');
-        const fullLink = item.link || `https://www.jinse.cn/lives/${item.id}`;
+        const itemId = item.id || index;
+        const fullLink = item.link || item.url || `https://www.jinse.cn/lives/${itemId}`;
         
         // 清除代币名称和合约地址信息
         const cleanedContent = content
@@ -112,16 +118,22 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
     // 检查API响应
     const newsItems: any[] = [];
     
-    if (response.data && response.data.data && response.data.data.list) {
+    if (response.data && response.data.data && Array.isArray(response.data.data.list)) {
       // 解析API响应的JSON数据
       const newsData = response.data.data.list.slice(0, limit);
       
       newsData.forEach((item: any, index: number) => {
-        const content = item.title || item.content || '无内容';
-        const timeText = new Date(item.created_at * 1000).toLocaleString('zh-CN');
+        // 适配新版火星财经API格式
+        const content = item.title || item.content || item.summary || '无内容';
+        // 确保时间戳存在，默认为当前时间
+        const timestamp = item.published_at || item.created_at || Math.floor(Date.now() / 1000);
+        const timeText = new Date(timestamp * 1000).toLocaleString('zh-CN');
+        
         // 生成符合PostgreSQL integer范围的唯一ID
         const newsId = generateUniqueId(index, 'marsbit');
-        const fullLink = item.url || `https://news.marsbit.co/flash/${item.id}`;
+        // 确保链接有效
+        const itemId = item.id || index;
+        const fullLink = item.url || item.link || `https://www.marsbit.co/article/${itemId}`;
         
         // 清除代币名称和合约地址信息
         const cleanedContent = content
