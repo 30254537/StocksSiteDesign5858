@@ -145,23 +145,13 @@ export default function Header() {
                   </a>
                   
                   <Link 
-                    href="/crypto-news" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
-                      location === "/crypto-news" ? "text-accent" : "text-white hover:text-accent"
-                    }`}
-                    onClick={scrollToTop}
-                  >
-                    {t("nav.cryptoNews")}
-                  </Link>
-                  
-                  <Link 
                     href="/telegram-messages" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
                       location === "/telegram-messages" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
                   >
-                    {language === 'zh' ? 'TG最新推送' : 'TG Latest Posts'}
+                    {language === 'zh' ? '金狗监测提醒' : 'Golden Dog Alerts'}
                   </Link>
                   
                   <a 

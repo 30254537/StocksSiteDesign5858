@@ -116,8 +116,27 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
     );
   }
   
-  // 只显示指定数量的消息
-  const messages = telegramData.data.slice(0, limit);
+  // 只显示金狗监测格式的消息
+  const goldenDogMessages = telegramData.data
+    .filter(message => {
+      const parsed = parseGoldenDogMessage(message.text);
+      return parsed && parsed.isGoldenDogFormat;
+    })
+    .slice(0, limit);
+  
+  // 如果没有金狗监测消息，显示特定的空状态
+  if (goldenDogMessages.length === 0) {
+    return (
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardContent className="pt-4">
+          <div className="text-center text-gray-400">
+            <FaBell className="mx-auto text-2xl mb-2 text-yellow-400" />
+            <p className="mb-2">{language === 'zh' ? '暂无金狗监测提醒消息' : 'No Golden Dog monitoring alerts'}</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   
   return (
     <div className="space-y-5">
@@ -125,145 +144,129 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
         <div className="flex items-center space-x-2 mb-2">
           <FaBell className="text-yellow-400 text-xl" />
           <h3 className="text-lg font-medium text-teal-400">
-            {language === 'zh' ? 'TG最新推送' : 'Latest TG Posts'}
+            {language === 'zh' ? '金狗监测提醒' : 'Golden Dog Monitoring Alerts'}
           </h3>
         </div>
       )}
       
-      {messages.map((message) => {
+      {goldenDogMessages.map((message) => {
         const parsed = parseGoldenDogMessage(message.text);
         
-        if (parsed && parsed.isGoldenDogFormat) {
-          // 金狗监测格式的卡片
-          return (
-            <Card key={message.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10">
-              <CardContent className="pt-4 pb-3">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center space-x-2">
-                    <FaBell className="text-yellow-400" />
-                    <span className="font-bold text-yellow-400">🔔 金狗监测提醒</span>
-                  </div>
-                  <span className="text-xs text-gray-400">{formatMessageDate(message.date, language)}</span>
+        return (
+          <Card key={message.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10">
+            <CardContent className="pt-4 pb-3">
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center space-x-2">
+                  <FaBell className="text-yellow-400" />
+                  <span className="font-bold text-yellow-400">🔔 金狗监测提醒</span>
                 </div>
+                <span className="text-xs text-gray-400">{formatMessageDate(message.date, language)}</span>
+              </div>
+              
+              {/* 代币名称 */}
+              {parsed.tokenName && (
+                <div className="flex items-start mb-2">
+                  <FaMoneyBillWave className="text-green-400 mt-1 mr-2 w-4 h-4 flex-shrink-0" />
+                  <div className="flex-grow">
+                    <div className="text-white whitespace-pre-wrap break-all">
+                      <span className="text-gray-400">💰 代币名称: </span>
+                      <span className="text-green-400 font-medium">{parsed.tokenName}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 合约地址 */}
+              {parsed.contractAddress && (
+                <div className="flex items-start mb-2">
+                  <FaFileContract className="text-blue-400 mt-1 mr-2 w-4 h-4 flex-shrink-0" />
+                  <div className="flex-grow">
+                    <div className="text-white whitespace-pre-wrap break-all">
+                      <span className="text-gray-400">📝 合约地址: </span>
+                      <code className="font-mono text-blue-300 bg-blue-900/20 px-1 rounded text-xs">{parsed.contractAddress}</code>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 数据统计部分 */}
+              <div className="grid grid-cols-2 gap-2 my-3">
+                {parsed.marketCap && (
+                  <div className="flex items-center">
+                    <FaSearchDollar className="text-purple-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">👺市值: </span>
+                    <span className="text-xs text-purple-400 ml-1">{parsed.marketCap}</span>
+                  </div>
+                )}
                 
-                {/* 代币名称 */}
-                {parsed.tokenName && (
-                  <div className="flex items-start mb-2">
-                    <FaMoneyBillWave className="text-green-400 mt-1 mr-2 w-4 h-4 flex-shrink-0" />
-                    <div className="flex-grow">
-                      <div className="text-white whitespace-pre-wrap break-all">
-                        <span className="text-gray-400">💰 代币名称: </span>
-                        <span className="text-green-400 font-medium">{parsed.tokenName}</span>
-                      </div>
-                    </div>
+                {parsed.top10Holding && (
+                  <div className="flex items-center">
+                    <FaChartBar className="text-teal-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">⏳前十持仓: </span>
+                    <span className="text-xs text-teal-400 ml-1">{parsed.top10Holding}</span>
                   </div>
                 )}
-
-                {/* 合约地址 */}
-                {parsed.contractAddress && (
-                  <div className="flex items-start mb-2">
-                    <FaFileContract className="text-blue-400 mt-1 mr-2 w-4 h-4 flex-shrink-0" />
-                    <div className="flex-grow">
-                      <div className="text-white whitespace-pre-wrap break-all">
-                        <span className="text-gray-400">📝 合约地址: </span>
-                        <code className="font-mono text-blue-300 bg-blue-900/20 px-1 rounded text-xs">{parsed.contractAddress}</code>
-                      </div>
-                    </div>
+                
+                {parsed.holders && (
+                  <div className="flex items-center">
+                    <FaUsers className="text-orange-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">👥持有者数量: </span>
+                    <span className="text-xs text-orange-400 ml-1">{parsed.holders}</span>
                   </div>
                 )}
+                
+                {parsed.volume24h && (
+                  <div className="flex items-center">
+                    <FaExchangeAlt className="text-blue-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">📊24h交易量: </span>
+                    <span className="text-xs text-blue-400 ml-1">{parsed.volume24h}</span>
+                  </div>
+                )}
+                
+                {parsed.priceChange && (
+                  <div className="flex items-center">
+                    <FaChartBar className="text-green-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">📈6小时价格变化: </span>
+                    <span className="text-xs text-green-400 ml-1">{parsed.priceChange}</span>
+                  </div>
+                )}
+                
+                {parsed.creationTime && (
+                  <div className="flex items-center">
+                    <FaClock className="text-gray-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">🕒创建时间: </span>
+                    <span className="text-xs text-gray-400 ml-1">{parsed.creationTime}</span>
+                  </div>
+                )}
+              </div>
 
-                {/* 数据统计部分 */}
-                <div className="grid grid-cols-2 gap-2 my-3">
-                  {parsed.marketCap && (
-                    <div className="flex items-center">
-                      <FaSearchDollar className="text-purple-400 mr-1.5 w-3.5 h-3.5" />
-                      <span className="text-xs text-gray-300">👺市值: </span>
-                      <span className="text-xs text-purple-400 ml-1">{parsed.marketCap}</span>
-                    </div>
-                  )}
-                  
-                  {parsed.top10Holding && (
-                    <div className="flex items-center">
-                      <FaChartBar className="text-teal-400 mr-1.5 w-3.5 h-3.5" />
-                      <span className="text-xs text-gray-300">⏳前十持仓: </span>
-                      <span className="text-xs text-teal-400 ml-1">{parsed.top10Holding}</span>
-                    </div>
-                  )}
-                  
-                  {parsed.holders && (
-                    <div className="flex items-center">
-                      <FaUsers className="text-orange-400 mr-1.5 w-3.5 h-3.5" />
-                      <span className="text-xs text-gray-300">👥持有者数量: </span>
-                      <span className="text-xs text-orange-400 ml-1">{parsed.holders}</span>
-                    </div>
-                  )}
-                  
-                  {parsed.volume24h && (
-                    <div className="flex items-center">
-                      <FaExchangeAlt className="text-blue-400 mr-1.5 w-3.5 h-3.5" />
-                      <span className="text-xs text-gray-300">📊24h交易量: </span>
-                      <span className="text-xs text-blue-400 ml-1">{parsed.volume24h}</span>
-                    </div>
-                  )}
-                  
-                  {parsed.priceChange && (
-                    <div className="flex items-center">
-                      <FaChartBar className="text-green-400 mr-1.5 w-3.5 h-3.5" />
-                      <span className="text-xs text-gray-300">📈6小时价格变化: </span>
-                      <span className="text-xs text-green-400 ml-1">{parsed.priceChange}</span>
-                    </div>
-                  )}
-                  
-                  {parsed.creationTime && (
-                    <div className="flex items-center">
-                      <FaClock className="text-gray-400 mr-1.5 w-3.5 h-3.5" />
-                      <span className="text-xs text-gray-300">🕒创建时间: </span>
-                      <span className="text-xs text-gray-400 ml-1">{parsed.creationTime}</span>
-                    </div>
-                  )}
-                </div>
+              {/* 其他信息 */}
+              <div className="mt-3 text-xs text-gray-400">
+                {parsed.bundleAnalysis && (
+                  <div className="flex items-center mb-1">
+                    <span>🔍捆绑分析: </span>
+                    <span className={`ml-1 ${
+                      parsed.bundleAnalysis.includes("🟢") ? "text-green-400" : 
+                      parsed.bundleAnalysis.includes("🟠") ? "text-amber-400" : 
+                      parsed.bundleAnalysis.includes("🔴") ? "text-red-400" : "text-gray-400"
+                    }`}>{parsed.bundleAnalysis}</span>
+                  </div>
+                )}
+                
+                {parsed.tweetAuthors && (
+                  <div className="mb-1">
+                    <span>📬有关推文作者数量: </span>
+                    <span className="text-blue-400">{parsed.tweetAuthors}</span>
+                  </div>
+                )}
+              </div>
 
-                {/* 其他信息 */}
-                <div className="mt-3 text-xs text-gray-400">
-                  {parsed.bundleAnalysis && (
-                    <div className="flex items-center mb-1">
-                      <span>🔍捆绑分析: </span>
-                      <span className={`ml-1 ${
-                        parsed.bundleAnalysis.includes("🟢") ? "text-green-400" : 
-                        parsed.bundleAnalysis.includes("🟠") ? "text-amber-400" : 
-                        parsed.bundleAnalysis.includes("🔴") ? "text-red-400" : "text-gray-400"
-                      }`}>{parsed.bundleAnalysis}</span>
-                    </div>
-                  )}
-                  
-                  {parsed.tweetAuthors && (
-                    <div className="mb-1">
-                      <span>📬有关推文作者数量: </span>
-                      <span className="text-blue-400">{parsed.tweetAuthors}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
-                  <span className="text-xs text-gray-500">{message.channelTitle}</span>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        } else {
-          // 普通消息的卡片 - 更简单的显示
-          return (
-            <Card key={message.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors">
-              <CardContent className="pt-4 pb-3">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="font-medium text-sm text-blue-400">{message.sender}</span>
-                  <span className="text-xs text-gray-400">{formatMessageDate(message.date, language)}</span>
-                </div>
-                <p className="text-sm text-gray-200 whitespace-pre-wrap">{message.text}</p>
-              </CardContent>
-            </Card>
-          );
-        }
+              <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
+                <span className="text-xs text-gray-500">金狗监测频道</span>
+              </div>
+            </CardContent>
+          </Card>
+        );
       })}
     </div>
   );

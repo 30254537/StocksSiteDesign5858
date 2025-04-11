@@ -65,14 +65,14 @@ const TelegramMessages: React.FC = () => {
         <div className="flex items-center gap-2">
           <FaTelegram className="text-2xl text-blue-400" />
           <PageHeaderHeading className="text-teal-400">
-            {language === 'zh' ? 'TG最新推送' : 'Latest TG Posts'}
+            {language === 'zh' ? '金狗监测提醒' : 'Golden Dog Monitoring Alerts'}
           </PageHeaderHeading>
         </div>
         <div className="flex justify-between items-center flex-wrap gap-2">
           <p className="text-muted-foreground mt-1">
             {language === 'zh' 
-              ? '来自金狗监测提醒频道的最新消息，每分钟自动同步' 
-              : 'Latest messages from Golden Dog Monitoring channel, auto-synced every minute'}
+              ? '来自金狗监测提醒频道的最新代币监测信息，每分钟自动同步' 
+              : 'Latest token monitoring alerts from Golden Dog channel, auto-synced every minute'}
           </p>
           <div className="flex gap-2">
             <Button 

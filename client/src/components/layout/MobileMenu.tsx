@@ -126,18 +126,6 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </li>
             <li>
               <Link 
-                href="/crypto-news" 
-                className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
-                onClick={() => {
-                  scrollToTop();
-                  onClose();
-                }}
-              >
-                {t("nav.cryptoNews")}
-              </Link>
-            </li>
-            <li>
-              <Link 
                 href="/telegram-messages" 
                 className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
                 onClick={() => {
@@ -145,7 +133,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   onClose();
                 }}
               >
-                {language === 'zh' ? 'TG最新推送' : 'TG Latest Posts'}
+                {language === 'zh' ? '金狗监测提醒' : 'Golden Dog Alerts'}
               </Link>
             </li>
             <li>
