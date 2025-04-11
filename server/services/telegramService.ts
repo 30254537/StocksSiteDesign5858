@@ -1,6 +1,8 @@
 import { db } from '../db';
 import { telegramMessages, InsertTelegramMessage } from '@shared/schema';
 import * as financeNewsService from './financeNewsService';
+import * as blockBeatsService from './blockBeatsService';
+import * as cryptoTwitterService from './cryptoTwitterService';
 
 /**
  * 加密快讯服务类 - 负责获取、处理和存储加密货币相关资讯
