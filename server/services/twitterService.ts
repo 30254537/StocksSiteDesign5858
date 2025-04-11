@@ -50,6 +50,10 @@ const twitterApi = axios.create({
   },
 });
 
+// Debug: 检查令牌
+console.log('Using Twitter API with token (first few chars):', 
+  process.env.X_BEARER_TOKEN ? `${process.env.X_BEARER_TOKEN.substring(0, 5)}...` : 'Not set');
+
 /**
  * 获取指定用户的最新推文
  */

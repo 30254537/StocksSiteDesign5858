@@ -1664,11 +1664,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 添加测试推文
   app.post('/api/tweets-test', async (req, res) => {
     try {
-      const { 
-        text = "🔔 新币上线提醒 $STONKS\n\n📊 价格: $0.031 USD\n📈 24h涨幅: +15.4%\n💰 市值: $31M\n👥 持有者: 9.5K\n\n💫 评级: 🟢 强烈推荐\n⚠️ 风险等级: 中等\n\n✅ 已KYC审核\n✅ 合约已审计\n\n🔗 合约: 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56", 
+      let { 
+        text = "", 
         authorName = "MoontokListing", 
         authorUsername = "MoontokListing" 
       } = req.body;
+      
+      // 如果没有提供文本，则使用预设的MoontokListing风格推文模板
+      if (!text) {
+        // 生成随机币种信息
+        const coinSymbols = ['BTC', 'ETH', 'BNB', 'SOL', 'DOGE', 'SHIB', 'PEPE', 'FLOKI', 'BOME', 'NEIRO', 'TOSHI', 'MAGA', 'TRUMP', 'MEME', 'BONK', 'WIF', 'MOG', 'BOOK'];
+        const randomSymbol = coinSymbols[Math.floor(Math.random() * coinSymbols.length)];
+        
+        const priceChange = (Math.random() * 100).toFixed(1);
+        const isPositive = Math.random() > 0.3; // 70%概率为正面涨幅
+        const changePrefix = isPositive ? '+' : '-';
+        
+        const marketCap = ['$200K', '$1.5M', '$5M', '$12M', '$31M', '$120M', '$1.2B'];
+        const randomMarketCap = marketCap[Math.floor(Math.random() * marketCap.length)];
+        
+        const holders = ['120', '550', '1.2K', '3.5K', '9.5K', '24K', '120K'];
+        const randomHolders = holders[Math.floor(Math.random() * holders.length)];
+        
+        const ratings = ['🟢 强烈推荐', '🟢 看好', '🟡 观望', '🟠 谨慎', '🔴 高风险'];
+        const randomRating = ratings[Math.floor(Math.random() * ratings.length)];
+        
+        const contractAddress = `0x${Math.random().toString(16).substring(2, 42)}`;
+        
+        // 模拟MoontokListing风格的推文
+        text = `🔔 新币上线提醒 $${randomSymbol}\n\n` +
+          `📊 价格: $${(Math.random() * 0.1).toFixed(6)} USD\n` +
+          `📈 24h涨幅: ${changePrefix}${priceChange}%\n` +
+          `💰 市值: ${randomMarketCap}\n` +
+          `👥 持有者: ${randomHolders}\n\n` +
+          `💫 评级: ${randomRating}\n` +
+          `⚠️ 风险等级: ${Math.random() > 0.5 ? '中等' : '高'}\n\n` +
+          `${Math.random() > 0.6 ? '✅ 已KYC审核\n' : ''}` +
+          `${Math.random() > 0.5 ? '✅ 合约已审计\n\n' : '\n'}` +
+          `🔗 合约: ${contractAddress}`;
+      }
+      
+      // 随机选择是否包含图片
+      const includeMedaImage = Math.random() > 0.5;
       
       // 获取当前时间
       const now = new Date();
@@ -1684,7 +1721,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         authorName,
         authorUsername,
         profileImageUrl: "https://pbs.twimg.com/profile_images/1702275000631328769/BiyRIcg5_400x400.jpg", // MoontokListing 头像
-        mediaUrl: null,
+        mediaUrl: includeMedaImage ? "https://pbs.twimg.com/media/GAPAiWobcAAVbPl?format=jpg&name=medium" : null, // 模拟媒体图片
         createdAt: now,
         isDisplayed: true
       };

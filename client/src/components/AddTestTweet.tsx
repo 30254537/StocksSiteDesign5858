@@ -51,13 +51,8 @@ const AddTestTweet: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!text) {
-      toast({
-        title: language === 'zh' ? "请输入内容" : "Please enter content",
-        variant: "destructive",
-      });
-      return;
-    }
+    // 如果没有输入内容，允许后端自动生成
+    // 不再需要阻止提交
     
     mutation.mutate({
       text,
@@ -95,11 +90,16 @@ const AddTestTweet: React.FC = () => {
             <Label htmlFor="text">{language === 'zh' ? '推文内容' : 'Tweet Content'}</Label>
             <Textarea
               id="text"
-              placeholder={language === 'zh' ? '在此输入推文内容...' : 'Enter tweet content here...'}
+              placeholder={language === 'zh' ? '在此输入推文内容或留空使用自动生成的MoontokListing风格推文...' : 'Enter tweet content or leave empty to use auto-generated MoontokListing style tweet...'}
               value={text}
               onChange={(e) => setText(e.target.value)}
               className="bg-gray-900 border-gray-700"
             />
+            <p className="text-xs text-gray-400 mt-1">
+              {language === 'zh' 
+                ? '提示：留空将自动生成具有随机币种、价格和评级的MoontokListing风格推文' 
+                : 'Tip: Leave empty to auto-generate MoontokListing style tweets with random coins, prices and ratings'}
+            </p>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
