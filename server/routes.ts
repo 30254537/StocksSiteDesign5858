@@ -1442,8 +1442,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 初始化加密货币新闻定时获取任务
   initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
   
-  // 添加测试合约地址推文（测试用，无需验证）
+  // 添加测试合约地址推文（测试用，无需验证）- 同时支持POST和GET方法
   app.post('/api/test/add-contract-tweet', async (req, res) => {
+    addTestContractTweet(req, res);
+  });
+  
+  // GET方法路由，方便通过浏览器地址栏直接调用
+  app.get('/api/test/add-contract-tweet', async (req, res) => {
+    addTestContractTweet(req, res);
+  });
+  
+  // 共用的测试推文添加函数
+  async function addTestContractTweet(req: any, res: any) {
     try {
       // 创建一个包含合约地址的测试推文
       const contractAddress = "0x7d8146cf21e8d7cbe46054e01588207b51198729";
