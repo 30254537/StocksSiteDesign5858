@@ -16,28 +16,53 @@ const formatMessageDate = (dateString: string, language: string) => {
 
 // 使用正则表达式识别金狗监测格式数据
 const parseGoldenDogMessage = (text: string) => {
-  // 检查消息类型
-  const isOldFormat = text.includes("🔔 金狗监测提醒") || 
-                     (text.includes("代币名称") && text.includes("合约地址"));
+  console.log("正在解析消息:", text.substring(0, 50) + "...");
   
-  const isNewFormat = (text.includes("🟢") && (text.includes("CA:") || text.includes("建仓"))) ||
-                      (text.includes("Ghibli") && text.includes("价格"));
+  // 检查消息类型 - 增强匹配能力
+  const isOldFormat = text.includes("🔔 金狗监测提醒") || 
+                      text.includes("金狗监测提醒") || 
+                      (text.includes("代币名称") && text.includes("合约地址")) ||
+                      (text.includes("市值") && text.includes("合约地址"));
+  
+  // 特殊处理 STONKS 代币信息
+  const isStonksFormat = text.includes("$STONKS") && 
+                        (text.includes("价格:") || text.includes("市值:") || 
+                         text.includes("合约:"));
+                         
+  const isNewFormat = ((text.includes("🚀 金狗监测") || text.includes("金狗监测")) && 
+                      (text.includes("代币:") || text.includes("代币：") || 
+                       text.includes("价格:") || text.includes("价格：") ||
+                       text.includes("合约:") || text.includes("合约："))) ||
+                      (text.includes("🟢") && (text.includes("CA:") || text.includes("建仓"))) ||
+                      (text.includes("Ghibli") && text.includes("价格")) ||
+                      isStonksFormat;
   
   // 如果既不是旧格式也不是新格式，返回null
   if (!isOldFormat && !isNewFormat) {
+    console.log("消息不符合任何已知格式");
     return null;
   }
+  
+  console.log("消息类型:", isOldFormat ? "旧格式" : "新格式");
 
   // 根据不同格式进行解析
   if (isNewFormat) {
     // 解析新格式
     // 尝试提取代币名称 (新格式可能在 🟢 后面或有单独的名称标记)
     let tokenName = "";
-    const nameMatch = text.match(/\🟢\s*(.+?)(?:\s*\n|\s*价格|\s*CA:)/i) || 
-                      text.match(/代币名称[:：]\s*(.+?)(?:\s*\n|$)/i) ||
-                      text.match(/\s*(.+?)(?:\s*价格|\s*CA:)/i);
-    if (nameMatch) {
-      tokenName = nameMatch[1].trim();
+    
+    // 特别处理STONKS代币格式
+    if (text.includes("$STONKS")) {
+      tokenName = "STONKS";
+    } else {
+      const nameMatch = text.match(/\🟢\s*(.+?)(?:\s*\n|\s*价格|\s*CA:)/i) || 
+                        text.match(/代币名称[:：]\s*(.+?)(?:\s*\n|$)/i) ||
+                        text.match(/代币[:：]\s*(.+?)(?:\s*\n|$)/i) ||
+                        text.match(/\$([A-Za-z0-9_]+)/) ||
+                        text.match(/\s*(.+?)(?:\s*价格|\s*CA:)/i);
+      if (nameMatch) {
+        tokenName = nameMatch[1].trim();
+      }
     }
     
     // 提取合约地址
@@ -53,6 +78,22 @@ const parseGoldenDogMessage = (text: string) => {
     const marketCapMatch = text.match(/市值[:：]?\s*(.+?)(?:\n|$)/i) ||
                            text.match(/mcap[:：]?\s*(.+?)(?:\n|$)/i);
     
+    // 提取持有者信息
+    let holders = "";
+    const holdersMatch = text.match(/持有者[:：]?\s*(.+?)(?:\n|$)/i) ||
+                         text.match(/holders[:：]?\s*(.+?)(?:\n|$)/i); 
+    if (holdersMatch) {
+      holders = holdersMatch[1].trim();
+    }
+                           
+    // 提取24h涨幅
+    let priceChange = "";
+    const priceChangeMatch = text.match(/24h涨幅[:：]?\s*(.+?)(?:\n|$)/i) ||
+                             text.match(/涨幅[:：]?\s*(.+?)(?:\n|$)/i);
+    if (priceChangeMatch) {
+      priceChange = priceChangeMatch[1].trim();
+    }
+    
     // 提取其他可能有的信息
     const liquidityMatch = text.match(/流动性[:：]?\s*(.+?)(?:\n|$)/i) ||
                            text.match(/lp[:：]?\s*(.+?)(?:\n|$)/i);
@@ -64,8 +105,23 @@ const parseGoldenDogMessage = (text: string) => {
                          text.match(/sell\s*tax[:：]?\s*(.+?)(?:\n|$)/i);
     
     const telegramMatch = text.match(/TG[:：]?\s*(.+?)(?:\n|$)/i) ||
-                          text.match(/telegram[:：]?\s*(.+?)(?:\n|$)/i);
+                          text.match(/telegram[:：]?\s*(.+?)(?:\n|$)/i) ||
+                          text.match(/查看更多[:：]?\s*(.+?)(?:\n|$)/i);
+
+    // 提取风险等级
+    let riskLevel = "";
+    const riskLevelMatch = text.match(/风险等级[:：]?\s*(.+?)(?:\n|$)/i);
+    if (riskLevelMatch) {
+      riskLevel = riskLevelMatch[1].trim();
+    }
     
+    // 提取当前动作
+    let currentAction = "";
+    const currentActionMatch = text.match(/当前动作[:：]?\s*(.+?)(?:\n|$)/i);
+    if (currentActionMatch) {
+      currentAction = currentActionMatch[1].trim();
+    }
+                           
     return {
       tokenName: tokenName || "",
       contractAddress: contractMatch?.[1]?.trim() || "",
@@ -75,32 +131,54 @@ const parseGoldenDogMessage = (text: string) => {
       buyTax: buyTaxMatch?.[1]?.trim() || "",
       sellTax: sellTaxMatch?.[1]?.trim() || "",
       telegram: telegramMatch?.[1]?.trim() || "",
-      // 保留一些旧字段，设为空字符串
+      // 更新一些旧字段以支持STONKS代币格式
       top10Holding: "",
-      holders: "",
+      holders: holders,
       volume24h: "",
-      priceChange: "",
+      priceChange: priceChange,
       creationTime: "",
       bundleAnalysis: "",
       tweetAuthors: "",
       blueVerified: "",
+      riskLevel: riskLevel,
+      currentAction: currentAction,
       rawText: text,
       isGoldenDogFormat: true,
       isNewFormat: true
     };
   } else {
-    // 旧格式解析
-    const tokenNameMatch = text.match(/💰\s*代币名称:(.+?)(\n|$)/);
-    const contractMatch = text.match(/📝\s*合约地址:\s*(.+?)(\n|$)/);
-    const marketCapMatch = text.match(/👺市值:(.+?)(\n|$)/);
-    const top10HoldingMatch = text.match(/⏳前十持仓:(.+?)(\n|$)/);
-    const holdersMatch = text.match(/👥持有者数量:\s*(.+?)(\n|$)/);
-    const volumeMatch = text.match(/📊24h交易量:\s*(.+?)(\n|$)/);
-    const priceChangeMatch = text.match(/📈.+价格变化:\s*(.+?)(\n|$)/);
-    const creationTimeMatch = text.match(/🕒创建时间:\s*(.+?)(\n|$)/);
-    const bundleAnalysisMatch = text.match(/🔍捆绑分析:\s*(.+?)(\n|$)/);
-    const tweetAuthorsMatch = text.match(/📬有关推文作者数量:\s*(.+?)(\n|$)/);
-    const blueVerifiedMatch = text.match(/🛜蓝V用户:\s*(.+?)(\n|$)/);
+    // 旧格式解析 - 支持不同的表达方式和标点符号，增强解析能力
+    const tokenNameMatch = text.match(/💰?\s*代币名称[:：](.+?)(\n|$)/) || 
+                         text.match(/代币名称[:：]\s*(.+?)(\n|$)/) ||
+                         text.match(/\$([A-Za-z0-9_]+)/);
+                         
+    const contractMatch = text.match(/📝?\s*合约地址[:：]\s*(.+?)(\n|$)/) ||
+                         text.match(/合约地址[:：]\s*(.+?)(\n|$)/) ||
+                         text.match(/合约[:：]\s*(.+?)(\n|$)/);
+                         
+    const marketCapMatch = text.match(/👺?市值[:：](.+?)(\n|$)/) ||
+                         text.match(/市值[:：]\s*(.+?)(\n|$)/);
+                         
+    const top10HoldingMatch = text.match(/⏳?前十持仓[:：](.+?)(\n|$)/);
+    
+    const holdersMatch = text.match(/👥?持有者数量[:：]\s*(.+?)(\n|$)/) ||
+                        text.match(/持有者[:：]\s*(.+?)(\n|$)/);
+                        
+    const volumeMatch = text.match(/📊?24h交易量[:：]\s*(.+?)(\n|$)/) ||
+                       text.match(/交易量[:：]\s*(.+?)(\n|$)/);
+                       
+    const priceChangeMatch = text.match(/📈?.+价格变化[:：]\s*(.+?)(\n|$)/) ||
+                            text.match(/(?:前1小时|24h|6小时)?涨幅[:：]?\s*(.+?)(\n|$)/);
+                            
+    const creationTimeMatch = text.match(/🕒?创建时间[:：]\s*(.+?)(\n|$)/);
+    
+    const bundleAnalysisMatch = text.match(/🔍?捆绑分析[:：]\s*(.+?)(\n|$)/) ||
+                               text.match(/市场分析[:：]\s*(.+?)(\n|$)/);
+                               
+    const tweetAuthorsMatch = text.match(/📬?有关推文作者数量[:：]\s*(.+?)(\n|$)/) ||
+                              text.match(/有关此文件查看数量[:：]?\s*(.+?)(\n|$)/);
+                              
+    const blueVerifiedMatch = text.match(/🛜?蓝V用户[:：]\s*(.+?)(\n|$)/);
 
     return {
       tokenName: tokenNameMatch?.[1]?.trim() || "",
@@ -210,6 +288,10 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
     );
   }
   
+  // 打印原始消息以便调试
+  console.log('原始消息列表:', telegramData?.data);
+  console.log('解析后消息列表:', goldenDogMessages);
+  
   return (
     <div className="space-y-5">
       {showTitle && (
@@ -224,7 +306,11 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
       {goldenDogMessages.map((message) => {
         const parsed = parseGoldenDogMessage(message.text);
         
-        if (!parsed) return null;
+        // 确保我们能正确解析每个消息，总是显示合法数据
+        if (!parsed) {
+          console.log("无法解析消息:", message);
+          return null;
+        }
 
         return (
           <Card key={message.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10">
@@ -313,12 +399,59 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                   </div>
                 )}
 
+                {/* 风险等级 */}
+                {parsed.isNewFormat && parsed.riskLevel && (
+                  <div className="flex items-center">
+                    <FaExclamationTriangle className="text-yellow-500 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">⚠️ 风险等级: </span>
+                    <span className={`text-xs ml-1 ${
+                      parsed.riskLevel.includes("低") ? "text-green-400" : 
+                      parsed.riskLevel.includes("中") ? "text-yellow-400" : 
+                      "text-red-400"
+                    }`}>{parsed.riskLevel}</span>
+                  </div>
+                )}
+                
+                {/* 当前动作 */}
+                {parsed.isNewFormat && parsed.currentAction && (
+                  <div className="flex items-center">
+                    <FaExchangeAlt className="text-blue-500 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">🔄 当前动作: </span>
+                    <span className="text-xs text-blue-400 ml-1">{parsed.currentAction}</span>
+                  </div>
+                )}
+                
+                {/* 持有者 */}
+                {parsed.isNewFormat && parsed.holders && (
+                  <div className="flex items-center">
+                    <FaUsers className="text-orange-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">👥 持有者: </span>
+                    <span className="text-xs text-orange-400 ml-1">{parsed.holders}</span>
+                  </div>
+                )}
+                
+                {/* 价格变化（新格式） */}
+                {parsed.isNewFormat && parsed.priceChange && (
+                  <div className="flex items-center">
+                    <FaChartLine className="text-green-400 mr-1.5 w-3.5 h-3.5" />
+                    <span className="text-xs text-gray-300">📈 涨幅: </span>
+                    <span className={`text-xs ml-1 ${parsed.priceChange.includes("+") ? "text-green-400" : "text-red-400"}`}>{parsed.priceChange}</span>
+                  </div>
+                )}
+                
                 {/* Telegram链接（新格式） */}
                 {parsed.isNewFormat && parsed.telegram && (
                   <div className="flex items-center">
                     <FaTelegram className="text-blue-400 mr-1.5 w-3.5 h-3.5" />
-                    <span className="text-xs text-gray-300">📣TG: </span>
-                    <span className="text-xs text-blue-400 ml-1">{parsed.telegram}</span>
+                    <span className="text-xs text-gray-300">📣 TG: </span>
+                    <span className="text-xs text-blue-400 ml-1">
+                      <a href={parsed.telegram.includes("http") ? parsed.telegram : `https://${parsed.telegram}`} 
+                         target="_blank" 
+                         rel="noopener noreferrer" 
+                         className="hover:underline">
+                        {parsed.telegram}
+                      </a>
+                    </span>
                   </div>
                 )}
                 
