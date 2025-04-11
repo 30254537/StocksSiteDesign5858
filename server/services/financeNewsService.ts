@@ -37,7 +37,8 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
       newsData.forEach((item: any, index: number) => {
         const content = item.content || '无内容';
         const timeText = new Date(item.created_at * 1000).toLocaleString('zh-CN');
-        const newsId = `jinse-${item.id || Date.now()}-${index}`;
+        // 生成唯一的数字ID - 使用当前时间戳加上索引
+        const newsId = Date.now() + index;
         const fullLink = item.link || `https://www.jinse.cn/lives/${item.id}`;
         
         newsItems.push({
@@ -69,7 +70,8 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
         ];
         
         const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-        const newsId = `jinse-${Date.now()}-${i}`;
+        // 生成唯一的整数ID
+        const newsId = Date.now() + i;
         const currentDate = new Date();
         const timeText = currentDate.toLocaleString('zh-CN');
         
@@ -104,7 +106,8 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
       ];
       
       const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-      const newsId = `jinse-${Date.now()}-${i}`;
+      // 生成唯一的整数ID
+      const newsId = Date.now() + 100 + i;
       const currentDate = new Date();
       const timeText = currentDate.toLocaleString('zh-CN');
       
@@ -152,7 +155,8 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
       newsData.forEach((item: any, index: number) => {
         const content = item.title || item.content || '无内容';
         const timeText = new Date(item.created_at * 1000).toLocaleString('zh-CN');
-        const newsId = `marsbit-${item.id || Date.now()}-${index}`;
+        // 生成唯一的整数ID - 使用当前时间戳加上索引并加上一个偏移量，避免与金色财经的ID冲突
+        const newsId = Date.now() + 1000 + index;
         const fullLink = item.url || `https://news.marsbit.co/flash/${item.id}`;
         
         newsItems.push({
@@ -184,7 +188,8 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
         ];
         
         const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-        const newsId = `marsbit-${Date.now()}-${i}`;
+        // 生成唯一的整数ID - 使用当前时间戳加上索引和一个偏移量
+        const newsId = Date.now() + 1000 + i;
         const currentDate = new Date();
         const timeText = currentDate.toLocaleString('zh-CN');
         
@@ -219,7 +224,8 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
       ];
       
       const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-      const newsId = `marsbit-${Date.now()}-${i}`;
+      // 生成唯一的整数ID - 使用当前时间戳加上索引和一个偏移量
+      const newsId = Date.now() + 2000 + i;
       const currentDate = new Date();
       const timeText = currentDate.toLocaleString('zh-CN');
       
