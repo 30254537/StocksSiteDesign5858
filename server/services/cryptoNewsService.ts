@@ -184,19 +184,39 @@ export async function fetchAndStoreNews(): Promise<number> {
 
 /**
  * 初始化定时任务，定期获取最新加密货币新闻
- * @param cronSchedule cron表达式，默认每小时执行一次
+ * @param cronSchedule cron表达式，默认每5分钟执行一次
  */
-export function initCryptoNewsScheduler(cronSchedule: string = '0 * * * *'): void {
+export function initCryptoNewsScheduler(cronSchedule: string = '*/5 * * * *'): void {
   console.log(`初始化加密货币新闻定时任务，计划: ${cronSchedule}`);
   
   // 启动时立即执行一次
-  fetchAndStoreNews().catch(err => {
+  fetchAndStoreNews().then(count => {
+    console.log(`初始化: 成功同步 ${count} 条加密快讯实时资讯`);
+  }).catch(err => {
     console.error('初始获取加密货币新闻失败:', err);
   });
   
   // 设置定时任务
   cron.schedule(cronSchedule, async () => {
     console.log('执行定时加密货币新闻获取...');
-    await fetchAndStoreNews();
+    const count = await fetchAndStoreNews();
+    console.log(`[Cron] 成功同步 ${count} 条加密快讯实时资讯`);
+  });
+  
+  // 每天一次全量更新（清除旧数据，获取全新数据）
+  cron.schedule('0 4 * * *', async () => {
+    console.log('执行每日全量加密货币新闻更新...');
+    
+    try {
+      // 清空所有已有数据（除Telegram消息外）
+      const oldNewsCount = await storage.clearAllCryptoNews();
+      console.log(`已清除 ${oldNewsCount} 条旧的加密货币新闻`);
+      
+      // 获取全新数据
+      const newCount = await fetchAndStoreNews(50);
+      console.log(`[每日更新] 成功添加 ${newCount} 条新的加密货币新闻`);
+    } catch (err) {
+      console.error('每日全量更新加密货币新闻失败:', err);
+    }
   });
 }
