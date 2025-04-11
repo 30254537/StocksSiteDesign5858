@@ -5,6 +5,7 @@ import Footer from '@/components/layout/Footer';
 import CryptoTweets from '@/components/CryptoTweets';
 import TwitterFeed from '@/components/TwitterFeed';
 import AddTestTweet from '@/components/AddTestTweet';
+import FinanceNews from '@/components/FinanceNews';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SiDiscord } from "react-icons/si";
 import { FaTwitter, FaTelegram } from "react-icons/fa";

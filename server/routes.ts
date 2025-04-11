@@ -1549,6 +1549,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: '获取 Telegram 消息失败' });
     }
   });
+  
+  // 获取财经快讯API端点
+  app.get('/api/finance-news', async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      
+      // 从数据库获取财经快讯
+      const newsItems = await financeNewsService.getLatestFinanceNews(limit);
+      
+      res.json({ data: newsItems });
+    } catch (error) {
+      console.error('获取财经快讯失败:', error);
+      res.status(500).json({ error: '获取财经快讯失败' });
+    }
+  });
+  
+  // 手动同步财经快讯（管理员用）
+  app.post('/api/finance-news/sync', requireAdmin, async (req, res) => {
+    try {
+      const newsItems = await financeNewsService.fetchAndStoreFinanceNews();
+      res.json({ message: `成功同步 ${newsItems.length} 条财经快讯` });
+    } catch (error) {
+      console.error('同步财经快讯失败:', error);
+      res.status(500).json({ error: '同步财经快讯失败' });
+    }
+  });
 
   // 手动触发获取新消息的 API 端点（管理员权限）
   app.post('/api/telegram-messages/sync', requireAdmin, async (req, res) => {

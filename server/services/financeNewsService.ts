@@ -5,9 +5,9 @@ import { eq, desc, or, and } from 'drizzle-orm';
 import { telegramMessages } from '@shared/schema';
 
 // 金色财经快讯页面URL
-const JINSE_URL = 'https://www.jinse.cn/lives';
+const JINSE_URL = 'https://www.jinse.cn/blockchain';
 // 火星财经快讯页面URL
-const MARSBIT_URL = 'https://www.marsbit.co/express';
+const MARSBIT_URL = 'https://news.marsbit.co/flash';
 
 /**
  * 从金色财经获取快讯
@@ -26,18 +26,18 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
     const $ = cheerio.load(response.data);
     const newsItems: any[] = [];
 
-    // 金色财经的快讯通常在.content-box .flash-list下
-    $('.flash-item').each((index: number, element: any) => {
+    // 金色财经的新结构，通常在文章列表中
+    $('.list_module-item').each((index: number, element: any) => {
       if (index >= limit) return false;
 
-      const timeElement = $(element).find('.flash-item-time');
-      const contentElement = $(element).find('.flash-item-content');
+      const timeElement = $(element).find('.list_module-date');
+      const contentElement = $(element).find('.list_module-title');
       
       const timeText = timeElement.text().trim();
       const content = contentElement.text().trim();
       
-      // 获取快讯ID，通常在data-id属性中
-      const newsId = $(element).attr('data-id') || `jinse-${Date.now()}-${index}`;
+      // 获取快讯ID，从链接或时间戳生成
+      const newsId = `jinse-${Date.now()}-${index}`;
       
       // 获取相对链接，可能在a标签中
       const link = $(element).find('a').attr('href');
@@ -81,22 +81,22 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
     const $ = cheerio.load(response.data);
     const newsItems: any[] = [];
 
-    // 火星财经快讯通常在特定的列表容器中
-    $('.express_content_list .express_item').each((index: number, element: any) => {
+    // 火星财经新闻快讯结构
+    $('.article-item').each((index: number, element: any) => {
       if (index >= limit) return false;
 
-      const timeElement = $(element).find('.time');
-      const contentElement = $(element).find('.content');
+      const timeElement = $(element).find('.item-date');
+      const contentElement = $(element).find('.item-title');
       
       const timeText = timeElement.text().trim();
       const content = contentElement.text().trim();
       
-      // 获取快讯ID
-      const newsId = $(element).attr('data-id') || `marsbit-${Date.now()}-${index}`;
+      // 生成唯一ID
+      const newsId = `marsbit-${Date.now()}-${index}`;
       
       // 获取相对链接
       const link = $(element).find('a').attr('href');
-      const fullLink = link ? (link.startsWith('http') ? link : `https://www.marsbit.co${link}`) : null;
+      const fullLink = link ? (link.startsWith('http') ? link : `https://news.marsbit.co${link}`) : null;
 
       newsItems.push({
         messageId: newsId,
