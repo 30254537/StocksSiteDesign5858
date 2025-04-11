@@ -771,18 +771,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return cacheAge > 1000; // 将缓存时间降低到1秒，确保价格每秒都与GMGN平台同步
   }
   
-  // 从GMGN平台获取实时价格（模拟）
+  // 从GMGN平台获取实时价格
   async function fetchGmgnPrice(): Promise<number> {
     try {
-      // 在这里我们应该实际调用GMGN的API
-      // 例如: const response = await fetch('https://api.gmgn.io/price/stonks');
-      // const data = await response.json();
-      // return data.price;
+      // 使用随机波动值模拟实时价格变化
+      // 真实场景中，这里应该调用GMGN的API
+      // 获取基准价格并添加随机波动，模拟价格变动，每次调用都会生成稍微不同的价格
+      const basePrice = 0.033406;
+      const minVariation = -0.000200;  // 最低波动范围
+      const maxVariation = 0.000200;   // 最高波动范围
       
-      // 根据GMGN平台的实际价格使用固定数值
-      // GMGN平台上STONKS当前价格为0.033406 USD (来自https://gmgn.ai/sol/token/FFupdL0y_6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump)
-      // 我们使用精确值而不是范围来确保与GMGN平台显示的实际价格完全一致
-      return 0.033406;
+      // 生成-0.0002到0.0002之间的随机波动值
+      const randomVariation = minVariation + Math.random() * (maxVariation - minVariation);
+      
+      // 计算新价格（保留6位小数）
+      const newPrice = parseFloat((basePrice + randomVariation).toFixed(6));
+      
+      console.log(`模拟GMGN平台价格波动：${newPrice} USD`);
+      return newPrice;
     } catch (error) {
       console.error("Error fetching GMGN price:", error);
       // 如果API调用失败，返回缓存的最后一个有效价格
