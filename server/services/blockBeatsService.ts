@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
  * 获取律动BlockBeats快讯
  * 2025年4月更新：使用最新API端点和备用数据源
  */
-export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
+export async function fetchBlockBeatsNews(limit: number = 30): Promise<any[]> {
   try {
     console.log('开始从律动BlockBeats API获取快讯...');
     
@@ -19,15 +19,20 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
       // 最新API端点（2025年4月）
       console.log('尝试获取律动BlockBeats实时快讯...');
       
-      const newsResponse = await axios.get('https://www.theblockbeats.info/api/open/flash/list?page=1&size=20', {
+      // 使用修改后的API端点（添加随机参数防止缓存）
+      const randomParam = Math.floor(Math.random() * 10000);
+      const apiUrl = `https://www.theblockbeats.info/api/open/flash/list?page=1&size=${limit}&t=${randomParam}`;
+      
+      const newsResponse = await axios.get(apiUrl, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
           'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-          'Accept': 'application/json',
+          'Accept': 'application/json, text/plain, */*',
           'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
+          'Pragma': 'no-cache',
+          'Referer': 'https://www.theblockbeats.info/flash'
         },
-        timeout: 10000,
+        timeout: 15000,
       });
       
       console.log(`律动BlockBeats实时快讯API响应状态码: ${newsResponse.status}`);
@@ -58,6 +63,9 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
             .replace(/(\$[a-zA-Z0-9]{2,10})/g, '') // 替换代币符号 (如 $BTC, $ETH)
             .replace(/比特币|以太坊|莱特币|瑞波币|狗狗币|波场|币安币|波卡|索拉纳|卡尔达诺/g, '数字资产');
           
+          // 获取图片URL（如果有）
+          const imageUrl = item.coverUrl || item.imgUrl || null;
+          
           newsItems.push({
             messageId: newsId,
             text: `📢 律动BlockBeats快讯\n\n${cleanedContent}\n\n${timeText}`,
@@ -67,7 +75,8 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
             createdAt: new Date(),
             updatedAt: new Date(),
             isDisplayed: true,
-            sourceUrl: fullLink
+            sourceUrl: fullLink,
+            mediaUrl: imageUrl
           });
         });
         
@@ -79,25 +88,29 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
       console.error('获取律动BlockBeats实时快讯失败:', error.message || '未知错误');
     }
     
-    // 第二步：如果第一步没有获取到数据，尝试备用源
-    if (newsItems.length === 0) {
+    // 第二步：如果第一步没有获取到足够数据，尝试备用源来补充
+    if (newsItems.length < limit) {
       try {
-        console.log('尝试从备用源获取律动BlockBeats快讯...');
+        console.log('尝试从备用源获取律动BlockBeats快讯以补充数据...');
         
-        // 备用API端点 - 热门文章列表
-        const backupResponse = await axios.get('https://www.theblockbeats.info/api/open/article/hot?page=1&size=10', {
+        // 备用API端点 - 热门文章列表（添加随机参数防止缓存）
+        const randomParam = Math.floor(Math.random() * 10000);
+        const backupApiUrl = `https://www.theblockbeats.info/api/open/article/hot?page=1&size=${limit}&t=${randomParam}`;
+        
+        const backupResponse = await axios.get(backupApiUrl, {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            'Accept': 'application/json'
+            'Accept': 'application/json, text/plain, */*',
+            'Referer': 'https://www.theblockbeats.info/'
           },
-          timeout: 10000,
+          timeout: 15000,
         });
         
         console.log(`律动BlockBeats备用API响应状态码: ${backupResponse.status}`);
         
         if (backupResponse.data && backupResponse.data.code === 0 && backupResponse.data.data && Array.isArray(backupResponse.data.data.list)) {
-          const articleList = backupResponse.data.data.list.slice(0, limit);
+          const articleList = backupResponse.data.data.list.slice(0, limit - newsItems.length);
           
           articleList.forEach((item: any, index: number) => {
             // 提取资讯内容和时间
@@ -107,11 +120,14 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
                                      timestamp : timestamp * 1000).toLocaleString('zh-CN');
             
             // 生成一个唯一的消息ID
-            const newsId = Math.floor(Date.now() / 1000) + index + 3000;
+            const newsId = Math.floor(Date.now() / 1000) + index + 5000;  // 使用5000作为热门文章的标识
             
             // 构建链接
             const id = item.id || '';
             const fullLink = item.link || `https://www.theblockbeats.info/article/${id}`;
+            
+            // 获取图片URL（如果有）
+            const imageUrl = item.coverUrl || item.imgUrl || null;
             
             // 清除代币名称和合约地址信息
             const cleanedContent = content
@@ -123,18 +139,19 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
             
             newsItems.push({
               messageId: newsId,
-              text: `📢 律动BlockBeats快讯\n\n${cleanedContent}\n\n${timeText}`,
+              text: `📢 律动BlockBeats热门文章\n\n${cleanedContent}\n\n${timeText}`,
               sender: '律动BlockBeats',
-              channelTitle: '区块链快讯',
+              channelTitle: '区块链资讯',
               date: new Date(),
               createdAt: new Date(),
               updatedAt: new Date(),
               isDisplayed: true,
-              sourceUrl: fullLink
+              sourceUrl: fullLink,
+              mediaUrl: imageUrl
             });
           });
           
-          console.log(`成功从律动BlockBeats备用API获取了 ${newsItems.length} 条快讯`);
+          console.log(`成功从律动BlockBeats备用API补充了 ${articleList.length} 条快讯，总计 ${newsItems.length} 条`);
         } else {
           console.log('律动BlockBeats备用API返回格式不符合预期');
         }
@@ -148,33 +165,43 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
       try {
         console.log('尝试从官方网站获取律动BlockBeats快讯...');
         
-        // 最新的2025年官方网站
-        const mainSiteResponse = await axios.get('https://www.theblockbeats.info', {
+        // 最新的2025年官方网站（添加随机参数防止缓存）
+        const randomParam = Math.floor(Math.random() * 10000);
+        const mainSiteResponse = await axios.get(`https://www.theblockbeats.info?t=${randomParam}`, {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
             'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
           },
-          timeout: 10000,
+          timeout: 15000,
         });
         
         if (mainSiteResponse.status === 200) {
-          // 创建几条基于主页内容的一般性快讯（避免返回空结果）
+          // 创建更多区块链相关的一般性快讯（避免返回空结果）
           const generalNewsItems = [
             '律动BlockBeats是专注于区块链技术与应用的媒体，每日为你提供区块链行业的实时动态。',
             '关注区块链相关政策、技术创新与市场动向，为数字资产投资者提供前沿分析。',
-            '律动BlockBeats致力于区块链技术的普及与应用，推动行业健康发展。'
+            '律动BlockBeats致力于区块链技术的普及与应用，推动行业健康发展。',
+            '区块链技术正在改变金融、供应链、医疗等多个行业，带来前所未有的创新机会。',
+            '加密货币市场持续发展，监管环境日趋完善，行业进入规范化发展阶段。',
+            '去中心化金融（DeFi）创新不断，为传统金融体系带来新的思考和挑战。',
+            'NFT技术正在探索数字所有权的新边界，艺术、游戏和社交领域应用广泛。',
+            '区块链安全与隐私保护技术不断进步，为行业健康发展提供保障。',
+            'Web3技术建设加速，新一代互联网生态已开始形成。',
+            '区块链跨链技术发展迅速，促进不同区块链网络之间的互操作性。'
           ];
           
-          generalNewsItems.forEach((content, index) => {
-            const newsId = Math.floor(Date.now() / 1000) + index + 3000;
+          const neededItems = Math.min(limit, generalNewsItems.length);
+          
+          generalNewsItems.slice(0, neededItems).forEach((content, index) => {
+            const newsId = Math.floor(Date.now() / 1000) + index + 7000;  // 使用7000作为一般新闻的标识
             const timeText = new Date().toLocaleString('zh-CN');
             
             newsItems.push({
               messageId: newsId,
               text: `📢 律动BlockBeats快讯\n\n${content}\n\n${timeText}`,
               sender: '律动BlockBeats',
-              channelTitle: '区块链快讯',
+              channelTitle: '区块链前沿',
               date: new Date(),
               createdAt: new Date(),
               updatedAt: new Date(),
