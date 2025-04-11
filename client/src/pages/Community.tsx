@@ -5,6 +5,7 @@ import Footer from '@/components/layout/Footer';
 import CryptoTweets from '@/components/CryptoTweets';
 import TelegramFeed from '@/components/TelegramFeed';
 import TgLatestMessages from '@/components/TgLatestMessages';
+import AddTestTelegramMessage from '@/components/AddTestTelegramMessage';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SiDiscord } from "react-icons/si";
 import { FaTwitter, FaTelegram } from "react-icons/fa";
@@ -110,6 +111,8 @@ const CommunityPage: React.FC = () => {
                   : 'Latest token monitoring alerts from GoldDogAlpha channel, auto-synced every minute'}
               </p>
             </div>
+            {/* 添加测试消息组件 */}
+            <AddTestTelegramMessage />
             <TgLatestMessages limit={3} />
           </TabsContent>
         </Tabs>
