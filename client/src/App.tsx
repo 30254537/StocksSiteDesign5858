@@ -24,6 +24,7 @@ const Music = lazy(() => import("@/pages/Music"));
 const CryptoNews = lazy(() => import("@/pages/CryptoNews"));
 const Community = lazy(() => import("@/pages/Community"));
 const TelegramMessages = lazy(() => import("@/pages/TelegramMessages"));
+const NewsDetail = lazy(() => import("@/pages/NewsDetail"));
 const TestTools = lazy(() => import("@/pages/TestTools"));
 
 import Header from "@/components/layout/Header";
@@ -99,7 +100,7 @@ function Router() {
           <Route path="/product/:id">
             {(params) => (
               <PageWrapper>
-                <ProductDetail id={params.id} />
+                <ProductDetail />
               </PageWrapper>
             )}
           </Route>
@@ -184,6 +185,13 @@ function Router() {
             {() => (
               <PageWrapper>
                 <TelegramMessages />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/news/:id">
+            {(params) => (
+              <PageWrapper>
+                <NewsDetail />
               </PageWrapper>
             )}
           </Route>

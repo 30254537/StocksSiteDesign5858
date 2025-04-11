@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from 'wouter';
 
 // 日期格式化
 const formatMessageDate = (dateString: string, language: string) => {
@@ -42,6 +43,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isSyncing, setIsSyncing] = useState(false);
+  const [, setLocation] = useLocation();
   
   // 用于手动同步Telegram消息的mutation
   const syncMutation = useMutation({
@@ -191,17 +193,14 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
             key={message.id} 
             className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10 cursor-pointer relative"
             onClick={() => {
-              if (message.sourceUrl) {
-                window.open(message.sourceUrl, '_blank', 'noopener,noreferrer');
-              }
+              // 导航到站内新闻详情页面
+              setLocation(`/news/${message.id}`);
             }}
           >
             {/* 右上角阅读标志 */}
-            {message.sourceUrl && (
-              <div className="absolute top-0 right-0 bg-teal-600 text-white text-xs px-2 py-1 rounded-bl-md">
-                <FaExternalLinkAlt className="h-3 w-3" />
-              </div>
-            )}
+            <div className="absolute top-0 right-0 bg-teal-600 text-white text-xs px-2 py-1 rounded-bl-md">
+              <FaNewspaper className="h-3 w-3" />
+            </div>
             
             <CardContent className="pt-4 pb-3">
               <div className="flex justify-between items-start mb-2">
@@ -230,20 +229,35 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                 <span className="text-xs text-gray-500">
                   {message.sender ? `来源: ${message.sender}` : "加密资讯频道"}
                 </span>
-                {message.sourceUrl && (
-                  <a 
-                    href={message.sourceUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                
+                <div className="flex gap-2">
+                  {/* 站内阅读按钮 */}
+                  <button
                     className="text-xs bg-teal-700 hover:bg-teal-600 text-white px-2 py-1 rounded flex items-center transition-colors"
                     onClick={(e) => {
                       e.stopPropagation(); // 阻止冒泡，避免触发Card的点击事件
+                      setLocation(`/news/${message.id}`);
                     }}
                   >
-                    {language === 'zh' ? '阅读全文' : 'Read more'} 
-                    <FaExternalLinkAlt className="ml-1 h-3 w-3" />
-                  </a>
-                )}
+                    {language === 'zh' ? '站内阅读' : 'Read Article'} 
+                  </button>
+                  
+                  {/* 源站访问按钮（可选） */}
+                  {message.sourceUrl && (
+                    <a 
+                      href={message.sourceUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-xs bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded flex items-center transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation(); // 阻止冒泡，避免触发Card的点击事件
+                      }}
+                    >
+                      {language === 'zh' ? '源站' : 'Source'} 
+                      <FaExternalLinkAlt className="ml-1 h-3 w-3" />
+                    </a>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
