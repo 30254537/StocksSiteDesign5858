@@ -1865,12 +1865,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 设置高频定时任务，每1分钟获取一次加密快讯消息，确保第一时间同步
   cron.schedule('* * * * *', async () => {
-    console.log('[Cron] 开始同步加密快讯消息...');
+    console.log('[Cron] 开始同步加密快讯实时资讯...');
     try {
       const messages = await telegramService.fetchAndStoreMessages();
-      console.log(`[Cron] 成功同步 ${messages.length} 条加密快讯消息`);
+      console.log(`[Cron] 成功同步 ${messages.length} 条加密快讯实时资讯`);
     } catch (error) {
-      console.error('[Cron] 同步加密快讯消息失败:', error);
+      console.error('[Cron] 同步加密快讯实时资讯失败:', error);
     }
   });
   
@@ -1882,17 +1882,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`[Cron] 成功同步 ${tweets.length} 条 MoontokListing 推文`);
     } catch (error) {
       console.error('[Cron] 同步 MoontokListing 推文失败:', error);
-    }
-  });
-  
-  // 设置定时任务，每1分钟同步一次财经快讯，确保实时更新
-  cron.schedule('* * * * *', async () => {
-    console.log('[Cron] 开始同步财经7x24H实时快讯...');
-    try {
-      const newsItems = await financeNewsService.fetchAndStoreFinanceNews(15);
-      console.log(`[Cron] 成功同步 ${newsItems.length} 条财经7x24H实时快讯`);
-    } catch (error) {
-      console.error('[Cron] 同步财经7x24H实时快讯失败:', error);
     }
   });
 
