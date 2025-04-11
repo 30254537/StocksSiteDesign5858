@@ -4,7 +4,6 @@ import { ProductGrid } from "@/components/ui/product-grid";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { NeonText } from "@/components/ui/neon-text";
-import CryptoTweets from "@/components/CryptoTweets";
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -141,16 +140,6 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Crypto Tweets Section */}
-      <section id="crypto-tweets" className="py-20 relative z-20">
-        {/* Deep blue background */}
-        <div className="absolute inset-0 bg-primary z-0"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <CryptoTweets />
-        </div>
-      </section>
-
       {/* About Us Section */}
       <section id="about" className="py-20 relative z-20">
         {/* Deep blue background */}
