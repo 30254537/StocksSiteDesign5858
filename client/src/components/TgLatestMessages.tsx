@@ -26,6 +26,7 @@ interface TelegramMessage {
   sender: string;
   channelTitle: string;
   date: string;
+  sourceUrl?: string;
 }
 
 interface TgLatestMessagesProps {
@@ -173,6 +174,17 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
               <span className="text-xs text-gray-500">
                 {message.sender ? `来源: ${message.sender}` : "加密资讯频道"}
               </span>
+              {message.sourceUrl && (
+                <a 
+                  href={message.sourceUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-teal-400 hover:text-teal-300 flex items-center"
+                >
+                  {language === 'zh' ? '阅读全文' : 'Read more'} 
+                  <FaExternalLinkAlt className="ml-1 h-3 w-3" />
+                </a>
+              )}
             </div>
           </CardContent>
         </Card>
