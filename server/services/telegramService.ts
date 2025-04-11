@@ -4,15 +4,22 @@ import { db } from '../db';
 import { telegramMessages, InsertTelegramMessage } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-// 检查是否为金狗监测提醒格式
+// 检查是否为金狗监测新格式
 function isGoldenDogFormat(text: string): boolean {
-  return text.includes("🔔 金狗监测提醒") ||
-         (text.includes("代币名称") && text.includes("合约地址"));
+  // 老格式
+  const isOldFormat = text.includes("🔔 金狗监测提醒") || 
+                     (text.includes("代币名称") && text.includes("合约地址"));
+  
+  // 新格式: 包含🟢和CA或者包含代币名称和价格
+  const isNewFormat = (text.includes("🟢") && (text.includes("CA:") || text.includes("建仓"))) ||
+                      (text.includes("Ghibli") && text.includes("价格"));
+  
+  return isOldFormat || isNewFormat;
 }
 
 class TelegramService {
-  // 更新为精确的频道URL，针对金狗监测提醒消息
-  private channelUrl: string = 'https://t.me/s/chengzi_golden/6';
+  // 更新为 GoldDogAlpha 频道URL
+  private channelUrl: string = 'https://t.me/s/GoldDogAlpha';
   
   /**
    * 从 Telegram 频道获取最新消息
@@ -47,7 +54,8 @@ class TelegramService {
         try {
           // 获取消息 ID
           const messageLink = container.getAttribute('data-post') || '';
-          const messageIdMatch = messageLink.match(/chengzi_golden\/(\d+)/);
+          // 适配新的Gold Dog Alpha格式
+          const messageIdMatch = messageLink.match(/GoldDogAlpha\/(\d+)/) || messageLink.match(/chengzi_golden\/(\d+)/);
           if (!messageIdMatch) return;
           
           const messageId = parseInt(messageIdMatch[1]);

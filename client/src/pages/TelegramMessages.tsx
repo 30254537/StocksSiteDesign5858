@@ -71,8 +71,8 @@ const TelegramMessages: React.FC = () => {
         <div className="flex justify-between items-center flex-wrap gap-2">
           <p className="text-muted-foreground mt-1">
             {language === 'zh' 
-              ? '来自金狗监测提醒频道的最新代币监测信息，每分钟自动同步' 
-              : 'Latest token monitoring alerts from Golden Dog channel, auto-synced every minute'}
+              ? '来自GoldDogAlpha频道的最新代币监测信息，每分钟自动同步' 
+              : 'Latest token monitoring alerts from GoldDogAlpha channel, auto-synced every minute'}
           </p>
           <div className="flex gap-2">
             <Button 
@@ -91,7 +91,7 @@ const TelegramMessages: React.FC = () => {
             </Button>
             <Badge className="bg-blue-500 hover:bg-blue-600">
               <a 
-                href="https://t.me/chengzi_golden/6" 
+                href="https://t.me/GoldDogAlpha" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-1"
