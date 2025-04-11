@@ -116,11 +116,9 @@ export default function Home() {
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-16">
-            {/* <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-6">{t("products.title")}</h2> */}
-            
+          <div className="text-center mb-12">
             {/* Product Filter Banner */}
-            <div className="mb-8 mx-auto text-center">
+            <div className="mb-4 mx-auto text-center">
               <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
                 <NeonText>{language === 'en' ? "STONKS DEX Merchandise" : "STONKS DEX 周边产品"}</NeonText>
               </div>
@@ -135,8 +133,10 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Product Grid */}
-          <ProductGrid category={selectedCategory === "all" ? undefined : selectedCategory} />
+          {/* Product Grid - 调整边距确保显示完整 */}
+          <div className="px-0 py-2">
+            <ProductGrid category={selectedCategory === "all" ? undefined : selectedCategory} />
+          </div>
         </div>
       </section>
       

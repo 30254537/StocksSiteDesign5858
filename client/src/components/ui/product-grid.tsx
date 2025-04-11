@@ -15,7 +15,7 @@ export function ProductGrid({ category = "all" }: ProductGridProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
-  const { data: products = [], isLoading } = useQuery({
+  const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: category === "all" ? ['/api/products'] : [`/api/products/category/${category}`],
     enabled: true
   });
@@ -32,7 +32,7 @@ export function ProductGrid({ category = "all" }: ProductGridProps) {
   return (
     <>
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 pt-4">
           {Array.from({ length: 8 }).map((_, index) => (
             <div key={index} className="bg-secondary border border-accent/30 rounded-xl animate-pulse">
               <div className="h-64 bg-primary/50 rounded-t-xl"></div>
@@ -50,7 +50,7 @@ export function ProductGrid({ category = "all" }: ProductGridProps) {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 pt-4">
           {products.map((product: Product) => (
             <ProductCard
               key={product.id}

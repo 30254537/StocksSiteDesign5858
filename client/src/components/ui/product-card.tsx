@@ -32,14 +32,14 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
 
   return (
     <div 
-      className="product-card relative group" 
+      className="product-card relative group w-full h-full" 
       data-category={product.category}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="bg-secondary border border-accent/30 rounded-xl overflow-hidden transition-all duration-500 hover:glow-border">
+      <div className="bg-secondary border border-accent/30 rounded-xl overflow-hidden transition-all duration-500 hover:glow-border h-full flex flex-col">
         {/* Product Image */}
-        <div className="relative h-64 overflow-hidden">
+        <div className="relative h-60 overflow-hidden">
           <img 
             src={product.imageUrl} 
             alt={product.name} 
@@ -59,14 +59,14 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         </div>
         
         {/* Product Info */}
-        <div className="p-4">
+        <div className="p-4 flex-grow flex flex-col justify-between">
           <Link href={`/product/${product.id}`}>
-            <h3 className="font-orbitron text-lg font-medium mb-2 hover:text-accent transition-colors cursor-pointer">
-              {/* 始终优先使用产品的实际名称，并添加产品的更新时间戳作为缓存破坏参数 */}
+            <h3 className="font-orbitron text-lg font-medium mb-3 hover:text-accent transition-colors cursor-pointer line-clamp-2">
+              {/* 始终优先使用产品的实际名称 */}
               {product.name || t(`product.name.${product.id}`)}
             </h3>
           </Link>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mt-auto">
             <div>
               <p className="text-gray-300 text-sm mb-1">{t("products.price")}</p>
               <div className="flex items-center">
