@@ -12,6 +12,53 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from 'wouter';
 
+// 字符串相似度计算函数
+function calculateStringSimilarity(a: string, b: string): number {
+  if (a.length === 0 || b.length === 0) return 0;
+  
+  // 将两个字符串转换为小写并去除所有非字母数字字符
+  const strA = a.toLowerCase().replace(/[^\w\s]/g, '');
+  const strB = b.toLowerCase().replace(/[^\w\s]/g, '');
+  
+  // 如果字符串为空，返回0
+  if (strA.length === 0 || strB.length === 0) return 0;
+  
+  // 使用莱文斯坦距离（编辑距离）计算相似度
+  const matrix: number[][] = [];
+  
+  // 初始化矩阵
+  for (let i = 0; i <= strA.length; i++) {
+    matrix[i] = [i];
+  }
+  
+  for (let j = 0; j <= strB.length; j++) {
+    matrix[0][j] = j;
+  }
+  
+  // 填充矩阵
+  for (let i = 1; i <= strA.length; i++) {
+    for (let j = 1; j <= strB.length; j++) {
+      if (strA.charAt(i - 1) === strB.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // 替换
+          Math.min(
+            matrix[i][j - 1] + 1,   // 插入
+            matrix[i - 1][j] + 1    // 删除
+          )
+        );
+      }
+    }
+  }
+  
+  // 计算相似度得分 (1 - 编辑距离/最长字符串长度)
+  const maxLength = Math.max(strA.length, strB.length);
+  const distance = matrix[strA.length][strB.length];
+  
+  return 1 - distance / maxLength;
+}
+
 // 日期格式化
 const formatMessageDate = (dateString: string, language: string) => {
   const date = new Date(dateString);
@@ -144,8 +191,57 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
     );
   }
   
+  // 对消息进行预处理，移除重复的
+  let processedMessages = telegramData.data;
+  
+  // 对于律动BlockBeats消息，额外进行内容相似度检查
+  if (processedMessages.some(msg => msg.sender === '律动BlockBeats')) {
+    const blockBeatsMessages = processedMessages.filter(msg => msg.sender === '律动BlockBeats');
+    const otherMessages = processedMessages.filter(msg => msg.sender !== '律动BlockBeats');
+    
+    // 对BlockBeats消息进行相似度过滤
+    const uniqueBlockBeatsMessages: TelegramMessage[] = [];
+    const seenContents = new Set<string>();
+    
+    blockBeatsMessages.forEach(msg => {
+      // 提取内容指纹（前50个字符），忽略发送时间和日期格式
+      const contentKey = msg.text
+        .replace(/📢 律动BlockBeats快讯\n\n/g, '')
+        .replace(/\d{4}\/\d{1,2}\/\d{1,2}\s\d{1,2}:\d{1,2}/g, '')
+        .trim()
+        .substring(0, 50)
+        .toLowerCase();
+      
+      // 判断是否已经有类似内容的消息
+      let isDuplicate = false;
+      for (const existingContent of seenContents) {
+        // 使用简单的内容相似度检查
+        const similarity = calculateStringSimilarity(contentKey, existingContent);
+        if (similarity > 0.7) { // 70%相似度阈值
+          isDuplicate = true;
+          break;
+        }
+      }
+      
+      if (!isDuplicate) {
+        seenContents.add(contentKey);
+        uniqueBlockBeatsMessages.push(msg);
+      }
+    });
+    
+    // 重新组合消息
+    processedMessages = [...otherMessages, ...uniqueBlockBeatsMessages];
+    
+    // 按日期重新排序
+    processedMessages.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return dateB - dateA; // 降序排列（新消息在前）
+    });
+  }
+  
   // 截取限制数量的消息
-  const displayMessages = telegramData.data.slice(0, limit);
+  const displayMessages = processedMessages.slice(0, limit);
   
   return (
     <div className="pb-8">
