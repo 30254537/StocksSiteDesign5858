@@ -775,46 +775,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 从GMGN平台获取实时价格
   async function fetchGmgnPrice(): Promise<number> {
     try {
-      // GMGN平台的STONKS代币详情页URL
-      const gmgnApiUrl = 'https://api.gmgn.ai/sol/token/price/FFupdL0y_6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump';
+      // 使用GMGN平台的Solana交易API获取实时价格
+      const STONKS_ADDRESS = '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump';
+      const SOL_ADDRESS = 'So11111111111111111111111111111111111111112';
       
-      console.log('正在从GMGN平台获取实时STONKS价格...');
+      // 使用您提供的API端点获取交易路由信息
+      const gmgnRouterApiUrl = 'https://gmgn.ai/defi/router/v1/sol/tx/get_swap_route';
       
-      // 使用axios调用GMGN API获取实时价格
-      const response = await axios.get(gmgnApiUrl, {
+      console.log('使用GMGN Solana交易API获取实时STONKS价格...');
+      
+      // API请求参数
+      const params = {
+        token_in_address: SOL_ADDRESS,
+        token_out_address: STONKS_ADDRESS,
+        in_amount: '1000000', // 0.001 SOL
+        from_address: '3GgDt5NTx37uNzDBJ8UwFy9CHBKPzUDdiWr3ymUFH3ZD', // 任意Solana地址
+        slippage: 0.5
+      };
+      
+      // 获取SOL价格（USD）
+      const coingeckoApiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd';
+      const solanaResponse = await axios.get(coingeckoApiUrl, {
         headers: {
           'Accept': 'application/json',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         },
-        timeout: 5000 // 设置超时为5秒
+        timeout: 5000
       });
       
-      // 检查响应状态
-      if (response.status === 200 && response.data) {
-        // 解析价格（假设API返回格式为 { price: 0.033406 }）
-        const price = parseFloat(response.data.price);
+      if (!solanaResponse.data || !solanaResponse.data.solana || !solanaResponse.data.solana.usd) {
+        throw new Error('无法获取SOL/USD价格');
+      }
+      
+      const solUsdPrice = solanaResponse.data.solana.usd;
+      console.log(`获取SOL价格成功: ${solUsdPrice} USD`);
+      
+      // 使用交易路由API获取STONKS实时价格
+      const routeResponse = await axios.get(gmgnRouterApiUrl, {
+        params: params,
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Referer': 'https://gmgn.ai/sol',
+          'Origin': 'https://gmgn.ai'
+        },
+        timeout: 8000
+      });
+      
+      if (routeResponse.status === 200 && routeResponse.data && routeResponse.data.success) {
+        const outAmount = parseFloat(routeResponse.data.data.out_amount);
+        // 计算价格：0.001 SOL可以换到多少STONKS
+        const priceInSol = 1000000 / outAmount; // SOL/STONKS比率
         
-        // 确保价格是有效的数字
-        if (!isNaN(price) && price > 0) {
-          console.log(`从GMGN平台获取实时STONKS价格成功: ${price} USD`);
-          return price;
-        } else {
-          throw new Error('GMGN平台返回了无效的价格数据');
-        }
+        // 换算成USD价格
+        const priceInUsd = parseFloat((priceInSol * solUsdPrice).toFixed(6));
+        
+        console.log(`GMGN平台上STONKS实时价格: ${priceInUsd} USD (${priceInSol} SOL)`);
+        return priceInUsd;
       } else {
-        throw new Error(`GMGN API返回非200状态码: ${response.status}`);
+        throw new Error('GMGN交易API响应无效');
       }
     } catch (error) {
       console.error("从GMGN平台获取价格失败:", error);
       
-      // 如果无法获取实时价格，尝试使用备用API
       try {
-        // 尝试从GMGN的备用API获取价格
-        const backupApiUrl = 'https://gmgn.ai/api/v1/token/FFupdL0y_6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump/price';
+        // 尝试使用CoinGecko直接获取STONKS价格
+        const coinGeckoApiUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=stonks&per_page=1';
         
-        console.log('尝试从GMGN备用API获取STONKS价格...');
+        console.log('尝试从CoinGecko API获取STONKS价格...');
         
-        const backupResponse = await axios.get(backupApiUrl, {
+        const cgResponse = await axios.get(coinGeckoApiUrl, {
           headers: {
             'Accept': 'application/json',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -822,20 +852,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timeout: 5000
         });
         
-        if (backupResponse.status === 200 && backupResponse.data) {
-          const backupPrice = parseFloat(backupResponse.data.price);
+        if (cgResponse.status === 200 && cgResponse.data && cgResponse.data.length > 0) {
+          const price = cgResponse.data[0].current_price;
           
-          if (!isNaN(backupPrice) && backupPrice > 0) {
-            console.log(`从GMGN备用API获取STONKS价格成功: ${backupPrice} USD`);
-            return backupPrice;
+          if (price && !isNaN(price) && price > 0) {
+            console.log(`从CoinGecko获取STONKS价格成功: ${price} USD`);
+            return price;
           }
         }
       } catch (backupError) {
-        console.error("从GMGN备用API获取价格也失败:", backupError);
+        console.error("从CoinGecko获取STONKS价格失败:", backupError);
       }
       
-      // 所有API调用失败，返回GMGN平台的精确价格
-      console.log(`无法获取实时价格，使用GMGN平台上的基准价格: 0.033406 USD`);
+      // 所有API调用失败时使用COINGECKO_API_KEY访问高级API
+      if (process.env.COINGECKO_API_KEY) {
+        try {
+          const proApiUrl = `https://pro-api.coingecko.com/api/v3/coins/stonks/market_chart?vs_currency=usd&days=1&interval=hourly&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
+          
+          console.log('尝试使用CoinGecko Pro API获取STONKS价格...');
+          
+          const proResponse = await axios.get(proApiUrl, {
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            },
+            timeout: 5000
+          });
+          
+          if (proResponse.status === 200 && proResponse.data && proResponse.data.prices && proResponse.data.prices.length > 0) {
+            // 使用最新价格
+            const latestPrice = proResponse.data.prices[proResponse.data.prices.length - 1][1];
+            console.log(`从CoinGecko Pro API获取STONKS价格成功: ${latestPrice} USD`);
+            return latestPrice;
+          }
+        } catch (proError) {
+          console.error("从CoinGecko Pro API获取STONKS价格失败:", proError);
+        }
+      }
+      
+      // 所有API调用失败，返回GMGN平台上的基准价格
+      console.log(`所有API调用失败，使用GMGN平台基准价格: 0.033406 USD`);
       return 0.033406; // 使用GMGN平台上显示的精确价格作为最后的备用方案
     }
   }
