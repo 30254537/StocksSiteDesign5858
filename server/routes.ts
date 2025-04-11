@@ -1592,6 +1592,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('[Cron] 同步 Telegram 消息失败:', error);
     }
   });
+  
+  // 在应用启动时立即同步一次 Telegram 消息
+  (async () => {
+    try {
+      console.log('初始化: 开始获取 Telegram 消息...');
+      const messages = await telegramService.fetchAndStoreMessages();
+      console.log(`初始化: 成功同步 ${messages.length} 条 Telegram 消息`);
+    } catch (error) {
+      console.error('初始化: 同步 Telegram 消息失败:', error);
+    }
+  })();
 
   const httpServer = createServer(app);
   return httpServer;
