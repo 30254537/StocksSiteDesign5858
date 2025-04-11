@@ -210,11 +210,32 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   return (
     <div className="space-y-5">
       {showTitle && (
-        <div className="flex items-center space-x-2 mb-2">
-          <FaBell className="text-yellow-400 text-xl" />
-          <h3 className="text-lg font-medium text-teal-400">
-            {language === 'zh' ? '金狗监测' : 'Golden Dog'}
-          </h3>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-2">
+            <FaBell className="text-yellow-400 text-xl" />
+            <h3 className="text-lg font-medium text-teal-400">
+              {language === 'zh' ? '金狗监测' : 'Golden Dog'}
+            </h3>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="text-xs h-8 px-3 bg-gray-800/60 border-teal-800 hover:bg-gray-800 hover:text-teal-400"
+            onClick={() => syncMutation.mutate()}
+            disabled={isSyncing || syncMutation.isPending}
+          >
+            {(isSyncing || syncMutation.isPending) ? (
+              <>
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                {language === 'zh' ? '同步中...' : 'Syncing...'}
+              </>
+            ) : (
+              <>
+                <FaSync className="mr-1 h-3 w-3" />
+                {language === 'zh' ? '刷新消息' : 'Refresh'}
+              </>
+            )}
+          </Button>
         </div>
       )}
       

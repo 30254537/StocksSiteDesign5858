@@ -1565,6 +1565,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // 普通用户也可以使用的消息同步端点 - 不需要管理员权限
+  app.post('/api/sync-telegram-messages', async (req, res) => {
+    try {
+      console.log('用户触发Telegram消息同步...');
+      const messages = await telegramService.fetchAndStoreMessages();
+      console.log(`成功同步 ${messages.length} 条Telegram消息`);
+      res.json({ 
+        success: true, 
+        message: `成功同步 ${messages.length} 条消息`,
+        count: messages.length
+      });
+    } catch (error) {
+      console.error('用户同步Telegram消息失败:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: '同步Telegram消息失败',
+        message: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
 
   // 管理 Telegram 消息的显示状态（管理员权限）
   app.patch('/api/telegram-messages/:id/toggle-display', requireAdmin, async (req, res) => {
