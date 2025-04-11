@@ -161,7 +161,7 @@ export default function Header() {
                     }`}
                     onClick={scrollToTop}
                   >
-                    TG最新推送
+                    {language === 'zh' ? 'TG最新推送' : 'TG Latest Posts'}
                   </Link>
                   
                   <a 
