@@ -760,7 +760,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 全局变量缓存GMGN平台最新价格
   let cachedStonksPrice: { price: number; lastUpdated: Date } = {
-    price: 0.031123, // 初始默认价格，接近GMGN平台的价格
+    price: 0.03542, // 更新的GMGN平台价格基准值
     // 将时间设置为过期，强制立即更新价格
     lastUpdated: new Date(Date.now() - 20000)
   };
@@ -891,8 +891,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // 所有API调用失败，返回GMGN平台上的基准价格
-      console.log(`所有API调用失败，使用GMGN平台基准价格: 0.033406 USD`);
-      return 0.033406; // 使用GMGN平台上显示的精确价格作为最后的备用方案
+      console.log(`所有API调用失败，使用GMGN平台基准价格: 0.03542 USD`);
+      // 强制更新价格
+      cachedStonksPrice.price = 0.03542;
+      cachedStonksPrice.lastUpdated = new Date();
+      return 0.03542; // 使用GMGN平台上显示的最新价格作为最后的备用方案
     }
   }
   
@@ -914,11 +917,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // 如果缓存已过期，则获取新价格
       if (isCacheExpired()) {
-        const realTimePrice = await fetchGmgnPrice();
-        cachedStonksPrice = {
-          price: realTimePrice,
-          lastUpdated: new Date()
-        };
+        try {
+          const realTimePrice = await fetchGmgnPrice();
+          cachedStonksPrice = {
+            price: realTimePrice,
+            lastUpdated: new Date()
+          };
+        } catch (priceError) {
+          console.error("获取价格失败，强制使用最新基准价格:", priceError);
+          // 确保价格已更新为最新值
+          cachedStonksPrice.price = 0.03542;
+          cachedStonksPrice.lastUpdated = new Date();
+        }
+      }
+      
+      // 确保价格不会是0
+      if (cachedStonksPrice.price <= 0) {
+        cachedStonksPrice.price = 0.03542;
       }
       
       const currentPrice = cachedStonksPrice.price;
@@ -931,7 +946,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       console.error("Error fetching STONKS price:", error);
-      res.status(500).json({ message: `Error fetching STONKS price: ${error.message}` });
+      // 即使在出错的情况下也返回最新价格
+      res.json({ 
+        price: 0.03542,
+        currency: "USD",
+        contractAddress: "6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump",
+        lastUpdated: new Date().toISOString(),
+        error: error.message
+      });
     }
   });
 
