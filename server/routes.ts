@@ -2,7 +2,7 @@ import type { Express, Request, Response } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema, insertMusicTrackSchema } from "@shared/schema";
+import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema, insertMusicTrackSchema, InsertCryptoTweet } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import * as crypto from "crypto";
