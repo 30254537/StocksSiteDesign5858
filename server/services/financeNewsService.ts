@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { db } from '../db';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, or, and } from 'drizzle-orm';
 import { telegramMessages } from '@shared/schema';
 
 // 金色财经快讯页面URL
@@ -27,7 +27,7 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
     const newsItems: any[] = [];
 
     // 金色财经的快讯通常在.content-box .flash-list下
-    $('.flash-item').each((index, element) => {
+    $('.flash-item').each((index: number, element: any) => {
       if (index >= limit) return false;
 
       const timeElement = $(element).find('.flash-item-time');
@@ -82,7 +82,7 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
     const newsItems: any[] = [];
 
     // 火星财经快讯通常在特定的列表容器中
-    $('.express_content_list .express_item').each((index, element) => {
+    $('.express_content_list .express_item').each((index: number, element: any) => {
       if (index >= limit) return false;
 
       const timeElement = $(element).find('.time');
@@ -141,10 +141,14 @@ export async function fetchAndStoreFinanceNews(limit: number = 10): Promise<any[
     // 获取所有现有的快讯ID
     const existingMessages = await db.select({ messageId: telegramMessages.messageId })
       .from(telegramMessages)
-      .where(eq(telegramMessages.sender, '金色财经'))
-      .or(eq(telegramMessages.sender, '火星财经'));
+      .where(
+        or(
+          eq(telegramMessages.sender, '金色财经'),
+          eq(telegramMessages.sender, '火星财经')
+        )
+      );
     
-    const existingMessageIds = new Set(existingMessages.map(m => m.messageId));
+    const existingMessageIds = new Set(existingMessages.map((m: {messageId: number | string}) => String(m.messageId)));
     
     // 只插入新的快讯
     const newMessages = allNews.filter(news => !existingMessageIds.has(news.messageId));
@@ -158,8 +162,12 @@ export async function fetchAndStoreFinanceNews(limit: number = 10): Promise<any[
     
     // 清空现有的快讯记录（可选，取决于是否要保留历史记录）
     await db.delete(telegramMessages)
-      .where(eq(telegramMessages.sender, '金色财经'))
-      .or(eq(telegramMessages.sender, '火星财经'));
+      .where(
+        or(
+          eq(telegramMessages.sender, '金色财经'),
+          eq(telegramMessages.sender, '火星财经')
+        )
+      );
     
     // 插入新数据
     const insertedMessages = await db.insert(telegramMessages)
@@ -182,10 +190,14 @@ export async function getLatestFinanceNews(limit: number = 10): Promise<any[]> {
   try {
     const latestMessages = await db.select()
       .from(telegramMessages)
-      .where(eq(telegramMessages.isDisplayed, true))
-      .and(
-        eq(telegramMessages.sender, '金色财经')
-        .or(eq(telegramMessages.sender, '火星财经'))
+      .where(
+        and(
+          eq(telegramMessages.isDisplayed, true),
+          or(
+            eq(telegramMessages.sender, '金色财经'),
+            eq(telegramMessages.sender, '火星财经')
+          )
+        )
       )
       .orderBy(desc(telegramMessages.createdAt))
       .limit(limit);
