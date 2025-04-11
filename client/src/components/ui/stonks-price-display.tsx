@@ -1,35 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStonksPrice } from '@/contexts/StonksPriceContext';
 import { formatCurrency } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // STONKS价格显示组件 - 简洁模式，用于顶部导航栏
 export function StonksPriceIndicator() {
   const { currentPrice, contractAddress, loading, error } = useStonksPrice();
   const { t } = useLanguage();
+  const [prevPrice, setPrevPrice] = useState(currentPrice);
+  const [priceDirection, setPriceDirection] = useState<'up' | 'down' | null>(null);
+  const priceRef = useRef(currentPrice);
 
-  if (loading) {
+  // 监测价格变化并设置方向
+  useEffect(() => {
+    if (currentPrice !== priceRef.current) {
+      setPriceDirection(currentPrice > priceRef.current ? 'up' : 'down');
+      setPrevPrice(priceRef.current);
+      priceRef.current = currentPrice;
+      
+      // 0.5秒后重置方向
+      const timer = setTimeout(() => {
+        setPriceDirection(null);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentPrice]);
+
+  // 即使在加载中也显示价格，如果以前有价格
+  // 如果是全新加载（没有缓存的价格），则短暂显示加载状态
+  if (loading && prevPrice === 0) {
     return (
-      <div className="flex items-center text-sm">
-        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-        <span>{t('stonksPrice.loading')}</span>
+      <div className="flex items-center text-sm font-mono group relative h-4">
+        <span className="text-primary mr-1">$STONKS:</span>
+        <span className="text-[#00ffcc] font-semibold">---.--</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-sm text-red-500">
-        {t('stonksPrice.error')}
+      <div className="flex items-center text-sm font-mono group relative">
+        <span className="text-primary mr-1">$STONKS:</span>
+        <span className="text-[#00ffcc] font-semibold opacity-70">{formatCurrency(prevPrice || 0.032834)}</span>
       </div>
     );
   }
 
+  // 价格数字翻动动画
   return (
-    <div className="flex items-center text-sm font-mono group relative">
+    <div className="flex items-center text-sm font-mono group relative h-4">
       <span className="text-primary mr-1">$STONKS:</span>
-      <span className="font-semibold">{formatCurrency(currentPrice)}</span>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentPrice}
+          initial={{ 
+            y: priceDirection === 'up' ? 10 : (priceDirection === 'down' ? -10 : 0),
+            opacity: 0.5
+          }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ 
+            y: priceDirection === 'up' ? -10 : (priceDirection === 'down' ? 10 : 0),
+            opacity: 0,
+            position: 'absolute'
+          }}
+          transition={{ duration: 0.3 }}
+          className={`font-semibold text-[#00ffcc] ${
+            priceDirection === 'up' ? 'text-[#00ffcc]' : 
+            priceDirection === 'down' ? 'text-[#ffaa00]' : 'text-[#00ffcc]'
+          }`}
+        >
+          {formatCurrency(currentPrice)}
+        </motion.div>
+      </AnimatePresence>
       
       {/* 悬停显示合约地址 */}
       <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-slate-900 p-2 rounded shadow-lg z-50 text-xs border border-accent/30 max-w-[300px] break-all">
