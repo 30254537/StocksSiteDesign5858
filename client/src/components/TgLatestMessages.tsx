@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FaTelegram, FaBell, FaMoneyBillWave, FaFileContract, FaChartBar, FaClock, FaUsers, FaExchangeAlt, FaSearchDollar } from "react-icons/fa";
+import { FaTelegram, FaBell, FaMoneyBillWave, FaFileContract, FaChartBar, FaClock, FaUsers, FaExchangeAlt, FaSearchDollar, FaExclamationTriangle, FaChartLine } from "react-icons/fa";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';

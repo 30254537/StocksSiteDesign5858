@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CryptoTweets from '@/components/CryptoTweets';
 import TelegramFeed from '@/components/TelegramFeed';
+import TgLatestMessages from '@/components/TgLatestMessages';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SiDiscord } from "react-icons/si";
 import { FaTwitter, FaTelegram } from "react-icons/fa";
@@ -90,7 +91,26 @@ const CommunityPage: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="telegram">
-            <TelegramFeed />
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-xl font-semibold text-teal-400 flex items-center">
+                  <FaTelegram className="mr-2 text-blue-400" />
+                  {language === 'zh' ? '金狗监测' : 'Golden Dog Monitoring'}
+                </h3>
+                <a 
+                  href="/telegram-messages" 
+                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline flex items-center"
+                >
+                  {language === 'zh' ? '查看所有金狗监测提醒' : 'View all Golden Dog alerts'} →
+                </a>
+              </div>
+              <p className="text-gray-300 text-sm mb-4">
+                {language === 'zh' 
+                  ? '来自GoldDogAlpha频道的最新代币监测信息，每分钟自动同步' 
+                  : 'Latest token monitoring alerts from GoldDogAlpha channel, auto-synced every minute'}
+              </p>
+            </div>
+            <TgLatestMessages limit={3} />
           </TabsContent>
         </Tabs>
         
@@ -134,6 +154,14 @@ const CommunityPage: React.FC = () => {
             >
               <SiDiscord className="mr-2" />
               Discord
+            </a>
+            
+            <a 
+              href="/telegram-messages" 
+              className="py-2 px-6 bg-yellow-600 rounded-md hover:bg-yellow-700 transition-colors flex items-center"
+            >
+              <FaTelegram className="mr-2" />
+              {language === 'zh' ? '金狗监测' : 'Golden Dog Alerts'}
             </a>
           </div>
         </div>
