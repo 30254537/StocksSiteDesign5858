@@ -667,6 +667,51 @@ export class DatabaseStorage implements IStorage {
       return false;
     }
   }
+  
+  // Telegram Messages methods
+  async getTelegramMessages(limit: number = 20): Promise<TelegramMessage[]> {
+    return await db.select().from(telegramMessages)
+      .orderBy(desc(telegramMessages.date))
+      .limit(limit);
+  }
+  
+  async getTelegramMessageById(id: number): Promise<TelegramMessage | undefined> {
+    const [message] = await db.select().from(telegramMessages).where(eq(telegramMessages.id, id));
+    return message;
+  }
+  
+  async getTelegramMessageByMessageId(messageId: number): Promise<TelegramMessage | undefined> {
+    const [message] = await db.select().from(telegramMessages)
+      .where(eq(telegramMessages.messageId, messageId));
+    return message;
+  }
+  
+  async createTelegramMessage(message: InsertTelegramMessage): Promise<TelegramMessage> {
+    const [newMessage] = await db.insert(telegramMessages).values(message).returning();
+    return newMessage;
+  }
+  
+  async updateTelegramMessage(id: number, data: Partial<TelegramMessage>): Promise<TelegramMessage | undefined> {
+    const [message] = await db.update(telegramMessages)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(telegramMessages.id, id))
+      .returning();
+    
+    return message;
+  }
+  
+  async deleteTelegramMessage(id: number): Promise<boolean> {
+    try {
+      await db.delete(telegramMessages).where(eq(telegramMessages.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除Telegram消息时出错:', error);
+      return false;
+    }
+  }
 }
 
 // Initialize with sample data

@@ -76,7 +76,7 @@ class TelegramService {
             sender,
             channelTitle,
             mediaUrl,
-            date,
+            date: new Date(date), // 转换为日期对象
             isDisplayed: true // 默认显示所有消息
           });
         } catch (error) {
@@ -132,7 +132,10 @@ class TelegramService {
       
       // 按消息时间排序（从新到旧）
       newMessages.sort((a, b) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        // 确保 date 是有效的 Date 对象或能转换为 Date 的值
+        const dateA = a.date instanceof Date ? a.date : new Date(a.date || Date.now());
+        const dateB = b.date instanceof Date ? b.date : new Date(b.date || Date.now());
+        return dateB.getTime() - dateA.getTime();
       });
       
       // 将新消息插入数据库
