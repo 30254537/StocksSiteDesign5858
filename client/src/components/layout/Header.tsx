@@ -151,7 +151,7 @@ export default function Header() {
                     }`}
                     onClick={scrollToTop}
                   >
-                    {language === 'zh' ? '金狗监测提醒' : 'Golden Dog Alerts'}
+                    {language === 'zh' ? '金狗监测' : 'Golden Dog'}
                   </Link>
                   
                   <a 

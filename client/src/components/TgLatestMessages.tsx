@@ -144,7 +144,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
         <div className="flex items-center space-x-2 mb-2">
           <FaBell className="text-yellow-400 text-xl" />
           <h3 className="text-lg font-medium text-teal-400">
-            {language === 'zh' ? '金狗监测提醒' : 'Golden Dog Monitoring Alerts'}
+            {language === 'zh' ? '金狗监测' : 'Golden Dog'}
           </h3>
         </div>
       )}

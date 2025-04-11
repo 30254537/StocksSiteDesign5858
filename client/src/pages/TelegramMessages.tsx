@@ -65,7 +65,7 @@ const TelegramMessages: React.FC = () => {
         <div className="flex items-center gap-2">
           <FaTelegram className="text-2xl text-blue-400" />
           <PageHeaderHeading className="text-teal-400">
-            {language === 'zh' ? '金狗监测提醒' : 'Golden Dog Monitoring Alerts'}
+            {language === 'zh' ? '金狗监测' : 'Golden Dog'}
           </PageHeaderHeading>
         </div>
         <div className="flex justify-between items-center flex-wrap gap-2">
