@@ -1708,10 +1708,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .orderBy(desc(telegramMessages.date))
         .limit(limit);
       
-      res.json({ data: messages });
+      // 如果没有消息，尝试立即同步获取 
+      if (messages.length === 0) {
+        console.log('没有找到消息，尝试立即同步获取实时数据...');
+        await telegramService.fetchAndStoreMessages();
+        
+        // 再次尝试获取消息
+        const freshMessages = await db.select()
+          .from(telegramMessages)
+          .where(eq(telegramMessages.isDisplayed, true))
+          .orderBy(desc(telegramMessages.date))
+          .limit(limit);
+        
+        res.json({ data: freshMessages });
+      } else {
+        res.json({ data: messages });
+      }
     } catch (error) {
       console.error('获取 Telegram 消息失败:', error);
       res.status(500).json({ error: '获取 Telegram 消息失败' });
+    }
+  });
+  
+  // 手动触发加密快讯同步（开发测试用）
+  app.get('/api/sync-crypto-news', async (req, res) => {
+    try {
+      console.log('手动触发加密快讯同步...');
+      const messages = await telegramService.fetchAndStoreMessages();
+      res.json({ 
+        success: true, 
+        message: `成功同步 ${messages.length} 条加密快讯`,
+        count: messages.length 
+      });
+    } catch (error) {
+      console.error('手动同步加密快讯失败:', error);
+      res.status(500).json({ error: 'Failed to sync crypto news' });
     }
   });
   
