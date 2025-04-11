@@ -18,27 +18,54 @@ const FlipDigit = ({
   // 只有当数字发生变化时才应用动画
   const hasChanged = digit !== prevDigit;
   
-  if (!hasChanged) {
-    return <span>{digit}</span>;
+  // 特殊处理点号、美元符等非数字字符，避免它们不必要的翻动
+  const isSpecialChar = !(/^\d$/.test(digit));
+  
+  // 容器样式 - 固定宽度确保所有数字对齐
+  const containerStyle = { 
+    width: isSpecialChar ? '0.5em' : '0.65em', 
+    height: '1.5em', 
+    textAlign: 'center' as const, 
+    display: 'inline-flex', 
+    justifyContent: 'center',
+    alignItems: 'center'
+  };
+  
+  // 如果是特殊字符或未变化，就不执行动画
+  if (isSpecialChar || !hasChanged) {
+    return (
+      <span className="inline-flex justify-center items-center" style={containerStyle}>
+        <span>{digit}</span>
+      </span>
+    );
   }
   
+  // 对数字执行平滑的翻动动画
   return (
-    <span className="inline-block relative overflow-hidden" style={{ width: '0.6em', height: '1.2em' }}>
+    <span className="inline-flex relative overflow-hidden justify-center items-center" style={containerStyle}>
       <AnimatePresence mode="wait">
         <motion.span
           key={digit}
           initial={{ 
-            y: direction === 'up' ? 16 : (direction === 'down' ? -16 : 0),
+            y: direction === 'up' ? 20 : -20,
             opacity: 0
           }}
-          animate={{ y: 0, opacity: 1 }}
+          animate={{ 
+            y: 0, 
+            opacity: 1 
+          }}
           exit={{ 
-            y: direction === 'up' ? -16 : (direction === 'down' ? 16 : 0),
+            y: direction === 'up' ? -20 : 20,
             opacity: 0,
             position: 'absolute'
           }}
-          transition={{ duration: 0.3 }}
-          className="inline-block"
+          transition={{ 
+            type: "spring", 
+            stiffness: 400, 
+            damping: 20, 
+            duration: 0.3 
+          }}
+          className="inline-flex absolute"
         >
           {digit}
         </motion.span>
