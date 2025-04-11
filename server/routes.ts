@@ -1487,7 +1487,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('添加测试推文失败:', error);
       res.status(500).json({ error: '添加测试推文失败' });
     }
-  });
+  }
   
   // 初始化推文翻译服务 (每4小时翻译一次未翻译的推文)
   initTweetTranslationScheduler('0 */4 * * *');
