@@ -144,6 +144,16 @@ export default function Header() {
                     {t("nav.products")}
                   </a>
                   
+                  <Link 
+                    href="/telegram-messages" 
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                      location === "/telegram-messages" ? "text-accent" : "text-white hover:text-accent"
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    {language === 'zh' ? '金狗监测' : 'Golden Dog'}
+                  </Link>
+                  
                   <a 
                     href="https://t.me/STONKSOPEN" 
                     target="_blank"

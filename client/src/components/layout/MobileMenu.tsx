@@ -126,6 +126,18 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </li>
 
             <li>
+              <Link 
+                href="/telegram-messages" 
+                className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
+                onClick={() => {
+                  scrollToTop();
+                  onClose();
+                }}
+              >
+                {language === 'zh' ? '金狗监测' : 'Golden Dog'}
+              </Link>
+            </li>
+            <li>
               <a 
                 href="https://t.me/STONKSOPEN" 
                 target="_blank"
