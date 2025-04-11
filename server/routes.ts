@@ -1775,7 +1775,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 手动触发获取新消息的 API 端点（管理员权限）
   app.post('/api/telegram-messages/sync', requireAdmin, async (req, res) => {
     try {
-      const messages = await telegramService.fetchAndStoreMessages();
+      // 检查请求中是否指定了日期（4月11日）
+      const { date } = req.body;
+      let messages;
+      
+      if (date === '2025-04-11') {
+        // 获取4月11日的所有消息
+        const startDate = new Date('2025-04-11T00:00:00Z');
+        const endDate = new Date('2025-04-11T23:59:59Z');
+        
+        // 先检查数据库中是否已经有4月11日的消息
+        const existingMessages = await db.select()
+          .from(telegramMessages)
+          .where(
+            and(
+              telegramMessages.date >= startDate.toISOString(),
+              telegramMessages.date <= endDate.toISOString()
+            )
+          )
+          .orderBy(desc(telegramMessages.date));
+        
+        if (existingMessages.length > 0) {
+          console.log(`数据库中已有 ${existingMessages.length} 条4月11日的消息`);
+          
+          // 更新这些消息为可见状态
+          for (const msg of existingMessages) {
+            await db.update(telegramMessages)
+              .set({ isDisplayed: true })
+              .where(eq(telegramMessages.id, msg.id));
+          }
+          
+          messages = existingMessages;
+        } else {
+          // 如果没有，则尝试从服务中获取
+          messages = await telegramService.fetchAndStoreMessages({ specificDate: '2025-04-11' });
+        }
+      } else {
+        // 正常获取最新消息
+        messages = await telegramService.fetchAndStoreMessages();
+      }
+      
       res.json({ 
         success: true,
         message: `成功同步 ${messages.length} 条 Telegram 消息`,
@@ -1794,8 +1833,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/sync-telegram-messages', async (req, res) => {
     try {
       console.log('用户触发Telegram消息同步...');
-      const messages = await telegramService.fetchAndStoreMessages();
-      console.log(`成功同步 ${messages.length} 条Telegram消息`);
+      
+      // 检查请求中是否指定了特定日期
+      const { date } = req.body;
+      let messages;
+      
+      if (date === '2025-04-11') {
+        console.log('用户请求同步2025年4月11日的消息...');
+        
+        // 获取2025年4月11日的消息
+        const startDate = new Date('2025-04-11T00:00:00Z');
+        const endDate = new Date('2025-04-11T23:59:59Z');
+        
+        // 查询数据库中是否已有相关消息
+        const existingMessages = await db.select()
+          .from(telegramMessages)
+          .where(
+            and(
+              telegramMessages.date >= startDate.toISOString(),
+              telegramMessages.date <= endDate.toISOString()
+            )
+          )
+          .orderBy(desc(telegramMessages.date));
+        
+        if (existingMessages.length > 0) {
+          // 确保所有消息都被设置为显示状态
+          for (const msg of existingMessages) {
+            await db.update(telegramMessages)
+              .set({ isDisplayed: true })
+              .where(eq(telegramMessages.id, msg.id));
+          }
+          messages = existingMessages;
+          console.log(`数据库已有 ${messages.length} 条4月11日的消息，已全部设为可见`);
+        } else {
+          // 尝试从服务中获取4月11日的消息
+          messages = await telegramService.fetchAndStoreMessages({ specificDate: '2025-04-11' });
+          console.log(`新获取 ${messages.length} 条4月11日的消息`);
+        }
+      } else {
+        // 正常获取最新消息
+        messages = await telegramService.fetchAndStoreMessages();
+        console.log(`成功同步 ${messages.length} 条最新Telegram消息`);
+      }
+      
       res.json({ 
         success: true, 
         message: `成功同步 ${messages.length} 条消息`,

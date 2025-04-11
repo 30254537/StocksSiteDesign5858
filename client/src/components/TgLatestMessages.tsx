@@ -12,51 +12,22 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from 'wouter';
 
-// 字符串相似度计算函数
+// 字符串相似度计算函数（使用Jaccard相似度）
 function calculateStringSimilarity(a: string, b: string): number {
-  if (a.length === 0 || b.length === 0) return 0;
+  if (!a || !b || a.length === 0 || b.length === 0) return 0;
   
-  // 将两个字符串转换为小写并去除所有非字母数字字符
-  const strA = a.toLowerCase().replace(/[^\w\s]/g, '');
-  const strB = b.toLowerCase().replace(/[^\w\s]/g, '');
+  // 将字符串转换为字符集合
+  const setA = new Set(a.toLowerCase().split(''));
+  const setB = new Set(b.toLowerCase().split(''));
   
-  // 如果字符串为空，返回0
-  if (strA.length === 0 || strB.length === 0) return 0;
+  // 计算交集大小
+  const intersection = [...setA].filter(char => setB.has(char)).length;
   
-  // 使用莱文斯坦距离（编辑距离）计算相似度
-  const matrix: number[][] = [];
+  // 计算并集大小
+  const union = setA.size + setB.size - intersection;
   
-  // 初始化矩阵
-  for (let i = 0; i <= strA.length; i++) {
-    matrix[i] = [i];
-  }
-  
-  for (let j = 0; j <= strB.length; j++) {
-    matrix[0][j] = j;
-  }
-  
-  // 填充矩阵
-  for (let i = 1; i <= strA.length; i++) {
-    for (let j = 1; j <= strB.length; j++) {
-      if (strA.charAt(i - 1) === strB.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1, // 替换
-          Math.min(
-            matrix[i][j - 1] + 1,   // 插入
-            matrix[i - 1][j] + 1    // 删除
-          )
-        );
-      }
-    }
-  }
-  
-  // 计算相似度得分 (1 - 编辑距离/最长字符串长度)
-  const maxLength = Math.max(strA.length, strB.length);
-  const distance = matrix[strA.length][strB.length];
-  
-  return 1 - distance / maxLength;
+  // 计算Jaccard相似度
+  return union === 0 ? 0 : intersection / union;
 }
 
 // 日期格式化
@@ -154,6 +125,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
   const { data: telegramData, isLoading, error } = useQuery<{ data: TelegramMessage[] }>({
     queryKey: ['/api/telegram-messages'],
     staleTime: 60 * 1000, // 1分钟
+    refetchInterval: 300 * 1000, // 每5分钟自动刷新一次
   });
   
   if (isLoading) {
@@ -352,7 +324,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                     <span className="text-gray-400">{formatMessageDate(message.date, language)}</span>
                   </div>
                   
-                  <h3 className="font-bold text-teal-400 text-base mb-3 group-hover:text-teal-300 transition-colors">
+                  <h3 className="font-bold text-lime-500 text-base mb-3 group-hover:text-lime-400 transition-colors">
                     {title}
                   </h3>
                   
