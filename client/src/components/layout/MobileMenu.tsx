@@ -134,7 +134,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   onClose();
                 }}
               >
-                {language === 'zh' ? '金狗监测' : 'Golden Dog'}
+                {language === 'zh' ? '加密快讯' : 'Crypto News'}
               </Link>
             </li>
             <li>
