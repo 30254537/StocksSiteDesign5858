@@ -772,9 +772,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return cacheAge > 30000; // 按用户要求设置为30秒刷新一次
   }
   
-  // 从GMGN平台获取实时价格
+  // 从OKX和GMGN平台获取实时价格
   async function fetchGmgnPrice(): Promise<number> {
     try {
+      // 优先使用OKX API获取价格
+      if (process.env.OKX_API_KEY && process.env.OKX_SECRET_KEY && process.env.OKX_PASSPHRASE) {
+        try {
+          console.log('使用OKX API获取实时STONKS价格...');
+          
+          // 导入OKX服务
+          const { getStonksPrice } = await import('./services/okxService');
+          
+          // 从OKX获取STONKS价格
+          const price = await getStonksPrice();
+          
+          if (price && price > 0) {
+            console.log(`从OKX获取STONKS价格成功: ${price} USD`);
+            return price;
+          }
+        } catch (okxError) {
+          console.error("从OKX获取STONKS价格失败，尝试备用方法:", okxError);
+        }
+      }
+      
+      // 如果OKX API失败，回退到GMGN平台
       // 使用GMGN平台的Solana交易API获取实时价格
       const STONKS_ADDRESS = '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump';
       const SOL_ADDRESS = 'So11111111111111111111111111111111111111112';

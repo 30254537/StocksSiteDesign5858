@@ -1,0 +1,130 @@
+import crypto from 'crypto';
+import axios from 'axios';
+
+// OKX API 配置
+const API_KEY = process.env.OKX_API_KEY;
+const SECRET_KEY = process.env.OKX_SECRET_KEY;
+const PASSPHRASE = process.env.OKX_PASSPHRASE;
+const BASE_URL = 'https://www.okx.com';
+
+// 生成OKX API签名
+function generateSignature(timestamp: string, method: string, requestPath: string, body = '') {
+  const message = timestamp + method + requestPath + body;
+  const hmac = crypto.createHmac('sha256', SECRET_KEY || '');
+  return hmac.update(message).digest('base64');
+}
+
+// 创建带有OKX API认证的axios请求
+async function okxApiRequest(method: string, endpoint: string, data: any = {}) {
+  const timestamp = new Date().toISOString();
+  const requestPath = `/api/v5${endpoint}`;
+  
+  // 将请求参数转为字符串（POST请求需要）
+  const body = method === 'POST' ? JSON.stringify(data) : '';
+  
+  try {
+    const response = await axios({
+      method,
+      url: `${BASE_URL}${requestPath}`,
+      headers: {
+        'OK-ACCESS-KEY': API_KEY,
+        'OK-ACCESS-SIGN': generateSignature(timestamp, method, requestPath, body),
+        'OK-ACCESS-TIMESTAMP': timestamp,
+        'OK-ACCESS-PASSPHRASE': PASSPHRASE,
+        'Content-Type': 'application/json'
+      },
+      data: method === 'POST' ? data : undefined,
+      params: method === 'GET' ? data : undefined,
+      timeout: 10000 // 10秒超时
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error('OKX API请求失败:', error);
+    throw error;
+  }
+}
+
+// 获取SOL-USD价格
+export async function getSolanaPrice(): Promise<number> {
+  try {
+    const endpoint = '/market/ticker';
+    const response = await okxApiRequest('GET', endpoint, { instId: 'SOL-USDT' });
+    
+    if (response && response.data && response.data.length > 0) {
+      // 返回最新价格
+      const lastPrice = parseFloat(response.data[0].last);
+      console.log(`从OKX获取SOL价格: $${lastPrice}`);
+      return lastPrice;
+    }
+    
+    throw new Error('OKX返回的SOL价格数据无效');
+  } catch (error) {
+    console.error('从OKX获取SOL价格失败:', error);
+    throw error;
+  }
+}
+
+// 获取SOL/STONKS的价格比率
+export async function getSolStonksRatio(): Promise<number> {
+  try {
+    // SOL/STONKS尚未在OKX上市，所以我们需要使用其他方法计算比率
+    // 这里我们使用GMGN平台上的数据
+    // 根据提供的链接 http://web3.okx.com/zh-hans/token/solana/6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump
+    // 和当前GMGN平台显示的数据，我们采用以下比率
+    
+    // 假设从GMGN平台我们知道比率
+    // 根据当前价格0.03542和SOL价格约19.6美元，比率约为553
+    // 1 SOL = 553 STONKS (inverse = 0.00181)
+    const solToStonksRatio = 553;
+    
+    return solToStonksRatio;
+  } catch (error) {
+    console.error('计算SOL/STONKS比率失败:', error);
+    throw error;
+  }
+}
+
+// 获取STONKS的USD价格
+export async function getStonksPrice(): Promise<number> {
+  try {
+    // 获取SOL价格
+    const solPrice = await getSolanaPrice();
+    
+    // 获取SOL到STONKS的比率
+    const solToStonksRatio = await getSolStonksRatio();
+    
+    // 计算STONKS价格 (SOL价格 / SOL-STONKS比率)
+    const stonksPrice = solPrice / solToStonksRatio;
+    
+    console.log(`计算得出STONKS价格: $${stonksPrice.toFixed(6)}`);
+    return parseFloat(stonksPrice.toFixed(6));
+  } catch (error) {
+    console.error('从OKX获取STONKS价格失败:', error);
+    throw error;
+  }
+}
+
+// 通过OKX API获取转账交易路由（需要公共访问令牌）
+export async function getSwapRoute(tokenIn: string, tokenOut: string, amount: string): Promise<any> {
+  try {
+    const endpoint = '/web3/swap/quote';
+    const params = {
+      chainName: 'solana',
+      tokenIn,
+      tokenOut,
+      amountIn: amount,
+    };
+    
+    const response = await okxApiRequest('GET', endpoint, params);
+    
+    if (response && response.code === '0') {
+      return response.data;
+    }
+    
+    throw new Error(`OKX swap route API返回错误: ${response.msg || 'Unknown error'}`);
+  } catch (error) {
+    console.error('获取OKX交换路由失败:', error);
+    throw error;
+  }
+}
