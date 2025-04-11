@@ -1619,26 +1619,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: '添加金狗监测测试消息失败' });
     }
   });
+  
+  // 添加手动同步金狗监测提醒的API端点
+  app.post('/api/sync-telegram-messages', async (req, res) => {
+    try {
+      console.log('开始手动同步金狗监测提醒消息...');
+      const messages = await telegramService.fetchAndStoreMessages();
+      
+      res.status(200).json({
+        success: true,
+        message: `已同步 ${messages.length} 条金狗监测提醒消息`,
+        data: messages
+      });
+    } catch (error) {
+      console.error('手动同步金狗监测提醒消息失败:', error);
+      res.status(500).json({ error: '同步金狗监测提醒消息失败' });
+    }
+  });
 
-  // 添加每小时定时获取 Telegram 消息的任务
-  cron.schedule('0 * * * *', async () => {
-    console.log('[Cron] 开始同步 Telegram 消息...');
+  // 设置高频定时任务，每1分钟获取一次金狗监测提醒消息，确保第一时间同步
+  cron.schedule('* * * * *', async () => {
+    console.log('[Cron] 开始同步金狗监测提醒消息...');
     try {
       const messages = await telegramService.fetchAndStoreMessages();
-      console.log(`[Cron] 成功同步 ${messages.length} 条 Telegram 消息`);
+      console.log(`[Cron] 成功同步 ${messages.length} 条金狗监测提醒消息`);
     } catch (error) {
-      console.error('[Cron] 同步 Telegram 消息失败:', error);
+      console.error('[Cron] 同步金狗监测提醒消息失败:', error);
     }
   });
   
-  // 在应用启动时立即同步一次 Telegram 消息
+  // 在应用启动时立即同步一次金狗监测提醒消息
   (async () => {
     try {
-      console.log('初始化: 开始获取 Telegram 消息...');
+      console.log('初始化: 开始获取金狗监测提醒消息...');
       const messages = await telegramService.fetchAndStoreMessages();
-      console.log(`初始化: 成功同步 ${messages.length} 条 Telegram 消息`);
+      console.log(`初始化: 成功同步 ${messages.length} 条金狗监测提醒消息`);
     } catch (error) {
-      console.error('初始化: 同步 Telegram 消息失败:', error);
+      console.error('初始化: 同步金狗监测提醒消息失败:', error);
     }
   })();
 

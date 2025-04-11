@@ -4,15 +4,22 @@ import { db } from '../db';
 import { telegramMessages, InsertTelegramMessage } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
+// 检查是否为金狗监测提醒格式
+function isGoldenDogFormat(text: string): boolean {
+  return text.includes("🔔 金狗监测提醒") ||
+         (text.includes("代币名称") && text.includes("合约地址"));
+}
+
 class TelegramService {
-  private channelUrl: string = 'https://t.me/s/chengzi_golden';
+  // 更新为精确的频道URL，针对金狗监测提醒消息
+  private channelUrl: string = 'https://t.me/s/chengzi_golden/6';
   
   /**
    * 从 Telegram 频道获取最新消息
    */
   async fetchMessages(): Promise<InsertTelegramMessage[]> {
     try {
-      console.log(`开始获取 ${this.channelUrl} 的最新消息...`);
+      console.log(`开始获取 ${this.channelUrl} 的最新金狗监测提醒消息...`);
       
       // 获取频道页面内容
       const response = await axios.get(this.channelUrl, {
@@ -27,7 +34,7 @@ class TelegramService {
       const document = dom.window.document;
       
       // 获取频道标题
-      const channelTitle = document.querySelector('.tgme_channel_info_header_title')?.textContent?.trim() || 'Telegram 频道';
+      const channelTitle = document.querySelector('.tgme_channel_info_header_title')?.textContent?.trim() || '金狗监测频道';
       
       // 获取所有消息容器
       const messageContainers = document.querySelectorAll('.tgme_widget_message');
@@ -51,11 +58,16 @@ class TelegramService {
           
           // 获取消息发送者
           const senderElement = container.querySelector('.tgme_widget_message_owner_name');
-          const sender = senderElement?.textContent?.trim() || channelTitle;
+          const sender = senderElement?.textContent?.trim() || '金狗监测';
           
           // 获取消息文本
           const textElement = container.querySelector('.tgme_widget_message_text');
           const text = textElement?.textContent?.trim() || '';
+          
+          // 过滤只保留金狗监测提醒格式的消息
+          if (!isGoldenDogFormat(text)) {
+            return;
+          }
           
           // 获取消息媒体 (如果有)
           const photoElement = container.querySelector('.tgme_widget_message_photo_wrap');
@@ -73,8 +85,8 @@ class TelegramService {
           messages.push({
             messageId,
             text,
-            sender,
-            channelTitle,
+            sender: '金狗监测', // 固定发送者为金狗监测
+            channelTitle: '金狗监测频道',
             mediaUrl,
             date: new Date(date), // 转换为日期对象
             isDisplayed: true // 默认显示所有消息
@@ -84,10 +96,10 @@ class TelegramService {
         }
       });
       
-      console.log(`成功解析 ${messages.length} 条消息`);
+      console.log(`成功解析 ${messages.length} 条金狗监测提醒消息`);
       return messages;
     } catch (error) {
-      console.error('获取 Telegram 消息失败:', error);
+      console.error('获取 Telegram 金狗监测提醒消息失败:', error);
       return [];
     }
   }
