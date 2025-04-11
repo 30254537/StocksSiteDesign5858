@@ -32,7 +32,7 @@ const handleProductsClick = (e: React.MouseEvent) => {
       const headerHeight = document.querySelector('header')?.offsetHeight || 0;
       
       // 计算正确的滚动位置，减去header高度
-      const scrollPosition = productsSection.offsetTop - headerHeight - 100;
+      const scrollPosition = productsSection.offsetTop - headerHeight - 20;
       
       // 使用平滑滚动
       window.scrollTo({
