@@ -1,148 +1,152 @@
 import axios from 'axios';
+import { JSDOM } from 'jsdom';
 import { db } from '../db';
-import { telegramMessages } from '@shared/schema';
+import { telegramMessages, InsertTelegramMessage } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-// Telegram API 基础 URL
-const TELEGRAM_API_BASE = 'https://api.telegram.org/bot';
-
-export interface TelegramMessage {
-  id: number;
-  text: string;
-  date: number; // Unix 时间戳
-  sender: string;
-  mediaUrl?: string;
-  channelTitle?: string;
-}
-
-export class TelegramService {
-  private botToken: string;
-  private channelUsername: string;
-  private lastUpdateId: number = 0;
+class TelegramService {
+  private channelUrl: string = 'https://t.me/s/chengzi_golden';
   
-  constructor(botToken: string, channelUsername: string) {
-    this.botToken = botToken;
-    // 确保频道用户名以 @ 开头
-    this.channelUsername = channelUsername.startsWith('@') ? channelUsername : `@${channelUsername}`;
-  }
-
   /**
-   * 获取频道的最新消息
+   * 从 Telegram 频道获取最新消息
    */
-  async getLatestMessages(limit: number = 10): Promise<TelegramMessage[]> {
+  async fetchMessages(): Promise<InsertTelegramMessage[]> {
     try {
-      // 从数据库获取消息
-      const messages = await db.select().from(telegramMessages)
-        .orderBy(telegramMessages.date)
-        .limit(limit);
+      console.log(`开始获取 ${this.channelUrl} 的最新消息...`);
       
-      return messages.map(msg => ({
-        id: msg.id,
-        text: msg.text,
-        date: new Date(msg.date).getTime() / 1000,
-        sender: msg.sender || '',
-        mediaUrl: msg.mediaUrl || undefined,
-        channelTitle: msg.channelTitle || undefined
-      }));
+      // 获取频道页面内容
+      const response = await axios.get(this.channelUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+        }
+      });
+      
+      // 解析 HTML
+      const dom = new JSDOM(response.data);
+      const document = dom.window.document;
+      
+      // 获取频道标题
+      const channelTitle = document.querySelector('.tgme_channel_info_header_title')?.textContent?.trim() || 'Telegram 频道';
+      
+      // 获取所有消息容器
+      const messageContainers = document.querySelectorAll('.tgme_widget_message');
+      console.log(`找到 ${messageContainers.length} 条消息`);
+      
+      const messages: InsertTelegramMessage[] = [];
+      
+      // 处理每条消息
+      messageContainers.forEach((container) => {
+        try {
+          // 获取消息 ID
+          const messageLink = container.getAttribute('data-post') || '';
+          const messageIdMatch = messageLink.match(/chengzi_golden\/(\d+)/);
+          if (!messageIdMatch) return;
+          
+          const messageId = parseInt(messageIdMatch[1]);
+          
+          // 获取消息日期
+          const dateElement = container.querySelector('.tgme_widget_message_date time');
+          const date = dateElement?.getAttribute('datetime') || new Date().toISOString();
+          
+          // 获取消息发送者
+          const senderElement = container.querySelector('.tgme_widget_message_owner_name');
+          const sender = senderElement?.textContent?.trim() || channelTitle;
+          
+          // 获取消息文本
+          const textElement = container.querySelector('.tgme_widget_message_text');
+          const text = textElement?.textContent?.trim() || '';
+          
+          // 获取消息媒体 (如果有)
+          const photoElement = container.querySelector('.tgme_widget_message_photo_wrap');
+          let mediaUrl = null;
+          
+          if (photoElement) {
+            const style = photoElement.getAttribute('style') || '';
+            const urlMatch = style.match(/background-image:url\('(.+?)'\)/);
+            if (urlMatch) {
+              mediaUrl = urlMatch[1];
+            }
+          }
+          
+          // 创建消息对象
+          messages.push({
+            messageId,
+            text,
+            sender,
+            channelTitle,
+            mediaUrl,
+            date,
+            isDisplayed: true // 默认显示所有消息
+          });
+        } catch (error) {
+          console.error('解析消息时出错:', error);
+        }
+      });
+      
+      console.log(`成功解析 ${messages.length} 条消息`);
+      return messages;
     } catch (error) {
       console.error('获取 Telegram 消息失败:', error);
       return [];
     }
   }
-
+  
   /**
-   * 从 Telegram API 获取最新消息并保存到数据库
+   * 获取并存储消息
    */
-  async fetchAndStoreMessages(): Promise<TelegramMessage[]> {
+  async fetchAndStoreMessages(): Promise<InsertTelegramMessage[]> {
     try {
-      // 获取频道更新
-      const response = await axios.get(
-        `${TELEGRAM_API_BASE}${this.botToken}/getUpdates?offset=${this.lastUpdateId + 1}&allowed_updates=["channel_post"]`
-      );
-
-      const { ok, result } = response.data;
-      
-      if (!ok || !result.length) {
+      // 获取消息
+      const messages = await this.fetchMessages();
+      if (messages.length === 0) {
+        console.log('没有找到 Telegram 消息');
         return [];
       }
-
-      // 过滤出来自指定频道的消息
-      const channelUpdates = result.filter(
-        (update: any) => 
-          update.channel_post && 
-          update.channel_post.chat.username === this.channelUsername.substring(1)
-      );
-
-      if (!channelUpdates.length) {
-        return [];
-      }
-
-      // 更新最后处理的更新 ID
-      this.lastUpdateId = Math.max(...channelUpdates.map((update: any) => update.update_id));
-
-      // 提取消息内容
-      const messages: TelegramMessage[] = [];
       
-      for (const update of channelUpdates) {
-        const post = update.channel_post;
+      console.log(`准备存储 ${messages.length} 条 Telegram 消息`);
+      
+      // 过滤出新消息
+      const newMessages: InsertTelegramMessage[] = [];
+      
+      // 检查每条消息是否已存在
+      for (const message of messages) {
+        // 查询数据库
+        const existingMessage = await db.select()
+          .from(telegramMessages)
+          .where(eq(telegramMessages.messageId, message.messageId))
+          .limit(1);
         
-        if (!post) continue;
-
-        let mediaUrl = undefined;
-        
-        // 检查消息中是否包含媒体内容
-        if (post.photo) {
-          // 获取最大尺寸的照片
-          const photoId = post.photo[post.photo.length - 1].file_id;
-          // 获取文件信息
-          const fileResponse = await axios.get(
-            `${TELEGRAM_API_BASE}${this.botToken}/getFile?file_id=${photoId}`
-          );
-          
-          if (fileResponse.data.ok) {
-            const filePath = fileResponse.data.result.file_path;
-            mediaUrl = `https://api.telegram.org/file/bot${this.botToken}/${filePath}`;
-          }
+        // 如果消息不存在，添加到新消息列表
+        if (existingMessage.length === 0) {
+          newMessages.push(message);
         }
-
-        const message: TelegramMessage = {
-          id: post.message_id,
-          text: post.text || post.caption || '',
-          date: post.date,
-          sender: post.chat.title || post.chat.username || '',
-          mediaUrl,
-          channelTitle: post.chat.title
-        };
-
-        messages.push(message);
-
-        // 保存到数据库
-        await db.insert(telegramMessages).values({
-          messageId: post.message_id,
-          text: message.text,
-          date: new Date(post.date * 1000),
-          sender: message.sender,
-          mediaUrl: message.mediaUrl,
-          channelTitle: message.channelTitle
-        }).onConflictDoUpdate({
-          target: telegramMessages.messageId,
-          set: {
-            text: message.text,
-            mediaUrl: message.mediaUrl
-          }
-        });
       }
-
-      return messages;
+      
+      if (newMessages.length === 0) {
+        console.log('没有新的 Telegram 消息需要存储');
+        return [];
+      }
+      
+      console.log(`发现 ${newMessages.length} 条新 Telegram 消息，准备存储`);
+      
+      // 按消息时间排序（从新到旧）
+      newMessages.sort((a, b) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      });
+      
+      // 将新消息插入数据库
+      const insertedMessages = await db.insert(telegramMessages)
+        .values(newMessages)
+        .returning();
+      
+      console.log(`成功存储 ${insertedMessages.length} 条新 Telegram 消息`);
+      return insertedMessages;
     } catch (error) {
-      console.error('从 Telegram 获取消息失败:', error);
+      console.error('获取并存储 Telegram 消息失败:', error);
       return [];
     }
   }
 }
 
-// 导出单例实例
-export const telegramService = new TelegramService(
-  process.env.TELEGRAM_BOT_TOKEN || '',
-  process.env.TELEGRAM_CHANNEL_USERNAME || 'chengzi_golden'
-);
+export const telegramService = new TelegramService();

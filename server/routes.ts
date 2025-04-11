@@ -19,6 +19,7 @@ import { syncCryptoTweets } from "./services/xService";
 import * as cron from "node-cron";
 import { telegramService } from "./services/telegramService";
 import { db } from "./db";
+import { desc, eq, and, or, like, ilike, isNull, isNotNull, SQL, sql, lt, gt, asc } from "drizzle-orm";
 
 // Extend the Express.Session interface to include our custom properties
 declare module 'express-session' {
@@ -1515,7 +1516,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 从数据库获取现有消息
       const messages = await db.select()
         .from(telegramMessages)
-        .where(eq(telegramMessages.isDisplayed, true))
+        .where(isNull(telegramMessages.isDisplayed) || eq(telegramMessages.isDisplayed, true))
         .orderBy(desc(telegramMessages.date))
         .limit(limit);
       

@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TelegramIcon } from "lucide-react";
+// 用正确的 Telegram 图标替换
+import { MessageCircle } from "lucide-react";
 import { FaTelegram } from "react-icons/fa";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { EnhancedAvatar } from "@/components/ui/enhanced-avatar";
@@ -43,7 +44,7 @@ interface TelegramMessage {
 }
 
 const TelegramFeed: React.FC = () => {
-  const { language, getLocalTranslation } = useLanguage();
+  const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState('latest');
   
   const { data: telegramData, isLoading, error } = useQuery<{ data: TelegramMessage[] }>({

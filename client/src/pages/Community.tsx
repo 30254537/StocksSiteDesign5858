@@ -1,5 +1,7 @@
 import React from 'react';
-import Layout from '@/components/Layout';
+// 使用正确的 Layout 导入
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import CryptoTweets from '@/components/CryptoTweets';
 import TelegramFeed from '@/components/TelegramFeed';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,7 +12,7 @@ const CommunityPage: React.FC = () => {
   const { language, getLocalTranslation } = useLanguage();
   
   return (
-    <Layout>
+    <div className="flex flex-col min-h-screen">
       <div className="container mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold mb-8 text-center text-teal-400">
           {language === 'zh' ? 'STONKS DEX 社区' : 'STONKS DEX Community'}
@@ -135,7 +137,7 @@ const CommunityPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
