@@ -1587,15 +1587,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { text = "" } = req.body;
       
+      // 获取当前时间
+      const now = new Date();
+      
       // 创建一个新的金狗监测消息
       const newMessage = {
         messageId: Math.floor(1000 + Math.random() * 9000), // 生成随机消息ID
         text: text || `🔔 金狗监测提醒\n\n💰 代币名称:$pablo\n\n📝 合约地址: DGWbzSHxZ13xHm8jX2L5NbQeqcYUkrTabCeGNS7Tpump\n\n👺市值:$17K\n⏳前十持仓:28.9%\n👥持有者数量: 119\n📊24h交易量: $36K\n📈6小时价格变化: 381%\n🕒创建时间: 2025/4/11 15:59:54\n🔍捆绑分析: 🟠 31.90%\n📬有关推文作者数量: 7\n🛜蓝V用户: 0\n\n🗣️推特信息:删帖次数(0) 发盘次数(0)`,
         sender: "金狗监测",
         channelTitle: "金狗监测频道",
-        date: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        date: now,
+        createdAt: now,
+        updatedAt: now,
         isDisplayed: true
       };
       

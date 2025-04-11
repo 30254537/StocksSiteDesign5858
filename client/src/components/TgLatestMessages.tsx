@@ -246,14 +246,6 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
 
                 <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
                   <span className="text-xs text-gray-500">{message.channelTitle}</span>
-                  <a 
-                    href={`https://t.me/chengzi_golden/${message.messageId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-400 hover:underline"
-                  >
-                    {language === 'zh' ? '查看原文' : 'View original'}
-                  </a>
                 </div>
               </CardContent>
             </Card>
@@ -268,16 +260,6 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                   <span className="text-xs text-gray-400">{formatMessageDate(message.date, language)}</span>
                 </div>
                 <p className="text-sm text-gray-200 whitespace-pre-wrap">{message.text}</p>
-                <div className="mt-2">
-                  <a 
-                    href={`https://t.me/chengzi_golden/${message.messageId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-400 hover:underline"
-                  >
-                    {language === 'zh' ? '查看原文' : 'View original'}
-                  </a>
-                </div>
               </CardContent>
             </Card>
           );
