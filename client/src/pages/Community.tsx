@@ -78,12 +78,15 @@ const CommunityPage: React.FC = () => {
         </div>
         
         <Tabs defaultValue="tweets" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="tweets" className="text-base">
               {language === 'zh' ? '热门推文' : 'Trending Tweets'}
             </TabsTrigger>
             <TabsTrigger value="telegram" className="text-base">
               {language === 'zh' ? 'Telegram 频道' : 'Telegram Channel'}
+            </TabsTrigger>
+            <TabsTrigger value="finance" className="text-base">
+              {language === 'zh' ? '财经快讯' : 'Finance News'}
             </TabsTrigger>
           </TabsList>
           
@@ -115,6 +118,41 @@ const CommunityPage: React.FC = () => {
             </div>
             <AddTestTweet />
             <TwitterFeed limit={3} showRefresh={true} />
+          </TabsContent>
+          
+          <TabsContent value="finance">
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-xl font-semibold text-teal-400 flex items-center">
+                  <FaTelegram className="mr-2 text-blue-500" />
+                  {language === 'zh' ? '财经快讯' : 'Finance News'}
+                </h3>
+                <div className="flex gap-2">
+                  <a 
+                    href="https://www.jinse.cn" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-400 hover:text-blue-300 hover:underline flex items-center"
+                  >
+                    {language === 'zh' ? '访问金色财经' : 'Visit Jinse Finance'} →
+                  </a>
+                  <a 
+                    href="https://news.marsbit.co" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-400 hover:text-blue-300 hover:underline flex items-center ml-4"
+                  >
+                    {language === 'zh' ? '访问火星财经' : 'Visit Marsbit News'} →
+                  </a>
+                </div>
+              </div>
+              <p className="text-gray-300 text-sm mb-4">
+                {language === 'zh' 
+                  ? '来自金色财经和火星财经的最新财经快讯，每5分钟自动同步一次' 
+                  : 'Latest financial news from Jinse and Marsbit, auto-synced every 5 minutes'}
+              </p>
+            </div>
+            <FinanceNews limit={5} showRefresh={true} />
           </TabsContent>
         </Tabs>
         
