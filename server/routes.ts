@@ -2017,10 +2017,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   cron.schedule('* * * * *', async () => {
     console.log('[Cron] 开始同步加密快讯实时资讯...');
     try {
+      // 使用telegramService整合后的方法获取所有来源的加密资讯
       const messages = await telegramService.fetchAndStoreMessages();
       console.log(`[Cron] 成功同步 ${messages.length} 条加密快讯实时资讯`);
     } catch (error) {
       console.error('[Cron] 同步加密快讯实时资讯失败:', error);
+    }
+  });
+  
+  // 设置定时任务，每5分钟获取律动BlockBeats资讯
+  cron.schedule('*/5 * * * *', async () => {
+    console.log('[Cron] 开始获取律动BlockBeats资讯...');
+    try {
+      const blockBeatsNews = await blockBeatsService.storeBlockBeatsNews(8);
+      console.log(`[Cron] 成功获取 ${blockBeatsNews.length} 条律动BlockBeats资讯`);
+    } catch (error) {
+      console.error('[Cron] 获取律动BlockBeats资讯失败:', error);
+    }
+  });
+  
+  // 设置定时任务，每5分钟获取加密KOL的X推文
+  cron.schedule('*/5 * * * *', async () => {
+    console.log('[Cron] 开始获取加密KOL的X推文...');
+    try {
+      const cryptoTweets = await cryptoTwitterService.storeCryptoKolTweets(5);
+      console.log(`[Cron] 成功获取 ${cryptoTweets.length} 条加密KOL的X推文`);
+    } catch (error) {
+      console.error('[Cron] 获取加密KOL的X推文失败:', error);
     }
   });
   
@@ -2035,12 +2058,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // 在应用启动时立即同步一次加密快讯消息、推文和财经快讯
+  // 在应用启动时立即同步一次所有来源的加密资讯
   (async () => {
     try {
-      console.log('初始化: 开始获取加密快讯消息...');
+      console.log('初始化: 开始获取综合加密快讯...');
       const messages = await telegramService.fetchAndStoreMessages();
-      console.log(`初始化: 成功同步 ${messages.length} 条加密快讯消息`);
+      console.log(`初始化: 成功同步 ${messages.length} 条综合加密快讯`);
+      
+      console.log('初始化: 开始获取律动BlockBeats资讯...');
+      const blockBeatsNews = await blockBeatsService.storeBlockBeatsNews(8);
+      console.log(`初始化: 成功同步 ${blockBeatsNews.length} 条律动BlockBeats资讯`);
+      
+      console.log('初始化: 开始获取加密KOL的X推文...');
+      const cryptoTweets = await cryptoTwitterService.storeCryptoKolTweets(5);
+      console.log(`初始化: 成功同步 ${cryptoTweets.length} 条加密KOL的X推文`);
       
       console.log('初始化: 开始获取 MoontokListing 推文...');
       const tweets = await twitterService.fetchAndStoreTweets();
