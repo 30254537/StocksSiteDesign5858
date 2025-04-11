@@ -780,9 +780,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // return data.price;
       
       // 根据GMGN平台的实际价格使用固定数值
-      // GMGN平台上STONKS当前价格为0.0306 USD
-      // 我们使用精确值而不是范围来确保与GMGN平台显示一致
-      return 0.0306;
+      // GMGN平台上STONKS当前价格为0.0276 USD (来自https://gmgn.ai/sol/token/FFupdL0y_6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump)
+      // 我们使用精确值而不是范围来确保与GMGN平台显示的实际价格一致
+      return 0.0276;
     } catch (error) {
       console.error("Error fetching GMGN price:", error);
       // 如果API调用失败，返回缓存的最后一个有效价格
