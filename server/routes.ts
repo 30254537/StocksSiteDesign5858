@@ -764,11 +764,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     lastUpdated: new Date(Date.now() - 20000)
   };
   
-  // 检查缓存是否过期（5秒）
+  // 检查缓存是否过期（1秒）
   function isCacheExpired(): boolean {
     const now = new Date();
     const cacheAge = now.getTime() - cachedStonksPrice.lastUpdated.getTime();
-    return cacheAge > 5000; // 降低缓存时间到5秒，确保价格更频繁地更新
+    return cacheAge > 1000; // 将缓存时间降低到1秒，确保价格每秒都与GMGN平台同步
   }
   
   // 从GMGN平台获取实时价格（模拟）

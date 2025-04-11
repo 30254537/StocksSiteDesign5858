@@ -59,10 +59,10 @@ export function StonksPriceProvider({ children }: { children: ReactNode }) {
     // 初始加载
     fetchStonksPrice();
 
-    // 设置定时器每30秒更新一次价格
+    // 设置定时器每1秒更新一次价格，确保与GMGN平台实时同步
     const intervalId = setInterval(() => {
       fetchStonksPrice();
-    }, 30000);
+    }, 1000);
 
     // 清理函数
     return () => clearInterval(intervalId);
