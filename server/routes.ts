@@ -2,7 +2,7 @@ import type { Express, Request, Response } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema, insertMusicTrackSchema, InsertCryptoTweet } from "@shared/schema";
+import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema, insertMusicTrackSchema, InsertCryptoTweet, telegramMessages } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import * as crypto from "crypto";
@@ -17,6 +17,8 @@ import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
 import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
 import { syncCryptoTweets } from "./services/xService";
 import * as cron from "node-cron";
+import { telegramService } from "./services/telegramService";
+import { db } from "./db";
 
 // Extend the Express.Session interface to include our custom properties
 declare module 'express-session' {

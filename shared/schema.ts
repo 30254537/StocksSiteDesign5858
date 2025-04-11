@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, doublePrecision, timestamp, primaryKey, foreignKey } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, doublePrecision, timestamp, primaryKey, foreignKey, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -255,3 +255,27 @@ export const insertCryptoTweetSchema = createInsertSchema(cryptoTweets).omit({
 
 export type CryptoTweet = typeof cryptoTweets.$inferSelect;
 export type InsertCryptoTweet = z.infer<typeof insertCryptoTweetSchema>;
+
+// Telegram 消息模型
+export const telegramMessages = pgTable("telegram_messages", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").notNull().unique(), // Telegram 消息ID
+  text: text("text").notNull(), // 消息内容
+  sender: text("sender"), // 发送者名称
+  channelTitle: text("channel_title"), // 频道名称
+  mediaUrl: text("media_url"), // 媒体URL (如图片、视频等)
+  date: timestamp("date").defaultNow().notNull(), // 消息日期
+  createdAt: timestamp("created_at").defaultNow(), // 创建时间
+  updatedAt: timestamp("updated_at").defaultNow(), // 更新时间
+  isDisplayed: boolean("is_displayed").default(true), // 是否显示
+  channelId: text("channel_id"), // 频道ID
+});
+
+export const insertTelegramMessageSchema = createInsertSchema(telegramMessages).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type TelegramMessage = typeof telegramMessages.$inferSelect;
+export type InsertTelegramMessage = z.infer<typeof insertTelegramMessageSchema>;
