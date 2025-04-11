@@ -1581,6 +1581,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: '更新 Telegram 消息显示状态失败' });
     }
   });
+  
+  // 添加金狗监测格式的测试消息
+  app.post('/api/telegram-messages-test', async (req, res) => {
+    try {
+      const { text = "" } = req.body;
+      
+      // 创建一个新的金狗监测消息
+      const newMessage = {
+        messageId: Math.floor(1000 + Math.random() * 9000), // 生成随机消息ID
+        text: text || `🔔 金狗监测提醒\n\n💰 代币名称:$pablo\n\n📝 合约地址: DGWbzSHxZ13xHm8jX2L5NbQeqcYUkrTabCeGNS7Tpump\n\n👺市值:$17K\n⏳前十持仓:28.9%\n👥持有者数量: 119\n📊24h交易量: $36K\n📈6小时价格变化: 381%\n🕒创建时间: 2025/4/11 15:59:54\n🔍捆绑分析: 🟠 31.90%\n📬有关推文作者数量: 7\n🛜蓝V用户: 0\n\n🗣️推特信息:删帖次数(0) 发盘次数(0)`,
+        sender: "金狗监测",
+        channelTitle: "金狗监测频道",
+        date: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isDisplayed: true
+      };
+      
+      // 插入新消息到数据库
+      const [insertedMessage] = await db.insert(telegramMessages)
+        .values(newMessage)
+        .returning();
+      
+      console.log('已添加金狗监测测试消息:', insertedMessage);
+      
+      res.status(200).json({
+        success: true,
+        message: '已添加金狗监测测试消息',
+        data: insertedMessage
+      });
+    } catch (error) {
+      console.error('添加金狗监测测试消息失败:', error);
+      res.status(500).json({ error: '添加金狗监测测试消息失败' });
+    }
+  });
 
   // 添加每小时定时获取 Telegram 消息的任务
   cron.schedule('0 * * * *', async () => {

@@ -24,6 +24,7 @@ const Music = lazy(() => import("@/pages/Music"));
 const CryptoNews = lazy(() => import("@/pages/CryptoNews"));
 const Community = lazy(() => import("@/pages/Community"));
 const TestTools = lazy(() => import("@/pages/TestTools"));
+const TelegramMessages = lazy(() => import("@/pages/TelegramMessages"));
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartModal from "@/components/ui/cart-modal";
@@ -175,6 +176,13 @@ function Router() {
             {() => (
               <PageWrapper>
                 <TestTools />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/telegram-messages">
+            {() => (
+              <PageWrapper>
+                <TelegramMessages />
               </PageWrapper>
             )}
           </Route>
