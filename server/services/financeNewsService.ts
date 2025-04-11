@@ -9,6 +9,23 @@ const JINSE_API_URL = 'https://api.jinse.cn/noah/v2/lives?limit=20&reading=false
 // 火星财经API URL（模拟数据）
 const MARSBIT_API_URL = 'https://api.marsbit.co/hotevents/list?size=20';
 
+// 生成符合PostgreSQL整数范围的ID
+function generateUniqueId(index: number = 0, source: string = ''): number {
+  // 使用Unix时间戳的秒数作为基础（而不是毫秒）
+  const baseId = Math.floor(Date.now() / 1000);
+  
+  // 对不同来源使用不同偏移量
+  let sourceOffset = 0;
+  if (source === 'jinse') {
+    sourceOffset = 1000;
+  } else if (source === 'marsbit') {
+    sourceOffset = 2000;
+  }
+  
+  // 组合生成最终ID
+  return baseId + sourceOffset + index;
+}
+
 /**
  * 从金色财经获取快讯
  */
@@ -37,8 +54,8 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
       newsData.forEach((item: any, index: number) => {
         const content = item.content || '无内容';
         const timeText = new Date(item.created_at * 1000).toLocaleString('zh-CN');
-        // 生成唯一的数字ID - 使用当前时间戳加上索引
-        const newsId = Date.now() + index;
+        // 生成符合PostgreSQL integer范围的唯一ID
+        const newsId = generateUniqueId(index, 'jinse');
         const fullLink = item.link || `https://www.jinse.cn/lives/${item.id}`;
         
         newsItems.push({
@@ -70,8 +87,8 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
         ];
         
         const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-        // 生成唯一的整数ID
-        const newsId = Date.now() + i;
+        // 生成符合PostgreSQL integer范围的唯一ID
+        const newsId = generateUniqueId(i, 'jinse');
         const currentDate = new Date();
         const timeText = currentDate.toLocaleString('zh-CN');
         
@@ -106,8 +123,8 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
       ];
       
       const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-      // 生成唯一的整数ID
-      const newsId = Date.now() + 100 + i;
+      // 生成符合PostgreSQL integer范围的唯一ID
+      const newsId = generateUniqueId(i + 100, 'jinse');
       const currentDate = new Date();
       const timeText = currentDate.toLocaleString('zh-CN');
       
@@ -155,8 +172,8 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
       newsData.forEach((item: any, index: number) => {
         const content = item.title || item.content || '无内容';
         const timeText = new Date(item.created_at * 1000).toLocaleString('zh-CN');
-        // 生成唯一的整数ID - 使用当前时间戳加上索引并加上一个偏移量，避免与金色财经的ID冲突
-        const newsId = Date.now() + 1000 + index;
+        // 生成符合PostgreSQL integer范围的唯一ID
+        const newsId = generateUniqueId(index, 'marsbit');
         const fullLink = item.url || `https://news.marsbit.co/flash/${item.id}`;
         
         newsItems.push({
@@ -188,8 +205,8 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
         ];
         
         const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-        // 生成唯一的整数ID - 使用当前时间戳加上索引和一个偏移量
-        const newsId = Date.now() + 1000 + i;
+        // 生成符合PostgreSQL integer范围的唯一ID
+        const newsId = generateUniqueId(i, 'marsbit');
         const currentDate = new Date();
         const timeText = currentDate.toLocaleString('zh-CN');
         
@@ -224,8 +241,8 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
       ];
       
       const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-      // 生成唯一的整数ID - 使用当前时间戳加上索引和一个偏移量
-      const newsId = Date.now() + 2000 + i;
+      // 生成符合PostgreSQL integer范围的唯一ID
+      const newsId = generateUniqueId(i + 100, 'marsbit');
       const currentDate = new Date();
       const timeText = currentDate.toLocaleString('zh-CN');
       
@@ -279,7 +296,7 @@ export async function fetchAndStoreFinanceNews(limit: number = 10): Promise<any[
     const existingMessageIds = new Set(existingMessages.map((m: {messageId: number | string}) => String(m.messageId)));
     
     // 只插入新的快讯
-    const newMessages = allNews.filter(news => !existingMessageIds.has(news.messageId));
+    const newMessages = allNews.filter(news => !existingMessageIds.has(String(news.messageId)));
     
     if (newMessages.length === 0) {
       console.log('没有新的财经快讯需要存储');
