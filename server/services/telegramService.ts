@@ -10,42 +10,47 @@ import * as cryptoTwitterService from './cryptoTwitterService';
  */
 class TelegramService {
   /**
-   * 创建基本的加密快讯消息（作为备用数据）- 移除了代币名称和合约地址信息
+   * 获取最新的加密快讯消息
+   * 注意：我们不再使用静态模拟数据，而是尝试通过API获取真实数据
    */
-  private createBasicMockMessages(): InsertTelegramMessage[] {
-    const currentDate = new Date();
-    return [
-      {
-        messageId: 100001,
-        text: `🔔 加密快讯 × 金色财经\n\n🗣️ 市场分析师认为，近期数字资产市场整体上涨趋势可能持续到2025年第二季度，预计将迎来新一轮市场行情。市场代表性数字资产已创下历史新高。\n\n${currentDate.toLocaleString('zh-CN')}`,
-        sender: '加密快讯 × 金色财经',
-        channelTitle: '加密资讯频道',
-        mediaUrl: null,
-        sourceUrl: 'https://www.jinse.cn/',
-        date: currentDate,
-        isDisplayed: true
-      },
-      {
-        messageId: 100002,
-        text: `🔔 加密快讯 × 火星财经\n\n🗣️ 最新区块链技术2.0质押量已突破3000万个单位，占总流通量的25%。这显示了市场对该技术长期发展的信心，同时也减少了市场上的流通供应。\n\n${currentDate.toLocaleString('zh-CN')}`,
-        sender: '加密快讯 × 火星财经',
-        channelTitle: '加密资讯频道',
-        mediaUrl: null,
-        sourceUrl: 'https://news.marsbit.co/',
-        date: currentDate,
-        isDisplayed: true
-      },
-      {
-        messageId: 100003,
-        text: `🔔 加密快讯 × 金色财经\n\n🗣️ STONKS DEX宣布将推出去中心化合成资产交易功能，成为DeFi领域首个提供此类服务的平台。该功能将允许用户交易与传统金融资产挂钩的合成代币。\n\n${currentDate.toLocaleString('zh-CN')}`,
-        sender: '加密快讯 × 金色财经',
-        channelTitle: '加密资讯频道',
-        mediaUrl: null,
-        sourceUrl: 'https://www.jinse.cn/',
-        date: currentDate,
-        isDisplayed: true
+  private async getLatestRealTimeMessages(): Promise<InsertTelegramMessage[]> {
+    try {
+      console.log('尝试从多个API源获取真实的加密快讯...');
+      
+      // 尝试从金色财经获取数据
+      const jinseNews = await financeNewsService.scrapeJinseNews(5);
+      if (jinseNews && jinseNews.length > 0) {
+        console.log(`成功从金色财经获取 ${jinseNews.length} 条实时加密资讯`);
+        
+        // 将获取到的金色财经数据格式化后返回
+        return jinseNews.map((news, index) => {
+          return {
+            messageId: 200000 + index,
+            text: news.text,
+            sender: '加密快讯 × 金色财经',
+            channelTitle: '加密资讯频道',
+            mediaUrl: news.mediaUrl,
+            sourceUrl: news.sourceUrl || 'https://www.jinse.cn/',
+            date: news.date || new Date(),
+            isDisplayed: true
+          };
+        });
       }
-    ];
+      
+      // 如果金色财经没有数据，尝试律动BlockBeats
+      const blockBeatsNews = await blockBeatsService.fetchBlockBeatsNews(5);
+      if (blockBeatsNews && blockBeatsNews.length > 0) {
+        console.log(`成功从律动BlockBeats获取 ${blockBeatsNews.length} 条实时加密资讯`);
+        return blockBeatsNews;
+      }
+      
+      // 如果还是没有数据，返回空数组
+      return [];
+    } catch (error) {
+      console.error('尝试获取实时加密快讯失败:', error);
+      // 返回空数组，不再使用静态模拟数据
+      return [];
+    }
   }
 
   /**
@@ -61,8 +66,8 @@ class TelegramService {
       const allNews = [...jinseNews, ...marsbitNews];
       
       if (!allNews || allNews.length === 0) {
-        console.log('没有找到财经快讯数据，使用基本模拟数据');
-        return this.createBasicMockMessages();
+        console.log('没有找到财经快讯数据，返回空数组');
+        return [];
       }
       
       console.log(`成功获取 ${allNews.length} 条金色财经与火星财经的实时资讯`);
@@ -83,7 +88,8 @@ class TelegramService {
       });
     } catch (error) {
       console.error('获取财经实时资讯失败:', error);
-      return this.createBasicMockMessages();
+      // 不再使用模拟数据，而是返回空数组
+      return [];
     }
   }
   
@@ -123,17 +129,31 @@ class TelegramService {
         console.error('获取加密KOL的X推文失败:', twitterError);
       }
       
-      // 如果没有获取到任何资讯，则使用基本模拟数据
+      // 4. 尝试从备用数据源获取内容
       if (allNews.length === 0) {
-        console.log('没有获取到任何类型的加密资讯，使用基本模拟数据');
-        return this.createBasicMockMessages();
+        try {
+          const backupMessages = await this.getLatestRealTimeMessages();
+          if (backupMessages && backupMessages.length > 0) {
+            console.log(`成功从备用数据源获取 ${backupMessages.length} 条资讯`);
+            allNews.push(...backupMessages);
+          }
+        } catch (backupError) {
+          console.error('从备用数据源获取资讯失败:', backupError);
+        }
+      }
+      
+      // 如果还是没有获取到任何资讯，返回空数组
+      if (allNews.length === 0) {
+        console.log('没有从任何数据源获取到加密资讯，返回空数组');
+        return [];
       }
       
       console.log(`总共获取到 ${allNews.length} 条来自所有来源的加密资讯`);
       return allNews;
     } catch (error) {
       console.error('整合所有加密资讯失败:', error);
-      return this.createBasicMockMessages();
+      // 不再使用模拟数据，返回空数组
+      return [];
     }
   }
   
@@ -146,19 +166,8 @@ class TelegramService {
       const allNews = await this.getAllCryptoNews();
       
       if (allNews.length === 0) {
-        console.log('没有获取到任何加密快讯，使用基本模拟数据');
-        const basicMessages = this.createBasicMockMessages();
-        
-        // 清空现有消息记录
-        await db.delete(telegramMessages);
-        
-        // 插入基本模拟数据
-        const insertedMessages = await db.insert(telegramMessages)
-          .values(basicMessages)
-          .returning();
-        
-        console.log(`成功存储 ${insertedMessages.length} 条基本模拟数据`);
-        return insertedMessages;
+        console.log('没有获取到任何加密快讯，无法进行存储');
+        return [];
       }
       
       // 对新闻进行去重处理，避免重复内容
@@ -210,27 +219,8 @@ class TelegramService {
       return insertedMessages;
     } catch (error) {
       console.error('获取并存储加密快讯失败:', error);
-      
-      // 出错时使用基本模拟数据
-      try {
-        console.log('获取快讯失败，使用基本模拟数据');
-        // 清空现有消息
-        await db.delete(telegramMessages);
-        
-        // 获取基本模拟消息
-        const basicMessages = this.createBasicMockMessages();
-        
-        // 插入基本模拟数据
-        const insertedMessages = await db.insert(telegramMessages)
-          .values(basicMessages)
-          .returning();
-        
-        console.log(`成功存储 ${insertedMessages.length} 条基本模拟数据`);
-        return insertedMessages;
-      } catch (mockError) {
-        console.error('存储基本模拟数据失败:', mockError);
-        return [];
-      }
+      // 不再使用模拟数据，返回空数组
+      return [];
     }
   }
   
