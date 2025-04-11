@@ -28,6 +28,7 @@ import { CryptoNewsType } from '../types';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
 import { useLanguage } from '../contexts/LanguageContext';
+import EnhancedAvatar from '../components/ui/enhanced-avatar';
 
 // 定义硬编码的翻译，以确保在翻译系统失败时仍能正确显示
 type TranslationLanguage = 'en' | 'zh';
@@ -752,16 +753,10 @@ const CryptoNews: React.FC = () => {
               >
                 <Card className="overflow-hidden border-teal-500/20 shadow-lg bg-gray-900 hover:bg-gray-800 transition-colors cursor-pointer h-full transform hover:scale-[1.02] transition-transform">
                   <div className="w-full h-40 overflow-hidden">
-                    <img 
-                      src={"/images/crypto/bitcoin.jpg"} 
-                      alt={news.title} 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // 如果图片加载失败，使用备用图片
-                        const target = e.target as HTMLImageElement;
-                        target.onerror = null; // 防止循环
-                        target.src = "/images/crypto/bitcoin.jpg";
-                      }}
+                    <EnhancedAvatar
+                      authorName={news.source || "News"}
+                      authorProfileImage={news.imageUrl || "/images/crypto/bitcoin.jpg"}
+                      className="w-full h-full rounded-none"
                     />
                   </div>
                   <CardHeader className="pb-2">
@@ -839,16 +834,10 @@ const CryptoNews: React.FC = () => {
                     <Card className="overflow-hidden border-gray-700 bg-gray-800/50 hover:bg-gray-800 transition-colors cursor-pointer transform hover:scale-[1.01] transition-transform">
                       <div className="flex flex-col md:flex-row">
                         <div className="w-full md:w-1/4 h-40 md:h-auto overflow-hidden">
-                          <img 
-                            src={"/images/crypto/bitcoin.jpg"} 
-                            alt={news.title} 
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              // 如果图片加载失败，使用备用图片
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null; // 防止循环
-                              target.src = "/images/crypto/bitcoin.jpg";
-                            }}
+                          <EnhancedAvatar
+                            authorName={news.source || "News"}
+                            authorProfileImage={news.imageUrl || "/images/crypto/bitcoin.jpg"}
+                            className="w-full h-full rounded-none"
                           />
                         </div>
                         <div className="flex-1 flex flex-col md:w-3/4">
