@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { CryptoNews, InsertCryptoNews } from '@shared/schema';
+import { CryptoNews, InsertCryptoNews, cryptoNews } from '@shared/schema';
 import { storage } from '../storage';
 import * as cron from 'node-cron';
 import { scrapeAllNews } from './cryptoNewsScraperService';
+import { db } from '../db';
 
 // 主要加密货币新闻API来源
 const NEWS_SOURCES = {
@@ -209,11 +210,16 @@ export function initCryptoNewsScheduler(cronSchedule: string = '*/5 * * * *'): v
     
     try {
       // 清空所有已有数据（除Telegram消息外）
-      const oldNewsCount = await storage.clearAllCryptoNews();
-      console.log(`已清除 ${oldNewsCount} 条旧的加密货币新闻`);
+      try {
+        // 删除现有的加密货币新闻
+        await db.delete(cryptoNews);
+        console.log('已清除所有旧的加密货币新闻');
+      } catch (clearError) {
+        console.error('清除旧加密货币新闻失败:', clearError);
+      }
       
       // 获取全新数据
-      const newCount = await fetchAndStoreNews(50);
+      const newCount = await fetchAndStoreNews();
       console.log(`[每日更新] 成功添加 ${newCount} 条新的加密货币新闻`);
     } catch (err) {
       console.error('每日全量更新加密货币新闻失败:', err);

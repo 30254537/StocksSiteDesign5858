@@ -251,7 +251,10 @@ export async function storeBlockBeatsNews(limit: number = 30): Promise<any[]> {
       return [];
     }
     
-    console.log(`准备存储 ${blockBeatsNews.length} 条律动BlockBeats快讯到数据库`);
+    // 消除相似内容的重复
+    const uniqueNews = removeSimilarContent(blockBeatsNews);
+    
+    console.log(`准备存储 ${uniqueNews.length} 条律动BlockBeats快讯到数据库（原始数量: ${blockBeatsNews.length}）`);
     
     // 清除旧的律动BlockBeats快讯
     await db.delete(telegramMessages)
@@ -259,7 +262,7 @@ export async function storeBlockBeatsNews(limit: number = 30): Promise<any[]> {
     
     // 插入新的快讯
     const insertedMessages = await db.insert(telegramMessages)
-      .values(blockBeatsNews)
+      .values(uniqueNews)
       .returning();
     
     console.log(`成功存储 ${insertedMessages.length} 条律动BlockBeats快讯`);
@@ -268,6 +271,100 @@ export async function storeBlockBeatsNews(limit: number = 30): Promise<any[]> {
     console.error('存储律动BlockBeats快讯失败:', error);
     return [];
   }
+}
+
+/**
+ * 消除相似内容的重复快讯
+ * 使用内容相似度比较来过滤高度相似的内容
+ */
+function removeSimilarContent(newsItems: any[]): any[] {
+  if (!newsItems || newsItems.length === 0) return [];
+  
+  // 排序，确保最新的信息优先
+  const sortedNews = [...newsItems].sort((a, b) => {
+    // 优先按日期排序（新到旧）
+    const dateA = a.date instanceof Date ? a.date : new Date(a.date);
+    const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+    return dateB.getTime() - dateA.getTime();
+  });
+  
+  const uniqueNews: any[] = [];
+  const processedTexts = new Set<string>();
+  
+  // 使用简单的内容指纹方法
+  for (const item of sortedNews) {
+    // 提取文本内容，清除标点符号、空格等，只保留核心内容用于比较
+    const textContent = item.text
+      .replace(/📢 律动BlockBeats快讯\n\n/g, '')
+      .replace(/📢 律动BlockBeats热门文章\n\n/g, '')
+      .replace(/\d{4}\/\d{1,2}\/\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}/g, '') // 移除日期时间
+      .replace(/\n\n.*?$/g, '') // 移除最后的日期行
+      .replace(/[.,，。、；;!！?？"""''「」【】()（）]/g, '') // 移除标点符号 
+      .replace(/\s+/g, '') // 移除空白字符
+      .toLowerCase() // 转为小写
+      .substring(0, 50); // 仅取前50个字符作为指纹
+    
+    // 检查是否有高度相似的条目已被添加
+    let isDuplicate = false;
+    
+    for (const processedText of processedTexts) {
+      // 使用莱文斯坦距离算法或字符串匹配率来判断相似度
+      const similarity = calculateSimilarity(textContent, processedText);
+      if (similarity > 0.7) { // 相似度阈值，可调整
+        isDuplicate = true;
+        break;
+      }
+    }
+    
+    if (!isDuplicate) {
+      processedTexts.add(textContent);
+      uniqueNews.push(item);
+      
+      // 限制最大条目数，避免过多重复内容
+      if (uniqueNews.length >= 15) {
+        break;
+      }
+    }
+  }
+  
+  return uniqueNews;
+}
+
+/**
+ * 计算两个字符串之间的相似度（0-1之间，1表示完全相同）
+ * 使用莱文斯坦距离的简化算法
+ */
+function calculateSimilarity(str1: string, str2: string): number {
+  // 如果字符串为空，则返回0
+  if (!str1 || !str2) return 0;
+  
+  // 如果字符串完全相同，则返回1
+  if (str1 === str2) return 1;
+  
+  // 如果一个字符串是另一个的子串，返回较高相似度
+  if (str1.includes(str2) || str2.includes(str1)) {
+    return 0.9;
+  }
+  
+  // 简单计算公共子序列
+  let commonChars = 0;
+  const charMap = new Map<string, number>();
+  
+  // 统计第一个字符串中字符出现的次数
+  for (const char of str1) {
+    charMap.set(char, (charMap.get(char) || 0) + 1);
+  }
+  
+  // 检查第二个字符串中的字符是否在第一个字符串中出现
+  for (const char of str2) {
+    if (charMap.get(char) && charMap.get(char)! > 0) {
+      commonChars++;
+      charMap.set(char, charMap.get(char)! - 1);
+    }
+  }
+  
+  // 计算相似度
+  return (2 * commonChars) / (str1.length + str2.length);
 }
 
 /**
