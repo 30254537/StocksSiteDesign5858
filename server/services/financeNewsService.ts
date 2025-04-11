@@ -58,9 +58,17 @@ export async function scrapeJinseNews(limit: number = 10): Promise<any[]> {
         const newsId = generateUniqueId(index, 'jinse');
         const fullLink = item.link || `https://www.jinse.cn/lives/${item.id}`;
         
+        // 清除代币名称和合约地址信息
+        const cleanedContent = content
+          .replace(/币名称\s*[:：]\s*\$?[a-zA-Z0-9]+/g, '')
+          .replace(/代币\s*[:：]\s*\$?[a-zA-Z0-9]+/g, '')
+          .replace(/合约地址\s*[:：]\s*0x[a-fA-F0-9]+/g, '')
+          .replace(/(\$[a-zA-Z0-9]{2,10})/g, '') // 替换代币符号 (如 $BTC, $ETH)
+          .replace(/比特币|以太坊|莱特币|瑞波币|狗狗币|波场|币安币|波卡|索拉纳|卡尔达诺/g, '数字资产');
+          
         newsItems.push({
           messageId: newsId,
-          text: `🔔 金色财经快讯\n\n${content}\n\n${timeText}`,
+          text: `🔔 金色财经快讯\n\n${cleanedContent}\n\n${timeText}`,
           sender: '金色财经',
           channelTitle: '金色财经快讯',
           date: new Date(),
@@ -115,9 +123,17 @@ export async function scrapeMarsbitNews(limit: number = 10): Promise<any[]> {
         const newsId = generateUniqueId(index, 'marsbit');
         const fullLink = item.url || `https://news.marsbit.co/flash/${item.id}`;
         
+        // 清除代币名称和合约地址信息
+        const cleanedContent = content
+          .replace(/币名称\s*[:：]\s*\$?[a-zA-Z0-9]+/g, '')
+          .replace(/代币\s*[:：]\s*\$?[a-zA-Z0-9]+/g, '')
+          .replace(/合约地址\s*[:：]\s*0x[a-fA-F0-9]+/g, '')
+          .replace(/(\$[a-zA-Z0-9]{2,10})/g, '') // 替换代币符号 (如 $BTC, $ETH)
+          .replace(/比特币|以太坊|莱特币|瑞波币|狗狗币|波场|币安币|波卡|索拉纳|卡尔达诺/g, '数字资产');
+          
         newsItems.push({
           messageId: newsId,
-          text: `🔥 火星财经快讯\n\n${content}\n\n${timeText}`,
+          text: `🔥 火星财经快讯\n\n${cleanedContent}\n\n${timeText}`,
           sender: '火星财经',
           channelTitle: '火星财经快讯',
           date: new Date(),

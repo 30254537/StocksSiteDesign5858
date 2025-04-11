@@ -8,14 +8,14 @@ import * as financeNewsService from './financeNewsService';
  */
 class TelegramService {
   /**
-   * 创建基本的加密快讯消息（作为备用数据）
+   * 创建基本的加密快讯消息（作为备用数据）- 移除了代币名称和合约地址信息
    */
   private createBasicMockMessages(): InsertTelegramMessage[] {
     const currentDate = new Date();
     return [
       {
         messageId: 100001,
-        text: `🔔 加密快讯 × 金色财经\n\n💰 代币名称: $BTC\n\n📝 合约地址: 0x2170Ed0880ac9A755fd29B2688956BD959F933F8\n\n🗣️相关资讯: 金色财经7x24H\n\n比特币突破7万美元大关，创下历史新高。市场分析师认为这一上涨趋势可能持续到2025年第二季度，预计比特币将迎来新一轮牛市。\n\n${currentDate.toLocaleString('zh-CN')}`,
+        text: `🔔 加密快讯 × 金色财经\n\n🗣️ 市场分析师认为，近期数字资产市场整体上涨趋势可能持续到2025年第二季度，预计将迎来新一轮市场行情。市场代表性数字资产已创下历史新高。\n\n${currentDate.toLocaleString('zh-CN')}`,
         sender: '加密快讯 × 金色财经',
         channelTitle: '加密资讯频道',
         mediaUrl: null,
@@ -25,7 +25,7 @@ class TelegramService {
       },
       {
         messageId: 100002,
-        text: `🔔 加密快讯 × 火星财经\n\n💰 代币名称: $ETH\n\n📝 合约地址: 0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c\n\n🗣️相关资讯: 火星财经快讯\n\nETH2.0质押量已突破3000万枚，占以太坊总流通量的25%。这显示了市场对以太坊长期发展的信心，同时也减少了市场上的流通供应。\n\n${currentDate.toLocaleString('zh-CN')}`,
+        text: `🔔 加密快讯 × 火星财经\n\n🗣️ 最新区块链技术2.0质押量已突破3000万个单位，占总流通量的25%。这显示了市场对该技术长期发展的信心，同时也减少了市场上的流通供应。\n\n${currentDate.toLocaleString('zh-CN')}`,
         sender: '加密快讯 × 火星财经',
         channelTitle: '加密资讯频道',
         mediaUrl: null,
@@ -35,7 +35,7 @@ class TelegramService {
       },
       {
         messageId: 100003,
-        text: `🔔 加密快讯 × 金色财经\n\n💰 代币名称: $STONKS\n\n📝 合约地址: 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56\n\n🗣️相关资讯: 金色财经7x24H\n\nSTONKS DEX宣布将推出去中心化合成资产交易功能，成为DeFi领域首个提供此类服务的平台。该功能将允许用户交易与传统金融资产挂钩的合成代币。\n\n${currentDate.toLocaleString('zh-CN')}`,
+        text: `🔔 加密快讯 × 金色财经\n\n🗣️ STONKS DEX宣布将推出去中心化合成资产交易功能，成为DeFi领域首个提供此类服务的平台。该功能将允许用户交易与传统金融资产挂钩的合成代币。\n\n${currentDate.toLocaleString('zh-CN')}`,
         sender: '加密快讯 × 金色财经',
         channelTitle: '加密资讯频道',
         mediaUrl: null,
