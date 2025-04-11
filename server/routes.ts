@@ -1516,7 +1516,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 从数据库获取现有消息
       const messages = await db.select()
         .from(telegramMessages)
-        .where(isNull(telegramMessages.isDisplayed) || eq(telegramMessages.isDisplayed, true))
+        .where(eq(telegramMessages.isDisplayed, true))
         .orderBy(desc(telegramMessages.date))
         .limit(limit);
       
