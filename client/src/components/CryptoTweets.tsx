@@ -55,10 +55,10 @@ const CryptoTweets: React.FC = () => {
   });
   
   // 获取合约地址推文数据
-  const { data: contractTweetsData, isLoading: isContractLoading } = useQuery<TweetsResponse>({
+  const { data: contractTweetsData, isLoading: isContractLoading, refetch: refetchContractTweets } = useQuery<TweetsResponse>({
     queryKey: ['/api/contract-tweets', { lang: language }],
     refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5分钟
+    staleTime: 1 * 60 * 1000, // 1分钟
   });
   
   // 复制合约地址到剪贴板
@@ -139,6 +139,23 @@ const CryptoTweets: React.FC = () => {
     <div className="mb-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">{t('cryptoTweets.title')}</h2>
+        {activeTab === 'contracts' && (
+          <Button 
+            onClick={() => {
+              refetchContractTweets();
+              toast({
+                title: language === 'zh' ? "正在刷新" : "Refreshing",
+                description: language === 'zh' ? "获取最新合约地址推文" : "Getting latest contract tweets",
+              });
+            }} 
+            size="sm"
+            variant="outline"
+            className="flex gap-2 items-center"
+          >
+            <Repeat2 className="h-4 w-4" />
+            {language === 'zh' ? "刷新" : "Refresh"}
+          </Button>
+        )}
       </div>
 
       <Tabs defaultValue="trending" className="w-full" onValueChange={setActiveTab}>
