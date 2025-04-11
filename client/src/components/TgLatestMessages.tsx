@@ -151,21 +151,49 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
       )}
       
       {messagesWithLimit.map((message: TelegramMessage) => {
-        // 提取标题和内容（通常标题在第一行，内容在第二行之后）
-        const lines = message.text.split('\n');
-        const title = lines.length > 1 ? lines[0] : '';
-        const content = lines.length > 1 ? lines.slice(1).join('\n') : message.text;
+        // 更精确地提取标题和内容
+        const lines = message.text.split('\n').filter(line => line.trim() !== '');
+        
+        // 首行通常是带有emoji的标题
+        const title = lines.length > 0 ? lines[0] : '加密快讯';
+        
+        // 中间几行是实际内容，移除表情符号
+        let content = '';
+        if (lines.length > 1) {
+          // 跳过第一行（标题）
+          const contentLines = lines.slice(1);
+          
+          // 如果最后一行是日期格式，也跳过
+          const lastLine = contentLines[contentLines.length - 1];
+          const isDateLine = /^\d{4}\/\d{1,2}\/\d{1,2}/.test(lastLine);
+          
+          content = isDateLine ? 
+            contentLines.slice(0, contentLines.length - 1).join('\n') : 
+            contentLines.join('\n');
+        }
+        
+        // 确保内容不为空
+        if (!content) {
+          content = '查看详细内容请点击阅读全文';
+        }
         
         return (
           <Card 
             key={message.id} 
-            className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10 cursor-pointer"
+            className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10 cursor-pointer relative"
             onClick={() => {
               if (message.sourceUrl) {
                 window.open(message.sourceUrl, '_blank', 'noopener,noreferrer');
               }
             }}
           >
+            {/* 右上角阅读标志 */}
+            {message.sourceUrl && (
+              <div className="absolute top-0 right-0 bg-teal-600 text-white text-xs px-2 py-1 rounded-bl-md">
+                <FaExternalLinkAlt className="h-3 w-3" />
+              </div>
+            )}
+            
             <CardContent className="pt-4 pb-3">
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center space-x-2">
@@ -179,9 +207,14 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                 </span>
               </div>
               
-              {/* 消息内容 */}
-              <div className="mt-2 whitespace-pre-wrap break-all text-white">
-                {message.text}
+              {/* 标题内容 - 以更突出的形式显示 */}
+              <h3 className="font-bold text-white text-lg mt-2">
+                {title}
+              </h3>
+              
+              {/* 消息内容 - 以正文形式显示，格式化后更易阅读 */}
+              <div className="mt-2 whitespace-pre-wrap break-words text-gray-300 text-sm">
+                {content}
               </div>
               
               <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
@@ -193,7 +226,7 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                     href={message.sourceUrl} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-xs text-teal-400 hover:text-teal-300 flex items-center"
+                    className="text-xs bg-teal-700 hover:bg-teal-600 text-white px-2 py-1 rounded flex items-center transition-colors"
                     onClick={(e) => {
                       e.stopPropagation(); // 阻止冒泡，避免触发Card的点击事件
                     }}
