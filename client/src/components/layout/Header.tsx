@@ -28,9 +28,16 @@ const handleProductsClick = (e: React.MouseEvent) => {
   if (window.location.pathname === "/") {
     const productsSection = document.getElementById('products');
     if (productsSection) {
-      productsSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+      // 获取header高度，确保滚动位置正确
+      const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+      
+      // 计算正确的滚动位置，减去header高度
+      const scrollPosition = productsSection.offsetTop - headerHeight - 50;
+      
+      // 使用平滑滚动
+      window.scrollTo({
+        top: scrollPosition,
+        behavior: 'smooth'
       });
     }
   } else {

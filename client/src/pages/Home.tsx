@@ -26,13 +26,19 @@ export default function Home() {
       setTimeout(() => {
         const productsSection = document.getElementById('products');
         if (productsSection) {
-          // 使用平滑滚动以提供更好的用户体验
-          productsSection.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
+          // 获取header高度，确保滚动位置正确
+          const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+          
+          // 计算正确的滚动位置，减去header高度并额外偏移确保标题完全可见
+          const scrollPosition = productsSection.offsetTop - headerHeight - 80;
+          
+          // 使用平滑滚动
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth'
           });
         }
-      }, 100);
+      }, 300);
     }
   }, []);
 
@@ -82,7 +88,12 @@ export default function Home() {
                     e.preventDefault();
                     const productsSection = document.getElementById('products');
                     if (productsSection) {
-                      productsSection.scrollIntoView({ behavior: 'instant' });
+                      const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+                      const scrollPosition = productsSection.offsetTop - headerHeight - 80;
+                      window.scrollTo({
+                        top: scrollPosition,
+                        behavior: 'smooth'
+                      });
                     }
                   }}
                 >
@@ -101,7 +112,12 @@ export default function Home() {
             e.preventDefault();
             const productsSection = document.getElementById('products');
             if (productsSection) {
-              productsSection.scrollIntoView({ behavior: 'instant' });
+              const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+              const scrollPosition = productsSection.offsetTop - headerHeight - 80;
+              window.scrollTo({
+                top: scrollPosition,
+                behavior: 'smooth'
+              });
             }
           }}
         >
@@ -110,15 +126,15 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="py-20 relative z-20">
+      <section id="products" className="py-24 pt-40 relative z-20">
         {/* Background with deep blue color */}
         <div className="absolute inset-0 bg-primary z-0"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-12" style={{ paddingTop: '40px' }}>
             {/* Product Filter Banner */}
-            <div className="mb-4 mx-auto text-center">
+            <div className="mb-6 mx-auto text-center">
               <div className="inline-block border-2 border-accent rounded-lg px-10 py-3 text-xl font-bold">
                 <NeonText>{language === 'en' ? "STONKS DEX Merchandise" : "STONKS DEX 周边产品"}</NeonText>
               </div>
