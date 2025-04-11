@@ -197,66 +197,90 @@
   }
 }
 
-/* 树叶落下动画效果 - 新数字从上方慢慢飘落 */
+/* 超丝滑树叶落下动画效果 - 新数字从上方摇摆着飘落 */
 @keyframes leafDropIn {
   0% {
-    transform: translateY(-100%) rotate(-3deg);
+    transform: translateY(-120%) rotate(-2deg) scale(0.95);
     opacity: 0;
   }
-  50% {
-    transform: translateY(-50%) rotate(2deg);
+  30% {
+    transform: translateY(-50%) rotate(1deg) scale(1.05);
     opacity: 0.5;
   }
+  60% {
+    transform: translateY(-20%) rotate(-0.5deg) scale(1.02);
+    opacity: 0.8;
+  }
+  85% {
+    transform: translateY(-5%) rotate(0.2deg) scale(1.01);
+    opacity: 0.9;
+  }
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
     opacity: 1;
   }
 }
 
-/* 树叶上升动画效果 - 新数字从下方慢慢上升 */
+/* 超丝滑树叶上升动画效果 - 新数字从下方轻盈上浮 */
 @keyframes leafRiseIn {
   0% {
-    transform: translateY(100%) rotate(3deg);
+    transform: translateY(120%) rotate(2deg) scale(0.95);
     opacity: 0;
   }
-  50% {
-    transform: translateY(50%) rotate(-2deg);
+  30% {
+    transform: translateY(50%) rotate(-1deg) scale(1.05);
     opacity: 0.5;
   }
+  60% {
+    transform: translateY(20%) rotate(0.5deg) scale(1.02);
+    opacity: 0.8;
+  }
+  85% {
+    transform: translateY(5%) rotate(-0.2deg) scale(1.01);
+    opacity: 0.9;
+  }
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
     opacity: 1;
   }
 }
 
-/* 旧数字飘落消失 */
+/* 超丝滑旧数字飘落消失 */
 @keyframes leafDropOut {
   0% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
     opacity: 1;
   }
-  50% {
-    transform: translateY(50%) rotate(2deg);
+  25% {
+    transform: translateY(20%) rotate(1deg) scale(0.98);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translateY(50%) rotate(2deg) scale(0.95);
     opacity: 0.5;
   }
   100% {
-    transform: translateY(100%) rotate(4deg);
+    transform: translateY(120%) rotate(3deg) scale(0.9);
     opacity: 0;
   }
 }
 
-/* 旧数字上升消失 */
+/* 超丝滑旧数字上升消失 */
 @keyframes leafRiseOut {
   0% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
     opacity: 1;
   }
-  50% {
-    transform: translateY(-50%) rotate(-2deg);
+  25% {
+    transform: translateY(-20%) rotate(-1deg) scale(0.98);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translateY(-50%) rotate(-2deg) scale(0.95);
     opacity: 0.5;
   }
   100% {
-    transform: translateY(-100%) rotate(-4deg);
+    transform: translateY(-120%) rotate(-3deg) scale(0.9);
     opacity: 0;
   }
 }

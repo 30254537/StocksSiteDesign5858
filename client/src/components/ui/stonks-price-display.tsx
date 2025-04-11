@@ -4,8 +4,7 @@ import { formatCurrency } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-// 创建一个模拟树叶落下动作的丝滑数字翻动组件
-// 使用内联样式和CSS变量确保动画过程中数字保持对齐
+// 最终版 - 丝滑完美的数字翻转动画，像树叶飘落一样
 const FlipDigit = ({ 
   digit, 
   prevDigit, 
@@ -21,50 +20,74 @@ const FlipDigit = ({
   // 特殊处理点号、美元符等非数字字符，这些字符不应该有翻动效果
   const isSpecialChar = !(/^\d$/.test(digit));
   
+  // 基础容器样式确保完美对齐
+  const containerStyle: React.CSSProperties = {
+    display: 'inline-block',
+    width: isSpecialChar ? '0.5em' : '0.65em',
+    textAlign: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    height: '1.5em',
+    verticalAlign: 'baseline',
+    lineHeight: '1.5em'
+  };
+  
   // 如果是特殊字符或数字没有变化，就只显示静态数字
   if (isSpecialChar || !hasChanged) {
     return (
-      <span style={{
-        display: 'inline-block',
-        width: isSpecialChar ? '0.5em' : '0.65em',
-        textAlign: 'center',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {digit}
+      <span style={containerStyle}>
+        <span style={{
+          position: 'relative',
+          display: 'inline-block'
+        }}>
+          {digit}
+        </span>
       </span>
     );
   }
   
+  // 数字动画样式
+  const digitStyle: React.CSSProperties = {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: 'translateZ(0)', // 强制GPU渲染，避免字体模糊
+    willChange: 'transform', // 提前告知浏览器将有变化发生，优化性能
+    backfaceVisibility: 'hidden',
+    width: '100%',
+    height: '100%'
+  };
+  
+  // 使用更合适的缓动函数实现类似树叶飘落的效果
+  const animationDuration = '0.5s';
+  const enterEasing = 'cubic-bezier(0.33, 1, 0.68, 1)'; // 快速到达最高点然后缓慢落下
+  const exitEasing = 'cubic-bezier(0.32, 0, 0.67, 0)';  // 在消失前快速离开
+  
   // 创建丝滑的树叶落下式数字翻动动画
   return (
-    <span style={{
-      display: 'inline-block',
-      width: '0.65em',
-      textAlign: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-      height: '1.5em'
-    }}>
-      {/* 新数字动画 - 从顶部/底部滑入 */}
+    <span style={containerStyle}>
+      {/* 新数字动画 - 从上方/下方飘入 */}
       <span 
         style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          animation: `${direction === 'up' ? 'leafDropIn' : 'leafRiseIn'} 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards`
+          ...digitStyle,
+          animation: `${direction === 'up' ? 'leafDropIn' : 'leafRiseIn'} ${animationDuration} ${enterEasing} forwards`,
+          zIndex: 2
         }}
       >
         {digit}
       </span>
       
-      {/* 旧数字动画 - 滑出 */}
+      {/* 旧数字动画 - 飘出 */}
       <span 
         style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          animation: `${direction === 'up' ? 'leafDropOut' : 'leafRiseOut'} 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.175) forwards`
+          ...digitStyle,
+          animation: `${direction === 'up' ? 'leafDropOut' : 'leafRiseOut'} ${animationDuration} ${exitEasing} forwards`,
+          zIndex: 1
         }}
       >
         {prevDigit}

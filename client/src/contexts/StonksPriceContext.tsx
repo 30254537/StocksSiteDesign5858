@@ -29,10 +29,15 @@ export function StonksPriceProvider({ children }: { children: ReactNode }) {
     return stonksAmount * currentPrice;
   };
 
-  // 获取STONKS价格的函数
+  // 获取STONKS价格的函数 - 优化版，避免闪烁和加载状态
   const fetchStonksPrice = async () => {
     try {
-      setLoading(true);
+      // 只在第一次加载时显示loading状态，后续更新不再显示
+      // 这样可以实现静默更新，不会造成数字闪烁
+      if (currentPrice === 0.1) {
+        setLoading(true);
+      }
+      
       const response = await fetch('/api/stonks-price');
       
       if (!response.ok) {
@@ -40,6 +45,8 @@ export function StonksPriceProvider({ children }: { children: ReactNode }) {
       }
       
       const data = await response.json();
+      
+      // 更新价格但不触发loading状态
       setCurrentPrice(data.price);
       setLastUpdated(data.lastUpdated);
       if (data.contractAddress) {
@@ -47,9 +54,11 @@ export function StonksPriceProvider({ children }: { children: ReactNode }) {
       }
       setError(null);
     } catch (err) {
+      // 仅设置错误但不改变当前价格，确保UI不闪烁
       setError(err instanceof Error ? err.message : '未知错误');
       console.error('获取STONKS价格错误:', err);
     } finally {
+      // 关闭loading状态
       setLoading(false);
     }
   };
