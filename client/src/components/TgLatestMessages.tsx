@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { FaTelegram, FaBell, FaSync, FaNewspaper } from "react-icons/fa";
+import { FaTelegram, FaBell, FaSync, FaNewspaper, FaExternalLinkAlt } from "react-icons/fa";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { format } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
@@ -150,45 +150,63 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
         </div>
       )}
       
-      {messagesWithLimit.map((message: TelegramMessage) => (
-        <Card key={message.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10">
-          <CardContent className="pt-4 pb-3">
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center space-x-2">
-                <FaNewspaper className="text-yellow-400" />
-                <span className="font-bold text-yellow-400">
-                  {message.channelTitle || "🟢 加密快讯"}
+      {messagesWithLimit.map((message: TelegramMessage) => {
+        // 提取标题和内容（通常标题在第一行，内容在第二行之后）
+        const lines = message.text.split('\n');
+        const title = lines.length > 1 ? lines[0] : '';
+        const content = lines.length > 1 ? lines.slice(1).join('\n') : message.text;
+        
+        return (
+          <Card 
+            key={message.id} 
+            className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors shadow-lg shadow-teal-800/10 cursor-pointer"
+            onClick={() => {
+              if (message.sourceUrl) {
+                window.open(message.sourceUrl, '_blank', 'noopener,noreferrer');
+              }
+            }}
+          >
+            <CardContent className="pt-4 pb-3">
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center space-x-2">
+                  <FaNewspaper className="text-yellow-400" />
+                  <span className="font-bold text-yellow-400">
+                    {message.channelTitle || "🟢 加密快讯"}
+                  </span>
+                </div>
+                <span className="text-xs text-gray-400">
+                  {formatMessageDate(message.date, language)}
                 </span>
               </div>
-              <span className="text-xs text-gray-400">
-                {formatMessageDate(message.date, language)}
-              </span>
-            </div>
-            
-            {/* 消息内容 */}
-            <div className="mt-2 whitespace-pre-wrap break-all text-white">
-              {message.text}
-            </div>
-            
-            <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
-              <span className="text-xs text-gray-500">
-                {message.sender ? `来源: ${message.sender}` : "加密资讯频道"}
-              </span>
-              {message.sourceUrl && (
-                <a 
-                  href={message.sourceUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-teal-400 hover:text-teal-300 flex items-center"
-                >
-                  {language === 'zh' ? '阅读全文' : 'Read more'} 
-                  <FaExternalLinkAlt className="ml-1 h-3 w-3" />
-                </a>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+              
+              {/* 消息内容 */}
+              <div className="mt-2 whitespace-pre-wrap break-all text-white">
+                {message.text}
+              </div>
+              
+              <div className="flex justify-between items-center mt-3 border-t border-gray-700 pt-2">
+                <span className="text-xs text-gray-500">
+                  {message.sender ? `来源: ${message.sender}` : "加密资讯频道"}
+                </span>
+                {message.sourceUrl && (
+                  <a 
+                    href={message.sourceUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-xs text-teal-400 hover:text-teal-300 flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation(); // 阻止冒泡，避免触发Card的点击事件
+                    }}
+                  >
+                    {language === 'zh' ? '阅读全文' : 'Read more'} 
+                    <FaExternalLinkAlt className="ml-1 h-3 w-3" />
+                  </a>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 };

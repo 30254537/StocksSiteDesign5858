@@ -104,22 +104,40 @@ class TelegramService {
         return insertedMessages;
       }
       
+      // 对新闻进行去重处理，避免重复内容
+      const uniqueNews = this.deduplicateNews(financeNews);
+      console.log(`对 ${financeNews.length} 条快讯进行去重后，剩余 ${uniqueNews.length} 条唯一快讯`);
+      
       // 清空现有消息记录，确保每次都能显示最新内容
       await db.delete(telegramMessages);
       console.log('已清空现有快讯记录');
       
-      console.log(`准备存储 ${financeNews.length} 条金色财经和火星财经的最新资讯`);
+      console.log(`准备存储 ${uniqueNews.length} 条金色财经和火星财经的最新资讯`);
       
       // 按时间排序（从新到旧）
-      financeNews.sort((a, b) => {
+      uniqueNews.sort((a, b) => {
         const dateA = a.date instanceof Date ? a.date : new Date(a.date || Date.now());
         const dateB = b.date instanceof Date ? b.date : new Date(b.date || Date.now());
         return dateB.getTime() - dateA.getTime();
       });
       
+      // 确保每条消息都有sourceUrl
+      const newsWithUrls = uniqueNews.map(news => {
+        if (!news.sourceUrl) {
+          if (news.sender.includes('金色财经')) {
+            news.sourceUrl = 'https://www.jinse.cn/';
+          } else if (news.sender.includes('火星财经')) {
+            news.sourceUrl = 'https://news.marsbit.co/';
+          } else {
+            news.sourceUrl = 'https://www.cryptonews.com/';
+          }
+        }
+        return news;
+      });
+      
       // 存储到数据库
       const insertedMessages = await db.insert(telegramMessages)
-        .values(financeNews)
+        .values(newsWithUrls)
         .returning();
       
       console.log(`成功存储 ${insertedMessages.length} 条加密快讯资讯`);
@@ -148,6 +166,38 @@ class TelegramService {
         return [];
       }
     }
+  }
+  
+  /**
+   * 对快讯进行去重处理
+   * 根据新闻内容进行去重，而不仅仅是ID
+   */
+  private deduplicateNews(news: InsertTelegramMessage[]): InsertTelegramMessage[] {
+    // 用于存储已处理的消息内容的集合
+    const uniqueContents = new Set<string>();
+    const uniqueNews: InsertTelegramMessage[] = [];
+    
+    for (const item of news) {
+      // 提取实际的新闻内容，去除时间戳和前缀等
+      let content = '';
+      const textLines = item.text.split('\n');
+      
+      // 找到实际内容行（不包括第一行标题和最后一行时间）
+      if (textLines.length >= 3) {
+        // 排除第一行和最后一行，通常是标题和时间戳
+        content = textLines.slice(1, -1).join(' ').trim();
+      } else {
+        content = item.text; // 如果格式不符合预期，使用整个文本
+      }
+      
+      // 如果这个内容还没有处理过，添加到结果中
+      if (!uniqueContents.has(content) && content.length > 0) {
+        uniqueContents.add(content);
+        uniqueNews.push(item);
+      }
+    }
+    
+    return uniqueNews;
   }
 }
 

@@ -264,6 +264,7 @@ export const telegramMessages = pgTable("telegram_messages", {
   sender: text("sender"), // 发送者名称
   channelTitle: text("channel_title"), // 频道名称
   mediaUrl: text("media_url"), // 媒体URL (如图片、视频等)
+  sourceUrl: text("source_url"), // 来源URL，用于阅读全文跳转
   date: timestamp("date").defaultNow().notNull(), // 消息日期
   createdAt: timestamp("created_at").defaultNow(), // 创建时间
   updatedAt: timestamp("updated_at").defaultNow(), // 更新时间
