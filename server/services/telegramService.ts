@@ -235,21 +235,30 @@ class TelegramService {
   }
   
   /**
-   * 对快讯进行去重处理 - 增强版
-   * 通过提取核心内容进行去重，更精确地识别重复消息
+   * 对快讯进行去重处理 - 强化版
+   * 通过多级去重策略，解决重复消息问题
    */
   private deduplicateNews(news: InsertTelegramMessage[]): InsertTelegramMessage[] {
-    // 用于存储已处理的核心内容指纹
+    // 用于存储已处理的消息指纹
     const uniqueFingerprints = new Set<string>();
+    const uniqueSenderTexts = new Set<string>();
     const uniqueNews: InsertTelegramMessage[] = [];
     
-    // 更准确的内容提取逻辑
-    for (const item of news) {
-      const textLines = item.text.split('\n').filter(line => line.trim() !== '');
+    // 对原始消息数组进行排序，优先添加最新的消息
+    const sortedNews = [...news].sort((a, b) => {
+      const dateA = a.date instanceof Date ? a.date : new Date(a.date || Date.now());
+      const dateB = b.date instanceof Date ? b.date : new Date(b.date || Date.now());
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    // 强化的内容去重逻辑
+    for (const item of sortedNews) {
+      // 提取正文内容
+      const fullText = item.text || '';
+      const textLines = fullText.split('\n').filter(line => line.trim() !== '');
       
-      // 提取核心内容，主要关注第二行的实际新闻内容
+      // 1. 提取核心内容
       let coreContent = '';
-      
       if (textLines.length >= 3) {
         // 通常第二行是核心内容
         coreContent = textLines[1].trim();
@@ -262,24 +271,28 @@ class TelegramService {
         continue;
       }
       
-      // 从核心内容中移除额外符号和日期信息
-      coreContent = coreContent
+      // 2. 清理核心内容，创建标准化指纹
+      const cleanedContent = coreContent
         .replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '') // 只保留中英文和数字
         .toLowerCase(); // 转为小写以忽略大小写差异
       
-      // 创建消息指纹 - 使用核心内容
-      const contentFingerprint = coreContent;
+      // 3. 创建发送者+内容的组合指纹，避免不同来源的相同内容被去重
+      const senderText = `${item.sender || ''}:${cleanedContent}`;
       
-      // 进行重复检查
-      if (!uniqueFingerprints.has(contentFingerprint) && contentFingerprint.length > 5) {
-        uniqueFingerprints.add(contentFingerprint);
+      // 4. 多级去重检查：检查清理后的内容 + 发送者-内容组合
+      if (
+        cleanedContent.length > 5 && 
+        !uniqueFingerprints.has(cleanedContent) &&
+        !uniqueSenderTexts.has(senderText)
+      ) {
+        uniqueFingerprints.add(cleanedContent);
+        uniqueSenderTexts.add(senderText);
         uniqueNews.push(item);
       }
     }
     
-    // 确保结果中至少有数据
+    // 确保结果中至少有一条数据
     if (uniqueNews.length === 0 && news.length > 0) {
-      // 如果所有消息被过滤掉了，至少返回第一条
       return [news[0]];
     }
     
