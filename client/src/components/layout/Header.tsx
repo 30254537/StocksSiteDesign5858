@@ -201,7 +201,7 @@ export default function Header() {
                   className="text-white hover:text-accent transition-colors duration-300 bg-transparent border-none cursor-pointer"
                   onClick={toggleLanguage}
                 >
-                  {language === 'en' ? 'EN' : '中文'}
+                  {language === 'en' ? 'EN' : 'CN'}
                 </button>
               </div>
               
