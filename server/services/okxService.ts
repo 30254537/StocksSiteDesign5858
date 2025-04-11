@@ -68,15 +68,12 @@ export async function getSolanaPrice(): Promise<number> {
 // 获取SOL/STONKS的价格比率
 export async function getSolStonksRatio(): Promise<number> {
   try {
-    // SOL/STONKS尚未在OKX上市，所以我们需要使用其他方法计算比率
-    // 这里我们使用GMGN平台上的数据
-    // 根据提供的链接 http://web3.okx.com/zh-hans/token/solana/6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump
-    // 和当前GMGN平台显示的数据，我们采用以下比率
+    // 根据OKX上显示的STONKS实际价格 $0.032834 和当前SOL价格 $120.4 计算比率
+    // 计算方法: SOL价格 / STONKS价格 = 比率
+    // $120.4 / $0.032834 ≈ 3667
     
-    // 假设从GMGN平台我们知道比率
-    // 根据当前价格0.03542和SOL价格约19.6美元，比率约为553
-    // 1 SOL = 553 STONKS (inverse = 0.00181)
-    const solToStonksRatio = 553;
+    // 1 SOL = 3667 STONKS (inverse = 0.00027)
+    const solToStonksRatio = 3667;
     
     return solToStonksRatio;
   } catch (error) {

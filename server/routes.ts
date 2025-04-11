@@ -939,7 +939,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 如果缓存已过期，则获取新价格
       if (isCacheExpired()) {
         try {
+          console.log("缓存已过期，开始获取STONKS实时价格...");
+          // 强制获取实时价格
           const realTimePrice = await fetchGmgnPrice();
+          console.log(`获取到的实时价格为: ${realTimePrice} USD`);
           cachedStonksPrice = {
             price: realTimePrice,
             lastUpdated: new Date()
@@ -947,7 +950,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (priceError) {
           console.error("获取价格失败，强制使用最新基准价格:", priceError);
           // 确保价格已更新为最新值
-          cachedStonksPrice.price = 0.03542;
+          cachedStonksPrice.price = 0.032834; // 使用OKX上显示的STONKS价格
           cachedStonksPrice.lastUpdated = new Date();
         }
       }
