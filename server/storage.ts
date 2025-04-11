@@ -11,6 +11,7 @@ import {
   contractAddresses, type ContractAddress, type InsertContractAddress,
   cryptoNews, type CryptoNews, type InsertCryptoNews,
   cryptoTweets, type CryptoTweet, type InsertCryptoTweet,
+  telegramMessages, type TelegramMessage, type InsertTelegramMessage,
   type OrderWithItems
 } from "@shared/schema";
 import { db } from "./db";
@@ -99,6 +100,14 @@ export interface IStorage {
   updateCryptoTweet(id: number, tweet: Partial<CryptoTweet>): Promise<CryptoTweet | undefined>;
   updateTweetTranslation(id: number, translatedText: string): Promise<CryptoTweet | undefined>;
   deleteCryptoTweet(id: number): Promise<boolean>;
+
+  // Telegram Messages operations
+  getTelegramMessages(limit?: number): Promise<TelegramMessage[]>;
+  getTelegramMessageById(id: number): Promise<TelegramMessage | undefined>;
+  getTelegramMessageByMessageId(messageId: number): Promise<TelegramMessage | undefined>;
+  createTelegramMessage(message: InsertTelegramMessage): Promise<TelegramMessage>;
+  updateTelegramMessage(id: number, message: Partial<TelegramMessage>): Promise<TelegramMessage | undefined>;
+  deleteTelegramMessage(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
