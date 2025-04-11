@@ -410,8 +410,22 @@ const CryptoTweets: React.FC = () => {
                   <CardContent className="p-4">
                     <div className="flex space-x-4">
                       <Avatar className="h-10 w-10">
-                        {tweet.authorProfileImage ? (
-                          <AvatarImage src={tweet.authorProfileImage} alt={tweet.authorName} />
+                        {tweet.authorProfileImage && tweet.authorProfileImage !== 'undefined' && tweet.authorProfileImage !== 'null' ? (
+                          <AvatarImage 
+                            src={tweet.authorProfileImage} 
+                            alt={tweet.authorName}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null; // 防止循环
+                              // 回退到默认头像
+                              target.style.display = 'none';
+                              // 显示回退头像
+                              const fallback = target.nextElementSibling;
+                              if (fallback) {
+                                fallback.style.display = 'flex';
+                              }
+                            }}
+                          />
                         ) : (
                           <AvatarFallback>{tweet.authorName.substring(0, 2)}</AvatarFallback>
                         )}
