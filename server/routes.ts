@@ -1843,8 +1843,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('[Cron] 同步 MoontokListing 推文失败:', error);
     }
   });
+  
+  // 设置定时任务，每5分钟同步一次财经快讯
+  cron.schedule('*/5 * * * *', async () => {
+    console.log('[Cron] 开始同步财经快讯...');
+    try {
+      const newsItems = await financeNewsService.fetchAndStoreFinanceNews(10);
+      console.log(`[Cron] 成功同步 ${newsItems.length} 条财经快讯`);
+    } catch (error) {
+      console.error('[Cron] 同步财经快讯失败:', error);
+    }
+  });
 
-  // 在应用启动时立即同步一次金狗监测提醒消息和推文
+  // 在应用启动时立即同步一次金狗监测提醒消息、推文和财经快讯
   (async () => {
     try {
       console.log('初始化: 开始获取金狗监测提醒消息...');
@@ -1854,6 +1865,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('初始化: 开始获取 MoontokListing 推文...');
       const tweets = await twitterService.fetchAndStoreTweets();
       console.log(`初始化: 成功同步 ${tweets.length} 条 MoontokListing 推文`);
+      
+      console.log('初始化: 开始获取财经快讯...');
+      const newsItems = await financeNewsService.fetchAndStoreFinanceNews(10);
+      console.log(`初始化: 成功同步 ${newsItems.length} 条财经快讯`);
     } catch (error) {
       console.error('初始化: 同步数据失败:', error);
     }
