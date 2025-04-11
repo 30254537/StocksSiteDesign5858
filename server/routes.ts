@@ -1505,6 +1505,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Telegram 消息相关 API
+  
+  // 获取最新的 Telegram 消息
+  app.get('/api/telegram-messages', async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      
+      // 从数据库获取现有消息
+      const messages = await db.select()
+        .from(telegramMessages)
+        .where(eq(telegramMessages.isDisplayed, true))
+        .orderBy(desc(telegramMessages.date))
+        .limit(limit);
+      
+      res.json({ data: messages });
+    } catch (error) {
+      console.error('获取 Telegram 消息失败:', error);
+      res.status(500).json({ error: '获取 Telegram 消息失败' });
+    }
+  });
+
+  // 手动触发获取新消息的 API 端点（管理员权限）
+  app.post('/api/telegram-messages/sync', requireAdmin, async (req, res) => {
+    try {
+      const messages = await telegramService.fetchAndStoreMessages();
+      res.json({ 
+        success: true,
+        message: `成功同步 ${messages.length} 条 Telegram 消息`,
+        data: messages
+      });
+    } catch (error) {
+      console.error('同步 Telegram 消息失败:', error);
+      res.status(500).json({ 
+        success: false,
+        error: '同步 Telegram 消息失败'
+      });
+    }
+  });
+
+  // 管理 Telegram 消息的显示状态（管理员权限）
+  app.patch('/api/telegram-messages/:id/toggle-display', requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: '无效的消息 ID' });
+      }
+
+      // 获取当前消息
+      const [message] = await db.select()
+        .from(telegramMessages)
+        .where(eq(telegramMessages.id, id));
+      
+      if (!message) {
+        return res.status(404).json({ error: '未找到消息' });
+      }
+
+      // 切换显示状态
+      const isDisplayed = !message.isDisplayed;
+      
+      // 更新显示状态
+      await db.update(telegramMessages)
+        .set({ isDisplayed })
+        .where(eq(telegramMessages.id, id));
+      
+      res.json({ 
+        success: true,
+        message: `消息显示状态已更新为 ${isDisplayed ? '显示' : '隐藏'}`,
+        id,
+        isDisplayed
+      });
+    } catch (error) {
+      console.error('更新 Telegram 消息显示状态失败:', error);
+      res.status(500).json({ error: '更新 Telegram 消息显示状态失败' });
+    }
+  });
+
+  // 添加每小时定时获取 Telegram 消息的任务
+  cron.schedule('0 * * * *', async () => {
+    console.log('[Cron] 开始同步 Telegram 消息...');
+    try {
+      const messages = await telegramService.fetchAndStoreMessages();
+      console.log(`[Cron] 成功同步 ${messages.length} 条 Telegram 消息`);
+    } catch (error) {
+      console.error('[Cron] 同步 Telegram 消息失败:', error);
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

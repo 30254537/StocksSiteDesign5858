@@ -22,6 +22,7 @@ const AdminLogin = lazy(() => import("@/pages/AdminLogin"));
 const About = lazy(() => import("@/pages/About"));
 const Music = lazy(() => import("@/pages/Music"));
 const CryptoNews = lazy(() => import("@/pages/CryptoNews"));
+const Community = lazy(() => import("@/pages/Community"));
 const TestTools = lazy(() => import("@/pages/TestTools"));
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -153,6 +154,13 @@ function Router() {
             {() => (
               <PageWrapper>
                 <CryptoNews />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/community">
+            {() => (
+              <PageWrapper>
+                <Community />
               </PageWrapper>
             )}
           </Route>
