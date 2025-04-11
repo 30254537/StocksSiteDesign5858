@@ -279,3 +279,25 @@ export const insertTelegramMessageSchema = createInsertSchema(telegramMessages).
 
 export type TelegramMessage = typeof telegramMessages.$inferSelect;
 export type InsertTelegramMessage = z.infer<typeof insertTelegramMessageSchema>;
+
+// MoontokListing 推文模型
+export const tweets = pgTable("tweets", {
+  id: serial("id").primaryKey(),
+  tweetId: text("tweet_id").notNull().unique(), // 推文ID
+  text: text("text").notNull(), // 推文内容
+  authorId: text("author_id").notNull(), // 作者ID
+  authorName: text("author_name").notNull(), // 作者名称
+  authorUsername: text("author_username").notNull(), // 作者用户名
+  profileImageUrl: text("profile_image_url"), // 作者头像
+  mediaUrl: text("media_url"), // 媒体URL (图片、视频链接)
+  createdAt: timestamp("created_at").defaultNow().notNull(), // 创建时间
+  isDisplayed: boolean("is_displayed").default(true), // 是否显示
+});
+
+export const insertTweetSchema = createInsertSchema(tweets).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Tweet = typeof tweets.$inferSelect;
+export type InsertTweet = z.infer<typeof insertTweetSchema>;

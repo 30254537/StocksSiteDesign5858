@@ -3,9 +3,8 @@ import React from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CryptoTweets from '@/components/CryptoTweets';
-import TelegramFeed from '@/components/TelegramFeed';
-import TgLatestMessages from '@/components/TgLatestMessages';
-import AddTestTelegramMessage from '@/components/AddTestTelegramMessage';
+import TwitterFeed from '@/components/TwitterFeed';
+import AddTestTweet from '@/components/AddTestTweet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SiDiscord } from "react-icons/si";
 import { FaTwitter, FaTelegram } from "react-icons/fa";
@@ -95,25 +94,26 @@ const CommunityPage: React.FC = () => {
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-xl font-semibold text-teal-400 flex items-center">
-                  <FaTelegram className="mr-2 text-blue-400" />
-                  {language === 'zh' ? '金狗监测' : 'Golden Dog Monitoring'}
+                  <FaTwitter className="mr-2 text-blue-400" />
+                  {language === 'zh' ? '加密资讯' : 'Crypto News'}
                 </h3>
                 <a 
-                  href="/telegram-messages" 
+                  href="https://twitter.com/MoontokListing" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm text-blue-400 hover:text-blue-300 hover:underline flex items-center"
                 >
-                  {language === 'zh' ? '查看所有金狗监测提醒' : 'View all Golden Dog alerts'} →
+                  {language === 'zh' ? '访问 @MoontokListing' : 'Visit @MoontokListing'} →
                 </a>
               </div>
               <p className="text-gray-300 text-sm mb-4">
                 {language === 'zh' 
-                  ? '来自GoldDogAlpha频道的最新代币监测信息，每分钟自动同步' 
-                  : 'Latest token monitoring alerts from GoldDogAlpha channel, auto-synced every minute'}
+                  ? '来自 Twitter 的最新加密资讯，每5分钟自动同步一次' 
+                  : 'Latest crypto news from Twitter, auto-synced every 5 minutes'}
               </p>
             </div>
-            {/* 添加测试消息组件 */}
-            <AddTestTelegramMessage />
-            <TgLatestMessages limit={3} />
+            <AddTestTweet />
+            <TwitterFeed limit={3} showRefresh={true} />
           </TabsContent>
         </Tabs>
         

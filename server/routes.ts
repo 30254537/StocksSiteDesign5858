@@ -2,7 +2,7 @@ import type { Express, Request, Response } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema, insertMusicTrackSchema, InsertCryptoTweet, telegramMessages } from "@shared/schema";
+import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema, insertMusicTrackSchema, InsertCryptoTweet, telegramMessages, tweets } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import * as crypto from "crypto";
@@ -18,6 +18,7 @@ import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translat
 import { syncCryptoTweets } from "./services/xService";
 import * as cron from "node-cron";
 import { telegramService } from "./services/telegramService";
+import * as twitterService from "./services/twitterService";
 import { db } from "./db";
 import { desc, eq, and, or, like, ilike, isNull, isNotNull, SQL, sql, lt, gt, asc } from "drizzle-orm";
 
@@ -1587,6 +1588,125 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Twitter 相关 API 端点
+  
+  // 获取 MoontokListing 的最新推文
+  app.get('/api/tweets', async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const latestTweets = await twitterService.getLatestTweets(limit);
+      res.json({ data: latestTweets });
+    } catch (error) {
+      console.error('获取推文失败:', error);
+      res.status(500).json({ error: '获取推文失败' });
+    }
+  });
+  
+  // 手动同步推文端点 - 获取 MoontokListing 的推文
+  app.post('/api/sync-tweets', async (req, res) => {
+    try {
+      console.log('用户触发 Twitter 推文同步...');
+      const tweets = await twitterService.fetchAndStoreTweets();
+      console.log(`成功同步 ${tweets.length} 条推文`);
+      res.json({ 
+        success: true, 
+        message: `成功同步 ${tweets.length} 条推文`,
+        count: tweets.length,
+        data: tweets
+      });
+    } catch (error) {
+      console.error('同步推文失败:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: '同步推文失败',
+        message: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // 切换推文显示状态 (仅管理员)
+  app.patch('/api/tweets/:id/toggle-display', requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: '无效的推文 ID' });
+      }
+
+      // 获取当前推文
+      const [tweet] = await db.select()
+        .from(tweets)
+        .where(eq(tweets.id, id));
+      
+      if (!tweet) {
+        return res.status(404).json({ error: '未找到推文' });
+      }
+
+      // 切换显示状态
+      const isDisplayed = !tweet.isDisplayed;
+      
+      // 更新显示状态
+      await db.update(tweets)
+        .set({ isDisplayed })
+        .where(eq(tweets.id, id));
+      
+      res.json({ 
+        success: true,
+        message: `推文显示状态已更新为 ${isDisplayed ? '显示' : '隐藏'}`,
+        id,
+        isDisplayed
+      });
+    } catch (error) {
+      console.error('更新推文显示状态失败:', error);
+      res.status(500).json({ error: '更新推文显示状态失败' });
+    }
+  });
+  
+  // 添加测试推文
+  app.post('/api/tweets-test', async (req, res) => {
+    try {
+      const { 
+        text = "🔔 新币上线提醒 $STONKS\n\n📊 价格: $0.031 USD\n📈 24h涨幅: +15.4%\n💰 市值: $31M\n👥 持有者: 9.5K\n\n💫 评级: 🟢 强烈推荐\n⚠️ 风险等级: 中等\n\n✅ 已KYC审核\n✅ 合约已审计\n\n🔗 合约: 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56", 
+        authorName = "MoontokListing", 
+        authorUsername = "MoontokListing" 
+      } = req.body;
+      
+      // 获取当前时间
+      const now = new Date();
+      
+      // 创建一个虚拟的推文ID
+      const tweetId = `${Date.now()}`;
+      
+      // 创建模拟推文
+      const newTweet = {
+        tweetId,
+        text,
+        authorId: "1702274513189580801", // MoontokListing 的 ID
+        authorName,
+        authorUsername,
+        profileImageUrl: "https://pbs.twimg.com/profile_images/1702275000631328769/BiyRIcg5_400x400.jpg", // MoontokListing 头像
+        mediaUrl: null,
+        createdAt: now,
+        isDisplayed: true
+      };
+      
+      // 插入新推文到数据库
+      const [insertedTweet] = await db.insert(tweets)
+        .values(newTweet)
+        .returning();
+      
+      console.log('已添加测试推文:', insertedTweet);
+      
+      res.status(200).json({
+        success: true,
+        message: '已添加测试推文',
+        data: insertedTweet
+      });
+    } catch (error) {
+      console.error('添加测试推文失败:', error);
+      res.status(500).json({ error: '添加测试推文失败' });
+    }
+  });
+
   // 管理 Telegram 消息的显示状态（管理员权限）
   app.patch('/api/telegram-messages/:id/toggle-display', requireAdmin, async (req, res) => {
     try {
@@ -1675,14 +1795,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 在应用启动时立即同步一次金狗监测提醒消息
+  // 设置定时任务，每5分钟同步一次 MoontokListing 的推文
+  cron.schedule('*/5 * * * *', async () => {
+    console.log('[Cron] 开始同步 MoontokListing 推文...');
+    try {
+      const tweets = await twitterService.fetchAndStoreTweets();
+      console.log(`[Cron] 成功同步 ${tweets.length} 条 MoontokListing 推文`);
+    } catch (error) {
+      console.error('[Cron] 同步 MoontokListing 推文失败:', error);
+    }
+  });
+
+  // 在应用启动时立即同步一次金狗监测提醒消息和推文
   (async () => {
     try {
       console.log('初始化: 开始获取金狗监测提醒消息...');
       const messages = await telegramService.fetchAndStoreMessages();
       console.log(`初始化: 成功同步 ${messages.length} 条金狗监测提醒消息`);
+      
+      console.log('初始化: 开始获取 MoontokListing 推文...');
+      const tweets = await twitterService.fetchAndStoreTweets();
+      console.log(`初始化: 成功同步 ${tweets.length} 条 MoontokListing 推文`);
     } catch (error) {
-      console.error('初始化: 同步金狗监测提醒消息失败:', error);
+      console.error('初始化: 同步数据失败:', error);
     }
   })();
 
