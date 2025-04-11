@@ -1825,8 +1825,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .from(telegramMessages)
           .where(
             and(
-              telegramMessages.date >= startDate.toISOString(),
-              telegramMessages.date <= endDate.toISOString()
+              gte(telegramMessages.date, startDate),
+              lte(telegramMessages.date, endDate)
             )
           )
           .orderBy(desc(telegramMessages.date));
@@ -1886,8 +1886,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .from(telegramMessages)
           .where(
             and(
-              telegramMessages.date >= startDate.toISOString(),
-              telegramMessages.date <= endDate.toISOString()
+              gte(telegramMessages.date, startDate),
+              lte(telegramMessages.date, endDate)
             )
           )
           .orderBy(desc(telegramMessages.date));
