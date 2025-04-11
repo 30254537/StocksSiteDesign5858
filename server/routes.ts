@@ -1863,14 +1863,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 这个端点已在上面定义，此处移除
 
-  // 设置高频定时任务，每1分钟获取一次金狗监测提醒消息，确保第一时间同步
+  // 设置高频定时任务，每1分钟获取一次加密快讯消息，确保第一时间同步
   cron.schedule('* * * * *', async () => {
-    console.log('[Cron] 开始同步金狗监测提醒消息...');
+    console.log('[Cron] 开始同步加密快讯消息...');
     try {
       const messages = await telegramService.fetchAndStoreMessages();
-      console.log(`[Cron] 成功同步 ${messages.length} 条金狗监测提醒消息`);
+      console.log(`[Cron] 成功同步 ${messages.length} 条加密快讯消息`);
     } catch (error) {
-      console.error('[Cron] 同步金狗监测提醒消息失败:', error);
+      console.error('[Cron] 同步加密快讯消息失败:', error);
     }
   });
   
@@ -1896,12 +1896,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // 在应用启动时立即同步一次金狗监测提醒消息、推文和财经快讯
+  // 在应用启动时立即同步一次加密快讯消息、推文和财经快讯
   (async () => {
     try {
-      console.log('初始化: 开始获取金狗监测提醒消息...');
+      console.log('初始化: 开始获取加密快讯消息...');
       const messages = await telegramService.fetchAndStoreMessages();
-      console.log(`初始化: 成功同步 ${messages.length} 条金狗监测提醒消息`);
+      console.log(`初始化: 成功同步 ${messages.length} 条加密快讯消息`);
       
       console.log('初始化: 开始获取 MoontokListing 推文...');
       const tweets = await twitterService.fetchAndStoreTweets();
