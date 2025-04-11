@@ -13,6 +13,7 @@ import fs from "fs";
 import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 import cryptoNewsRoutes from "./routes/cryptoNewsRoutes";
+import financeNewsRoutes from "./routes/financeNewsRoutes";
 import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
 import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
 import { syncCryptoTweets } from "./services/xService";
@@ -1319,6 +1320,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 加密货币新闻路由
   app.use('/api', cryptoNewsRoutes);
   
+  // 财经快讯路由
+  app.use('/api', financeNewsRoutes);
+  
   // 加密推文API端点
   app.get('/api/crypto-tweets', async (req, res) => {
     try {
@@ -1446,6 +1450,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 初始化加密货币新闻定时获取任务
   initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
+  
+  // 初始化财经快讯定时获取任务
+  cron.schedule('0 */5 * * *', async () => {
+    try {
+      console.log('开始定时同步财经快讯...');
+      const newsItems = await financeNewsService.fetchAndStoreFinanceNews();
+      console.log(`定时任务成功同步了 ${newsItems.length} 条财经快讯`);
+    } catch (error) {
+      console.error('定时同步财经快讯失败:', error);
+    }
+  }); // 每5小时获取一次最新财经快讯
   
   // 添加测试合约地址推文（测试用，无需验证）- 同时支持POST和GET方法
   app.post('/api/test/add-contract-tweet', async (req, res) => {
