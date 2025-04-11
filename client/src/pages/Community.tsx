@@ -5,11 +5,12 @@ import Footer from '@/components/layout/Footer';
 import CryptoTweets from '@/components/CryptoTweets';
 import TelegramFeed from '@/components/TelegramFeed';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SiDiscord, SiTwitter, SiTelegram } from "react-icons/si";
+import { SiDiscord } from "react-icons/si";
+import { FaTwitter, FaTelegram } from "react-icons/fa";
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const CommunityPage: React.FC = () => {
-  const { language, getLocalTranslation } = useLanguage();
+  const { language } = useLanguage();
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -20,7 +21,7 @@ const CommunityPage: React.FC = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div className="bg-gray-800/50 rounded-xl p-6 flex flex-col items-center border border-gray-700 hover:border-teal-400 transition-colors">
-            <SiTwitter className="text-4xl text-blue-400 mb-4" />
+            <FaTwitter className="text-4xl text-blue-400 mb-4" />
             <h3 className="text-xl font-semibold mb-2">Twitter</h3>
             <p className="text-gray-300 text-center mb-4">
               {language === 'zh' 
@@ -38,7 +39,7 @@ const CommunityPage: React.FC = () => {
           </div>
           
           <div className="bg-gray-800/50 rounded-xl p-6 flex flex-col items-center border border-gray-700 hover:border-teal-400 transition-colors">
-            <SiTelegram className="text-4xl text-blue-500 mb-4" />
+            <FaTelegram className="text-4xl text-blue-500 mb-4" />
             <h3 className="text-xl font-semibold mb-2">Telegram</h3>
             <p className="text-gray-300 text-center mb-4">
               {language === 'zh' 
@@ -111,7 +112,7 @@ const CommunityPage: React.FC = () => {
               rel="noopener noreferrer"
               className="py-2 px-6 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors flex items-center"
             >
-              <SiTwitter className="mr-2" />
+              <FaTwitter className="mr-2" />
               Twitter
             </a>
             
@@ -121,7 +122,7 @@ const CommunityPage: React.FC = () => {
               rel="noopener noreferrer"
               className="py-2 px-6 bg-blue-500 rounded-md hover:bg-blue-600 transition-colors flex items-center"
             >
-              <SiTelegram className="mr-2" />
+              <FaTelegram className="mr-2" />
               Telegram
             </a>
             
