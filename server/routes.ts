@@ -1885,14 +1885,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 设置定时任务，每5分钟同步一次财经快讯
-  cron.schedule('*/5 * * * *', async () => {
-    console.log('[Cron] 开始同步财经快讯...');
+  // 设置定时任务，每1分钟同步一次财经快讯，确保实时更新
+  cron.schedule('* * * * *', async () => {
+    console.log('[Cron] 开始同步财经7x24H实时快讯...');
     try {
-      const newsItems = await financeNewsService.fetchAndStoreFinanceNews(10);
-      console.log(`[Cron] 成功同步 ${newsItems.length} 条财经快讯`);
+      const newsItems = await financeNewsService.fetchAndStoreFinanceNews(15);
+      console.log(`[Cron] 成功同步 ${newsItems.length} 条财经7x24H实时快讯`);
     } catch (error) {
-      console.error('[Cron] 同步财经快讯失败:', error);
+      console.error('[Cron] 同步财经7x24H实时快讯失败:', error);
     }
   });
 
