@@ -6,20 +6,39 @@ import { eq } from 'drizzle-orm';
 
 // 检查是否为金狗监测新格式
 function isGoldenDogFormat(text: string): boolean {
+  // 检查是否含有典型的金狗监测标记
+  const hasGoldenDogMarker = text.includes("金狗监测") || 
+                            text.includes("全狗信号") || 
+                            text.includes("全狗监测") || 
+                            text.includes("全狗值守机器人");
+  
   // 老格式
   const isOldFormat = text.includes("🔔 金狗监测提醒") || 
                      (text.includes("代币名称") && text.includes("合约地址"));
   
-  // 新格式: 包含🟢和CA或者包含代币名称和价格
-  const isNewFormat = (text.includes("🟢") && (text.includes("CA:") || text.includes("建仓"))) ||
-                      (text.includes("Ghibli") && text.includes("价格"));
+  // 新格式: 检查与加密货币相关的关键词
+  const hasContractInfo = text.includes("合约地址") || 
+                          text.includes("CA:") || 
+                          text.includes("代币名称") || 
+                          text.includes("建仓");
+                          
+  // 检查价格、市值等数据类信息
+  const hasMarketInfo = text.includes("市值") || 
+                        text.includes("价格") || 
+                        text.includes("持有者") || 
+                        text.includes("交易量");
   
-  return isOldFormat || isNewFormat;
+  console.log(`消息格式检查: hasGoldenDogMarker=${hasGoldenDogMarker}, hasContractInfo=${hasContractInfo}, hasMarketInfo=${hasMarketInfo}`);
+  
+  // 满足以下任一条件即可：
+  // 1. 包含金狗监测标记
+  // 2. 同时包含合约信息和市场信息
+  return hasGoldenDogMarker || (hasContractInfo && hasMarketInfo);
 }
 
 class TelegramService {
-  // 更新为 GoldDogAlpha 频道URL
-  private channelUrl: string = 'https://t.me/s/GoldDogAlpha';
+  // 使用金狗监测提醒频道URL，这是正确的Telegram公开频道URL格式
+  private channelUrl: string = 'https://t.me/s/chengzi_golden';
   
   /**
    * 从 Telegram 频道获取最新消息
@@ -54,9 +73,27 @@ class TelegramService {
         try {
           // 获取消息 ID
           const messageLink = container.getAttribute('data-post') || '';
-          // 适配新的Gold Dog Alpha格式
-          const messageIdMatch = messageLink.match(/GoldDogAlpha\/(\d+)/) || messageLink.match(/chengzi_golden\/(\d+)/);
-          if (!messageIdMatch) return;
+          console.log(`处理消息链接: ${messageLink}`);
+          
+          // 适配不同频道格式
+          let messageIdMatch = messageLink.match(/chengzi_golden\/(\d+)/);
+          
+          // 如果无法匹配，尝试其他格式
+          if (!messageIdMatch) {
+            messageIdMatch = messageLink.match(/GoldDogAlpha\/(\d+)/);
+          }
+          
+          // 如果还是无法匹配，尝试直接获取最后一段数字作为消息ID
+          if (!messageIdMatch) {
+            const parts = messageLink.split('/');
+            const lastPart = parts[parts.length - 1];
+            if (/^\d+$/.test(lastPart)) {
+              messageIdMatch = [lastPart, lastPart];
+            } else {
+              console.log(`无法从链接提取消息ID: ${messageLink}`);
+              return;
+            }
+          }
           
           const messageId = parseInt(messageIdMatch[1]);
           
