@@ -6,10 +6,12 @@ import { eq } from 'drizzle-orm';
 
 // 检查是否为金狗监测格式，使用更宽松的匹配逻辑
 function isGoldenDogFormat(text: string): boolean {
-  // 消息关键词列表
+  // 消息关键词列表，更新了更多格式的关键词
   const keywords = [
     "金狗", "代币", "合约", "CA", "市值", "持有", "持仓", "交易量", "价格", 
-    "监测", "提醒", "全狗", "推特", "分析", "捆绑", "交易"
+    "监测", "提醒", "全狗", "推特", "分析", "捆绑", "交易", "风险", "动作",
+    "创建时间", "买税", "卖税", "持有人", "LP", "风险等级", "流动性", 
+    "SOL", "Solana", "金狗监测", "买入成本", "$", "小时", "涨幅", "TrashCoin"
   ];
   
   // 计算匹配的关键词数量
@@ -18,6 +20,21 @@ function isGoldenDogFormat(text: string): boolean {
     if (text.includes(keyword)) {
       matchCount++;
     }
+  }
+  
+  // 自动检测橙子消息格式
+  if (text.includes('买币渠道') || 
+      text.includes('代币名称:') || 
+      text.includes('代币名称：') || 
+      text.includes('代码: BLORB') || 
+      text.includes('市值:') ||
+      text.includes('$TrashCoin')) {
+    matchCount += 5; // 更可能是我们想要的消息
+  }
+  
+  // 自动检测STONKS相关消息
+  if (text.includes('STONKS') || text.includes('$STONKS')) {
+    matchCount += 3;
   }
   
   // 如果包含2个或以上关键词，认为是符合条件的消息
@@ -32,7 +49,7 @@ function isGoldenDogFormat(text: string): boolean {
 
 // Telegram服务类
 class TelegramService {
-  // 手动添加一些测试消息用于显示
+  // 手动添加一些测试消息用于显示，包括新的TrashCoin格式
   private mockMessages: InsertTelegramMessage[] = [
     {
       messageId: 1001,
@@ -71,6 +88,42 @@ class TelegramService {
 🔗 查看更多: t.me/GoldDogAlpha`,
       sender: 'GoldDogAlpha频道',
       channelTitle: 'GoldDogAlpha频道',
+      mediaUrl: null,
+      date: new Date(),
+      isDisplayed: true
+    },
+    {
+      messageId: 1003,
+      text: `买币渠道
+代币: BLORB 涨幅: 2120.22% 合约地址: Azf..,
+现在上线: uniswap | MEXC | Bybit | Huobi | ByDFI | OKX | Gate | Binance | HTX
+
+#SOL #Solana #金狗监测
+
+⚠ 金狗监测高度提醒
+💰 代币名称:$TrashCoin TrashCoin
+📝 合约地址:
+Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
+
+🪙 K线链接:
+https://gmgn.ai/sol/token/l2XlXD4b_Ba32nK2fV9yr7ALcyoiBdzw1AryjzazmBBW877ZEpump
+
+💴 市值$21K
+💵 前十持仓:30.9%
+👨‍👨‍👧‍👦持有者数量: 117
+📈24h交易量: $34K
+💶6小时价格变化: 543%
+⏰创建时间:2025/4/11 17:41:25
+🔮市场分析: 🔴 40.12%
+
+👨‍💻有关此文件查看数量: 7
+📡蓝V用户: 0
+
+⚠ 推荐信息:无推特
+
+⚠ 笔记:`,
+      sender: '金狗监测频道',
+      channelTitle: '金狗监测频道',
       mediaUrl: null,
       date: new Date(),
       isDisplayed: true

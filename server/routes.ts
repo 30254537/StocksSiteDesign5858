@@ -1509,6 +1509,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Telegram 消息相关 API
   
   // 获取最新的 Telegram 消息
+  // 手动同步Telegram消息的API
+  app.post('/api/sync-telegram-messages', async (req, res) => {
+    try {
+      console.log('开始手动同步Telegram消息...');
+      const messages = await telegramService.fetchAndStoreMessages();
+      console.log(`成功同步 ${messages.length} 条消息`);
+      res.status(200).json({ 
+        success: true, 
+        message: `成功同步 ${messages.length} 条消息`,
+        data: messages
+      });
+    } catch (error) {
+      console.error('手动同步Telegram消息失败:', error);
+      res.status(500).json({
+        success: false,
+        message: '同步Telegram消息失败',
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   app.get('/api/telegram-messages', async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -1620,22 +1641,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 添加手动同步金狗监测提醒的API端点
-  app.post('/api/sync-telegram-messages', async (req, res) => {
-    try {
-      console.log('开始手动同步金狗监测提醒消息...');
-      const messages = await telegramService.fetchAndStoreMessages();
-      
-      res.status(200).json({
-        success: true,
-        message: `已同步 ${messages.length} 条金狗监测提醒消息`,
-        data: messages
-      });
-    } catch (error) {
-      console.error('手动同步金狗监测提醒消息失败:', error);
-      res.status(500).json({ error: '同步金狗监测提醒消息失败' });
-    }
-  });
+  // 这个端点已在上面定义，此处移除
 
   // 设置高频定时任务，每1分钟获取一次金狗监测提醒消息，确保第一时间同步
   cron.schedule('* * * * *', async () => {
