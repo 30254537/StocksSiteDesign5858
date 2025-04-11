@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface EnhancedAvatarProps {
@@ -12,26 +12,37 @@ export const EnhancedAvatar: React.FC<EnhancedAvatarProps> = ({
   authorProfileImage,
   className = "h-10 w-10"
 }) => {
+  const [imgError, setImgError] = useState(false);
+  const [validUrl, setValidUrl] = useState(false);
+  
+  // 验证URL是否有效
+  useEffect(() => {
+    if (!authorProfileImage || 
+        authorProfileImage === 'undefined' || 
+        authorProfileImage === 'null' || 
+        !authorProfileImage.startsWith('http')) {
+      setValidUrl(false);
+    } else {
+      setValidUrl(true);
+    }
+  }, [authorProfileImage]);
+
+  // 获取用户名首字母(用于回退显示)
+  const getInitials = () => {
+    if (!authorName || authorName.length === 0) return "?";
+    return authorName.substring(0, 2).toUpperCase();
+  };
+
   return (
     <Avatar className={className}>
-      {authorProfileImage && authorProfileImage !== 'undefined' && authorProfileImage !== 'null' ? (
+      {validUrl && !imgError ? (
         <AvatarImage 
-          src={authorProfileImage} 
-          alt={authorName}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.onerror = null; // 防止循环
-            // 隐藏图片
-            target.style.display = 'none';
-            // 显示回退头像
-            const fallback = target.nextElementSibling as HTMLElement;
-            if (fallback) {
-              fallback.style.display = 'flex';
-            }
-          }}
+          src={authorProfileImage!} 
+          alt={authorName || "User"}
+          onError={() => setImgError(true)}
         />
       ) : (
-        <AvatarFallback>{authorName.substring(0, 2)}</AvatarFallback>
+        <AvatarFallback>{getInitials()}</AvatarFallback>
       )}
     </Avatar>
   );
