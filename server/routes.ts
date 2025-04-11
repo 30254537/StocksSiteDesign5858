@@ -1746,6 +1746,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // 普通用户可访问的消息同步端点
+  app.post('/api/sync-telegram-messages', async (req, res) => {
+    try {
+      console.log('用户触发Telegram消息同步...');
+      
+      // 检查请求中是否指定了日期（4月11日）
+      const { date } = req.body;
+      let messages;
+      
+      if (date === '2025-04-11') {
+        console.log('请求获取2025年4月11日的加密快讯...');
+        
+        // 获取4月11日的所有消息
+        messages = await telegramService.fetchAndStoreMessages({ specificDate: '2025-04-11' });
+        console.log(`已返回 ${messages.length} 条2025年4月11日的加密快讯`);
+      } else {
+        // 正常获取最新消息
+        messages = await telegramService.fetchAndStoreMessages();
+        console.log(`已成功同步 ${messages.length} 条最新加密快讯`);
+      }
+      
+      res.json({ 
+        success: true, 
+        message: `成功同步 ${messages.length} 条消息`,
+        count: messages.length
+      });
+    } catch (error) {
+      console.error('用户同步Telegram消息失败:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: '同步Telegram消息失败',
+        message: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
   // 获取财经快讯API端点
   app.get('/api/finance-news', async (req, res) => {
     try {

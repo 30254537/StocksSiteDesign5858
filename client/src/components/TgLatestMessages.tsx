@@ -304,37 +304,9 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
           // 使用消息ID确保不同消息有不同的内容
           const messageId = message.id || message.messageId;
           
-          // 此处不再使用通用模板，而是更动态地基于标题和ID生成唯一内容
-          let expandedContent = '';
-          
-          // 根据标题关键词定制不同内容
-          if (title.includes("比特币") || title.toLowerCase().includes("bitcoin") || title.includes("BTC")) {
-            expandedContent = `${realContent}\n\n比特币作为领先的数字资产，市场表现持续受到全球投资者关注。当前价格波动反映了市场对宏观经济政策和机构参与度的敏感反应。`;
-          } else if (title.includes("ETH") || title.includes("以太坊")) {
-            expandedContent = `${realContent}\n\n以太坊作为智能合约平台的领导者，其发展与网络升级进展密切相关。质押量增长表明投资者对生态系统长期发展持有信心。`;
-          } else if (title.includes("监管") || title.includes("法规")) {
-            expandedContent = `${realContent}\n\n随着加密市场规模不断扩大，全球监管框架正逐步完善。明确的监管环境将有助于吸引更多机构投资者进入市场，同时为用户提供更好的保护。`;
-          } else if (title.includes("DeFi") || title.includes("去中心化金融")) {
-            expandedContent = `${realContent}\n\nDeFi领域创新不断，各协议之间的竞争与合作推动着整体生态系统的发展。收益率变化、流动性迁移和新协议出现都是市场关注的焦点。`;
-          } else if (title.includes("交易所") || title.includes("CEX") || title.includes("DEX")) {
-            expandedContent = `${realContent}\n\n加密货币交易基础设施是整个行业的重要组成部分，用户体验、安全性和流动性是交易平台的关键竞争因素。市场份额的变化反映了用户偏好的转变。`;
-          } else {
-            // 为其他类型内容提供基于ID的多样性
-            const variations = [
-              `${realContent}\n\n这一发展可能对加密市场产生深远影响，投资者应密切关注后续进展并评估潜在机会和风险。`,
-              `${realContent}\n\n业内专家对此持谨慎乐观态度，认为这将促进行业更加规范化发展，同时为用户提供更好的体验和服务。`,
-              `${realContent}\n\n市场分析师表示，这一趋势预计将在未来几个月内持续，机构投资者的参与度将是关键指标之一。`,
-              `${realContent}\n\n面对这一新动向，生态系统参与者正积极调整策略，以适应不断变化的市场环境和用户需求。`,
-              `${realContent}\n\n从长期来看，这一发展符合行业整体演进方向，将为区块链技术的更广泛应用奠定基础。`
-            ];
-            
-            // 使用消息ID作为索引来选择不同的内容变体
-            const variationIndex = messageId % variations.length;
-            expandedContent = variations[variationIndex];
-          }
-          
+          // 改进：只使用原始内容，不再添加额外重复的内容
           // 将内容分割成短段落
-          const paragraphs = expandedContent.split('\n\n');
+          const paragraphs = realContent.split('\n\n');
           const firstParagraph = paragraphs[0];
           const remainingParagraphs = paragraphs.slice(1);
           
@@ -355,25 +327,23 @@ const TgLatestMessages: React.FC<TgLatestMessagesProps> = ({
                     {title}
                   </h3>
                   
-                  {expandedContent && (
-                    <div className="space-y-3">
-                      {firstParagraph && (
-                        <div className="text-white text-base font-medium">
-                          {firstParagraph}
-                        </div>
-                      )}
-                      
-                      {remainingParagraphs.length > 0 && (
-                        <div className="space-y-2">
-                          {remainingParagraphs.map((paragraph, i) => (
-                            <p key={i} className="text-gray-100 text-base">
-                              {paragraph}
-                            </p>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <div className="space-y-3">
+                    {firstParagraph && (
+                      <div className="text-white text-base font-medium">
+                        {firstParagraph}
+                      </div>
+                    )}
+                    
+                    {remainingParagraphs.length > 0 && (
+                      <div className="space-y-2">
+                        {remainingParagraphs.map((paragraph, i) => (
+                          <p key={i} className="text-gray-100 text-base">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </div>
