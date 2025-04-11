@@ -185,8 +185,8 @@ export async function fetchBlockBeatsNews(limit: number = 10): Promise<any[]> {
           
           console.log(`成功从律动BlockBeats网站提取了 ${newsItems.length} 条一般快讯`);
         }
-      } catch (mainSiteError) {
-        console.error('从律动BlockBeats网站获取快讯失败:', mainSiteError.message);
+      } catch (mainSiteError: any) {
+        console.error('从律动BlockBeats网站获取快讯失败:', mainSiteError.message || '未知错误');
       }
     }
 

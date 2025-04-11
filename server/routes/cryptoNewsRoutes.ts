@@ -70,7 +70,24 @@ router.get('/news/highlighted', async (req: Request, res: Response) => {
 // 获取单个加密货币新闻详情
 router.get('/news/:id', async (req: Request, res: Response) => {
   try {
+    // 检查是否为特殊ID（例如"telegram"等字符串ID）
+    if (req.params.id === 'telegram') {
+      // 获取Telegram新闻（最新的几条）
+      const telegramNews = await storage.getTelegramMessages(10);
+      if (!telegramNews || telegramNews.length === 0) {
+        return res.status(404).json({ error: '找不到Telegram快讯' });
+      }
+      return res.json(telegramNews);
+    }
+    
+    // 尝试将ID解析为数字
     const id = parseInt(req.params.id);
+    
+    // 验证id是否为有效数字
+    if (isNaN(id)) {
+      return res.status(400).json({ error: '无效的新闻ID格式' });
+    }
+    
     const news = await storage.getCryptoNewsById(id);
     
     if (!news) {
