@@ -58,7 +58,7 @@ export default function CheckoutSuccess() {
   }, []);
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-12">
+    <div className="container max-w-4xl mx-auto px-4 pt-32 pb-20">
       <div className="bg-card rounded-lg shadow-lg p-8 text-center">
         <div className="mb-6 flex justify-center">
           <CheckCircle className="h-24 w-24 text-emerald-500" />
