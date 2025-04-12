@@ -82,8 +82,29 @@ export async function getSolStonksRatio(): Promise<number> {
   }
 }
 
-// 获取STONKS的USD价格
-export async function getStonksPrice(): Promise<number> {
+// 直接从OKX获取STONKS的USD价格
+export async function getDirectStonksPrice(): Promise<number> {
+  try {
+    const endpoint = '/market/ticker';
+    const response = await okxApiRequest('GET', endpoint, { instId: 'STONKS-USDT' });
+    
+    if (response && response.data && response.data.length > 0) {
+      // 返回最新价格
+      const lastPrice = parseFloat(response.data[0].last);
+      console.log(`从OKX获取STONKS价格成功: ${lastPrice} USD`);
+      return lastPrice;
+    }
+    
+    throw new Error('OKX返回的STONKS价格数据无效');
+  } catch (error) {
+    console.error('直接从OKX获取STONKS价格失败:', error);
+    // 如果直接获取失败，回退到通过SOL计算的方法
+    return calculateStonksPriceFromSol();
+  }
+}
+
+// 通过SOL价格计算STONKS价格（作为备用方法）
+async function calculateStonksPriceFromSol(): Promise<number> {
   try {
     // 获取SOL价格
     const solPrice = await getSolanaPrice();
@@ -97,8 +118,20 @@ export async function getStonksPrice(): Promise<number> {
     console.log(`计算得出STONKS价格: $${stonksPrice.toFixed(6)}`);
     return parseFloat(stonksPrice.toFixed(6));
   } catch (error) {
-    console.error('从OKX获取STONKS价格失败:', error);
+    console.error('从SOL计算STONKS价格失败:', error);
     throw error;
+  }
+}
+
+// 获取STONKS的USD价格（主函数）
+export async function getStonksPrice(): Promise<number> {
+  try {
+    // 优先尝试直接从OKX获取STONKS价格
+    return await getDirectStonksPrice();
+  } catch (error) {
+    console.error('从OKX获取STONKS价格失败，回退到计算方法:', error);
+    // 如果直接获取失败，回退到通过SOL计算的方法
+    return calculateStonksPriceFromSol();
   }
 }
 
