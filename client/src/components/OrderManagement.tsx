@@ -298,14 +298,34 @@ export default function OrderManagement() {
               {loadingOrders ? "加载中..." : "刷新订单"}
             </Button>
             
-            {selectedOrderIds.length > 0 && (
+            {filteredOrders.length > 0 && (
               <Button 
-                variant="destructive" 
-                className="bg-red-600 hover:bg-red-700"
-                onClick={() => setShowDeleteConfirm(true)}
+                variant="outline" 
+                className="border-cyan-500 text-cyan-500 hover:bg-cyan-500/20"
+                onClick={() => handleSelectAll(true)}
               >
-                批量删除 ({selectedOrderIds.length})
+                全选
               </Button>
+            )}
+            
+            {selectedOrderIds.length > 0 && (
+              <>
+                <Button 
+                  variant="outline" 
+                  className="border-accent text-accent hover:bg-accent/20"
+                  onClick={() => handleSelectAll(false)}
+                >
+                  取消选择
+                </Button>
+                
+                <Button 
+                  variant="destructive" 
+                  className="bg-red-600 hover:bg-red-700"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  批量删除 ({selectedOrderIds.length})
+                </Button>
+              </>
             )}
           </div>
           
@@ -341,7 +361,7 @@ export default function OrderManagement() {
                       <Checkbox 
                         checked={selectedOrderIds.length === filteredOrders.length && filteredOrders.length > 0}
                         onCheckedChange={handleSelectAll}
-                        className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                        className="data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500 border-cyan-400"
                       />
                     )}
                   </TableHead>
@@ -350,7 +370,6 @@ export default function OrderManagement() {
                   <TableHead className="text-accent">总金额</TableHead>
                   <TableHead className="text-accent">支付方式</TableHead>
                   <TableHead className="text-accent">状态</TableHead>
-                  <TableHead className="text-accent">交易哈希</TableHead>
                   <TableHead className="text-accent">操作</TableHead>
                 </TableRow>
               </TableHeader>
@@ -368,7 +387,7 @@ export default function OrderManagement() {
                         <Checkbox 
                           checked={selectedOrderIds.includes(order.id)}
                           onCheckedChange={(checked) => handleOrderSelection(order.id, !!checked)}
-                          className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                          className="data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500 border-cyan-400"
                         />
                       </TableCell>
                       <TableCell>{order.id}</TableCell>
@@ -385,15 +404,7 @@ export default function OrderManagement() {
                           {getStatusDisplay(order.status)}
                         </span>
                       </TableCell>
-                      <TableCell>
-                        {order.transactionHash ? (
-                          <div className="w-32 truncate text-xs text-gray-400" title={order.transactionHash}>
-                            {order.transactionHash}
-                          </div>
-                        ) : (
-                          <span className="text-xs text-gray-600">-</span>
-                        )}
-                      </TableCell>
+
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button 
