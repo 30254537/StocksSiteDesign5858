@@ -1349,8 +1349,11 @@ export default function Manage() {
                 const contentId = document.getElementById("content-id")?.getAttribute("value");
                 const key = (document.getElementById("content-key") as HTMLInputElement).value.trim();
                 const value = (document.getElementById("content-value") as HTMLTextAreaElement).value.trim();
-                const type = "text"; // 默认类型
-                const language = "zh"; // 默认语言
+                const typeElement = document.getElementById("content-type") as HTMLSelectElement;
+                const languageElement = document.getElementById("content-language") as HTMLSelectElement;
+                
+                const type = typeElement ? typeElement.value : "text";
+                const language = languageElement ? languageElement.value : "zh";
                 const section = key.split('.')[0] || "other"; // 根据key提取section
                 
                 if (!key || !value) {
@@ -1435,6 +1438,39 @@ export default function Manage() {
                   </p>
                 </div>
                 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="content-language" className="block text-sm font-medium">
+                      内容语言
+                    </label>
+                    <Select defaultValue="zh" id="content-language">
+                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-language">
+                        <SelectValue placeholder="选择语言" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="zh">中文</SelectItem>
+                        <SelectItem value="en">英文</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="content-type" className="block text-sm font-medium">
+                      内容类型
+                    </label>
+                    <Select defaultValue="text" id="content-type">
+                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-type">
+                        <SelectValue placeholder="选择内容类型" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="text">文本</SelectItem>
+                        <SelectItem value="html">HTML</SelectItem>
+                        <SelectItem value="markdown">Markdown</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <label htmlFor="content-value" className="block text-sm font-medium">
                     内容文本
@@ -1514,6 +1550,36 @@ export default function Manage() {
                                     document.getElementById("content-id")?.setAttribute("value", content.id.toString());
                                     (document.getElementById("content-key") as HTMLInputElement).value = content.key;
                                     (document.getElementById("content-value") as HTMLTextAreaElement).value = content.value;
+                                    
+                                    // 设置语言和类型选择器
+                                    try {
+                                      // 设置语言
+                                      const languageTrigger = document.querySelector('[data-id="content-language"]');
+                                      if (languageTrigger) {
+                                        languageTrigger.setAttribute('data-value', content.language || 'zh');
+                                        const languageValue = languageTrigger.querySelector('[data-radix-select-value-id]');
+                                        if (languageValue) {
+                                          languageValue.textContent = content.language === 'en' ? '英文' : '中文';
+                                        }
+                                      }
+                                      
+                                      // 设置内容类型
+                                      const typeTrigger = document.querySelector('[data-id="content-type"]');
+                                      if (typeTrigger) {
+                                        typeTrigger.setAttribute('data-value', content.type || 'text');
+                                        const typeValue = typeTrigger.querySelector('[data-radix-select-value-id]');
+                                        if (typeValue) {
+                                          const typeMap: {[key: string]: string} = {
+                                            'text': '文本',
+                                            'html': 'HTML',
+                                            'markdown': 'Markdown'
+                                          };
+                                          typeValue.textContent = typeMap[content.type] || '文本';
+                                        }
+                                      }
+                                    } catch (e) {
+                                      console.error("设置选择器失败:", e);
+                                    }
                                     
                                     // 滚动到表单
                                     document.getElementById("website-content-form")?.scrollIntoView({ behavior: "smooth" });
