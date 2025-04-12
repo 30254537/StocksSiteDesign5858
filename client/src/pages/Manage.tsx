@@ -548,7 +548,7 @@ export default function Manage() {
       </div>
       
       {/* 管理导航选项卡 */}
-      <div className="flex flex-wrap border-b border-accent/30 mb-8">
+      <div className="flex flex-wrap border-b border-accent/30 mb-8 overflow-x-auto whitespace-nowrap w-full">
         <button
           className={`px-4 py-2 font-medium transition-colors duration-200 ${
             activeTab === "products" 
