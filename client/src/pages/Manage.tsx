@@ -547,84 +547,90 @@ export default function Manage() {
         </Button>
       </div>
       
-      {/* 管理导航选项卡 */}
-      <div className="flex flex-wrap border-b border-accent/30 mb-8 overflow-x-auto whitespace-nowrap w-full">
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "products" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("products")}
-        >
-          商品管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "contracts" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("contracts")}
-        >
-          合约地址管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "contact" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("contact")}
-        >
-          联系信息管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "contents" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("contents")}
-        >
-          网站内容管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "music" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("music")}
-        >
-          音乐管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "orders" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("orders")}
-        >
-          订单管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "tweets" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("tweets")}
-        >
-          推文管理
-        </button>
+      {/* 管理导航选项卡 - 使用两行布局确保所有选项可见 */}
+      <div className="border-b border-accent/30 mb-8">
+        {/* 第一行 */}
+        <div className="flex flex-wrap mb-2">
+          <button
+            className={`px-4 py-2 font-medium transition-colors duration-200 ${
+              activeTab === "products" 
+                ? "text-accent border-b-2 border-accent" 
+                : "text-gray-400 hover:text-accent"
+            }`}
+            onClick={() => setActiveTab("products")}
+          >
+            商品管理
+          </button>
+          
+          <button
+            className={`px-4 py-2 font-medium transition-colors duration-200 ${
+              activeTab === "contracts" 
+                ? "text-accent border-b-2 border-accent" 
+                : "text-gray-400 hover:text-accent"
+            }`}
+            onClick={() => setActiveTab("contracts")}
+          >
+            合约地址管理
+          </button>
+          
+          <button
+            className={`px-4 py-2 font-medium transition-colors duration-200 ${
+              activeTab === "contact" 
+                ? "text-accent border-b-2 border-accent" 
+                : "text-gray-400 hover:text-accent"
+            }`}
+            onClick={() => setActiveTab("contact")}
+          >
+            联系信息管理
+          </button>
+          
+          <button
+            className={`px-4 py-2 font-medium transition-colors duration-200 ${
+              activeTab === "music" 
+                ? "text-accent border-b-2 border-accent" 
+                : "text-gray-400 hover:text-accent"
+            }`}
+            onClick={() => setActiveTab("music")}
+          >
+            音乐管理
+          </button>
+        </div>
+          
+        {/* 第二行 */}
+        <div className="flex flex-wrap">
+          <button
+            className={`px-4 py-2 font-medium transition-colors duration-200 ${
+              activeTab === "contents" 
+                ? "text-accent border-b-2 border-accent" 
+                : "text-gray-400 hover:text-accent"
+            }`}
+            onClick={() => setActiveTab("contents")}
+          >
+            网站内容管理
+          </button>
+          
+          <button
+            className={`px-4 py-2 font-medium transition-colors duration-200 ${
+              activeTab === "orders" 
+                ? "text-accent border-b-2 border-accent" 
+                : "text-gray-400 hover:text-accent"
+            }`}
+            onClick={() => setActiveTab("orders")}
+          >
+            订单管理
+          </button>
+          
+          <button
+            className={`px-4 py-2 font-medium transition-colors duration-200 ${
+              activeTab === "tweets" 
+                ? "text-accent border-b-2 border-accent" 
+                : "text-gray-400 hover:text-accent"
+            }`}
+            onClick={() => setActiveTab("tweets")}
+          >
+            推文管理
+          </button>
+        </div>
       </div>
       
       {/* 根据活动选项卡展示不同的卡片 */}
