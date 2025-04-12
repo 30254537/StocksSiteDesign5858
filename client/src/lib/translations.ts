@@ -52,6 +52,7 @@ export const translations: Translations = {
     "orders.status.completed": "Completed",
     "orders.status.cancelled": "Cancelled",
     "orders.status.refunded": "Refunded",
+    "orders.status.paid": "Paid",
     
     // Hero Section
     "hero.title": "Trade Decentralized, Wear the Future",
@@ -285,6 +286,7 @@ export const translations: Translations = {
     "orders.status.completed": "已完成",
     "orders.status.cancelled": "已取消",
     "orders.status.refunded": "已退款",
+    "orders.status.paid": "已支付",
     
     // Product Names
     "product.name.1": "KUBE 连帽衫",
