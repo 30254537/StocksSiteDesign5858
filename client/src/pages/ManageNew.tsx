@@ -392,6 +392,28 @@ export default function Manage() {
         >
           订单管理
         </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "website" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("website")}
+        >
+          网站内容管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "tweets" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("tweets")}
+        >
+          推文管理
+        </button>
       </div>
       
       {/* 产品管理 */}
