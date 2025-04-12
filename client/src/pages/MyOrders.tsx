@@ -3,12 +3,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import { ArrowLeft, ExternalLink, Truck, Calendar, CreditCard, Package, AlertCircle } from "lucide-react";
+import { ArrowLeft, ExternalLink, Truck, Calendar, CreditCard, Package, AlertCircle, Gift, Clock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/utils";
+import { OrderStatusBadge } from "@/components/ui/order-status-badge";
 
 // 订单类型定义
 interface OrderItem {
@@ -106,23 +106,7 @@ export default function MyOrders() {
     return networkMap[network] || network;
   };
 
-  // 获取状态徽章样式
-  const getStatusBadgeVariant = (status: string): "default" | "secondary" | "outline" | "destructive" => {
-    switch (status) {
-      case "pending":
-        return "outline";
-      case "paid":
-        return "default";
-      case "shipped":
-        return "secondary";
-      case "completed":
-        return "default";
-      case "cancelled":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
+  // No longer needed as the OrderStatusBadge component handles this
 
   // 订单详情展示
   const renderOrderDetails = (order: Order) => {
@@ -131,70 +115,78 @@ export default function MyOrders() {
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-lg font-medium">
-              {language === 'zh' ? '订单详情' : 'Order Details'}
+              {t('orders.orderNumber')}: <span className="font-mono">#{order.id}</span>
             </h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              <span className="font-semibold text-accent">订单号: </span>#{order.id}
-            </p>
-          </div>
-          <Badge variant={getStatusBadgeVariant(order.status)}>
-            {getStatusDisplay(order.status)}
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm font-medium text-accent">
-              {language === 'zh' ? '下单日期' : 'Order Date'}
-            </p>
-            <p className="text-sm flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
+            <p className="text-sm text-muted-foreground mt-1 flex items-center">
+              <Clock className="h-3 w-3 mr-1" />
               {formatDate(order.createdAt)}
             </p>
           </div>
-          <div>
-            <p className="text-sm font-medium text-accent">
-              {language === 'zh' ? '支付方式' : 'Payment Method'}
-            </p>
-            <p className="text-sm flex items-center gap-1">
-              <CreditCard className="h-3 w-3" />
-              {getPaymentMethodDisplay(order.paymentMethod)}
-              {order.network && ` - ${getNetworkDisplay(order.network)}`}
-            </p>
-          </div>
+          <OrderStatusBadge status={order.status} />
         </div>
 
-        {order.transactionHash && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-lg bg-primary-foreground/5 border border-border/50">
+          {/* Order Summary Box */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-accent" />
+              <div>
+                <p className="text-sm font-medium text-accent">{t('orders.paymentMethod')}</p>
+                <p className="text-sm">
+                  {getPaymentMethodDisplay(order.paymentMethod)}
+                  {order.network && ` - ${getNetworkDisplay(order.network)}`}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Gift className="h-4 w-4 text-accent" />
+              <div>
+                <p className="text-sm font-medium text-accent">{t('orders.items')}</p>
+                <p className="text-sm">{order.items.length} {order.items.length > 1 ? t('items') : t('item')}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-accent" />
+              <div>
+                <p className="text-sm font-medium text-accent">{t('orders.total')}</p>
+                <p className="text-sm">${order.total.toFixed(2)}</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Shipping Address */}
           <div>
-            <p className="text-sm font-medium text-accent">
+            <div className="flex items-start gap-2">
+              <Truck className="h-4 w-4 text-accent mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-accent">{t('orders.shipping')}</p>
+                <p className="text-sm whitespace-pre-line">
+                  {order.shippingAddress}
+                </p>
+                
+                {order.trackingNumber && (
+                  <div className="mt-2">
+                    <p className="text-xs font-medium text-accent">{t('orders.trackingNumber')}</p>
+                    <p className="text-sm font-mono">{order.trackingNumber}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {order.transactionHash && (
+          <div className="p-3 rounded-lg bg-primary-foreground/5 border border-border/50">
+            <p className="text-sm font-medium text-accent mb-1">
               {language === 'zh' ? '交易哈希' : 'Transaction Hash'}
             </p>
-            <p className="text-sm font-mono bg-primary-foreground/10 p-2 rounded overflow-auto">
+            <p className="text-sm font-mono overflow-auto break-all">
               {order.transactionHash}
             </p>
           </div>
         )}
-
-        {order.trackingNumber && (
-          <div>
-            <p className="text-sm font-medium text-accent">
-              {language === 'zh' ? '物流单号' : 'Tracking Number'}
-            </p>
-            <p className="text-sm flex items-center gap-1">
-              <Truck className="h-3 w-3" />
-              {order.trackingNumber}
-            </p>
-          </div>
-        )}
-
-        <div>
-          <p className="text-sm font-medium text-accent">
-            {language === 'zh' ? '收货地址' : 'Shipping Address'}
-          </p>
-          <p className="text-sm whitespace-pre-line bg-primary-foreground/10 p-2 rounded">
-            {order.shippingAddress}
-          </p>
-        </div>
 
         <div>
           <p className="text-sm font-medium text-accent mb-2">
@@ -307,9 +299,7 @@ export default function MyOrders() {
                     >
                       <div className="flex justify-between">
                         <p className="font-medium">#{order.id}</p>
-                        <Badge variant={getStatusBadgeVariant(order.status)}>
-                          {getStatusDisplay(order.status)}
-                        </Badge>
+                        <OrderStatusBadge status={order.status} />
                       </div>
                       <div className="flex justify-between text-sm mt-1">
                         <p>{formatDate(order.createdAt)}</p>
