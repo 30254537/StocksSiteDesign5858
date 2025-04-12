@@ -47,6 +47,7 @@ export default function AdminLogin() {
     }
     
     setIsLoading(true);
+    console.log("尝试登录，用户名:", username);
     
     try {
       const response = await apiRequest("POST", "/api/admin-login", {
@@ -54,20 +55,41 @@ export default function AdminLogin() {
         password
       });
       
+      console.log("登录响应状态:", response.status);
+      const responseData = await response.json().catch(() => ({}));
+      console.log("登录响应数据:", responseData);
+      
       if (response.ok) {
         toast({
           title: "登录成功",
           description: "欢迎回来，管理员",
         });
-        setLocation("/manage");
+        
+        // 验证一下是否真的登录成功
+        const authCheckResponse = await apiRequest("GET", "/api/check-admin-auth");
+        console.log("验证登录状态:", authCheckResponse.status);
+        
+        if (authCheckResponse.ok) {
+          // 确认已登录，重定向到管理页面
+          console.log("验证成功，正在重定向到管理页面");
+          setLocation("/manage");
+        } else {
+          console.error("登录验证失败，但登录API返回成功");
+          toast({
+            title: "登录异常",
+            description: "登录成功但验证失败，请刷新重试",
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "登录失败",
-          description: "用户名或密码错误",
+          description: responseData.message || "用户名或密码错误",
           variant: "destructive",
         });
       }
     } catch (error) {
+      console.error("登录过程中出错:", error);
       toast({
         title: "登录错误",
         description: "请稍后再试",
