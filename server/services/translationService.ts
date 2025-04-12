@@ -1,4 +1,5 @@
 import { storage } from '../storage';
+import * as cron from 'node-cron';
 
 /**
  * 推文翻译服务
@@ -192,10 +193,8 @@ export function initTweetTranslationScheduler(cronExpression: string): void {
       console.error('初始化推文翻译失败:', error);
     });
     
-  // 导入node-cron并设置定时任务
+  // 使用已导入的node-cron并设置定时任务
   try {
-    const cron = require('node-cron');
-    
     if (cron.validate(cronExpression)) {
       cron.schedule(cronExpression, async () => {
         console.log('执行定时推文翻译任务...');

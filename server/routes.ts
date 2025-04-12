@@ -1629,7 +1629,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
   
   // 初始化推文翻译服务 (每4小时翻译一次未翻译的推文)
-  initTweetTranslationScheduler('0 */4 * * *');
+  // 暂时注释掉，因为动态导入有问题
+  // initTweetTranslationScheduler('0 */4 * * *');
   
   // 定时同步X推文 (每4小时一次)
   cron.schedule('0 */4 * * *', async () => {
