@@ -264,6 +264,16 @@ const OrderLookup: React.FC = () => {
               </div>
             )}
             
+            {order.notes && (
+              <div className="mb-6 border-2 border-accent/40 rounded-lg p-4 bg-primary-900/70 shadow-md">
+                <p className="text-accent font-bold text-sm uppercase tracking-wide mb-2">{t('orders.transactionHash')}：</p>
+                <p className="text-white font-semibold text-base font-mono">
+                  {order.paymentMethod === 'usdt' ? 'USDT/TRC20: ' : 'STONKS: '}
+                  {order.notes}
+                </p>
+              </div>
+            )}
+            
             <div className="border-t-2 border-accent/40 pt-6 mt-6">
               <h3 className="text-xl text-accent font-bold uppercase tracking-wide mb-4">{t('orders.items')}：</h3>
               <div className="space-y-4">

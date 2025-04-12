@@ -183,6 +183,7 @@ export default function MyOrders() {
               {language === 'zh' ? '交易哈希' : 'Transaction Hash'}
             </p>
             <p className="text-sm font-mono overflow-auto break-all">
+              {order.paymentMethod === 'usdt' ? 'USDT/TRC20: ' : 'STONKS: '}
               {order.transactionHash}
             </p>
           </div>
