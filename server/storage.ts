@@ -637,7 +637,10 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(orders.id, orderId),
-          eq(orders.shippingAddress, email) // 使用shippingAddress字段存储邮箱
+          or(
+            eq(orders.customerEmail, email),
+            eq(orders.shippingAddress, email) // 向后兼容，也检查shippingAddress字段
+          )
         )
       );
       
