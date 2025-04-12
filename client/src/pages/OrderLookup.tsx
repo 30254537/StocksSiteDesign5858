@@ -148,21 +148,21 @@ const OrderLookup: React.FC = () => {
     <div className="container mx-auto px-4 py-24 mt-10">
       <h1 className="text-2xl text-white font-bold mb-8">{t('orderLookup.title')}</h1>
       
-      <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden relative">
-        <div className="p-6 border-b border-primary-700 relative">
+      <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden">
+        <div className="p-6 border-b border-primary-700">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 relative z-10">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative">
               <FormField
                 control={form.control}
                 name="orderId"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">{t('orderLookup.orderNumber')}</FormLabel>
+                  <FormItem className="relative z-20">
+                    <FormLabel className="text-white text-base mb-2 block">{t('orderLookup.orderNumber')}</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder={t('orderLookup.orderNumberPlaceholder')} 
                         {...field} 
-                        className="bg-primary-800 border-primary-700 text-white relative z-10" 
+                        className="bg-primary-800 border-primary-700 text-white h-11 relative z-20" 
                       />
                     </FormControl>
                     <FormMessage />
@@ -174,16 +174,16 @@ const OrderLookup: React.FC = () => {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">{t('orderLookup.email')}</FormLabel>
+                  <FormItem className="relative z-20">
+                    <FormLabel className="text-white text-base mb-2 block">{t('orderLookup.email')}</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder={t('orderLookup.emailPlaceholder')} 
                         {...field} 
-                        className="bg-primary-800 border-primary-700 text-white relative z-10" 
+                        className="bg-primary-800 border-primary-700 text-white h-11 relative z-20" 
                       />
                     </FormControl>
-                    <FormDescription className="text-primary-300">
+                    <FormDescription className="text-primary-300 mt-2">
                       {t('orderLookup.description')}
                     </FormDescription>
                     <FormMessage />
@@ -194,7 +194,7 @@ const OrderLookup: React.FC = () => {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-accent hover:bg-accent/90 text-primary-900"
+                className="w-full bg-accent hover:bg-accent/90 text-primary-900 h-11 mt-8"
               >
                 {isLoading ? (
                   <>
@@ -217,18 +217,20 @@ const OrderLookup: React.FC = () => {
         
         {order && (
           <div className="p-6 bg-primary-800">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl text-white font-medium">{t('orders.viewDetails')}</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl text-white font-medium">{t('orders.viewDetails')}</h2>
+                <div className="flex items-center mt-2">
+                  <span className="text-accent mr-2 font-medium">{t('orders.orderNumber')}:</span>
+                  <span className="bg-primary-900 px-3 py-1 rounded-md font-mono text-white"># {order.id}</span>
+                </div>
+              </div>
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
                 {getStatusText(order.status)}
               </span>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <p className="text-primary-300 mb-1">{t('orders.orderNumber')}</p>
-                <p className="text-white font-medium">{order.id}</p>
-              </div>
               <div>
                 <p className="text-primary-300 mb-1">{t('orders.date')}</p>
                 <p className="text-white font-medium">{formatDate(new Date(order.createdAt))}</p>

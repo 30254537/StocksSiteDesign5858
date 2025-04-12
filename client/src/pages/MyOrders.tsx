@@ -127,14 +127,14 @@ export default function MyOrders() {
   // 订单详情展示
   const renderOrderDetails = (order: Order) => {
     return (
-      <div className="space-y-6 mt-4">
+      <div className="space-y-6 mt-8">
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-lg font-medium">
               {language === 'zh' ? '订单详情' : 'Order Details'}
             </h3>
-            <p className="text-sm text-muted-foreground">
-              #{order.id}
+            <p className="text-sm text-muted-foreground mt-1">
+              <span className="font-semibold text-accent">订单号: </span>#{order.id}
             </p>
           </div>
           <Badge variant={getStatusBadgeVariant(order.status)}>
@@ -324,19 +324,24 @@ export default function MyOrders() {
 
           <div className="md:col-span-2">
             <Card>
-              <CardHeader>
-                <CardTitle>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-xl mb-2">
                   {language === 'zh' ? '订单详情' : 'Order Details'}
                 </CardTitle>
-                <CardDescription>
-                  {selectedOrderId 
-                    ? `#${selectedOrderId}` 
-                    : language === 'zh' 
+                <CardDescription className="flex items-center">
+                  {selectedOrderId ? (
+                    <>
+                      <span className="font-semibold text-accent mr-1">订单号:</span> 
+                      <span className="font-mono">#{selectedOrderId}</span>
+                    </>
+                  ) : (
+                    language === 'zh' 
                       ? '选择一个订单查看详情' 
-                      : 'Select an order to view details'}
+                      : 'Select an order to view details'
+                  )}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-4">
                 {selectedOrderId ? (
                   renderOrderDetails(orders.find(o => o.id === selectedOrderId)!)
                 ) : (
