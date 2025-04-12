@@ -285,10 +285,24 @@ export class DatabaseStorage implements IStorage {
   }
   
   // 订单相关方法
-  async createOrder(orderData: InsertOrder): Promise<Order> {
+  async createOrder(orderData: InsertOrder, orderItems?: any[]): Promise<Order> {
     const [order] = await db.insert(orders)
       .values(orderData)
       .returning();
+    
+    // 如果提供了订单项数据，则为每个订单项创建记录
+    if (orderItems && orderItems.length > 0) {
+      for (const itemData of orderItems) {
+        await this.createOrderItem({
+          orderId: order.id,
+          productId: itemData.productId,
+          quantity: itemData.quantity,
+          price: itemData.price,
+          ethPrice: itemData.ethPrice,
+          size: itemData.size
+        });
+      }
+    }
     
     return order;
   }
