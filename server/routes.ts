@@ -2226,6 +2226,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   })();
 
+  // 匿名用户订单查询API
+  app.post('/api/lookup-order', async (req, res) => {
+    try {
+      const { orderId, email } = req.body;
+      
+      if (!orderId || !email) {
+        return res.status(400).json({ error: '订单号和邮箱都必须提供' });
+      }
+      
+      // 通过订单ID和邮箱查询订单
+      const order = await storage.getOrderWithItemsByIdAndEmail(Number(orderId), email);
+      
+      if (!order) {
+        return res.status(404).json({ error: '未找到匹配的订单，请检查订单号和邮箱是否正确' });
+      }
+      
+      res.json({ order });
+    } catch (error) {
+      console.error('查询订单失败:', error);
+      res.status(500).json({ error: '查询订单失败，请稍后再试' });
+    }
+  });
+
   // 添加加密新闻路由
   setupCryptoNewsRoutes(app);
 
