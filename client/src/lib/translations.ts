@@ -30,6 +30,11 @@ export const translations: Translations = {
     "orderLookup.error": "No order found with the provided information",
     "orderLookup.success": "Order found!",
     
+    // Form Validation Errors
+    "validation.required": "This field is required",
+    "validation.email": "Invalid email address",
+    "validation.minLength": "This field is too short",
+    
     // Orders
     "orders.viewDetails": "Order Details",
     "orders.orderNumber": "Order Number",
@@ -257,6 +262,11 @@ export const translations: Translations = {
     "orderLookup.submit": "查询订单",
     "orderLookup.error": "未找到符合提供信息的订单",
     "orderLookup.success": "已找到订单!",
+    
+    // Form Validation Errors
+    "validation.required": "此字段为必填项",
+    "validation.email": "无效的邮箱地址",
+    "validation.minLength": "此字段太短",
     
     // Orders
     "orders.viewDetails": "订单详情",
