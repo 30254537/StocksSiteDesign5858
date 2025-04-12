@@ -217,91 +217,97 @@ const OrderLookup: React.FC = () => {
         
         {order && (
           <div className="p-8 bg-primary-800 max-w-3xl mx-auto">
-            <div className="flex items-center justify-between mb-8 border-b border-primary-700 pb-6">
-              <div>
-                <h2 className="text-2xl text-white font-medium mb-3">{t('orders.viewDetails')}</h2>
-                <div className="flex items-center mt-2">
-                  <span className="text-accent mr-2 font-semibold">{t('orders.orderNumber')}:</span>
-                  <span className="bg-primary-900 px-4 py-2 rounded-md font-mono text-white text-lg">#{order.id}</span>
-                </div>
+            <div className="mb-8 border-b border-accent/30 pb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl text-white font-bold tracking-tight">{t('orders.viewDetails')}</h2>
+                <span className={`px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider ${getStatusColor(order.status)}`}>
+                  {getStatusText(order.status)}
+                </span>
               </div>
-              <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
-                {getStatusText(order.status)}
-              </span>
+              <div className="flex items-center bg-primary-900/70 p-4 rounded-lg border border-accent/50 shadow-lg">
+                <span className="text-accent mr-3 font-bold text-base uppercase">{t('orders.orderNumber')}:</span>
+                <span className="bg-primary-950 px-5 py-2 rounded-md font-mono text-white text-lg font-bold tracking-wider border border-accent/40">
+                  #{order.id}
+                </span>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 gap-4 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
-                  <p className="text-accent font-medium text-sm mb-1">{t('orders.date')}</p>
-                  <p className="text-white font-medium">{formatDate(new Date(order.createdAt))}</p>
+                <div className="border-2 border-accent/40 rounded-lg p-4 bg-primary-900/70 shadow-md">
+                  <p className="text-accent font-bold text-sm uppercase tracking-wide mb-2">{t('orders.date')}</p>
+                  <p className="text-white font-semibold text-base">{formatDate(new Date(order.createdAt))}</p>
                 </div>
-                <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
-                  <p className="text-accent font-medium text-sm mb-1">{t('orders.paymentMethod')}</p>
-                  <p className="text-white font-medium">{getPaymentMethodText(order.paymentMethod)}</p>
+                <div className="border-2 border-accent/40 rounded-lg p-4 bg-primary-900/70 shadow-md">
+                  <p className="text-accent font-bold text-sm uppercase tracking-wide mb-2">{t('orders.paymentMethod')}</p>
+                  <p className="text-white font-semibold text-base">{getPaymentMethodText(order.paymentMethod)}</p>
                 </div>
               </div>
               
-              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
-                <p className="text-accent font-medium text-sm mb-1">{t('orders.total')}</p>
-                <p className="text-white font-medium">
+              <div className="border-2 border-accent/40 rounded-lg p-4 bg-primary-900/70 shadow-md">
+                <p className="text-accent font-bold text-sm uppercase tracking-wide mb-2">{t('orders.total')}</p>
+                <p className="text-white font-semibold text-lg">
                   USDT ${Math.floor(order.total)} / ⊙ {Math.floor(order.ethTotal)} $STONKS
                 </p>
               </div>
               
-              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
-                <p className="text-accent font-medium text-sm mb-1">{t('orders.shipping')}</p>
-                <p className="text-white font-medium break-words">{order.shippingAddress}</p>
+              <div className="border-2 border-accent/40 rounded-lg p-4 bg-primary-900/70 shadow-md">
+                <p className="text-accent font-bold text-sm uppercase tracking-wide mb-2">{t('orders.shipping')}</p>
+                <p className="text-white font-semibold text-base break-words">{order.shippingAddress}</p>
               </div>
             </div>
             
             {order.trackingNumber && (
-              <div className="mb-6 border border-accent/30 rounded-md p-3 bg-primary-900/50">
-                <p className="text-accent font-medium text-sm mb-1">{t('orders.trackingNumber')}</p>
-                <p className="text-white font-medium">{order.trackingNumber}</p>
+              <div className="mb-6 border-2 border-accent/40 rounded-lg p-4 bg-primary-900/70 shadow-md">
+                <p className="text-accent font-bold text-sm uppercase tracking-wide mb-2">{t('orders.trackingNumber')}</p>
+                <p className="text-white font-semibold text-base font-mono">{order.trackingNumber}</p>
               </div>
             )}
             
-            <div className="border-t border-accent/30 pt-4 mt-4">
-              <h3 className="text-lg text-accent font-medium mb-4">{t('orders.items')}</h3>
+            <div className="border-t-2 border-accent/40 pt-6 mt-6">
+              <h3 className="text-xl text-accent font-bold uppercase tracking-wide mb-4">{t('orders.items')}</h3>
               <div className="space-y-4">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex items-center bg-primary-900 p-4 rounded-lg border border-accent/30">
-                    <div className="flex-shrink-0 w-16 h-16 mr-4">
+                  <div key={item.id} className="flex items-center bg-primary-900/80 p-4 rounded-lg border-2 border-accent/40 shadow-md hover:shadow-lg transition-all duration-300">
+                    <div className="flex-shrink-0 w-20 h-20 mr-5">
                       <img 
                         src={item.productImage} 
                         alt={item.productName} 
-                        className="w-full h-full object-cover rounded-md"
+                        className="w-full h-full object-cover rounded-md border border-accent/30"
                       />
                     </div>
                     <div className="flex-grow">
-                      <h4 className="text-white font-medium">{item.productName}</h4>
-                      <div className="flex mt-1">
-                        <p className="text-primary-300 text-sm mr-4">
-                          {t('orders.quantity')} {item.quantity}
-                        </p>
+                      <h4 className="text-white font-bold text-lg">{item.productName}</h4>
+                      <div className="flex mt-2">
+                        <div className="bg-primary-950 px-3 py-1 rounded mr-3 border border-accent/30">
+                          <span className="text-accent font-bold uppercase text-xs mr-1">{t('orders.quantity')}:</span>
+                          <span className="text-white font-semibold">{item.quantity}</span>
+                        </div>
                         {item.size && (
-                          <p className="text-primary-300 text-sm">
-                            {t('product.size')} {item.size}
-                          </p>
+                          <div className="bg-primary-950 px-3 py-1 rounded border border-accent/30">
+                            <span className="text-accent font-bold uppercase text-xs mr-1">{t('product.size')}:</span>
+                            <span className="text-white font-semibold">{item.size}</span>
+                          </div>
                         )}
                       </div>
-                      <p className="text-accent mt-1">
-                        USDT ${Math.floor(item.price)} / ⊙ {Math.floor(item.ethPrice)} $STONKS
-                      </p>
+                      <div className="mt-3 pt-2 border-t border-accent/20">
+                        <span className="text-accent font-bold">
+                          USDT ${Math.floor(item.price)} / ⊙ {Math.floor(item.ethPrice)} $STONKS
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
             
-            <div className="mt-6 flex justify-between">
+            <div className="mt-8 flex justify-between">
               <Link href="/">
                 <Button 
                   variant="outline" 
-                  className="bg-transparent border-primary-600 text-white hover:bg-primary-700"
+                  className="bg-transparent border-2 border-accent/50 text-white hover:bg-primary-800 font-semibold shadow-md"
                 >
-                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  <ShoppingBag className="mr-2 h-5 w-5 text-accent" />
                   {t('cart.continueShopping')}
                 </Button>
               </Link>
@@ -309,14 +315,14 @@ const OrderLookup: React.FC = () => {
               <Link href="/order-lookup">
                 <Button 
                   variant="outline" 
-                  className="bg-transparent border-primary-600 text-white hover:bg-primary-700"
+                  className="bg-transparent border-2 border-accent/50 text-white hover:bg-primary-800 font-semibold shadow-md"
                   onClick={() => {
                     setOrder(null);
                     form.reset();
                   }}
                 >
                   {t('orderLookup.title')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-5 w-5 text-accent" />
                 </Button>
               </Link>
             </div>
