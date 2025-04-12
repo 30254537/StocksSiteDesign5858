@@ -17,7 +17,7 @@ export default function ManageNew() {
   const { toast } = useToast();
 
   // 管理选项卡切换状态
-  const [activeTab, setActiveTab] = useState<string>("website-content");
+  const [activeTab, setActiveTab] = useState<string>("products");
   
   // 通用状态
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -36,7 +36,9 @@ export default function ManageNew() {
         const response = await apiRequest("GET", "/api/check-admin-auth");
         if (response.ok) {
           setIsAuthenticated(true);
-          fetchWebsiteContents();
+          if (activeTab === "website-content") {
+            fetchWebsiteContents();
+          }
         } else {
           toast({
             title: "需要管理员权限",
@@ -58,6 +60,16 @@ export default function ManageNew() {
     
     checkAuth();
   }, [toast, setLocation]);
+  
+  // 监听标签页变化，加载相应数据
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    if (activeTab === "website-content") {
+      fetchWebsiteContents();
+    }
+    
+  }, [activeTab, isAuthenticated]);
 
   // 获取网站内容列表
   const fetchWebsiteContents = async () => {
@@ -104,6 +116,17 @@ export default function ManageNew() {
       <div className="mb-8">
         <div className="flex flex-wrap gap-2 justify-center">
           <Button
+            onClick={() => setActiveTab("products")}
+            variant={activeTab === "products" ? "default" : "outline"}
+            className={
+              activeTab === "products"
+                ? "bg-accent hover:bg-accent/80 text-black"
+                : "border-accent text-accent hover:bg-accent hover:text-black"
+            }
+          >
+            商品管理
+          </Button>
+          <Button
             onClick={() => setActiveTab("website-content")}
             variant={activeTab === "website-content" ? "default" : "outline"}
             className={
@@ -114,9 +137,123 @@ export default function ManageNew() {
           >
             网站内容管理
           </Button>
+          <Button
+            onClick={() => setActiveTab("contract-addresses")}
+            variant={activeTab === "contract-addresses" ? "default" : "outline"}
+            className={
+              activeTab === "contract-addresses"
+                ? "bg-accent hover:bg-accent/80 text-black"
+                : "border-accent text-accent hover:bg-accent hover:text-black"
+            }
+          >
+            合约地址管理
+          </Button>
+          <Button
+            onClick={() => setActiveTab("contact-info")}
+            variant={activeTab === "contact-info" ? "default" : "outline"}
+            className={
+              activeTab === "contact-info"
+                ? "bg-accent hover:bg-accent/80 text-black"
+                : "border-accent text-accent hover:bg-accent hover:text-black"
+            }
+          >
+            联系信息管理
+          </Button>
+          <Button
+            onClick={() => setActiveTab("orders")}
+            variant={activeTab === "orders" ? "default" : "outline"}
+            className={
+              activeTab === "orders"
+                ? "bg-accent hover:bg-accent/80 text-black"
+                : "border-accent text-accent hover:bg-accent hover:text-black"
+            }
+          >
+            订单管理
+          </Button>
+          <Button
+            onClick={() => setActiveTab("music")}
+            variant={activeTab === "music" ? "default" : "outline"}
+            className={
+              activeTab === "music"
+                ? "bg-accent hover:bg-accent/80 text-black"
+                : "border-accent text-accent hover:bg-accent hover:text-black"
+            }
+          >
+            音乐管理
+          </Button>
         </div>
       </div>
       
+      {activeTab === "products" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>商品管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <h3 className="text-lg font-medium mb-4 text-accent">商品管理界面正在加载中...</h3>
+              <p className="text-gray-400">请稍候，或者切换到其他管理选项卡</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {activeTab === "contract-addresses" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>合约地址管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <h3 className="text-lg font-medium mb-4 text-accent">合约地址管理界面正在加载中...</h3>
+              <p className="text-gray-400">请稍候，或者切换到其他管理选项卡</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {activeTab === "contact-info" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>联系信息管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <h3 className="text-lg font-medium mb-4 text-accent">联系信息管理界面正在加载中...</h3>
+              <p className="text-gray-400">请稍候，或者切换到其他管理选项卡</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {activeTab === "orders" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>订单管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <h3 className="text-lg font-medium mb-4 text-accent">订单管理界面正在加载中...</h3>
+              <p className="text-gray-400">请稍候，或者切换到其他管理选项卡</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {activeTab === "music" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>音乐管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <h3 className="text-lg font-medium mb-4 text-accent">音乐管理界面正在加载中...</h3>
+              <p className="text-gray-400">请稍候，或者切换到其他管理选项卡</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {activeTab === "website-content" && (
         <Card className="shadow-lg mb-8">
           <CardHeader>
