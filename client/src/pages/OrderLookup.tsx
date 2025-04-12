@@ -231,63 +231,65 @@ const OrderLookup: React.FC = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <p className="text-primary-300 mb-1">{t('orders.date')}</p>
+              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
+                <p className="text-accent font-medium text-sm mb-1">{t('orders.date')}</p>
                 <p className="text-white font-medium">{formatDate(new Date(order.createdAt))}</p>
               </div>
-              <div>
-                <p className="text-primary-300 mb-1">{t('orders.paymentMethod')}</p>
+              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
+                <p className="text-accent font-medium text-sm mb-1">{t('orders.paymentMethod')}</p>
                 <p className="text-white font-medium">{getPaymentMethodText(order.paymentMethod)}</p>
               </div>
-              <div>
-                <p className="text-primary-300 mb-1">{t('orders.total')}</p>
+              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
+                <p className="text-accent font-medium text-sm mb-1">{t('orders.total')}</p>
                 <p className="text-white font-medium">
                   {formatCurrency(order.total)} / ⊙ {order.ethTotal.toFixed(6)} $STONKS
                 </p>
               </div>
             </div>
             
-            <div className="mb-6">
-              <p className="text-primary-300 mb-1">{t('orders.shipping')}</p>
+            <div className="mb-6 border border-accent/30 rounded-md p-3 bg-primary-900/50">
+              <p className="text-accent font-medium text-sm mb-1">{t('orders.shipping')}</p>
               <p className="text-white font-medium break-words">{order.shippingAddress}</p>
             </div>
             
             {order.trackingNumber && (
-              <div className="mb-6">
-                <p className="text-primary-300 mb-1">{t('orders.trackingNumber')}</p>
+              <div className="mb-6 border border-accent/30 rounded-md p-3 bg-primary-900/50">
+                <p className="text-accent font-medium text-sm mb-1">{t('orders.trackingNumber')}</p>
                 <p className="text-white font-medium">{order.trackingNumber}</p>
               </div>
             )}
             
-            <h3 className="text-lg text-white font-medium mb-4">{t('orders.items')}</h3>
-            <div className="space-y-4">
-              {order.items.map((item) => (
-                <div key={item.id} className="flex items-center bg-primary-900 p-4 rounded-lg">
-                  <div className="flex-shrink-0 w-16 h-16 mr-4">
-                    <img 
-                      src={item.productImage} 
-                      alt={item.productName} 
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-white font-medium">{item.productName}</h4>
-                    <div className="flex mt-1">
-                      <p className="text-primary-300 text-sm mr-4">
-                        {t('orders.quantity')} {item.quantity}
-                      </p>
-                      {item.size && (
-                        <p className="text-primary-300 text-sm">
-                          {t('product.size')} {item.size}
-                        </p>
-                      )}
+            <div className="border-t border-accent/30 pt-4 mt-4">
+              <h3 className="text-lg text-accent font-medium mb-4">{t('orders.items')}</h3>
+              <div className="space-y-4">
+                {order.items.map((item) => (
+                  <div key={item.id} className="flex items-center bg-primary-900 p-4 rounded-lg border border-accent/30">
+                    <div className="flex-shrink-0 w-16 h-16 mr-4">
+                      <img 
+                        src={item.productImage} 
+                        alt={item.productName} 
+                        className="w-full h-full object-cover rounded-md"
+                      />
                     </div>
-                    <p className="text-accent mt-1">
-                      {formatCurrency(item.price)} / ⊙ {item.ethPrice.toFixed(6)} $STONKS
-                    </p>
+                    <div className="flex-grow">
+                      <h4 className="text-white font-medium">{item.productName}</h4>
+                      <div className="flex mt-1">
+                        <p className="text-primary-300 text-sm mr-4">
+                          {t('orders.quantity')} {item.quantity}
+                        </p>
+                        {item.size && (
+                          <p className="text-primary-300 text-sm">
+                            {t('product.size')} {item.size}
+                          </p>
+                        )}
+                      </div>
+                      <p className="text-accent mt-1">
+                        {formatCurrency(item.price)} / ⊙ {item.ethPrice.toFixed(6)} $STONKS
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             
             <div className="mt-6 flex justify-between">
