@@ -481,7 +481,7 @@ export default function OrderManagement() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="space-y-2">
-                  <h4 className="font-medium text-accent">订单状态</h4>
+                  <h4 className="font-medium text-accent">订单状态:</h4>
                   <div className="flex items-center gap-3">
                     <span className={getStatusClass(selectedOrder.status)}>
                       {getStatusDisplay(selectedOrder.status)}
@@ -503,7 +503,7 @@ export default function OrderManagement() {
                 </div>
                 
                 <div className="space-y-2">
-                  <h4 className="font-medium text-accent">支付信息</h4>
+                  <h4 className="font-medium text-accent">支付信息:</h4>
                   <p>方式: {getPaymentMethodDisplay(selectedOrder.paymentMethod)}</p>
                   <div className="flex flex-col">
                     <span className="text-accent">⊙ {selectedOrder.ethTotal.toFixed(6)} $STONKS</span>
@@ -521,7 +521,7 @@ export default function OrderManagement() {
               </div>
               
               <div className="mb-6">
-                <h4 className="font-medium text-accent mb-2">收货信息</h4>
+                <h4 className="font-medium text-accent mb-2">收货信息:</h4>
                 <div className="bg-primary/20 p-3 rounded border border-accent/30">
                   <p className="whitespace-pre-line">{selectedOrder.shippingAddress || '暂无收货地址'}</p>
                 </div>
@@ -529,7 +529,7 @@ export default function OrderManagement() {
               
               {selectedOrder.status === 'pending' && (
                 <div className="mb-6">
-                  <h4 className="font-medium text-accent mb-2">标记为已付款</h4>
+                  <h4 className="font-medium text-accent mb-2">标记为已付款:</h4>
                   <Button 
                     variant="outline" 
                     className="border-green-500 text-green-500 hover:bg-green-500/20"
@@ -542,7 +542,7 @@ export default function OrderManagement() {
               
               {selectedOrder.status === 'paid' && (
                 <div className="mb-6">
-                  <h4 className="font-medium text-accent mb-2">添加物流信息</h4>
+                  <h4 className="font-medium text-accent mb-2">添加物流信息:</h4>
                   <div className="flex gap-2">
                     <Input 
                       placeholder="输入物流单号" 
@@ -564,7 +564,7 @@ export default function OrderManagement() {
               
               {selectedOrder.trackingNumber && (
                 <div className="mb-6">
-                  <h4 className="font-medium text-accent mb-2">物流单号</h4>
+                  <h4 className="font-medium text-accent mb-2">物流单号:</h4>
                   <div className="bg-primary/20 p-3 rounded border border-accent/30">
                     <p>{selectedOrder.trackingNumber}</p>
                   </div>
@@ -572,7 +572,7 @@ export default function OrderManagement() {
               )}
               
               <div className="mb-6">
-                <h4 className="font-medium text-accent mb-2">订单商品</h4>
+                <h4 className="font-medium text-accent mb-2">订单商品:</h4>
                 <div className="rounded-md border border-accent/30 overflow-hidden">
                   <Table>
                     <TableHeader className="bg-primary/50">
@@ -625,7 +625,7 @@ export default function OrderManagement() {
               
               {selectedOrder.notes && (
                 <div className="mb-6">
-                  <h4 className="font-medium text-accent mb-2">订单备注</h4>
+                  <h4 className="font-medium text-accent mb-2">交易哈希:</h4>
                   <div className="bg-primary/20 p-3 rounded border border-accent/30">
                     <p className="whitespace-pre-line">{selectedOrder.notes}</p>
                   </div>
