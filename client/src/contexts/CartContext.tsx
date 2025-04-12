@@ -11,7 +11,7 @@ interface CartContextType {
   totalPrice: number;
   totalEthPrice: number;
   addToCart: (productId: number, quantity: number, size?: string) => Promise<void>;
-  updateCartItem: (itemId: number, quantity: number, size?: string) => Promise<void>;
+  updateCart: (itemId: number, quantity: number, size?: string) => Promise<void>;
   removeCartItem: (itemId: number) => Promise<void>;
   clearCart: () => Promise<void>;
   isCartOpen: boolean;

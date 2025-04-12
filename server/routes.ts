@@ -96,7 +96,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all orders (admin only)
   app.get('/api/orders', requireAdmin, async (req, res) => {
     try {
-      const orders = await storage.getOrders();
+      // 使用现有方法组合来获取所有订单
+      // 由于没有专门的getOrders方法，我们使用数据库中的userId为null的情况来获取所有订单
+      const orders = await storage.getOrdersByUserId(null);
       res.json(orders);
     } catch (error) {
       console.error("获取订单列表错误:", error);
