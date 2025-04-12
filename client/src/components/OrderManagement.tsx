@@ -37,7 +37,8 @@ export default function OrderManagement() {
     const methodMap: Record<string, string> = {
       stonks: "STONKS代币",
       usdt: "USDT",
-      fiat: "法币支付"
+      fiat: "法币支付",
+      crypto: "STONKS"  // 将crypto显示为STONKS
     };
     return methodMap[method] || method;
   };
@@ -176,7 +177,7 @@ export default function OrderManagement() {
   };
 
   return (
-    <Card className="shadow-lg mb-8">
+    <Card className="shadow-lg mb-8 bg-nightblue border border-accent/30">
       <CardHeader>
         <CardTitle>订单管理</CardTitle>
       </CardHeader>
