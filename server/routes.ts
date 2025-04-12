@@ -693,12 +693,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (existingItem) {
         // Update existing item quantity
-        const updatedItem = await storage.updateCartItem(
+        const updatedItem = await storage.updateCart(
           existingItem.id,
-          existingItem.quantity + (validatedData.quantity || 1),
-          validatedData.size && typeof validatedData.size === 'string' 
-            ? validatedData.size 
-            : undefined
+          existingItem.quantity + (validatedData.quantity || 1)
         );
         return res.status(200).json(updatedItem);
       }

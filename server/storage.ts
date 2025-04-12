@@ -51,7 +51,7 @@ export interface IStorage {
   // 购物车相关方法
   getCart(sessionId: string): Promise<CartItem[]>;
   addToCart(item: InsertCartItem): Promise<CartItem>;
-  updateCartItem(id: number, quantity: number): Promise<CartItem | undefined>;
+  updateCart(id: number, quantity: number): Promise<CartItem | undefined>;
   removeFromCart(id: number): Promise<boolean>;
   clearCart(sessionId: string): Promise<boolean>;
   
@@ -214,11 +214,14 @@ export class DatabaseStorage implements IStorage {
       quantity: cartItems.quantity,
       size: cartItems.size,
       createdAt: cartItems.createdAt,
-      productName: products.name,
-      productPrice: products.price,
-      productEthPrice: products.ethPrice,
-      productImage: products.imageUrl,
-      productHasSizes: products.hasSizes
+      product: {
+        id: products.id,
+        name: products.name,
+        price: products.price,
+        ethPrice: products.ethPrice,
+        imageUrl: products.imageUrl,
+        hasSizes: products.hasSizes
+      }
     })
     .from(cartItems)
     .innerJoin(products, eq(cartItems.productId, products.id))
@@ -241,7 +244,7 @@ export class DatabaseStorage implements IStorage {
     
     if (existingItem) {
       // 如果已存在相同产品，则增加数量
-      return this.updateCartItem(existingItem.id, existingItem.quantity + item.quantity);
+      return this.updateCart(existingItem.id, existingItem.quantity + item.quantity);
     } else {
       // 否则创建新购物车项
       const [newItem] = await db.insert(cartItems)
@@ -252,7 +255,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
-  async updateCartItem(id: number, quantity: number): Promise<CartItem | undefined> {
+  async updateCart(id: number, quantity: number): Promise<CartItem | undefined> {
     const [updatedItem] = await db.update(cartItems)
       .set({ quantity })
       .where(eq(cartItems.id, id))
