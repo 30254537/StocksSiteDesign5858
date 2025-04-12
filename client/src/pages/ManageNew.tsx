@@ -1182,6 +1182,272 @@ export default function Manage() {
       
       {/* 订单管理 */}
       {activeTab === "orders" && <OrderManagement />}
+      
+      {activeTab === "website" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>网站内容管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <form 
+                className="space-y-4" 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  
+                  const key = (document.getElementById("content-key") as HTMLInputElement).value;
+                  const value = (document.getElementById("content-value") as HTMLTextAreaElement).value;
+                  const contentId = document.getElementById("content-id")?.getAttribute("value");
+                  
+                  if (!key || !value) {
+                    toast({
+                      title: "表单错误",
+                      description: "标识符和内容不能为空",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  try {
+                    let response;
+                    
+                    if (contentId) {
+                      // 更新内容
+                      response = await apiRequest("PUT", `/api/website-contents/${contentId}`, {
+                        key,
+                        value
+                      });
+                    } else {
+                      // 创建新内容
+                      response = await apiRequest("POST", "/api/website-contents", {
+                        key,
+                        value
+                      });
+                    }
+                    
+                    if (response.ok) {
+                      toast({
+                        title: contentId ? "更新成功" : "添加成功",
+                        description: contentId ? "网站内容已成功更新" : "网站内容已成功添加",
+                      });
+                      
+                      // 重置表单
+                      (document.getElementById("website-content-form") as HTMLFormElement).reset();
+                      document.getElementById("content-id")?.removeAttribute("value");
+                      
+                      // 重新获取数据
+                      // 此处应添加获取网站内容的函数调用
+                    } else {
+                      throw new Error(await response.text());
+                    }
+                  } catch (error) {
+                    console.error("提交网站内容表单错误:", error);
+                    toast({
+                      title: "提交失败",
+                      description: "无法保存网站内容，请稍后再试",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                id="website-content-form"
+              >
+                <input type="hidden" id="content-id" />
+                
+                <div className="space-y-2">
+                  <label htmlFor="content-key" className="block text-sm font-medium">
+                    内容标识符
+                  </label>
+                  <Input
+                    id="content-key"
+                    placeholder="输入内容的唯一标识符 (例如: home.banner.title)"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="content-value" className="block text-sm font-medium">
+                    内容文本
+                  </label>
+                  <Textarea
+                    id="content-value"
+                    placeholder="输入网站内容文本"
+                    className="bg-primary/50 border-accent min-h-[120px]"
+                    required
+                  />
+                </div>
+                
+                <div className="flex gap-4">
+                  <Button
+                    type="submit"
+                    className="bg-accent hover:bg-accent/80 text-black"
+                  >
+                    保存内容
+                  </Button>
+                </div>
+              </form>
+              
+              <div className="mt-8 border-t border-accent/30 pt-6">
+                <h3 className="text-lg font-medium mb-4">现有网站内容</h3>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>内容标识符</TableHead>
+                        <TableHead>内容文本</TableHead>
+                        <TableHead className="w-[120px]">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* 此处应显示网站内容列表 */}
+                      {/* 暂时显示提示信息 */}
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center py-8 text-gray-400">
+                          网站内容将在此处显示
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {activeTab === "tweets" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>推文管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <form 
+                className="space-y-4" 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  
+                  const author = (document.getElementById("tweet-author") as HTMLInputElement).value;
+                  const content = (document.getElementById("tweet-content") as HTMLTextAreaElement).value;
+                  const tweetId = document.getElementById("tweet-id")?.getAttribute("value");
+                  
+                  if (!author || !content) {
+                    toast({
+                      title: "表单错误",
+                      description: "作者和内容不能为空",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  try {
+                    let response;
+                    
+                    if (tweetId) {
+                      // 更新推文
+                      response = await apiRequest("PUT", `/api/tweets/${tweetId}`, {
+                        author,
+                        content
+                      });
+                    } else {
+                      // 创建新推文
+                      response = await apiRequest("POST", "/api/tweets", {
+                        author,
+                        content,
+                        timestamp: new Date().toISOString()
+                      });
+                    }
+                    
+                    if (response.ok) {
+                      toast({
+                        title: tweetId ? "更新成功" : "添加成功",
+                        description: tweetId ? "推文已成功更新" : "推文已成功添加",
+                      });
+                      
+                      // 重置表单
+                      (document.getElementById("tweet-form") as HTMLFormElement).reset();
+                      document.getElementById("tweet-id")?.removeAttribute("value");
+                      
+                      // 重新获取数据
+                      // 此处应添加获取推文的函数调用
+                    } else {
+                      throw new Error(await response.text());
+                    }
+                  } catch (error) {
+                    console.error("提交推文表单错误:", error);
+                    toast({
+                      title: "提交失败",
+                      description: "无法保存推文，请稍后再试",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                id="tweet-form"
+              >
+                <input type="hidden" id="tweet-id" />
+                
+                <div className="space-y-2">
+                  <label htmlFor="tweet-author" className="block text-sm font-medium">
+                    作者
+                  </label>
+                  <Input
+                    id="tweet-author"
+                    placeholder="输入推文作者"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="tweet-content" className="block text-sm font-medium">
+                    推文内容
+                  </label>
+                  <Textarea
+                    id="tweet-content"
+                    placeholder="输入推文内容"
+                    className="bg-primary/50 border-accent min-h-[120px]"
+                    required
+                  />
+                </div>
+                
+                <div className="flex gap-4">
+                  <Button
+                    type="submit"
+                    className="bg-accent hover:bg-accent/80 text-black"
+                  >
+                    保存推文
+                  </Button>
+                </div>
+              </form>
+              
+              <div className="mt-8 border-t border-accent/30 pt-6">
+                <h3 className="text-lg font-medium mb-4">现有推文</h3>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>作者</TableHead>
+                        <TableHead>内容</TableHead>
+                        <TableHead>日期</TableHead>
+                        <TableHead className="w-[120px]">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* 此处应显示推文列表 */}
+                      {/* 暂时显示提示信息 */}
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-8 text-gray-400">
+                          推文将在此处显示
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
