@@ -3,7 +3,16 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import axios from "axios";
-import { insertCartItemSchema, insertOrderSchema, insertOrderItemSchema, insertMusicTrackSchema, InsertCryptoTweet, telegramMessages, tweets } from "@shared/schema";
+import { 
+  insertCartItemSchema, 
+  insertOrderSchema, 
+  insertOrderItemSchema, 
+  insertMusicTrackSchema, 
+  InsertCryptoTweet, 
+  telegramMessages, 
+  tweets,
+  CartItemWithProduct  // Import the CartItemWithProduct type
+} from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import * as crypto from "crypto";
@@ -1087,7 +1096,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/crypto-checkout", async (req: Request & { user?: any }, res) => {
     try {
       const sessionId = getSessionId(req);
-      const cartItems = await storage.getCart(sessionId);
+      // Cast the cart items to the CartItemWithProduct type
+      const cartItems = await storage.getCart(sessionId) as CartItemWithProduct[];
       
       if (cartItems.length === 0) {
         return res.status(400).json({ message: "Cart is empty" });
@@ -1116,17 +1126,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 添加网络信息到日志，如果提供了
       const networkInfo = network ? ` on ${network} network` : "";
       
-      // 确保购物车项中有product属性（TypeScript类型检查会报错，但运行时程序正常工作）
-      // @ts-ignore - 运行时product属性存在于cartItems中
+      // 确保购物车项中有product属性
       if (!cartItems.every(item => item.product)) {
         console.error("Error: Some cart items don't have product information");
         return res.status(400).json({ message: "购物车数据无效，请刷新页面后重试" });
       }
       
-      // Calculate totals - 使用类型断言来避免TypeScript报错
-      // @ts-ignore - 运行时product属性存在于cartItems中
+      // 计算总价
       const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-      // @ts-ignore - 运行时product属性存在于cartItems中
       const ethTotal = cartItems.reduce((sum, item) => sum + (item.product.ethPrice * item.quantity), 0);
       
       // Here in a real application, we would verify the blockchain transaction
