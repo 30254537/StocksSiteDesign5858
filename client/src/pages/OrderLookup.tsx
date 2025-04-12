@@ -230,26 +230,29 @@ const OrderLookup: React.FC = () => {
               </span>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
-                <p className="text-accent font-medium text-sm mb-1">{t('orders.date')}</p>
-                <p className="text-white font-medium">{formatDate(new Date(order.createdAt))}</p>
+            <div className="grid grid-cols-1 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
+                  <p className="text-accent font-medium text-sm mb-1">{t('orders.date')}</p>
+                  <p className="text-white font-medium">{formatDate(new Date(order.createdAt))}</p>
+                </div>
+                <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
+                  <p className="text-accent font-medium text-sm mb-1">{t('orders.paymentMethod')}</p>
+                  <p className="text-white font-medium">{getPaymentMethodText(order.paymentMethod)}</p>
+                </div>
               </div>
-              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
-                <p className="text-accent font-medium text-sm mb-1">{t('orders.paymentMethod')}</p>
-                <p className="text-white font-medium">{getPaymentMethodText(order.paymentMethod)}</p>
-              </div>
+              
               <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
                 <p className="text-accent font-medium text-sm mb-1">{t('orders.total')}</p>
                 <p className="text-white font-medium">
-                  {formatCurrency(order.total)} / ⊙ {order.ethTotal.toFixed(6)} $STONKS
+                  ${Math.floor(order.total)} / ⊙ {Math.floor(order.ethTotal)} $STONKS
                 </p>
               </div>
-            </div>
-            
-            <div className="mb-6 border border-accent/30 rounded-md p-3 bg-primary-900/50">
-              <p className="text-accent font-medium text-sm mb-1">{t('orders.shipping')}</p>
-              <p className="text-white font-medium break-words">{order.shippingAddress}</p>
+              
+              <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
+                <p className="text-accent font-medium text-sm mb-1">{t('orders.shipping')}</p>
+                <p className="text-white font-medium break-words">{order.shippingAddress}</p>
+              </div>
             </div>
             
             {order.trackingNumber && (
@@ -284,7 +287,7 @@ const OrderLookup: React.FC = () => {
                         )}
                       </div>
                       <p className="text-accent mt-1">
-                        {formatCurrency(item.price)} / ⊙ {item.ethPrice.toFixed(6)} $STONKS
+                        ${Math.floor(item.price)} / ⊙ {Math.floor(item.ethPrice)} $STONKS
                       </p>
                     </div>
                   </div>

@@ -151,7 +151,7 @@ export default function MyOrders() {
               <AlertCircle className="h-4 w-4 text-accent" />
               <div>
                 <p className="text-sm font-medium text-accent">{t('orders.total')}</p>
-                <p className="text-sm">${order.total.toFixed(2)}</p>
+                <p className="text-sm">${Math.floor(order.total)}</p>
               </div>
             </div>
           </div>
@@ -205,14 +205,14 @@ export default function MyOrders() {
                 <div className="flex-grow">
                   <div className="flex justify-between">
                     <p className="font-medium">{item.productName}</p>
-                    <p className="text-sm">${item.price.toFixed(2)}</p>
+                    <p className="text-sm">${Math.floor(item.price)}</p>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <p>
                       {language === 'zh' ? '数量' : 'Qty'}: {item.quantity}
                       {item.size && ` / ${language === 'zh' ? '尺码' : 'Size'}: ${item.size}`}
                     </p>
-                    <p>${(item.price * item.quantity).toFixed(2)}</p>
+                    <p>${Math.floor(item.price * item.quantity)}</p>
                   </div>
                 </div>
               </div>
