@@ -62,6 +62,8 @@ export interface IStorage {
   getOrdersBySessionId(sessionId: string): Promise<Order[]>;
   getOrdersByUserId(userId: number): Promise<Order[]>;
   updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
+  deleteOrder(id: number): Promise<boolean>;
+  deleteOrders(ids: number[]): Promise<number>; // 返回成功删除的订单数量
   
   // 订单项相关方法
   createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
@@ -341,6 +343,37 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return updatedOrder;
+  }
+  
+  // 删除单个订单
+  async deleteOrder(id: number): Promise<boolean> {
+    try {
+      await db.delete(orders).where(eq(orders.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除订单时出错:', error);
+      return false;
+    }
+  }
+  
+  // 批量删除订单
+  async deleteOrders(ids: number[]): Promise<number> {
+    let successCount = 0;
+    
+    try {
+      // 遍历每个订单ID进行删除
+      for (const id of ids) {
+        const result = await this.deleteOrder(id);
+        if (result) {
+          successCount++;
+        }
+      }
+      
+      return successCount;
+    } catch (error) {
+      console.error('批量删除订单时出错:', error);
+      return successCount; // 返回已成功删除的数量
+    }
   }
   
   // 订单项相关方法

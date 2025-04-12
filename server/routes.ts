@@ -154,6 +154,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Delete order (admin only)
+  app.delete('/api/orders/:id', requireAdmin, async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.id);
+      if (isNaN(orderId)) {
+        return res.status(400).json({ error: '无效的订单ID' });
+      }
+      
+      const result = await storage.deleteOrder(orderId);
+      if (!result) {
+        return res.status(404).json({ error: '订单不存在或删除失败' });
+      }
+      
+      res.status(200).json({ message: '订单删除成功' });
+    } catch (error) {
+      console.error("删除订单错误:", error);
+      res.status(500).json({ error: '删除订单失败' });
+    }
+  });
+  
+  // Bulk delete orders (admin only)
+  app.post('/api/orders/bulk-delete', requireAdmin, async (req, res) => {
+    try {
+      const { orderIds } = req.body;
+      
+      if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0) {
+        return res.status(400).json({ error: '请提供有效的订单ID列表' });
+      }
+      
+      // 确保所有ID都是数字
+      const validOrderIds = orderIds.filter(id => !isNaN(parseInt(id))).map(id => parseInt(id));
+      
+      if (validOrderIds.length === 0) {
+        return res.status(400).json({ error: '未提供有效的订单ID' });
+      }
+      
+      const deletedCount = await storage.deleteOrders(validOrderIds);
+      
+      res.status(200).json({
+        message: `成功删除 ${deletedCount} 个订单`,
+        deletedCount,
+        totalCount: validOrderIds.length
+      });
+    } catch (error) {
+      console.error("批量删除订单错误:", error);
+      res.status(500).json({ error: '批量删除订单失败' });
+    }
+  });
+  
   // Update order status (admin only)
   app.put('/api/orders/:id/status', requireAdmin, async (req, res) => {
     try {
