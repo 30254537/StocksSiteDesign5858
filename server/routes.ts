@@ -1072,12 +1072,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Cart is empty" });
       }
       
-      const { paymentMethod, transactionHash, shippingAddress } = req.body;
+      const { paymentMethod, transactionHash, shippingAddress, network } = req.body;
       
-      // Validate payment method
-      if (paymentMethod !== "crypto" || !transactionHash) {
+      // Validate payment method - accept both "crypto" and "usdt"
+      if ((paymentMethod !== "crypto" && paymentMethod !== "usdt") || !transactionHash) {
         return res.status(400).json({ message: "Invalid payment information" });
       }
+      
+      // 添加网络信息到日志，如果提供了
+      const networkInfo = network ? ` on ${network} network` : "";
       
       // Calculate totals
       const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
@@ -1093,10 +1096,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           status: "paid",
           total,
           ethTotal,
-          paymentMethod: "crypto",
+          paymentMethod: paymentMethod, // 使用提交的支付方式，无需转换
           shippingAddress: shippingAddress || null,
           trackingNumber: null,
-          notes: `Crypto transaction: ${transactionHash}`,
+          notes: `${paymentMethod.toUpperCase()} transaction${networkInfo}: ${transactionHash}`,
           // If user is logged in, associate with their account
           userId: req.user?.id || null
         },
