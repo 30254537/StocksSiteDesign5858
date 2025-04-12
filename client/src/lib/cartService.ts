@@ -55,7 +55,7 @@ export function addToCart(product: Product, quantity: number = 1, size?: string)
   }
 }
 
-export function updateCartItemQuantity(itemId: number, quantity: number): void {
+export function updateCart(itemId: number, quantity: number): void {
   try {
     const cart = getCartItems();
     const itemIndex = cart.findIndex(item => item.id === itemId);
