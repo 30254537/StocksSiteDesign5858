@@ -190,12 +190,24 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
   const { currentPrice, contractAddress, loading, error, convertUsdToStonks } = useStonksPrice();
   const { t } = useLanguage();
   const [customAmount, setCustomAmount] = React.useState<string>(amount?.toString() || '');
+  const [prevPrice, setPrevPrice] = useState<number>(currentPrice || 0.035);
+  
+  // 在价格更新时保存前一个有效价格
+  useEffect(() => {
+    if (currentPrice > 0 && !loading) {
+      setPrevPrice(currentPrice);
+    }
+  }, [currentPrice, loading]);
+  
+  // 使用当前价格或上一个有效价格，避免显示0或闪烁
+  const displayPrice = currentPrice > 0 ? currentPrice : prevPrice;
   
   // 如果提供了amount，计算等值的STONKS
   const stonksEquivalent = amount ? convertUsdToStonks(amount) : 0;
   const customStonksEquivalent = customAmount ? convertUsdToStonks(parseFloat(customAmount)) : 0;
 
-  if (loading) {
+  // 即使在加载中也显示上次的价格，避免闪烁
+  if (loading && prevPrice <= 0) {
     return (
       <div className="flex flex-col space-y-2 p-4 bg-slate-800 rounded-lg">
         <div className="flex items-center">
@@ -206,7 +218,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
     );
   }
 
-  if (error) {
+  if (error && prevPrice <= 0) {
     return (
       <div className="p-4 bg-slate-800 rounded-lg text-red-500">
         <p>{t('stonksPrice.error')}</p>
@@ -220,7 +232,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
       <div className="flex justify-between items-center">
         <span className="text-gray-400">{t('stonksPrice.currentPrice')}:</span>
         <span className="font-mono font-semibold">
-          1 $STONKS = {formatCurrency(currentPrice)}
+          1 $STONKS = {formatCurrency(displayPrice)}
         </span>
       </div>
       
@@ -228,7 +240,7 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
         <div className="flex justify-between items-center">
           <span className="text-gray-400">{t('stonksPrice.equivalentAmount')}:</span>
           <span className="font-mono font-semibold">
-            {formatCurrency(amount)} = ⊙ {stonksEquivalent.toFixed(6)} $STONKS
+            {formatCurrency(amount)} = ⊙ {(amount / displayPrice).toFixed(6)} $STONKS
           </span>
         </div>
       )}
@@ -255,7 +267,9 @@ export function StonksPriceDisplay({ amount, showConverter = false }: StonksPric
             <span>=</span>
             <div className="flex-1">
               <div className="p-2 bg-slate-900 rounded border border-gray-700 font-mono">
-                ⊙ {!isNaN(customStonksEquivalent) ? customStonksEquivalent.toFixed(6) : '0.000000'} $STONKS
+                ⊙ {(!isNaN(parseFloat(customAmount)) && displayPrice > 0) 
+                  ? (parseFloat(customAmount) / displayPrice).toFixed(6) 
+                  : '0.000000'} $STONKS
               </div>
             </div>
           </div>
