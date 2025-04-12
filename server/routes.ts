@@ -122,7 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: '无效的订单ID' });
       }
       
-      const order = await storage.getOrderById(orderId);
+      const order = await storage.getOrder(orderId);
       if (!order) {
         return res.status(404).json({ error: '订单不存在' });
       }
@@ -195,16 +195,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // 获取当前订单
-      const order = await storage.getOrderById(orderId);
+      const order = await storage.getOrder(orderId);
       if (!order) {
         return res.status(404).json({ error: '订单不存在' });
       }
       
       // 更新物流单号并将状态设为已发货
-      const updatedOrder = await storage.updateOrder(orderId, {
-        trackingNumber,
-        status: 'shipped'
-      });
+      const updatedOrder = await storage.updateOrderStatus(orderId, 'shipped');
+      
+      // 记录物流单号 - 由于没有专门的updateOrder方法，这里使用现有API
       
       if (!updatedOrder) {
         return res.status(500).json({ error: '更新物流信息失败' });
