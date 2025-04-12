@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from '@/lib/translations';
 import { apiRequest } from '@/lib/queryClient';
-import { formatDate, formatCurrency } from '@/lib/utils';
+import { formatDate, formatCurrency, formatTransactionHash } from '@/lib/utils';
 import { 
   Form, 
   FormControl, 
@@ -268,8 +268,7 @@ const OrderLookup: React.FC = () => {
               <div className="mb-6 border-2 border-accent/40 rounded-lg p-4 bg-primary-900/70 shadow-md">
                 <p className="text-accent font-bold text-sm uppercase tracking-wide mb-2">{t('orders.transactionHash')}：</p>
                 <p className="text-white font-semibold text-base font-mono">
-                  {order.paymentMethod === 'usdt' ? 'USDT/TRC20: ' : 'STONKS: '}
-                  {order.notes}
+                  {formatTransactionHash(order.notes, order.paymentMethod)}
                 </p>
               </div>
             )}
