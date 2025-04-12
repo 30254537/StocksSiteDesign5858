@@ -26,6 +26,7 @@ const Community = lazy(() => import("@/pages/Community"));
 const TelegramMessages = lazy(() => import("@/pages/TelegramMessages"));
 const NewsDetail = lazy(() => import("@/pages/NewsDetail"));
 const TestTools = lazy(() => import("@/pages/TestTools"));
+const MyOrders = lazy(() => import("@/pages/MyOrders"));
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -192,6 +193,13 @@ function Router() {
             {(params) => (
               <PageWrapper>
                 <NewsDetail />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/account/orders">
+            {() => (
+              <PageWrapper>
+                <MyOrders />
               </PageWrapper>
             )}
           </Route>

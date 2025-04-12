@@ -34,6 +34,24 @@ export function truncateText(text: string, maxLength: number): string {
   return `${text.substring(0, maxLength)}...`;
 }
 
+/**
+ * 格式化日期为本地字符串，用于显示订单日期等
+ * @param dateString - 日期字符串或Date对象
+ * @returns 格式化后的日期字符串，例如：2025-04-12 11:30 AM
+ */
+export function formatDate(dateString: string | Date): string {
+  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
 export function generateSessionId(): string {
   return Math.random().toString(36).substring(2, 15) + 
          Math.random().toString(36).substring(2, 15);

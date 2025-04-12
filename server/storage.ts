@@ -58,8 +58,10 @@ export interface IStorage {
   getOrderById(id: number): Promise<Order | undefined>;
   getOrdersByUserId(userId: number): Promise<Order[]>;
   getOrdersBySessionId(sessionId: string): Promise<Order[]>;
+  getOrdersWithItemsBySessionId(sessionId: string): Promise<OrderWithItems[]>;
   createOrder(order: InsertOrder, items: Omit<InsertOrderItem, 'orderId'>[]): Promise<Order>;
   updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
+  updateOrder(id: number, data: Partial<Order>): Promise<Order | undefined>;
   getOrderWithItems(id: number): Promise<OrderWithItems | undefined>;
   
   // Newsletter operations
@@ -451,7 +453,11 @@ export class DatabaseStorage implements IStorage {
         .where(eq(products.id, item.productId));
       
       if (product) {
-        itemsWithProducts.push({ ...item, product });
+        itemsWithProducts.push({
+          ...item,
+          productName: product.name,
+          productImage: product.imageUrl || '',
+        });
       }
     }
     
@@ -459,6 +465,49 @@ export class DatabaseStorage implements IStorage {
       ...order,
       items: itemsWithProducts
     };
+  }
+  
+  // 获取所有带订单项的订单（按会话ID）
+  async getOrdersWithItemsBySessionId(sessionId: string): Promise<OrderWithItems[]> {
+    const ordersList = await db.select().from(orders)
+      .where(eq(orders.sessionId, sessionId))
+      .orderBy(desc(orders.createdAt));
+    
+    if (!ordersList || ordersList.length === 0) {
+      return [];
+    }
+    
+    const result: OrderWithItems[] = [];
+    
+    // 处理每个订单
+    for (const order of ordersList) {
+      const orderItemsList = await db.select().from(orderItems)
+        .where(eq(orderItems.orderId, order.id));
+      
+      const itemsWithProductInfo = [];
+      
+      // 为每个订单项获取产品信息
+      for (const item of orderItemsList) {
+        const [product] = await db.select().from(products)
+          .where(eq(products.id, item.productId));
+        
+        if (product) {
+          itemsWithProductInfo.push({
+            ...item,
+            productName: product.name,
+            productImage: product.imageUrl || '',
+          });
+        }
+      }
+      
+      // 添加完整订单（带订单项）到结果中
+      result.push({
+        ...order,
+        items: itemsWithProductInfo
+      });
+    }
+    
+    return result;
   }
 
   // Newsletter operations

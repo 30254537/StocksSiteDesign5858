@@ -226,6 +226,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // 新端点：获取我的订单（支持会话ID）- 提供给前端MyOrders页面使用
+  app.get('/api/my-orders', async (req: Request & { user?: any }, res) => {
+    try {
+      // 获取会话ID
+      const sessionId = getSessionId(req);
+      
+      // 从数据库中获取订单，带有订单项
+      const orders = await storage.getOrdersWithItemsBySessionId(sessionId);
+      
+      if (!orders || orders.length === 0) {
+        // 返回空数组，而不是错误
+        return res.json([]);
+      }
+      
+      res.json(orders);
+    } catch (error) {
+      console.error("获取我的订单错误:", error);
+      res.status(500).json({ error: '获取订单列表失败' });
+    }
+  });
+  
   // Create a new order
   app.post('/api/orders', async (req, res) => {
     try {
