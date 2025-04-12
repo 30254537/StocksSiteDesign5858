@@ -229,8 +229,17 @@ export default function ManageNew() {
                     <label htmlFor="content-language" className="block text-sm font-medium">
                       内容语言
                     </label>
-                    <Select name="content-language" defaultValue="zh">
-                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-language">
+                    <Select 
+                      defaultValue="zh"
+                      onValueChange={(value) => {
+                        // 更新data-value属性以便后续访问
+                        const trigger = document.querySelector('[data-id="content-language"]');
+                        if (trigger) {
+                          trigger.setAttribute('data-value', value);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-language" data-value="zh">
                         <SelectValue placeholder="选择语言" />
                       </SelectTrigger>
                       <SelectContent>
@@ -244,8 +253,17 @@ export default function ManageNew() {
                     <label htmlFor="content-type" className="block text-sm font-medium">
                       内容类型
                     </label>
-                    <Select name="content-type" defaultValue="text">
-                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-type">
+                    <Select 
+                      defaultValue="text"
+                      onValueChange={(value) => {
+                        // 更新data-value属性以便后续访问
+                        const trigger = document.querySelector('[data-id="content-type"]');
+                        if (trigger) {
+                          trigger.setAttribute('data-value', value);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-type" data-value="text">
                         <SelectValue placeholder="选择内容类型" />
                       </SelectTrigger>
                       <SelectContent>
