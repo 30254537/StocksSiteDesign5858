@@ -92,19 +92,23 @@ const CryptoNews: React.FC = () => {
     data: newsData, 
     isLoading, 
     error 
-  } = useQuery<{ 
-    data: CryptoNewsType[], 
-    pagination: { 
-      total: number, 
-      limit: number, 
-      offset: number, 
-      hasMore: boolean 
-    } 
-  }>({
-    queryKey: ['/api/news', currentPage, PAGE_SIZE],
+  } = useQuery<CryptoNewsType[]>({
+    queryKey: ['/api/crypto-news', currentPage, PAGE_SIZE],
     queryFn: async () => {
-      const res = await fetch(`/api/news?limit=${PAGE_SIZE}&offset=${offset}`);
-      return await res.json();
+      const res = await fetch(`/api/crypto-news?limit=${PAGE_SIZE}`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch news');
+      }
+      const data = await res.json();
+      return {
+        data: data,
+        pagination: { 
+          total: data.length, 
+          limit: PAGE_SIZE, 
+          offset: offset, 
+          hasMore: data.length >= PAGE_SIZE 
+        }
+      };
     }
   });
   
@@ -113,10 +117,19 @@ const CryptoNews: React.FC = () => {
     data: highlightedNews, 
     isLoading: isLoadingHighlighted 
   } = useQuery<CryptoNewsType[]>({
-    queryKey: ['/api/news/highlighted'],
+    queryKey: ['/api/crypto-news/highlighted'],
     queryFn: async () => {
-      const res = await fetch('/api/news/highlighted');
-      return await res.json();
+      try {
+        const res = await fetch('/api/crypto-news?limit=5');
+        if (!res.ok) {
+          console.error('Failed to fetch highlighted news');
+          return [];
+        }
+        return await res.json();
+      } catch (error) {
+        console.error('Error fetching highlighted news:', error);
+        return [];
+      }
     }
   });
   
@@ -127,7 +140,7 @@ const CryptoNews: React.FC = () => {
   };
   
   // 计算总页数
-  const totalPages = newsData 
+  const totalPages = newsData && newsData.pagination
     ? Math.ceil(newsData.pagination.total / PAGE_SIZE) 
     : 0;
     
