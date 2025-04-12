@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
-import { Product, ContractAddress } from "@shared/schema";
+import { Product, ContractAddress, WebsiteContent } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -26,9 +26,9 @@ export default function Manage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   
   // 网站内容管理状态
-  const [websiteContents, setWebsiteContents] = useState<any[]>([]);
+  const [websiteContents, setWebsiteContents] = useState<WebsiteContent[]>([]);
   const [loadingWebsiteContents, setLoadingWebsiteContents] = useState(false);
-  const [editingContent, setEditingContent] = useState<any>(null);
+  const [editingContent, setEditingContent] = useState<WebsiteContent | null>(null);
   
   // 推文管理状态
   const [tweets, setTweets] = useState<any[]>([]);
@@ -328,7 +328,7 @@ export default function Manage() {
   };
   
   // 处理编辑网站内容
-  const handleEditContent = (content: any) => {
+  const handleEditContent = (content: WebsiteContent) => {
     setEditingContent(content);
     
     // 填充表单
