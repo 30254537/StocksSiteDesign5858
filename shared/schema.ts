@@ -82,6 +82,8 @@ export const orders = pgTable("orders", {
   customerPhone: text("customer_phone"),
   shippingAddress: text("shipping_address"),
   trackingNumber: text("tracking_number"),
+  // 支付相关信息
+  transactionHash: text("transaction_hash"), // 交易哈希
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

@@ -478,6 +478,14 @@ export default function OrderManagement() {
                     <span className="text-accent">⊙ {selectedOrder.ethTotal.toFixed(6)} $STONKS</span>
                     <span className="text-xs text-gray-400">${selectedOrder.total.toFixed(2)} USD</span>
                   </div>
+                  {selectedOrder.transactionHash && (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium text-accent">交易哈希:</p>
+                      <p className="text-xs break-all bg-primary/20 p-2 rounded border border-accent/30">
+                        {selectedOrder.transactionHash}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               
