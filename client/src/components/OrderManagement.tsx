@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Order, OrderItemWithProduct } from "@shared/schema";
@@ -19,6 +21,11 @@ export default function OrderManagement() {
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [showOrderDialog, setShowOrderDialog] = useState(false);
+  
+  // 批量删除状态
+  const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   // 订单状态显示函数
   const getStatusDisplay = (status: string): string => {
@@ -175,6 +182,104 @@ export default function OrderManagement() {
       });
     }
   };
+  
+  // 处理单个订单的复选框选择
+  const handleOrderSelection = (orderId: number, isChecked: boolean) => {
+    if (isChecked) {
+      // 添加到选中的订单ID列表
+      setSelectedOrderIds(prevSelected => [...prevSelected, orderId]);
+    } else {
+      // 从选中的订单ID列表中移除
+      setSelectedOrderIds(prevSelected => prevSelected.filter(id => id !== orderId));
+    }
+  };
+  
+  // 处理全选/取消全选
+  const handleSelectAll = (isChecked: boolean) => {
+    if (isChecked) {
+      // 选中当前过滤后的所有订单
+      const allOrderIds = filteredOrders.map(order => order.id);
+      setSelectedOrderIds(allOrderIds);
+    } else {
+      // 取消所有选择
+      setSelectedOrderIds([]);
+    }
+  };
+  
+  // 删除单个订单
+  const handleDeleteOrder = async (orderId: number) => {
+    try {
+      const response = await apiRequest("DELETE", `/api/orders/${orderId}`);
+      
+      if (response.ok) {
+        toast({
+          title: "订单删除成功",
+          description: `订单 #${orderId} 已成功删除`,
+        });
+        
+        // 刷新订单列表
+        await fetchOrders();
+        // 清空选中状态
+        setSelectedOrderIds([]);
+      } else {
+        throw new Error("删除订单失败");
+      }
+    } catch (error) {
+      console.error("删除订单错误:", error);
+      toast({
+        title: "删除订单失败",
+        description: "无法删除订单，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // 批量删除所选订单
+  const handleBulkDelete = async () => {
+    if (selectedOrderIds.length === 0) {
+      toast({
+        title: "请选择要删除的订单",
+        description: "您尚未选择任何订单",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsDeleting(true);
+    
+    try {
+      const response = await apiRequest("POST", "/api/orders/bulk-delete", {
+        orderIds: selectedOrderIds
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        
+        toast({
+          title: "批量删除成功",
+          description: `成功删除 ${result.deletedCount} 个订单`,
+        });
+        
+        // 刷新订单列表
+        await fetchOrders();
+        // 关闭确认对话框
+        setShowDeleteConfirm(false);
+        // 清空选中状态
+        setSelectedOrderIds([]);
+      } else {
+        throw new Error("批量删除订单失败");
+      }
+    } catch (error) {
+      console.error("批量删除订单错误:", error);
+      toast({
+        title: "批量删除失败",
+        description: "无法批量删除订单，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <Card className="shadow-lg mb-8 bg-nightblue border border-accent/30">
@@ -183,14 +288,26 @@ export default function OrderManagement() {
       </CardHeader>
       <CardContent>
         <div className="mb-4 flex justify-between items-center">
-          <Button 
-            variant="outline" 
-            className="border-accent text-accent"
-            onClick={fetchOrders}
-            disabled={loadingOrders}
-          >
-            {loadingOrders ? "加载中..." : "刷新订单"}
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              className="border-accent text-accent"
+              onClick={fetchOrders}
+              disabled={loadingOrders}
+            >
+              {loadingOrders ? "加载中..." : "刷新订单"}
+            </Button>
+            
+            {selectedOrderIds.length > 0 && (
+              <Button 
+                variant="destructive" 
+                className="bg-red-600 hover:bg-red-700"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                批量删除 ({selectedOrderIds.length})
+              </Button>
+            )}
+          </div>
           
           <div className="flex items-center space-x-2">
             <label htmlFor="order-status-filter" className="text-sm">状态筛选:</label>
@@ -219,6 +336,15 @@ export default function OrderManagement() {
             <Table>
               <TableHeader className="bg-primary/50">
                 <TableRow>
+                  <TableHead className="text-accent w-[50px]">
+                    {filteredOrders.length > 0 && (
+                      <Checkbox 
+                        checked={selectedOrderIds.length === filteredOrders.length && filteredOrders.length > 0}
+                        onCheckedChange={handleSelectAll}
+                        className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                      />
+                    )}
+                  </TableHead>
                   <TableHead className="text-accent">订单号</TableHead>
                   <TableHead className="text-accent">日期</TableHead>
                   <TableHead className="text-accent">总金额</TableHead>
@@ -230,13 +356,20 @@ export default function OrderManagement() {
               <TableBody>
                 {filteredOrders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={7} className="text-center py-8">
                       {orderStatusFilter === 'all' ? "暂无订单记录" : `暂无${getStatusDisplay(orderStatusFilter)}订单`}
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredOrders.map((order) => (
                     <TableRow key={order.id} className={order.status === 'paid' && !order.trackingNumber ? "bg-yellow-900/20" : ""}>
+                      <TableCell>
+                        <Checkbox 
+                          checked={selectedOrderIds.includes(order.id)}
+                          onCheckedChange={(checked) => handleOrderSelection(order.id, !!checked)}
+                          className="data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                        />
+                      </TableCell>
                       <TableCell>{order.id}</TableCell>
                       <TableCell>{new Date(order.createdAt).toLocaleString('zh-CN')}</TableCell>
                       <TableCell>
@@ -263,6 +396,13 @@ export default function OrderManagement() {
                           >
                             查看详情
                           </Button>
+                          <Button
+                            variant="ghost"
+                            className="text-red-500 hover:text-white hover:bg-red-600/50"
+                            onClick={() => handleDeleteOrder(order.id)}
+                          >
+                            删除
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -272,6 +412,28 @@ export default function OrderManagement() {
             </Table>
           </div>
         )}
+        
+        {/* 批量删除确认对话框 */}
+        <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+          <AlertDialogContent className="bg-nightblue border border-accent">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-accent">确认批量删除</AlertDialogTitle>
+              <AlertDialogDescription>
+                您确定要删除选中的 {selectedOrderIds.length} 个订单吗？此操作不可撤销，删除后数据将无法恢复。
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="border-accent text-accent">取消</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleBulkDelete}
+                className="bg-red-600 hover:bg-red-700"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "删除中..." : "确认删除"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         
         {/* 订单详情弹窗 */}
         {showOrderDialog && selectedOrder && (
