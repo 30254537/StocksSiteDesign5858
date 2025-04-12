@@ -1093,11 +1093,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Cart is empty" });
       }
       
-      const { paymentMethod, transactionHash, shippingAddress, network } = req.body;
+      const { 
+        paymentMethod, 
+        transactionHash, 
+        shippingAddress, 
+        customerName, 
+        customerEmail, 
+        customerPhone,
+        network 
+      } = req.body;
       
       // Validate payment method - accept both "crypto" and "usdt"
       if ((paymentMethod !== "crypto" && paymentMethod !== "usdt") || !transactionHash) {
         return res.status(400).json({ message: "Invalid payment information" });
+      }
+      
+      // 验证必要的客户信息字段
+      if (!customerEmail) {
+        return res.status(400).json({ message: "Customer email is required" });
       }
       
       // 添加网络信息到日志，如果提供了
@@ -1118,6 +1131,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           total,
           ethTotal,
           paymentMethod: paymentMethod, // 使用提交的支付方式，无需转换
+          customerName: customerName || null,
+          customerEmail: customerEmail || null,
+          customerPhone: customerPhone || null,
           shippingAddress: shippingAddress || null,
           trackingNumber: null,
           notes: `${paymentMethod.toUpperCase()} transaction${networkInfo}: ${transactionHash}`,

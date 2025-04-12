@@ -76,6 +76,10 @@ export const orders = pgTable("orders", {
   total: doublePrecision("total").notNull(),
   ethTotal: doublePrecision("eth_total").notNull(),
   paymentMethod: text("payment_method").notNull(),
+  // 收件人信息字段
+  customerName: text("customer_name"),
+  customerEmail: text("customer_email"),
+  customerPhone: text("customer_phone"),
   shippingAddress: text("shipping_address"),
   trackingNumber: text("tracking_number"),
   notes: text("notes"),
