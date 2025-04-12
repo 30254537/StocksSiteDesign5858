@@ -1116,6 +1116,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 添加网络信息到日志，如果提供了
       const networkInfo = network ? ` on ${network} network` : "";
       
+      // 确保每个购物车项都有product属性
+      if (!cartItems.every(item => item.product)) {
+        console.error("Error: Some cart items don't have product information");
+        return res.status(400).json({ message: "Invalid cart data. Please refresh and try again." });
+      }
+      
       // Calculate totals
       const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
       const ethTotal = cartItems.reduce((sum, item) => sum + (item.product.ethPrice * item.quantity), 0);
