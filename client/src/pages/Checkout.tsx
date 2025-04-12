@@ -165,18 +165,16 @@ const UsdtDirectForm = () => {
         </p>
       </div>
       
-      <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.shippingAddress')}:
-        </label>
-        <Textarea
-          placeholder={t('checkout.enterShippingAddress')}
-          className="mb-4 border-gray-700 bg-slate-800"
-          value={shippingAddress}
-          onChange={(e) => setShippingAddress(e.target.value)}
-          required
-        />
-      </div>
+      <CustomerInfoForm
+        customerName={customerName}
+        setCustomerName={setCustomerName}
+        customerEmail={customerEmail}
+        setCustomerEmail={setCustomerEmail}
+        customerPhone={customerPhone}
+        setCustomerPhone={setCustomerPhone}
+        shippingAddress={shippingAddress}
+        setShippingAddress={setShippingAddress}
+      />
       
       {error && (
         <div className="p-3 mb-4 text-sm text-red-500 bg-red-900/20 rounded-md border border-red-800">
@@ -339,18 +337,16 @@ const CryptoForm = () => {
         </p>
       </div>
       
-      <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.shippingAddress')}:
-        </label>
-        <Textarea
-          placeholder={t('checkout.enterShippingAddress')}
-          className="mb-4 border-gray-700 bg-slate-800"
-          value={shippingAddress}
-          onChange={(e) => setShippingAddress(e.target.value)}
-          required
-        />
-      </div>
+      <CustomerInfoForm
+        customerName={customerName}
+        setCustomerName={setCustomerName}
+        customerEmail={customerEmail}
+        setCustomerEmail={setCustomerEmail}
+        customerPhone={customerPhone}
+        setCustomerPhone={setCustomerPhone}
+        shippingAddress={shippingAddress}
+        setShippingAddress={setShippingAddress}
+      />
       
       {error && (
         <div className="p-3 mb-4 text-sm text-red-500 bg-red-900/20 rounded-md border border-red-800">
@@ -488,27 +484,17 @@ export default function Checkout() {
           <CardContent>
             <Tabs defaultValue="card">
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="card">
-                  <DollarSign className="mr-2 h-4 w-4" />
-                  USDT
-                </TabsTrigger>
-                <TabsTrigger value="crypto">
-                  $ STONKS
-                </TabsTrigger>
+                <TabsTrigger value="card">USDT</TabsTrigger>
+                <TabsTrigger value="crypto">$STONKS</TabsTrigger>
               </TabsList>
-              
               <TabsContent value="card">
                 <UsdtDirectForm />
               </TabsContent>
-              
               <TabsContent value="crypto">
                 <CryptoForm />
               </TabsContent>
             </Tabs>
           </CardContent>
-          <CardFooter className="flex flex-col items-start">
-            
-          </CardFooter>
         </Card>
       </div>
     </div>
