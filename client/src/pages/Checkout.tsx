@@ -57,21 +57,27 @@ const UsdtDirectForm = () => {
     
     try {
       // 提交USDT支付详情
-      await apiRequest('POST', '/api/crypto-checkout', {
+      const response = await apiRequest('POST', '/api/crypto-checkout', {
         paymentMethod: 'usdt',
         transactionHash,
         shippingAddress,
         network: selectedUsdtChain
       });
       
+      // 首先显示成功消息
       toast({
         title: t('checkout.paymentSuccessful'),
         description: t('checkout.orderPlacedSuccessfully'),
       });
       
-      // 清空购物车并重定向到成功页面
+      // 清空购物车
       await clearCart();
-      setLocation('/checkout-success');
+      
+      // 使用setTimeout确保重定向发生在状态更新之后
+      setTimeout(() => {
+        // 重定向到成功页面
+        setLocation('/checkout-success');
+      }, 300); // 短暂延迟以确保状态已更新
     } catch (err) {
       console.error('Error processing USDT payment:', err);
       setError(t('checkout.cryptoPaymentError'));
@@ -80,9 +86,8 @@ const UsdtDirectForm = () => {
         description: t('checkout.unableToProcessPayment'),
         variant: 'destructive',
       });
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
@@ -237,25 +242,36 @@ const CryptoForm = () => {
       return;
     }
     
+    if (!shippingAddress) {
+      setError(t('checkout.shippingAddressRequired'));
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     
     try {
       // Submit crypto payment details
-      await apiRequest('POST', '/api/crypto-checkout', {
+      const response = await apiRequest('POST', '/api/crypto-checkout', {
         paymentMethod: 'crypto',
         transactionHash,
         shippingAddress
       });
       
+      // 首先显示成功消息
       toast({
         title: t('checkout.paymentSuccessful'),
         description: t('checkout.orderPlacedSuccessfully'),
       });
       
-      // Clear cart and redirect to success page
+      // 清空购物车
       await clearCart();
-      setLocation('/checkout-success');
+      
+      // 使用setTimeout确保重定向发生在状态更新之后
+      setTimeout(() => {
+        // 重定向到成功页面
+        setLocation('/checkout-success');
+      }, 300); // 短暂延迟以确保状态已更新
     } catch (err) {
       console.error('Error processing crypto payment:', err);
       setError(t('checkout.cryptoPaymentError'));
@@ -264,9 +280,8 @@ const CryptoForm = () => {
         description: t('checkout.unableToProcessPayment'),
         variant: 'destructive',
       });
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
   
   return (
