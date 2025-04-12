@@ -49,6 +49,80 @@ export default function Manage() {
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [editingAddress, setEditingAddress] = useState<ContractAddress | null>(null);
   
+  // 网站内容管理状态
+  const [websiteContents, setWebsiteContents] = useState<any[]>([]);
+  const [loadingContents, setLoadingContents] = useState(false);
+  const [editingContent, setEditingContent] = useState<any | null>(null);
+  
+  // 获取网站内容数据
+  const fetchWebsiteContents = async () => {
+    setLoadingContents(true);
+    try {
+      const response = await apiRequest("GET", "/api/website-contents");
+      const data = await response.json();
+      setWebsiteContents(data);
+    } catch (error) {
+      console.error("获取网站内容失败:", error);
+      toast({
+        title: "获取失败",
+        description: "无法获取网站内容数据，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingContents(false);
+    }
+  };
+  
+  // 处理编辑网站内容
+  const handleEditContent = (content: any) => {
+    setEditingContent(content);
+    
+    // 填充表单
+    document.getElementById("content-id")?.setAttribute("value", content.id.toString());
+    
+    const keyInput = document.getElementById("content-key") as HTMLInputElement;
+    if (keyInput) keyInput.value = content.key;
+    
+    const valueInput = document.getElementById("content-value") as HTMLTextAreaElement;
+    if (valueInput) valueInput.value = content.value || "";
+    
+    const sectionInput = document.getElementById("content-section") as HTMLInputElement;
+    if (sectionInput) sectionInput.value = content.section || "";
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("content-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑网站内容",
+      description: `正在编辑: ${content.key}`,
+    });
+  };
+  
+  // 处理删除网站内容
+  const handleDeleteContent = async (contentId: number) => {
+    if (window.confirm("确定要删除此网站内容项吗？此操作无法撤销。")) {
+      try {
+        // 发送删除请求
+        await apiRequest("DELETE", `/api/website-contents/${contentId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "网站内容项已成功删除",
+        });
+        
+        // 重新获取内容列表以更新UI
+        await fetchWebsiteContents();
+      } catch (error) {
+        console.error("删除网站内容错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除网站内容，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
@@ -226,6 +300,8 @@ export default function Manage() {
           fetchContractAddresses();
           // 获取推文数据
           fetchTweets();
+          // 获取网站内容数据
+          fetchWebsiteContents();
         } else {
           // 未经授权，重定向到登录页面
           toast({
@@ -508,6 +584,17 @@ export default function Manage() {
         
         <button
           className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "contents" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("contents")}
+        >
+          网站内容管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
             activeTab === "music" 
               ? "text-accent border-b-2 border-accent" 
               : "text-gray-400 hover:text-accent"
@@ -541,6 +628,207 @@ export default function Manage() {
       </div>
       
       {/* 根据活动选项卡展示不同的卡片 */}
+      {activeTab === "contents" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>网站内容管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
+              <h3 className="text-xl mb-4 text-accent">内容表单</h3>
+              <form id="content-form" className="space-y-4" onSubmit={async (e) => {
+                e.preventDefault();
+                
+                const contentId = document.getElementById("content-id") as HTMLInputElement;
+                const key = document.getElementById("content-key") as HTMLInputElement;
+                const value = document.getElementById("content-value") as HTMLTextAreaElement;
+                const section = document.getElementById("content-section") as HTMLInputElement;
+                
+                const isEditing = contentId.value ? true : false;
+                
+                try {
+                  // 构建内容数据
+                  const contentData = {
+                    key: key.value,
+                    value: value.value,
+                    section: section.value,
+                  };
+                  
+                  // 发送请求
+                  if (isEditing) {
+                    // 更新内容
+                    await apiRequest("PUT", `/api/website-contents/${contentId.value}`, contentData);
+                    
+                    toast({
+                      title: "更新成功",
+                      description: `内容项 "${key.value}" 已更新`,
+                    });
+                  } else {
+                    // 创建新内容
+                    await apiRequest("POST", "/api/website-contents", contentData);
+                    
+                    toast({
+                      title: "添加成功",
+                      description: `内容项 "${key.value}" 已添加`,
+                    });
+                  }
+                  
+                  // 重置表单
+                  if (!isEditing) {
+                    e.currentTarget.reset();
+                  }
+                  
+                  // 重新获取内容列表更新UI
+                  await fetchWebsiteContents();
+                  
+                  // 重置编辑状态
+                  if (isEditing) {
+                    setEditingContent(null);
+                    contentId.value = "";
+                    window.scrollTo({ top: document.getElementById("contents-table")?.offsetTop || 0, behavior: "smooth" });
+                  }
+                } catch (error) {
+                  console.error("内容操作错误:", error);
+                  toast({
+                    title: isEditing ? "更新失败" : "添加失败",
+                    description: "操作失败，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}>
+                <input type="hidden" id="content-id" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="content-key" className="block text-sm">内容关键字:</label>
+                    <Input 
+                      id="content-key" 
+                      className="bg-primary/50 border-accent"
+                      placeholder="例如: home.title, about.description"
+                      required 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="content-section" className="block text-sm">内容分类:</label>
+                    <Input 
+                      id="content-section" 
+                      className="bg-primary/50 border-accent"
+                      placeholder="例如: home, about, footer"
+                      required 
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="content-value" className="block text-sm">内容值:</label>
+                  <textarea 
+                    id="content-value" 
+                    className="w-full rounded-md p-2 bg-primary/50 border border-accent"
+                    rows={4}
+                    required
+                  />
+                </div>
+                
+                <div className="flex justify-end gap-2">
+                  {editingContent && (
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      className="border-accent text-accent"
+                      onClick={() => {
+                        setEditingContent(null);
+                        (document.getElementById("content-id") as HTMLInputElement).value = "";
+                        (document.getElementById("content-form") as HTMLFormElement).reset();
+                      }}
+                    >
+                      取消编辑
+                    </Button>
+                  )}
+                  <Button 
+                    type="submit"
+                    className="bg-accent text-primary hover:bg-accent/80"
+                  >
+                    {editingContent ? "更新内容" : "添加内容"}
+                  </Button>
+                </div>
+              </form>
+            </div>
+            
+            <div className="mb-4 flex justify-between items-center">
+              <Button 
+                variant="outline" 
+                className="border-accent text-accent"
+                onClick={fetchWebsiteContents}
+                disabled={loadingContents}
+              >
+                {loadingContents ? "加载中..." : "刷新数据"}
+              </Button>
+            </div>
+
+            {loadingContents ? (
+              <div className="flex justify-center my-8">
+                <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+              </div>
+            ) : (
+              <div id="contents-table" className="rounded-md border overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-primary/50">
+                    <TableRow>
+                      <TableHead className="text-accent">ID</TableHead>
+                      <TableHead className="text-accent">键名</TableHead>
+                      <TableHead className="text-accent">分类</TableHead>
+                      <TableHead className="text-accent">内容</TableHead>
+                      <TableHead className="text-accent">操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {websiteContents.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-8">
+                          暂无网站内容数据
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      websiteContents.map((content) => (
+                        <TableRow key={content.id}>
+                          <TableCell>{content.id}</TableCell>
+                          <TableCell>{content.key}</TableCell>
+                          <TableCell>{content.section || "未分类"}</TableCell>
+                          <TableCell>
+                            <div className="max-w-md overflow-hidden text-ellipsis whitespace-nowrap">
+                              {content.value}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                className="text-accent hover:text-white hover:bg-primary/50"
+                                onClick={() => handleEditContent(content)}
+                              >
+                                编辑
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                className="text-destructive hover:text-white hover:bg-destructive/90"
+                                onClick={() => handleDeleteContent(content.id)}
+                              >
+                                删除
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+      
       {activeTab === "products" && (
         <Card className="shadow-lg mb-8">
           <CardHeader>
