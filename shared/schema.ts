@@ -302,3 +302,25 @@ export const insertTweetSchema = createInsertSchema(tweets).omit({
 
 export type Tweet = typeof tweets.$inferSelect;
 export type InsertTweet = z.infer<typeof insertTweetSchema>;
+
+// 内容管理模型 - 用于动态管理网站内容
+export const websiteContents = pgTable("website_contents", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(), // 内容键名，如 "about.title", "about.description"
+  value: text("value").notNull(), // 内容值
+  type: text("type").default("text").notNull(), // 内容类型: text, html, markdown等
+  language: text("language").default("zh").notNull(), // 内容语言: zh, en等
+  section: text("section").notNull(), // 内容所属区域: about, footer, home等
+  isActive: boolean("is_active").default(true), // 是否激活
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertWebsiteContentSchema = createInsertSchema(websiteContents).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type WebsiteContent = typeof websiteContents.$inferSelect;
+export type InsertWebsiteContent = z.infer<typeof insertWebsiteContentSchema>;

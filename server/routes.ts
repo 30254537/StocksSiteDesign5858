@@ -2204,6 +2204,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 添加加密新闻路由
   setupCryptoNewsRoutes(app);
+  
+  // 网站内容管理API
+  // 获取所有网站内容
+  app.get('/api/website-contents', async (req, res) => {
+    try {
+      const contents = await storage.getWebsiteContents();
+      res.json(contents);
+    } catch (error) {
+      console.error('获取网站内容失败:', error);
+      res.status(500).json({ message: '获取网站内容失败' });
+    }
+  });
+  
+  // 获取特定区域的网站内容
+  app.get('/api/website-contents/section/:section', async (req, res) => {
+    try {
+      const { section } = req.params;
+      const contents = await storage.getWebsiteContentsBySection(section);
+      res.json(contents);
+    } catch (error) {
+      console.error(`获取 ${req.params.section} 区域内容失败:`, error);
+      res.status(500).json({ message: '获取区域内容失败' });
+    }
+  });
+  
+  // 获取单个内容项
+  app.get('/api/website-contents/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: '无效的内容ID' });
+      }
+      
+      const content = await storage.getWebsiteContent(id);
+      if (!content) {
+        return res.status(404).json({ message: '内容不存在' });
+      }
+      
+      res.json(content);
+    } catch (error) {
+      console.error('获取内容项失败:', error);
+      res.status(500).json({ message: '获取内容项失败' });
+    }
+  });
+  
+  // 根据key获取内容项
+  app.get('/api/website-contents/key/:key', async (req, res) => {
+    try {
+      const { key } = req.params;
+      const content = await storage.getWebsiteContentByKey(key);
+      
+      if (!content) {
+        return res.status(404).json({ message: '内容不存在' });
+      }
+      
+      res.json(content);
+    } catch (error) {
+      console.error('获取内容项失败:', error);
+      res.status(500).json({ message: '获取内容项失败' });
+    }
+  });
+  
+  // 创建新内容项 (管理员权限)
+  app.post('/api/website-contents', requireAdmin, async (req, res) => {
+    try {
+      const { key, value, type, language, section } = req.body;
+      
+      if (!key || !value || !section) {
+        return res.status(400).json({ message: '键名、值和区域为必填项' });
+      }
+      
+      // 检查键名是否已存在
+      const existing = await storage.getWebsiteContentByKey(key);
+      if (existing) {
+        return res.status(409).json({ message: '该键名已存在' });
+      }
+      
+      const content = await storage.createWebsiteContent({
+        key,
+        value,
+        type: type || 'text',
+        language: language || 'zh',
+        section,
+        isActive: true
+      });
+      
+      res.status(201).json(content);
+    } catch (error) {
+      console.error('创建内容项失败:', error);
+      res.status(500).json({ message: '创建内容项失败' });
+    }
+  });
+  
+  // 更新内容项 (管理员权限)
+  app.put('/api/website-contents/:id', requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: '无效的内容ID' });
+      }
+      
+      const { key, value, type, language, section, isActive } = req.body;
+      
+      // 如果更新key，检查是否与其他内容冲突
+      if (key) {
+        const existingWithSameKey = await storage.getWebsiteContentByKey(key);
+        if (existingWithSameKey && existingWithSameKey.id !== id) {
+          return res.status(409).json({ message: '该键名已被其他内容使用' });
+        }
+      }
+      
+      const content = await storage.updateWebsiteContent(id, {
+        key,
+        value,
+        type,
+        language,
+        section,
+        isActive,
+        updatedAt: new Date()
+      });
+      
+      if (!content) {
+        return res.status(404).json({ message: '内容不存在' });
+      }
+      
+      res.json(content);
+    } catch (error) {
+      console.error('更新内容项失败:', error);
+      res.status(500).json({ message: '更新内容项失败' });
+    }
+  });
+  
+  // 删除内容项 (管理员权限)
+  app.delete('/api/website-contents/:id', requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: '无效的内容ID' });
+      }
+      
+      const success = await storage.deleteWebsiteContent(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: '内容不存在或删除失败' });
+      }
+      
+      res.json({ message: '内容已删除' });
+    } catch (error) {
+      console.error('删除内容项失败:', error);
+      res.status(500).json({ message: '删除内容项失败' });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
