@@ -678,15 +678,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // Check if product exists
-      const product = await storage.getProductById(validatedData.productId);
+      const product = await storage.getProduct(validatedData.productId);
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
       
-      // Check if item already exists in cart
-      const existingItem = await storage.getCartItemByProductAndSession(
-        validatedData.productId,
-        sessionId
+      // Check if item already exists in cart - we need to implement this method
+      // For now, we'll query cart items and find the matching product
+      const cartItems = await storage.getCart(sessionId);
+      const existingItem = cartItems.find(item => 
+        item.productId === validatedData.productId && 
+        item.size === validatedData.size
       );
       
       if (existingItem) {
@@ -702,7 +704,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create new cart item
-      const cartItem = await storage.createCartItem(validatedData);
+      const cartItem = await storage.addToCart(validatedData);
       res.status(201).json(cartItem);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -727,18 +729,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Quantity must be a positive number" });
       }
       
-      // Get cart item and verify ownership
-      const cartItem = await storage.getCartItem(id);
+      // Get cart item and verify ownership - for now use a workaround
+      const cartItems = await storage.getCart(sessionId);
+      const cartItem = cartItems.find(item => item.id === id);
       if (!cartItem) {
         return res.status(404).json({ message: "Cart item not found" });
       }
       
-      if (cartItem.sessionId !== sessionId) {
-        return res.status(403).json({ message: "Not authorized to update this cart item" });
-      }
+      // Cart items already filtered by session, no need to check ownership
       
       // Update cart item
-      const updatedItem = await storage.updateCartItem(id, quantity, size);
+      const updatedItem = await storage.updateCart(id, quantity);
       res.json(updatedItem);
     } catch (error) {
       res.status(500).json({ message: "Error updating cart item" });
@@ -754,18 +755,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const sessionId = getSessionId(req);
       
-      // Get cart item and verify ownership
-      const cartItem = await storage.getCartItem(id);
+      // Get cart item and verify ownership - for now use a workaround
+      const cartItems = await storage.getCart(sessionId);
+      const cartItem = cartItems.find(item => item.id === id);
       if (!cartItem) {
         return res.status(404).json({ message: "Cart item not found" });
       }
       
-      if (cartItem.sessionId !== sessionId) {
-        return res.status(403).json({ message: "Not authorized to delete this cart item" });
-      }
+      // Cart items already filtered by session, no need to check ownership
       
       // Delete cart item
-      await storage.deleteCartItem(id);
+      await storage.removeFromCart(id);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Error deleting cart item" });
@@ -968,7 +968,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
       const sessionId = getSessionId(req);
-      const cartItems = await storage.getCartItems(sessionId);
+      const cartItems = await storage.getCart(sessionId);
       
       if (cartItems.length === 0) {
         return res.status(400).json({ message: "Cart is empty" });
@@ -1029,7 +1029,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionId = paymentIntent.metadata.sessionId || getSessionId(req);
       
       // Get cart items
-      const cartItems = await storage.getCartItems(sessionId);
+      const cartItems = await storage.getCart(sessionId);
       
       if (cartItems.length === 0) {
         return res.status(400).json({ message: "Cart is empty" });
@@ -1088,7 +1088,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/crypto-checkout", async (req: Request & { user?: any }, res) => {
     try {
       const sessionId = getSessionId(req);
-      const cartItems = await storage.getCartItems(sessionId);
+      const cartItems = await storage.getCart(sessionId);
       
       if (cartItems.length === 0) {
         return res.status(400).json({ message: "Cart is empty" });
