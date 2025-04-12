@@ -222,7 +222,7 @@ export default function MyOrders() {
 
         <div className="flex justify-between font-medium">
           <p>{language === 'zh' ? '总计' : 'Total'}</p>
-          <p>${order.total.toFixed(2)}</p>
+          <p>${Math.floor(order.total)}</p>
         </div>
       </div>
     );
@@ -303,7 +303,7 @@ export default function MyOrders() {
                       </div>
                       <div className="flex justify-between text-sm mt-1">
                         <p>{formatDate(order.createdAt)}</p>
-                        <p>${order.total.toFixed(2)}</p>
+                        <p>${Math.floor(order.total)}</p>
                       </div>
                     </div>
                   ))}
