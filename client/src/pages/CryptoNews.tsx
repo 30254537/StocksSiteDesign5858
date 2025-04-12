@@ -87,19 +87,30 @@ const CryptoNews: React.FC = () => {
   // 计算分页偏移
   const offset = (currentPage - 1) * PAGE_SIZE;
   
+  // 创建一个结构用于前端处理
+  interface NewsDataResponse {
+    data: CryptoNewsType[];
+    pagination: { 
+      total: number;
+      limit: number;
+      offset: number;
+      hasMore: boolean;
+    }
+  }
+
   // 获取新闻数据
   const { 
     data: newsData, 
     isLoading, 
     error 
-  } = useQuery<CryptoNewsType[]>({
+  } = useQuery<NewsDataResponse>({
     queryKey: ['/api/crypto-news', currentPage, PAGE_SIZE],
     queryFn: async () => {
       const res = await fetch(`/api/crypto-news?limit=${PAGE_SIZE}`);
       if (!res.ok) {
         throw new Error('Failed to fetch news');
       }
-      const data = await res.json();
+      const data = await res.json() as CryptoNewsType[];
       return {
         data: data,
         pagination: { 
@@ -838,7 +849,7 @@ const CryptoNews: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {newsData?.data.map((news) => (
+                {newsData?.data?.map((news) => (
                   <a 
                     key={news.id} 
                     href={news.sourceUrl} 
