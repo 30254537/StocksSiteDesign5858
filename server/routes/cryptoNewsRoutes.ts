@@ -1,127 +1,79 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { storage } from '../storage';
-import { fetchAndStoreNews } from '../services/cryptoNewsService';
+import { Express } from "express";
+import { 
+  getLatestCryptoNews, 
+  getCryptoNewsBySource, 
+  getCryptoNewsByCategory,
+  syncCryptoNews
+} from "../services/cryptoNewsService";
+import cron from "node-cron";
 
-// 引入全局管理员变量(这里使用声明扩展接口的方式)
-declare global {
-  var adminLoggedIn: boolean;
+export function setupCryptoNewsRoutes(app: Express) {
+  // 获取最新加密新闻的API
+  app.get("/api/crypto-news", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 30;
+      const news = await getLatestCryptoNews(limit);
+      res.json(news);
+    } catch (error) {
+      console.error("获取加密新闻失败:", error);
+      res.status(500).json({ message: "获取加密新闻失败" });
+    }
+  });
+
+  // 获取特定来源的加密新闻API
+  app.get("/api/crypto-news/source/:source", async (req, res) => {
+    try {
+      const { source } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const news = await getCryptoNewsBySource(source, limit);
+      res.json(news);
+    } catch (error) {
+      console.error(`获取来源为 ${req.params.source} 的加密新闻失败:`, error);
+      res.status(500).json({ message: "获取加密新闻失败" });
+    }
+  });
+
+  // 获取特定类别的加密新闻API
+  app.get("/api/crypto-news/category/:category", async (req, res) => {
+    try {
+      const { category } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const news = await getCryptoNewsByCategory(category, limit);
+      res.json(news);
+    } catch (error) {
+      console.error(`获取类别为 ${req.params.category} 的加密新闻失败:`, error);
+      res.status(500).json({ message: "获取加密新闻失败" });
+    }
+  });
+
+  // 手动触发同步加密新闻的API（公开）
+  app.post("/api/crypto-news/sync", async (req, res) => {
+    try {
+      await syncCryptoNews();
+      res.json({ message: "加密新闻同步成功" });
+    } catch (error) {
+      console.error("手动同步加密新闻失败:", error);
+      res.status(500).json({ message: "同步加密新闻失败" });
+    }
+  });
+
+  // 设置定时任务，每10分钟同步一次加密新闻
+  cron.schedule("*/10 * * * *", async () => {
+    console.log(`[${new Date().toISOString()}] 执行定时任务: 同步加密新闻...`);
+    try {
+      await syncCryptoNews();
+    } catch (error) {
+      console.error("定时同步加密新闻失败:", error);
+    }
+  });
+
+  // 启动后立即执行一次同步
+  setTimeout(async () => {
+    console.log("首次启动同步加密新闻...");
+    try {
+      await syncCryptoNews();
+    } catch (error) {
+      console.error("首次启动同步加密新闻失败:", error);
+    }
+  }, 5000); // 等待5秒后执行，确保应用充分启动
 }
-
-// 管理员权限检查中间件
-const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
-  if (global.adminLoggedIn) {
-    next();
-  } else {
-    res.status(401).json({ success: false, message: "需要管理员权限" });
-  }
-};
-
-const router = Router();
-
-// 获取最新的加密货币新闻
-router.get('/news', async (req: Request, res: Response) => {
-  try {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
-    const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-    const news = await storage.getCryptoNews(limit, offset);
-    const total = await storage.getCryptoNewsCount();
-    
-    res.json({
-      data: news,
-      pagination: {
-        total,
-        limit,
-        offset,
-        hasMore: offset + limit < total
-      }
-    });
-  } catch (error) {
-    console.error('获取加密货币新闻失败:', error);
-    res.status(500).json({ error: '获取加密货币新闻时发生错误' });
-  }
-});
-
-// 获取特定分类的加密货币新闻
-router.get('/news/category/:category', async (req: Request, res: Response) => {
-  try {
-    const { category } = req.params;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    
-    const news = await storage.getCryptoNewsByCategory(category, limit);
-    res.json(news);
-  } catch (error) {
-    console.error(`获取分类 ${req.params.category} 的加密货币新闻失败:`, error);
-    res.status(500).json({ error: '获取分类加密货币新闻时发生错误' });
-  }
-});
-
-// 获取重点加密货币新闻
-router.get('/news/highlighted', async (req: Request, res: Response) => {
-  try {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 5;
-    const news = await storage.getHighlightedCryptoNews(limit);
-    res.json(news);
-  } catch (error) {
-    console.error('获取重点加密货币新闻失败:', error);
-    res.status(500).json({ error: '获取重点加密货币新闻时发生错误' });
-  }
-});
-
-// 获取单个加密货币新闻详情
-router.get('/news/:id', async (req: Request, res: Response) => {
-  try {
-    // 检查是否为特殊ID（例如"telegram"等字符串ID）
-    if (req.params.id === 'telegram') {
-      // 获取Telegram新闻（最新的几条）
-      const telegramNews = await storage.getTelegramMessages(10);
-      if (!telegramNews || telegramNews.length === 0) {
-        return res.status(404).json({ error: '找不到Telegram快讯' });
-      }
-      return res.json(telegramNews);
-    }
-    
-    // 尝试将ID解析为数字
-    const id = parseInt(req.params.id);
-    
-    // 验证id是否为有效数字
-    if (isNaN(id)) {
-      return res.status(400).json({ error: '无效的新闻ID格式' });
-    }
-    
-    const news = await storage.getCryptoNewsById(id);
-    
-    if (!news) {
-      return res.status(404).json({ error: '找不到指定的加密货币新闻' });
-    }
-    
-    res.json(news);
-  } catch (error) {
-    console.error(`获取ID为 ${req.params.id} 的加密货币新闻失败:`, error);
-    res.status(500).json({ error: '获取加密货币新闻详情时发生错误' });
-  }
-});
-
-// 手动触发新闻获取 (仅限管理员)
-router.post('/news/fetch', requireAdmin, async (req: Request, res: Response) => {
-  try {
-    console.log('管理员请求手动获取加密货币新闻');
-    const addedCount = await fetchAndStoreNews();
-    
-    // 记录抓取结果
-    console.log(`管理员手动获取成功，添加了 ${addedCount} 条新的加密货币新闻`);
-    
-    res.json({ 
-      success: true, 
-      message: `成功获取并添加 ${addedCount} 条新的加密货币新闻` 
-    });
-  } catch (error) {
-    console.error('管理员手动获取加密货币新闻失败:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: '获取加密货币新闻时发生错误',
-      message: error instanceof Error ? error.message : String(error)
-    });
-  }
-});
-
-export default router;

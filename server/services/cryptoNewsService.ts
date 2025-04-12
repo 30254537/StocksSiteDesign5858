@@ -1,228 +1,124 @@
-import axios from 'axios';
-import { CryptoNews, InsertCryptoNews, cryptoNews } from '@shared/schema';
-import { storage } from '../storage';
-import * as cron from 'node-cron';
-import { scrapeAllNews } from './cryptoNewsScraperService';
-import { db } from '../db';
+import { db } from "../db";
+import { InsertCryptoNews, cryptoNews } from "@shared/schema";
+import { fetchBlockBeatsNews } from "./blockBeatsService";
+import { fetchJinseNews } from "./jinseService";
+import { fetchHuoxingNews } from "./huoxingService";
+import { eq } from "drizzle-orm";
 
-// 主要加密货币新闻API来源
-const NEWS_SOURCES = {
-  COINGECKO: {
-    name: 'CoinGecko',
-    url: 'https://api.coingecko.com/api/v3/news',
-    apiKey: process.env.COINGECKO_API_KEY || '',
-  },
-  CRYPTONEWS: {
-    name: 'CryptoNews',
-    url: 'https://cryptonews-api.com/api/v1/category',
-    apiKey: process.env.CRYPTONEWS_API_KEY || '',
-  },
-  SCRAPED_SOURCES: {
-    name: 'ScrapedSources',
-    enabled: true
-  }
-};
-
-/**
- * 从CoinGecko获取最新的加密货币新闻
- */
-export async function fetchCoinGeckoNews(): Promise<InsertCryptoNews[]> {
+// 主加密新闻服务
+export async function syncCryptoNews(): Promise<void> {
   try {
-    // CoinGecko需要页码参数，使用查询参数方式添加API密钥
-    const apiUrl = NEWS_SOURCES.COINGECKO.apiKey 
-      ? `${NEWS_SOURCES.COINGECKO.url}?page=1&x_cg_pro_api_key=${NEWS_SOURCES.COINGECKO.apiKey}`
-      : `${NEWS_SOURCES.COINGECKO.url}?page=1`;
-      
-    const response = await axios.get(apiUrl);
+    console.log("[Cron] 开始同步加密快讯实时资讯...");
 
-    if (response.data && Array.isArray(response.data.data)) {
-      return response.data.data.map((item: any) => {
-        // 确保日期格式正确
-        let publishedAt = new Date();
-        try {
-          if (item.published_at) {
-            publishedAt = new Date(item.published_at);
-            // 验证日期是否有效
-            if (isNaN(publishedAt.getTime())) {
-              publishedAt = new Date(); // 使用当前日期作为后备
-            }
-          }
-        } catch (e) {
-          console.warn('无效的日期格式，使用当前日期:', e);
-        }
-        
-        return {
-          title: item.title,
-          content: item.description || '未提供详细内容',
-          source: NEWS_SOURCES.COINGECKO.name,
-          sourceUrl: item.url,
-          imageUrl: item.thumb_2x || item.thumb || '',
-          category: item.categories?.join(',') || 'general',
-          isHighlighted: item.is_hot ? 1 : 0,
-          publishedAt
-        };
-      });
-    }
-    return [];
-  } catch (error) {
-    console.error('获取CoinGecko新闻失败:', error);
-    return [];
-  }
-}
+    // 从所有来源获取新闻
+    const blockBeatsNews = await fetchBlockBeatsNews();
+    console.log("开始从金色财经API获取快讯...");
+    const jinseNews = await fetchJinseNews();
+    console.log("开始从火星财经API获取快讯...");
+    const huoxingNews = await fetchHuoxingNews();
 
-/**
- * CryptoPanic已被移除
- * 此函数只是一个存根，保持API兼容性，永远返回空数组
- */
-export async function fetchCryptoPanicNews(): Promise<InsertCryptoNews[]> {
-  return [];
-}
+    // 合并所有新闻
+    const allNews = [
+      ...blockBeatsNews,
+      ...jinseNews,
+      ...huoxingNews
+    ];
 
-/**
- * 从CryptoNews获取最新的加密货币新闻
- */
-export async function fetchCryptoNewsApi(): Promise<InsertCryptoNews[]> {
-  if (!NEWS_SOURCES.CRYPTONEWS.apiKey) {
-    console.warn('未找到CryptoNews API密钥，跳过此来源');
-    return [];
-  }
+    console.log(`总共获取到 ${allNews.length} 条来自所有来源的加密资讯`);
 
-  try {
-    const response = await axios.get(`${NEWS_SOURCES.CRYPTONEWS.url}?section=general&apiKey=${NEWS_SOURCES.CRYPTONEWS.apiKey}`);
-
-    // 检查API错误响应
-    if (response.data && response.data.title === 'Crypto News API' && response.data.text && response.data.text.includes('API Token inactive')) {
-      console.warn('CryptoNews API Token无效，请检查API密钥是否正确');
-      return [];
-    }
-
-    if (response.data && Array.isArray(response.data.data)) {
-      return response.data.data.map((item: any) => {
-        // 确保日期格式正确
-        let publishedAt = new Date();
-        try {
-          if (item.date) {
-            publishedAt = new Date(item.date);
-            // 验证日期是否有效
-            if (isNaN(publishedAt.getTime())) {
-              publishedAt = new Date(); // 使用当前日期作为后备
-            }
-          }
-        } catch (e) {
-          console.warn('无效的日期格式，使用当前日期:', e);
-        }
-        
-        return {
-          title: item.title,
-          content: item.text || item.description || '未提供详细内容',
-          source: NEWS_SOURCES.CRYPTONEWS.name,
-          sourceUrl: item.news_url,
-          imageUrl: item.image_url || '',
-          category: item.categories || 'general',
-          isHighlighted: 0,
-          publishedAt
-        };
-      });
-    }
-    return [];
-  } catch (error) {
-    console.error('获取CryptoNews新闻失败:', error);
-    return [];
-  }
-}
-
-/**
- * 从多个来源获取最新加密货币新闻并存储到数据库
- */
-export async function fetchAndStoreNews(): Promise<number> {
-  console.log('开始获取加密货币新闻...');
-  
-  try {
-    // 并行获取所有来源的新闻
-    const [coinGeckoNews, cryptoNewsApiNews, scrapedNews] = await Promise.all([
-      fetchCoinGeckoNews(),
-      fetchCryptoNewsApi(),
-      scrapeAllNews() // 从各大网站抓取新闻
-    ]);
-
-    console.log(`抓取结果: CoinGecko: ${coinGeckoNews.length}, CryptoNews API: ${cryptoNewsApiNews.length}, 网站抓取: ${scrapedNews.length}`);
-
-    // 合并所有来源的新闻
-    const allNews = [...coinGeckoNews, ...cryptoNewsApiNews, ...scrapedNews];
-    
     if (allNews.length === 0) {
-      console.log('没有找到新的加密货币新闻');
-      return 0;
+      console.log("没有获取到任何加密快讯，跳过后续处理");
+      return;
     }
 
-    // 防止重复添加，通过标题和来源检查
-    let addedCount = 0;
-    for (const news of allNews) {
-      // 检查30天内是否有相同标题和来源的新闻
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      const existingNews = await storage.getCryptoNews(1000, 0); // 获取所有新闻来检查
-      const isDuplicate = existingNews.some(item => 
-        item.title === news.title && 
-        item.source === news.source &&
-        new Date(item.publishedAt) >= thirtyDaysAgo
-      );
+    // 去重处理 - 通过标题比较
+    const uniqueNewsTitles = new Set<string>();
+    const uniqueNews: InsertCryptoNews[] = [];
 
-      if (!isDuplicate) {
-        await storage.createCryptoNews(news);
-        addedCount++;
+    allNews.forEach(news => {
+      if (!uniqueNewsTitles.has(news.title)) {
+        uniqueNewsTitles.add(news.title);
+        uniqueNews.push(news);
       }
+    });
+
+    console.log(`对 ${allNews.length} 条快讯进行去重后，剩余 ${uniqueNews.length} 条唯一快讯`);
+
+    // 清空旧数据 (可选：如果希望保留历史数据，可以移除这一步)
+    // 根据实际需求，可以保留一定数量的历史数据，例如只保留最近7天的
+    try {
+      await db.delete(cryptoNews);
+      console.log("已清空现有快讯记录");
+    } catch (error) {
+      console.error("清空现有快讯记录失败:", error);
     }
 
-    console.log(`成功添加 ${addedCount} 条新的加密货币新闻`);
-    return addedCount;
+    // 存储新闻到数据库
+    try {
+      console.log(`准备存储 ${uniqueNews.length} 条来自多个来源的加密资讯`);
+      
+      // 分批插入，每批50条，避免数据库压力过大
+      const batchSize = 50;
+      for (let i = 0; i < uniqueNews.length; i += batchSize) {
+        const batch = uniqueNews.slice(i, i + batchSize);
+        await db.insert(cryptoNews).values(batch);
+      }
+      
+      console.log(`成功存储 ${uniqueNews.length} 条加密资讯`);
+    } catch (error) {
+      console.error("存储加密资讯失败:", error);
+    }
+
+    console.log(`[Cron] 成功同步 ${uniqueNews.length} 条加密快讯实时资讯`);
   } catch (error) {
-    console.error('获取和存储加密货币新闻时出错:', error);
-    return 0;
+    console.error("[Cron] 同步加密快讯失败:", error);
   }
 }
 
-/**
- * 初始化定时任务，定期获取最新加密货币新闻
- * @param cronSchedule cron表达式，默认每5分钟执行一次
- */
-export function initCryptoNewsScheduler(cronSchedule: string = '*/5 * * * *'): void {
-  console.log(`初始化加密货币新闻定时任务，计划: ${cronSchedule}`);
-  
-  // 启动时立即执行一次
-  fetchAndStoreNews().then(count => {
-    console.log(`初始化: 成功同步 ${count} 条加密快讯实时资讯`);
-  }).catch(err => {
-    console.error('初始获取加密货币新闻失败:', err);
-  });
-  
-  // 设置定时任务
-  cron.schedule(cronSchedule, async () => {
-    console.log('执行定时加密货币新闻获取...');
-    const count = await fetchAndStoreNews();
-    console.log(`[Cron] 成功同步 ${count} 条加密快讯实时资讯`);
-  });
-  
-  // 每天一次全量更新（清除旧数据，获取全新数据）
-  cron.schedule('0 4 * * *', async () => {
-    console.log('执行每日全量加密货币新闻更新...');
-    
-    try {
-      // 清空所有已有数据（除Telegram消息外）
-      try {
-        // 删除现有的加密货币新闻
-        await db.delete(cryptoNews);
-        console.log('已清除所有旧的加密货币新闻');
-      } catch (clearError) {
-        console.error('清除旧加密货币新闻失败:', clearError);
-      }
-      
-      // 获取全新数据
-      const newCount = await fetchAndStoreNews();
-      console.log(`[每日更新] 成功添加 ${newCount} 条新的加密货币新闻`);
-    } catch (err) {
-      console.error('每日全量更新加密货币新闻失败:', err);
-    }
-  });
+// 获取最新加密新闻
+export async function getLatestCryptoNews(limit: number = 30): Promise<any[]> {
+  try {
+    // 获取最新的加密新闻，按发布时间降序排序
+    const news = await db
+      .select()
+      .from(cryptoNews)
+      .limit(limit);
+
+    return news;
+  } catch (error) {
+    console.error("获取最新加密新闻失败:", error);
+    return [];
+  }
+}
+
+// 按来源获取新闻
+export async function getCryptoNewsBySource(source: string, limit: number = 10): Promise<any[]> {
+  try {
+    const news = await db
+      .select()
+      .from(cryptoNews)
+      .where(eq(cryptoNews.source, source))
+      .limit(limit);
+
+    return news;
+  } catch (error) {
+    console.error(`获取来源为 ${source} 的加密新闻失败:`, error);
+    return [];
+  }
+}
+
+// 按类别获取新闻
+export async function getCryptoNewsByCategory(category: string, limit: number = 10): Promise<any[]> {
+  try {
+    const news = await db
+      .select()
+      .from(cryptoNews)
+      .where(eq(cryptoNews.category, category))
+      .limit(limit);
+
+    return news;
+  } catch (error) {
+    console.error(`获取类别为 ${category} 的加密新闻失败:`, error);
+    return [];
+  }
 }

@@ -13,9 +13,9 @@ import path from "path";
 import fs from "fs";
 import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
-import cryptoNewsRoutes from "./routes/cryptoNewsRoutes";
-import financeNewsRoutes from "./routes/financeNewsRoutes";
-import { initCryptoNewsScheduler } from "./services/cryptoNewsService";
+import { setupCryptoNewsRoutes } from "./routes/cryptoNewsRoutes";
+import { syncCryptoNews } from "./services/cryptoNewsService";
+// 注意：financeNewsRoutes 不存在，将在下面注释相关代码
 import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
 import { syncCryptoTweets } from "./services/xService";
 import * as cron from "node-cron";
@@ -1427,10 +1427,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // 加密货币新闻路由
-  app.use('/api', cryptoNewsRoutes);
+  // 加密新闻路由已在文件结尾直接设置
   
   // 财经快讯路由
-  app.use('/api', financeNewsRoutes);
+  // financeNewsRoutes不存在，直接在此注册路由
+  app.get('/api/finance-news', async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const newsItems = await financeNewsService.getLatestFinanceNews(limit);
+      res.json({ data: newsItems });
+    } catch (error) {
+      console.error('获取财经快讯失败:', error);
+      res.status(500).json({ error: '获取财经快讯失败' });
+    }
+  });
   
   // 加密推文API端点
   app.get('/api/crypto-tweets', async (req, res) => {
@@ -1558,7 +1568,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // 初始化加密货币新闻定时获取任务
-  initCryptoNewsScheduler('0 */2 * * *'); // 每2小时获取一次最新新闻
+  // 加密新闻定时任务已移至cryptoNewsRoutes.ts中，每10分钟运行一次
   
   // 初始化财经快讯定时获取任务
   cron.schedule('0 */5 * * *', async () => {
@@ -2135,7 +2145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   cron.schedule('*/5 * * * *', async () => {
     console.log('[Cron] 开始获取律动BlockBeats资讯...');
     try {
-      const blockBeatsNews = await blockBeatsService.storeBlockBeatsNews(8);
+      const blockBeatsNews = await blockBeatsService.fetchBlockBeatsNews();
       console.log(`[Cron] 成功获取 ${blockBeatsNews.length} 条律动BlockBeats资讯`);
     } catch (error) {
       console.error('[Cron] 获取律动BlockBeats资讯失败:', error);
@@ -2172,7 +2182,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`初始化: 成功同步 ${messages.length} 条综合加密快讯`);
       
       console.log('初始化: 开始获取律动BlockBeats资讯...');
-      const blockBeatsNews = await blockBeatsService.storeBlockBeatsNews(8);
+      const blockBeatsNews = await blockBeatsService.fetchBlockBeatsNews();
       console.log(`初始化: 成功同步 ${blockBeatsNews.length} 条律动BlockBeats资讯`);
       
       console.log('初始化: 开始获取加密KOL的X推文...');
@@ -2190,6 +2200,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('初始化: 同步数据失败:', error);
     }
   })();
+
+  // 添加加密新闻路由
+  setupCryptoNewsRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
