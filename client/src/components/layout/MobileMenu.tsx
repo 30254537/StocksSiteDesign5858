@@ -138,6 +138,18 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </Link>
             </li>
             <li>
+              <Link 
+                href="/order-lookup" 
+                className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
+                onClick={() => {
+                  scrollToTop();
+                  onClose();
+                }}
+              >
+                {t("nav.orderLookup")}
+              </Link>
+            </li>
+            <li>
               <a 
                 href="https://t.me/STONKSOPEN" 
                 target="_blank"

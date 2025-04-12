@@ -203,6 +203,43 @@ function Router() {
               </PageWrapper>
             )}
           </Route>
+          <Route path="/order-lookup">
+            {() => (
+              <PageWrapper>
+                <div className="container mx-auto px-4 py-8">
+                  <h1 className="text-2xl text-white font-bold mb-6">查询订单</h1>
+                  
+                  <div className="bg-primary-800 p-6 rounded-lg shadow-lg">
+                    <p className="text-white mb-4">输入您的订单号和邮箱查询订单状态</p>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-white mb-2">订单号</label>
+                        <input 
+                          type="text" 
+                          className="w-full rounded p-2 bg-primary-700 border border-primary-600 text-white"
+                          placeholder="输入您的订单号"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-white mb-2">邮箱</label>
+                        <input 
+                          type="email" 
+                          className="w-full rounded p-2 bg-primary-700 border border-primary-600 text-white"
+                          placeholder="输入您的邮箱地址"
+                        />
+                      </div>
+                      
+                      <button className="w-full bg-accent text-primary-900 py-2 rounded font-medium hover:bg-accent/90 transition-colors">
+                        查询订单
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </PageWrapper>
+            )}
+          </Route>
           <Route>
             {() => (
               <PageWrapper>
