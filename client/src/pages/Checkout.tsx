@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Bitcoin, RefreshCw, DollarSign, User, Mail, Phone, MapPin } from 'lucide-react';
 import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
+import { CustomerInfoForm } from '@/components/ui/customer-info-form';
 
 // USDT直接支付表单
 const UsdtDirectForm = () => {
