@@ -146,9 +146,9 @@ const OrderLookup: React.FC = () => {
   
   return (
     <div className="container mx-auto px-4 py-32 pt-40 max-w-6xl">
-      <h1 className="text-3xl text-white font-bold mb-10">{t('orderLookup.title')}</h1>
+      <h1 className="text-3xl text-white font-bold mb-10 text-center">{t('orderLookup.title')}</h1>
       
-      <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden max-w-md mx-auto">
         <div className="p-8 border-b border-primary-700">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative">
@@ -216,7 +216,7 @@ const OrderLookup: React.FC = () => {
         )}
         
         {order && (
-          <div className="p-8 bg-primary-800">
+          <div className="p-8 bg-primary-800 max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-8 border-b border-primary-700 pb-6">
               <div>
                 <h2 className="text-2xl text-white font-medium mb-3">{t('orders.viewDetails')}</h2>
