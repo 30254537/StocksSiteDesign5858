@@ -16,6 +16,8 @@ export const translations: Translations = {
     "nav.manage": "Management",
     "nav.about": "About Us",
     "nav.community": "Community",
+    "nav.myOrders": "My Orders",
+    "nav.orderLookup": "Order Lookup",
     
     // Hero Section
     "hero.title": "Trade Decentralized, Wear the Future",
@@ -213,6 +215,8 @@ export const translations: Translations = {
     "nav.manage": "后台管理",
     "nav.about": "关于我们",
     "nav.community": "社区",
+    "nav.myOrders": "我的订单",
+    "nav.orderLookup": "订单查询",
     
     // Product Names
     "product.name.1": "KUBE 连帽衫",

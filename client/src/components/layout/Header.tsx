@@ -118,7 +118,7 @@ export default function Header() {
             {/* 主导航 - 中间 - 错落设计 */}
             <nav className="hidden md:flex flex-1 justify-center">
               <div className="flex flex-col items-center">
-                <div className="flex items-center space-x-16 mb-3">
+                <div className="flex items-center space-x-10 mb-3">
                   <Link 
                     href="/" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
@@ -137,6 +137,16 @@ export default function Header() {
                     onClick={scrollToTop}
                   >
                     {t("nav.about")}
+                  </Link>
+                  
+                  <Link 
+                    href="/order-lookup" 
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                      location === "/order-lookup" ? "text-accent" : "text-white hover:text-accent"
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    {t("nav.orderLookup")}
                   </Link>
                 </div>
                 
