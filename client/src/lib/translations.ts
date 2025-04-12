@@ -19,6 +19,35 @@ export const translations: Translations = {
     "nav.myOrders": "My Orders",
     "nav.orderLookup": "Order Lookup",
     
+    // Order Lookup
+    "orderLookup.title": "Order Lookup",
+    "orderLookup.description": "Enter your order number and email to check your order status",
+    "orderLookup.orderNumber": "Order Number",
+    "orderLookup.orderNumberPlaceholder": "Enter your order number",
+    "orderLookup.email": "Email",
+    "orderLookup.emailPlaceholder": "Enter your email address",
+    "orderLookup.submit": "Look Up Order",
+    "orderLookup.error": "No order found with the provided information",
+    "orderLookup.success": "Order found!",
+    
+    // Orders
+    "orders.viewDetails": "Order Details",
+    "orders.orderNumber": "Order Number",
+    "orders.date": "Order Date",
+    "orders.paymentMethod": "Payment Method",
+    "orders.total": "Total Amount",
+    "orders.shipping": "Shipping Address",
+    "orders.trackingNumber": "Tracking Number",
+    "orders.items": "Order Items",
+    "orders.quantity": "Quantity:",
+    "orders.status.pending": "Pending",
+    "orders.status.processing": "Processing",
+    "orders.status.shipped": "Shipped",
+    "orders.status.delivered": "Delivered",
+    "orders.status.completed": "Completed",
+    "orders.status.cancelled": "Cancelled",
+    "orders.status.refunded": "Refunded",
+    
     // Hero Section
     "hero.title": "Trade Decentralized, Wear the Future",
     "hero.subtitle": "Explore STONKS DEX exclusive merchandise",
@@ -217,6 +246,35 @@ export const translations: Translations = {
     "nav.community": "社区",
     "nav.myOrders": "我的订单",
     "nav.orderLookup": "订单查询",
+    
+    // Order Lookup
+    "orderLookup.title": "订单查询",
+    "orderLookup.description": "输入您的订单号和邮箱查询订单状态",
+    "orderLookup.orderNumber": "订单号",
+    "orderLookup.orderNumberPlaceholder": "输入您的订单号",
+    "orderLookup.email": "邮箱",
+    "orderLookup.emailPlaceholder": "输入您的邮箱地址",
+    "orderLookup.submit": "查询订单",
+    "orderLookup.error": "未找到符合提供信息的订单",
+    "orderLookup.success": "已找到订单!",
+    
+    // Orders
+    "orders.viewDetails": "订单详情",
+    "orders.orderNumber": "订单号",
+    "orders.date": "下单日期",
+    "orders.paymentMethod": "支付方式",
+    "orders.total": "总金额",
+    "orders.shipping": "收货地址",
+    "orders.trackingNumber": "物流单号",
+    "orders.items": "订单商品",
+    "orders.quantity": "数量:",
+    "orders.status.pending": "待付款",
+    "orders.status.processing": "处理中",
+    "orders.status.shipped": "已发货",
+    "orders.status.delivered": "已送达",
+    "orders.status.completed": "已完成",
+    "orders.status.cancelled": "已取消",
+    "orders.status.refunded": "已退款",
     
     // Product Names
     "product.name.1": "KUBE 连帽衫",

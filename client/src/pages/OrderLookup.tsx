@@ -20,10 +20,10 @@ import { Loader2, CheckCircle, ShoppingBag, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
-// 订单查询表单验证模式
+// Order lookup form validation schema
 const orderLookupSchema = z.object({
-  orderId: z.string().min(1, "请输入订单号"),
-  email: z.string().email("请输入有效的邮箱地址"),
+  orderId: z.string().min(1),
+  email: z.string().email(),
 });
 
 type OrderLookupForm = z.infer<typeof orderLookupSchema>;
@@ -85,43 +85,39 @@ const OrderLookup: React.FC = () => {
       
       if (response.ok) {
         setOrder(result.order);
+        toast({
+          variant: "default",
+          title: t('orderLookup.success'),
+          description: t('orders.viewDetails'),
+        });
       } else {
-        setError(result.error || "查询订单失败，请稍后再试");
+        setError(result.error || t('orderLookup.error'));
         toast({
           variant: "destructive",
-          title: "查询失败",
-          description: result.error || "查询订单失败，请稍后再试",
+          title: t('checkout.orderError'),
+          description: result.error || t('orderLookup.error'),
         });
       }
     } catch (err) {
-      console.error("查询订单出错:", err);
-      setError("查询订单失败，请稍后再试");
+      console.error("Error querying order:", err);
+      setError(t('orderLookup.error'));
       toast({
         variant: "destructive",
-        title: "查询失败",
-        description: "网络错误，请稍后再试",
+        title: t('checkout.orderError'),
+        description: t('checkout.pleaseTryAgainLater'),
       });
     } finally {
       setIsLoading(false);
     }
   };
   
-  // 获取订单状态显示文本
+  // Get text representation of order status
   const getStatusText = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'pending': '待付款',
-      'processing': '处理中',
-      'shipped': '已发货',
-      'delivered': '已送达',
-      'completed': '已完成',
-      'cancelled': '已取消',
-      'refunded': '已退款'
-    };
-    
-    return statusMap[status] || status;
+    const statusKey = `orders.status.${status}`;
+    return t(statusKey, status); // Fallback to the status itself if no translation exists
   };
   
-  // 获取订单状态显示颜色
+  // Get the appropriate color classes for order status
   const getStatusColor = (status: string) => {
     const colorMap: Record<string, string> = {
       'pending': 'text-yellow-500 bg-yellow-100',
@@ -136,24 +132,21 @@ const OrderLookup: React.FC = () => {
     return colorMap[status] || 'text-gray-500 bg-gray-100';
   };
   
-  // 获取支付方式显示文本
+  // Get text representation of payment method
   const getPaymentMethodText = (method: string) => {
-    const methodMap: Record<string, string> = {
-      'usdt': 'USDT',
-      'credit_card': '信用卡',
-      'paypal': 'PayPal',
-      'crypto': '加密货币',
-      'bank_transfer': '银行转账',
-      'alipay': '支付宝',
-      'wechat': '微信支付'
-    };
-    
-    return methodMap[method] || method;
+    switch (method) {
+      case 'usdt':
+        return 'USDT';
+      case 'crypto':
+        return t('checkout.cryptocurrency');
+      default:
+        return method;
+    }
   };
   
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl text-white font-bold mb-6">订单查询</h1>
+      <h1 className="text-2xl text-white font-bold mb-6">{t('orderLookup.title')}</h1>
       
       <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6 border-b border-primary-700">
@@ -164,10 +157,10 @@ const OrderLookup: React.FC = () => {
                 name="orderId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">订单号</FormLabel>
+                    <FormLabel className="text-white">{t('orderLookup.orderNumber')}</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="请输入订单号" 
+                        placeholder={t('orderLookup.orderNumberPlaceholder')} 
                         {...field} 
                         className="bg-primary-800 border-primary-700 text-white" 
                       />
@@ -182,16 +175,16 @@ const OrderLookup: React.FC = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">邮箱地址</FormLabel>
+                    <FormLabel className="text-white">{t('orderLookup.email')}</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="请输入下单时使用的邮箱地址" 
+                        placeholder={t('orderLookup.emailPlaceholder')} 
                         {...field} 
                         className="bg-primary-800 border-primary-700 text-white" 
                       />
                     </FormControl>
                     <FormDescription className="text-primary-300">
-                      输入您下单时填写的邮箱地址
+                      {t('orderLookup.description')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -206,10 +199,10 @@ const OrderLookup: React.FC = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    查询中...
+                    {t('checkout.processing')}
                   </>
                 ) : (
-                  "查询订单"
+                  t('orderLookup.submit')
                 )}
               </Button>
             </form>
@@ -225,7 +218,7 @@ const OrderLookup: React.FC = () => {
         {order && (
           <div className="p-6 bg-primary-800">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl text-white font-medium">订单详情</h2>
+              <h2 className="text-xl text-white font-medium">{t('orders.viewDetails')}</h2>
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
                 {getStatusText(order.status)}
               </span>
@@ -233,19 +226,19 @@ const OrderLookup: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
-                <p className="text-primary-300 mb-1">订单号</p>
+                <p className="text-primary-300 mb-1">{t('orders.orderNumber')}</p>
                 <p className="text-white font-medium">{order.id}</p>
               </div>
               <div>
-                <p className="text-primary-300 mb-1">下单日期</p>
+                <p className="text-primary-300 mb-1">{t('orders.date')}</p>
                 <p className="text-white font-medium">{formatDate(new Date(order.createdAt))}</p>
               </div>
               <div>
-                <p className="text-primary-300 mb-1">支付方式</p>
+                <p className="text-primary-300 mb-1">{t('orders.paymentMethod')}</p>
                 <p className="text-white font-medium">{getPaymentMethodText(order.paymentMethod)}</p>
               </div>
               <div>
-                <p className="text-primary-300 mb-1">总金额</p>
+                <p className="text-primary-300 mb-1">{t('orders.total')}</p>
                 <p className="text-white font-medium">
                   {formatCurrency(order.total)} / ⊙ {order.ethTotal.toFixed(6)} $STONKS
                 </p>
@@ -253,18 +246,18 @@ const OrderLookup: React.FC = () => {
             </div>
             
             <div className="mb-6">
-              <p className="text-primary-300 mb-1">联系邮箱/配送地址</p>
+              <p className="text-primary-300 mb-1">{t('orders.shipping')}</p>
               <p className="text-white font-medium break-words">{order.shippingAddress}</p>
             </div>
             
             {order.trackingNumber && (
               <div className="mb-6">
-                <p className="text-primary-300 mb-1">物流单号</p>
+                <p className="text-primary-300 mb-1">{t('orders.trackingNumber')}</p>
                 <p className="text-white font-medium">{order.trackingNumber}</p>
               </div>
             )}
             
-            <h3 className="text-lg text-white font-medium mb-4">订单商品</h3>
+            <h3 className="text-lg text-white font-medium mb-4">{t('orders.items')}</h3>
             <div className="space-y-4">
               {order.items.map((item) => (
                 <div key={item.id} className="flex items-center bg-primary-900 p-4 rounded-lg">
@@ -279,11 +272,11 @@ const OrderLookup: React.FC = () => {
                     <h4 className="text-white font-medium">{item.productName}</h4>
                     <div className="flex mt-1">
                       <p className="text-primary-300 text-sm mr-4">
-                        数量: {item.quantity}
+                        {t('orders.quantity')} {item.quantity}
                       </p>
                       {item.size && (
                         <p className="text-primary-300 text-sm">
-                          尺码: {item.size}
+                          {t('product.size')} {item.size}
                         </p>
                       )}
                     </div>
@@ -302,7 +295,7 @@ const OrderLookup: React.FC = () => {
                   className="bg-transparent border-primary-600 text-white hover:bg-primary-700"
                 >
                   <ShoppingBag className="mr-2 h-4 w-4" />
-                  继续购物
+                  {t('cart.continueShopping')}
                 </Button>
               </Link>
               
@@ -315,7 +308,7 @@ const OrderLookup: React.FC = () => {
                     form.reset();
                   }}
                 >
-                  查询其他订单
+                  {t('orderLookup.title')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
