@@ -337,11 +337,10 @@ export async function getStonksPriceChange(): Promise<any> {
     
     // 尝试使用Pro API获取SOL价格变化
     try {
-      const solProApiUrl = 'https://pro-api.coingecko.com/api/v3/coins/solana';
+      const solProApiUrl = `https://pro-api.coingecko.com/api/v3/coins/solana?x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
       const solProResponse = await axios.get(solProApiUrl, {
         headers: {
           'Accept': 'application/json',
-          'X-CG-Pro-API-Key': process.env.COINGECKO_API_KEY,
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         },
         timeout: 5000
