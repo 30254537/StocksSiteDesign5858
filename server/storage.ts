@@ -15,7 +15,8 @@ import {
   users, products, cartItems, 
   orders, orderItems, musicTracks, 
   cryptoTweets, telegramMessages, 
-  cryptoNews, contractAddresses, tweets
+  cryptoNews, contractAddresses, tweets,
+  contactInfo
 } from "@shared/schema";
 import { eq, and, or, like, desc, count, isNull, asc } from "drizzle-orm";
 import * as bcrypt from "bcryptjs";
