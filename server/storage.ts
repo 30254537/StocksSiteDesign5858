@@ -107,6 +107,13 @@ export interface IStorage {
   // 根据订单ID和邮箱查询订单（用于匿名用户查询订单）
   getOrderWithItemsByIdAndEmail(orderId: number, email: string): Promise<OrderWithItems | null>;
   
+  // 获取所有订单（用于管理后台）
+  getAllOrders(): Promise<OrderWithItems[]>;
+  
+  // 联系信息相关方法
+  getAllContactInfo(): Promise<{email: string, address: string}>;
+  updateContactInfo(key: string, value: string): Promise<boolean>;
+  
   // 会话存储
   sessionStore: session.Store;
 }
@@ -627,6 +634,84 @@ export class DatabaseStorage implements IStorage {
       return true;
     } catch (error) {
       console.error('删除合约地址时出错:', error);
+      return false;
+    }
+  }
+  
+  // 获取所有订单（用于管理后台）
+  async getAllOrders(): Promise<OrderWithItems[]> {
+    const ordersList = await db.select().from(orders)
+      .orderBy(desc(orders.createdAt));
+    
+    if (!ordersList || ordersList.length === 0) {
+      return [];
+    }
+    
+    const result: OrderWithItems[] = [];
+    
+    for (const order of ordersList) {
+      const orderWithItems = await this.getOrderWithItems(order.id);
+      if (orderWithItems) {
+        result.push(orderWithItems);
+      }
+    }
+    
+    return result;
+  }
+
+  // 联系信息相关方法
+  async getAllContactInfo(): Promise<{email: string, address: string}> {
+    try {
+      // 查找email联系方式
+      const [emailInfo] = await db.select().from(contactInfo)
+        .where(eq(contactInfo.key, 'email'));
+      
+      // 查找address联系方式
+      const [addressInfo] = await db.select().from(contactInfo)
+        .where(eq(contactInfo.key, 'address'));
+      
+      return {
+        email: emailInfo?.value || '',
+        address: addressInfo?.value || ''
+      };
+    } catch (error) {
+      console.error("获取联系信息失败:", error);
+      // 返回默认空值
+      return {
+        email: '',
+        address: ''
+      };
+    }
+  }
+  
+  async updateContactInfo(key: string, value: string): Promise<boolean> {
+    try {
+      // 先检查是否已存在该键的记录
+      const [existingInfo] = await db.select().from(contactInfo)
+        .where(eq(contactInfo.key, key));
+      
+      if (existingInfo) {
+        // 如果已存在，则更新
+        await db.update(contactInfo)
+          .set({ 
+            value,
+            updatedAt: new Date()
+          })
+          .where(eq(contactInfo.key, key));
+      } else {
+        // 否则创建新记录
+        await db.insert(contactInfo)
+          .values({
+            key,
+            value,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+      }
+      
+      return true;
+    } catch (error) {
+      console.error(`更新联系信息 ${key} 失败:`, error);
       return false;
     }
   }
