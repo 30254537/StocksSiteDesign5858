@@ -549,8 +549,8 @@ export default function Manage() {
       
       {/* 管理导航选项卡 - 使用下拉菜单方式展示所有选项 */}
       <div className="mb-8">
-        {/* 管理菜单导航 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+        {/* 管理菜单导航 - 使用单个网格布局显示所有选项卡 */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 mb-4">
           <button
             className={`px-3 py-2 rounded-md font-medium transition-colors duration-200 ${
               activeTab === "products" 
@@ -594,9 +594,7 @@ export default function Manage() {
           >
             音乐管理
           </button>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+          
           <button
             className={`px-3 py-2 rounded-md font-medium transition-colors duration-200 ${
               activeTab === "contents" 
