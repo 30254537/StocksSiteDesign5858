@@ -14,7 +14,7 @@ import { useStonksPrice } from "@/contexts/StonksPriceContext";
 import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib/utils";
 
 export default function CartModal() {
-  const { cartItems, totalPrice, totalEthPrice, isCartOpen, closeCart, removeCartItem, updateCartItem } = useCart();
+  const { cartItems, totalPrice, totalEthPrice, isCartOpen, closeCart, removeCartItem, updateCart } = useCart();
   const { t } = useLanguage();
   const { currentPrice } = useStonksPrice();
 
@@ -24,7 +24,7 @@ export default function CartModal() {
 
   const handleUpdateQuantity = (itemId: number, currentQuantity: number, delta: number) => {
     const newQuantity = Math.max(1, currentQuantity + delta);
-    updateCartItem(itemId, newQuantity);
+    updateCart(itemId, newQuantity);
   };
 
   return (
