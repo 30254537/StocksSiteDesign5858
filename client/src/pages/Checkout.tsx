@@ -10,8 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Bitcoin, RefreshCw, DollarSign } from 'lucide-react';
+import { Loader2, Bitcoin, RefreshCw, DollarSign, User, Mail, Phone, MapPin } from 'lucide-react';
 import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
 
 // USDT直接支付表单
@@ -22,6 +24,11 @@ const UsdtDirectForm = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { clearCart, totalPrice } = useCart();
+  
+  // 顾客联系信息
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
   const [transactionHash, setTransactionHash] = useState('');
 
@@ -44,6 +51,11 @@ const UsdtDirectForm = () => {
     
     if (!transactionHash) {
       setError(t('checkout.transactionHashRequired'));
+      return;
+    }
+    
+    if (!customerEmail) {
+      setError('请提供您的电子邮箱，以便我们联系您');
       return;
     }
     
