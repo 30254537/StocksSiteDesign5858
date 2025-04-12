@@ -207,7 +207,7 @@ export class DatabaseStorage implements IStorage {
   // 购物车相关方法
   async getCart(sessionId: string): Promise<CartItem[]> {
     // 使用连接查询获取购物车项以及相关产品信息
-    const cartItems = await db.select({
+    const items = await db.select({
       id: cartItems.id,
       productId: cartItems.productId,
       sessionId: cartItems.sessionId,
@@ -228,7 +228,7 @@ export class DatabaseStorage implements IStorage {
     .where(eq(cartItems.sessionId, sessionId))
     .orderBy(desc(cartItems.id));
     
-    return cartItems;
+    return items;
   }
   
   async addToCart(item: InsertCartItem): Promise<CartItem> {
