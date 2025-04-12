@@ -350,13 +350,14 @@ export default function OrderManagement() {
                   <TableHead className="text-accent">总金额</TableHead>
                   <TableHead className="text-accent">支付方式</TableHead>
                   <TableHead className="text-accent">状态</TableHead>
+                  <TableHead className="text-accent">交易哈希</TableHead>
                   <TableHead className="text-accent">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredOrders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8">
+                    <TableCell colSpan={8} className="text-center py-8">
                       {orderStatusFilter === 'all' ? "暂无订单记录" : `暂无${getStatusDisplay(orderStatusFilter)}订单`}
                     </TableCell>
                   </TableRow>
@@ -383,6 +384,15 @@ export default function OrderManagement() {
                         <span className={getStatusClass(order.status)}>
                           {getStatusDisplay(order.status)}
                         </span>
+                      </TableCell>
+                      <TableCell>
+                        {order.transactionHash ? (
+                          <div className="w-32 truncate text-xs text-gray-400" title={order.transactionHash}>
+                            {order.transactionHash}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-600">-</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
