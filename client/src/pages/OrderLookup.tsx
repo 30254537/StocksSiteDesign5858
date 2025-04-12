@@ -148,10 +148,10 @@ const OrderLookup: React.FC = () => {
     <div className="container mx-auto px-4 py-24 mt-10">
       <h1 className="text-2xl text-white font-bold mb-8">{t('orderLookup.title')}</h1>
       
-      <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6 border-b border-primary-700">
+      <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden relative">
+        <div className="p-6 border-b border-primary-700 relative">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 relative z-10">
               <FormField
                 control={form.control}
                 name="orderId"
@@ -162,7 +162,7 @@ const OrderLookup: React.FC = () => {
                       <Input 
                         placeholder={t('orderLookup.orderNumberPlaceholder')} 
                         {...field} 
-                        className="bg-primary-800 border-primary-700 text-white" 
+                        className="bg-primary-800 border-primary-700 text-white relative z-10" 
                       />
                     </FormControl>
                     <FormMessage />
@@ -180,7 +180,7 @@ const OrderLookup: React.FC = () => {
                       <Input 
                         placeholder={t('orderLookup.emailPlaceholder')} 
                         {...field} 
-                        className="bg-primary-800 border-primary-700 text-white" 
+                        className="bg-primary-800 border-primary-700 text-white relative z-10" 
                       />
                     </FormControl>
                     <FormDescription className="text-primary-300">
