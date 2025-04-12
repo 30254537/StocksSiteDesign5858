@@ -2267,8 +2267,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: '订单号和邮箱都必须提供' });
       }
       
+      // 检查订单ID是否是有效的数字
+      const orderIdNum = parseInt(orderId, 10);
+      if (isNaN(orderIdNum)) {
+        return res.status(400).json({ error: '订单号必须是数字' });
+      }
+      
       // 通过订单ID和邮箱查询订单
-      const order = await storage.getOrderWithItemsByIdAndEmail(Number(orderId), email);
+      const order = await storage.getOrderWithItemsByIdAndEmail(orderIdNum, email);
       
       if (!order) {
         return res.status(404).json({ error: '未找到匹配的订单，请检查订单号和邮箱是否正确' });
