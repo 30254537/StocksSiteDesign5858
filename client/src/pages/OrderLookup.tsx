@@ -245,7 +245,7 @@ const OrderLookup: React.FC = () => {
               <div className="border border-accent/30 rounded-md p-3 bg-primary-900/50">
                 <p className="text-accent font-medium text-sm mb-1">{t('orders.total')}</p>
                 <p className="text-white font-medium">
-                  ${Math.floor(order.total)} / ⊙ {Math.floor(order.ethTotal)} $STONKS
+                  USDT ${Math.floor(order.total)} / ⊙ {Math.floor(order.ethTotal)} $STONKS
                 </p>
               </div>
               
@@ -287,7 +287,7 @@ const OrderLookup: React.FC = () => {
                         )}
                       </div>
                       <p className="text-accent mt-1">
-                        ${Math.floor(item.price)} / ⊙ {Math.floor(item.ethPrice)} $STONKS
+                        USDT ${Math.floor(item.price)} / ⊙ {Math.floor(item.ethPrice)} $STONKS
                       </p>
                     </div>
                   </div>

@@ -205,14 +205,14 @@ export default function MyOrders() {
                 <div className="flex-grow">
                   <div className="flex justify-between">
                     <p className="font-medium">{item.productName}</p>
-                    <p className="text-sm">${Math.floor(item.price)}</p>
+                    <p className="text-sm">USDT ${Math.floor(item.price)}</p>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <p>
                       {language === 'zh' ? '数量' : 'Qty'}: {item.quantity}
                       {item.size && ` / ${language === 'zh' ? '尺码' : 'Size'}: ${item.size}`}
                     </p>
-                    <p>${Math.floor(item.price * item.quantity)}</p>
+                    <p>USDT ${Math.floor(item.price * item.quantity)}</p>
                   </div>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export default function MyOrders() {
 
         <div className="flex justify-between font-medium">
           <p>{language === 'zh' ? '总计' : 'Total'}</p>
-          <p>${Math.floor(order.total)}</p>
+          <p>USDT ${Math.floor(order.total)}</p>
         </div>
       </div>
     );
@@ -303,7 +303,7 @@ export default function MyOrders() {
                       </div>
                       <div className="flex justify-between text-sm mt-1">
                         <p>{formatDate(order.createdAt)}</p>
-                        <p>${Math.floor(order.total)}</p>
+                        <p>USDT ${Math.floor(order.total)}</p>
                       </div>
                     </div>
                   ))}
