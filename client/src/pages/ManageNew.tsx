@@ -25,6 +25,16 @@ export default function Manage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   
+  // 网站内容管理状态
+  const [websiteContents, setWebsiteContents] = useState<any[]>([]);
+  const [loadingWebsiteContents, setLoadingWebsiteContents] = useState(false);
+  const [editingContent, setEditingContent] = useState<any>(null);
+  
+  // 推文管理状态
+  const [tweets, setTweets] = useState<any[]>([]);
+  const [loadingTweets, setLoadingTweets] = useState(false);
+  const [editingTweet, setEditingTweet] = useState<any>(null);
+  
   // 产品管理状态
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,6 +89,8 @@ export default function Manage() {
           fetchProducts();
           fetchContactInfo();
           fetchContractAddresses();
+          fetchWebsiteContents();
+          fetchTweets();
         } else {
           toast({
             title: "需要管理员权限",
@@ -135,6 +147,52 @@ export default function Manage() {
       });
     } finally {
       setLoadingAddresses(false);
+    }
+  };
+  
+  // 获取网站内容列表
+  const fetchWebsiteContents = async () => {
+    setLoadingWebsiteContents(true);
+    try {
+      const response = await apiRequest("GET", "/api/website-contents");
+      if (response.ok) {
+        const data = await response.json();
+        setWebsiteContents(data);
+      } else {
+        throw new Error(await response.text());
+      }
+    } catch (error) {
+      console.error("获取网站内容列表失败:", error);
+      toast({
+        title: "获取网站内容失败",
+        description: "无法获取网站内容列表，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingWebsiteContents(false);
+    }
+  };
+  
+  // 获取推文列表
+  const fetchTweets = async () => {
+    setLoadingTweets(true);
+    try {
+      const response = await apiRequest("GET", "/api/tweets");
+      if (response.ok) {
+        const data = await response.json();
+        setTweets(data);
+      } else {
+        throw new Error(await response.text());
+      }
+    } catch (error) {
+      console.error("获取推文列表失败:", error);
+      toast({
+        title: "获取推文失败",
+        description: "无法获取推文列表，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingTweets(false);
     }
   };
   
@@ -263,6 +321,98 @@ export default function Manage() {
         toast({
           title: "删除失败",
           description: "无法删除产品，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+  // 处理编辑网站内容
+  const handleEditContent = (content: any) => {
+    setEditingContent(content);
+    
+    // 填充表单
+    document.getElementById("content-id")?.setAttribute("value", content.id.toString());
+    
+    const keyInput = document.getElementById("content-key") as HTMLInputElement;
+    if (keyInput) keyInput.value = content.key;
+    
+    const valueInput = document.getElementById("content-value") as HTMLTextAreaElement;
+    if (valueInput) valueInput.value = content.value;
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("website-content-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑网站内容",
+      description: `正在编辑: ${content.key}`,
+    });
+  };
+  
+  // 处理删除网站内容
+  const handleDeleteContent = async (contentId: number) => {
+    if (window.confirm("确定要删除此网站内容吗？此操作无法撤销。")) {
+      try {
+        await apiRequest("DELETE", `/api/website-contents/${contentId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "网站内容已成功删除",
+        });
+        
+        // 重新获取内容列表以更新UI
+        await fetchWebsiteContents();
+      } catch (error) {
+        console.error("删除网站内容错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除网站内容，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+  // 处理编辑推文
+  const handleEditTweet = (tweet: any) => {
+    setEditingTweet(tweet);
+    
+    // 填充表单
+    document.getElementById("tweet-id")?.setAttribute("value", tweet.id.toString());
+    
+    const authorInput = document.getElementById("tweet-author") as HTMLInputElement;
+    if (authorInput) authorInput.value = tweet.author;
+    
+    const contentInput = document.getElementById("tweet-content") as HTMLTextAreaElement;
+    if (contentInput) contentInput.value = tweet.content;
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("tweet-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑推文",
+      description: `正在编辑: ${tweet.author}的推文`,
+    });
+  };
+  
+  // 处理删除推文
+  const handleDeleteTweet = async (tweetId: number) => {
+    if (window.confirm("确定要删除此推文吗？此操作无法撤销。")) {
+      try {
+        await apiRequest("DELETE", `/api/tweets/${tweetId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "推文已成功删除",
+        });
+        
+        // 重新获取推文列表以更新UI
+        await fetchTweets();
+      } catch (error) {
+        console.error("删除推文错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除推文，请稍后再试",
           variant: "destructive",
         });
       }
