@@ -774,11 +774,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return cacheAge > 30000; // 按用户要求设置为30秒刷新一次
   }
   
-  // 从OKX和GMGN平台获取实时价格
+  // 获取STONKS代币实时价格，优先使用CoinGecko Pro API
   async function fetchGmgnPrice(): Promise<number> {
+    // 首先尝试使用CoinGecko Pro API获取STONKS价格
+    if (process.env.COINGECKO_API_KEY) {
+      try {
+        const coinGeckoProApiUrl = 'https://pro-api.coingecko.com/api/v3/coins/stonks';
+        
+        console.log('优先使用CoinGecko Pro API直接获取STONKS价格...');
+        
+        const cgProResponse = await axios.get(coinGeckoProApiUrl, {
+          headers: {
+            'Accept': 'application/json',
+            'X-CG-Pro-API-Key': process.env.COINGECKO_API_KEY,
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          },
+          timeout: 5000
+        });
+        
+        if (cgProResponse.status === 200 && cgProResponse.data && cgProResponse.data.market_data && cgProResponse.data.market_data.current_price && cgProResponse.data.market_data.current_price.usd) {
+          const price = cgProResponse.data.market_data.current_price.usd;
+          
+          if (price && !isNaN(price) && price > 0) {
+            console.log(`从CoinGecko Pro API直接获取到STONKS价格: $${price}`);
+            return price;
+          }
+        }
+      } catch (cgProError) {
+        console.error("从CoinGecko Pro API直接获取STONKS价格失败:", cgProError);
+      }
+    }
+    
+    // 备用方法1：使用gmgnService服务获取价格
     try {
       // 首先尝试使用GMGN API直接获取STONKS价格
-      console.log('使用GMGN API直接获取STONKS价格...');
+      console.log('使用GMGN服务获取STONKS价格...');
       
       // 导入GMGN API服务
       const { getStonksPriceFromGmgn } = await import('./services/gmgnService');
@@ -787,40 +817,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const price = await getStonksPriceFromGmgn();
       
       if (price && price > 0) {
-        console.log(`从GMGN API获取STONKS价格成功: ${price} USD`);
+        console.log(`从GMGN服务获取STONKS价格成功: ${price} USD`);
         return price;
       }
       
       throw new Error('GMGN API返回的价格无效');
     } catch (gmgnError) {
-      console.error("从GMGN API获取价格失败，尝试备用方法:", gmgnError);
+      console.error("从GMGN服务获取价格失败，尝试备用方法:", gmgnError);
       
-      // 备用方法1：使用OKX API
-      if (process.env.OKX_API_KEY && process.env.OKX_SECRET_KEY && process.env.OKX_PASSPHRASE) {
-        try {
-          console.log('使用OKX API获取实时STONKS价格...');
-          
-          // 导入OKX服务
-          const { getStonksPrice } = await import('./services/okxService');
-          
-          // 从OKX获取STONKS价格
-          const price = await getStonksPrice();
-          
-          if (price && price > 0) {
-            console.log(`从OKX获取STONKS价格成功: ${price} USD`);
-            return price;
-          }
-        } catch (okxError) {
-          console.error("从OKX获取STONKS价格失败，尝试下一个备用方法:", okxError);
-        }
-      }
-      
-      // 备用方法2：使用CoinGecko API
+      // 备用方法2：使用CoinGecko免费API
       try {
         // 尝试使用CoinGecko直接获取STONKS价格
         const coinGeckoApiUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=stonks&per_page=1';
         
-        console.log('尝试从CoinGecko API获取STONKS价格...');
+        console.log('尝试从CoinGecko免费API获取STONKS价格...');
         
         const cgResponse = await axios.get(coinGeckoApiUrl, {
           headers: {
@@ -834,37 +844,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const price = cgResponse.data[0].current_price;
           
           if (price && !isNaN(price) && price > 0) {
-            console.log(`从CoinGecko获取STONKS价格成功: ${price} USD`);
+            console.log(`从CoinGecko免费API获取STONKS价格成功: ${price} USD`);
             return price;
           }
         }
       } catch (backupError) {
-        console.error("从CoinGecko获取STONKS价格失败:", backupError);
+        console.error("从CoinGecko免费API获取STONKS价格失败:", backupError);
       }
       
-      // 备用方法3：使用CoinGecko Pro API
-      if (process.env.COINGECKO_API_KEY) {
+      // 备用方法3：使用OKX API（如果配置了API密钥）
+      if (process.env.OKX_API_KEY && process.env.OKX_SECRET_KEY && process.env.OKX_PASSPHRASE) {
         try {
-          const proApiUrl = `https://pro-api.coingecko.com/api/v3/coins/stonks/market_chart?vs_currency=usd&days=1&interval=hourly&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
+          console.log('尝试使用OKX API获取实时STONKS价格...');
           
-          console.log('尝试使用CoinGecko Pro API获取STONKS价格...');
+          // 导入OKX服务
+          const { getStonksPrice } = await import('./services/okxService');
           
-          const proResponse = await axios.get(proApiUrl, {
-            headers: {
-              'Accept': 'application/json',
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            },
-            timeout: 5000
-          });
+          // 从OKX获取STONKS价格
+          const price = await getStonksPrice();
           
-          if (proResponse.status === 200 && proResponse.data && proResponse.data.prices && proResponse.data.prices.length > 0) {
-            // 使用最新价格
-            const latestPrice = proResponse.data.prices[proResponse.data.prices.length - 1][1];
-            console.log(`从CoinGecko Pro API获取STONKS价格成功: ${latestPrice} USD`);
-            return latestPrice;
+          if (price && price > 0) {
+            console.log(`从OKX获取STONKS价格成功: ${price} USD`);
+            return price;
           }
-        } catch (proError) {
-          console.error("从CoinGecko Pro API获取STONKS价格失败:", proError);
+        } catch (okxError) {
+          console.error("从OKX获取STONKS价格失败:", okxError);
         }
       }
       
