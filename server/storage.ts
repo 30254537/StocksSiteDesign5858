@@ -12,7 +12,6 @@ import {
   cryptoNews, type CryptoNews, type InsertCryptoNews,
   cryptoTweets, type CryptoTweet, type InsertCryptoTweet,
   telegramMessages, type TelegramMessage, type InsertTelegramMessage,
-  websiteContents, type WebsiteContent, type InsertWebsiteContent,
   type OrderWithItems
 } from "@shared/schema";
 import { db } from "./db";
@@ -31,15 +30,6 @@ export interface IStorage {
   updateStripeCustomerId(userId: number, customerId: string): Promise<User>;
   updateUserStripeInfo(userId: number, stripeInfo: {customerId: string, subscriptionId: string}): Promise<User>;
 
-  // Website Content operations
-  getWebsiteContents(): Promise<WebsiteContent[]>;
-  getWebsiteContentsBySection(section: string): Promise<WebsiteContent[]>;
-  getWebsiteContent(id: number): Promise<WebsiteContent | undefined>;
-  getWebsiteContentByKey(key: string): Promise<WebsiteContent | undefined>;
-  createWebsiteContent(content: InsertWebsiteContent): Promise<WebsiteContent>;
-  updateWebsiteContent(id: number, content: Partial<WebsiteContent>): Promise<WebsiteContent | undefined>;
-  deleteWebsiteContent(id: number): Promise<boolean>;
-  
   // Contact Info operations
   getContactInfo(key: string): Promise<string | null>;
   getAllContactInfo(): Promise<Record<string, string>>;
@@ -121,65 +111,6 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // Website Content methods
-  async getWebsiteContents(): Promise<WebsiteContent[]> {
-    return await db.select().from(websiteContents)
-      .where(eq(websiteContents.isActive, true))
-      .orderBy(websiteContents.section, websiteContents.key);
-  }
-
-  async getWebsiteContentsBySection(section: string): Promise<WebsiteContent[]> {
-    return await db.select().from(websiteContents)
-      .where(
-        and(
-          eq(websiteContents.section, section),
-          eq(websiteContents.isActive, true)
-        )
-      )
-      .orderBy(websiteContents.key);
-  }
-
-  async getWebsiteContent(id: number): Promise<WebsiteContent | undefined> {
-    const [content] = await db.select().from(websiteContents)
-      .where(eq(websiteContents.id, id));
-    return content;
-  }
-
-  async getWebsiteContentByKey(key: string): Promise<WebsiteContent | undefined> {
-    const [content] = await db.select().from(websiteContents)
-      .where(eq(websiteContents.key, key));
-    return content;
-  }
-
-  async createWebsiteContent(content: InsertWebsiteContent): Promise<WebsiteContent> {
-    const [newContent] = await db.insert(websiteContents).values(content).returning();
-    return newContent;
-  }
-
-  async updateWebsiteContent(id: number, data: Partial<WebsiteContent>): Promise<WebsiteContent | undefined> {
-    const updateData = {
-      ...data,
-      updatedAt: new Date()
-    };
-    
-    const [content] = await db.update(websiteContents)
-      .set(updateData)
-      .where(eq(websiteContents.id, id))
-      .returning();
-    
-    return content;
-  }
-
-  async deleteWebsiteContent(id: number): Promise<boolean> {
-    try {
-      await db.delete(websiteContents).where(eq(websiteContents.id, id));
-      return true;
-    } catch (error) {
-      console.error('删除网站内容时出错:', error);
-      return false;
-    }
-  }
-
   // Contact Info methods
   async getContactInfo(key: string): Promise<string | null> {
     const [info] = await db.select().from(contactInfo).where(eq(contactInfo.key, key));
