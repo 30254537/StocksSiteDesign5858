@@ -138,9 +138,19 @@ export default function ManageNew() {
                 const typeElement = document.querySelector('[data-id="content-type"]');
                 const languageElement = document.querySelector('[data-id="content-language"]');
                 
+                // 获取当前设置的data-value属性
                 const type = typeElement?.getAttribute('data-value') || "text";
                 const language = languageElement?.getAttribute('data-value') || "zh";
                 const section = key.split('.')[0] || "other"; // 根据key提取section
+                
+                console.log("表单提交信息:", {
+                  contentId: contentId || "新内容",
+                  key,
+                  valueLength: value.length,
+                  type,
+                  language,
+                  section
+                });
                 
                 if (!key || !value) {
                   toast({
@@ -230,16 +240,23 @@ export default function ManageNew() {
                       内容语言
                     </label>
                     <Select 
-                      defaultValue="zh"
+                      value={editingContent?.language || "zh"}
                       onValueChange={(value) => {
                         // 更新data-value属性以便后续访问
                         const trigger = document.querySelector('[data-id="content-language"]');
                         if (trigger) {
                           trigger.setAttribute('data-value', value);
                         }
+                        // 如果处于编辑模式，更新编辑中的内容
+                        if (editingContent) {
+                          setEditingContent({
+                            ...editingContent,
+                            language: value
+                          });
+                        }
                       }}
                     >
-                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-language" data-value="zh">
+                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-language" data-value={editingContent?.language || "zh"}>
                         <SelectValue placeholder="选择语言" />
                       </SelectTrigger>
                       <SelectContent>
@@ -254,16 +271,23 @@ export default function ManageNew() {
                       内容类型
                     </label>
                     <Select 
-                      defaultValue="text"
+                      value={editingContent?.type || "text"}
                       onValueChange={(value) => {
                         // 更新data-value属性以便后续访问
                         const trigger = document.querySelector('[data-id="content-type"]');
                         if (trigger) {
                           trigger.setAttribute('data-value', value);
                         }
+                        // 如果处于编辑模式，更新编辑中的内容
+                        if (editingContent) {
+                          setEditingContent({
+                            ...editingContent,
+                            type: value
+                          });
+                        }
                       }}
                     >
-                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-type" data-value="text">
+                      <SelectTrigger className="bg-primary/50 border-accent" data-id="content-type" data-value={editingContent?.type || "text"}>
                         <SelectValue placeholder="选择内容类型" />
                       </SelectTrigger>
                       <SelectContent>
@@ -357,20 +381,39 @@ export default function ManageNew() {
                                     
                                     // 设置语言和类型选择器
                                     try {
+                                      // 设置语言和类型
+                                      console.log("编辑选择器初始化:", {
+                                        contentId: content.id,
+                                        language: content.language || 'zh',
+                                        type: content.type || 'text'
+                                      });
+                                      
                                       // 设置语言
                                       const languageTrigger = document.querySelector('[data-id="content-language"]');
                                       if (languageTrigger) {
+                                        // 设置data-value属性
                                         languageTrigger.setAttribute('data-value', content.language || 'zh');
+                                        
+                                        // 尝试更新显示值
                                         const languageValue = languageTrigger.querySelector('[data-radix-select-value-id]');
                                         if (languageValue) {
                                           languageValue.textContent = content.language === 'en' ? '英文' : '中文';
                                         }
+                                        
+                                        // 确保界面反映正确的选项状态
+                                        const languageEvent = new CustomEvent('custom-language-change', { 
+                                          detail: { value: content.language || 'zh' } 
+                                        });
+                                        document.dispatchEvent(languageEvent);
                                       }
                                       
                                       // 设置内容类型
                                       const typeTrigger = document.querySelector('[data-id="content-type"]');
                                       if (typeTrigger) {
+                                        // 设置data-value属性
                                         typeTrigger.setAttribute('data-value', content.type || 'text');
+                                        
+                                        // 尝试更新显示值
                                         const typeValue = typeTrigger.querySelector('[data-radix-select-value-id]');
                                         if (typeValue) {
                                           const typeMap: {[key: string]: string} = {
@@ -380,6 +423,12 @@ export default function ManageNew() {
                                           };
                                           typeValue.textContent = typeMap[content.type] || '文本';
                                         }
+                                        
+                                        // 确保界面反映正确的选项状态
+                                        const typeEvent = new CustomEvent('custom-type-change', { 
+                                          detail: { value: content.type || 'text' } 
+                                        });
+                                        document.dispatchEvent(typeEvent);
                                       }
                                     } catch (e) {
                                       console.error("设置选择器失败:", e);
