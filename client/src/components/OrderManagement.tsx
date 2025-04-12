@@ -94,9 +94,19 @@ export default function OrderManagement() {
   // 获取订单详情
   const fetchOrderDetails = async (orderId: number) => {
     try {
-      const response = await apiRequest("GET", `/api/orders/${orderId}/items`);
-      const itemsData = await response.json();
+      // 获取订单项
+      const itemsResponse = await apiRequest("GET", `/api/orders/${orderId}/items`);
+      const itemsData = await itemsResponse.json();
       setSelectedOrderItems(itemsData);
+      
+      // 获取完整的订单信息（包括交易哈希）
+      const orderResponse = await apiRequest("GET", `/api/orders/${orderId}`);
+      if (orderResponse.ok) {
+        const orderData = await orderResponse.json();
+        // 更新完整的订单信息
+        setSelectedOrder(orderData);
+      }
+      
       setShowOrderDialog(true);
     } catch (error) {
       console.error("获取订单详情错误:", error);
