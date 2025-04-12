@@ -9,6 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Order, OrderItemWithProduct } from "@shared/schema";
+import { formatTransactionHash } from "@/lib/utils";
 
 export default function OrderManagement() {
   const { toast } = useToast();
@@ -513,8 +514,7 @@ export default function OrderManagement() {
                     <div className="mt-2">
                       <p className="text-sm font-medium text-accent">交易哈希:</p>
                       <p className="text-xs break-all bg-primary/20 p-2 rounded border border-accent/30">
-                        {selectedOrder.paymentMethod === 'usdt' ? 'USDT/TRC20: ' : 'STONKS: '}
-                        {selectedOrder.transactionHash}
+                        {formatTransactionHash(selectedOrder.transactionHash, selectedOrder.paymentMethod)}
                       </p>
                     </div>
                   )}
@@ -629,8 +629,7 @@ export default function OrderManagement() {
                   <h4 className="font-medium text-accent mb-2">交易哈希:</h4>
                   <div className="bg-primary/20 p-3 rounded border border-accent/30">
                     <p className="whitespace-pre-line">
-                      {selectedOrder.paymentMethod === 'usdt' ? 'USDT/TRC20: ' : 'STONKS: '}
-                      {selectedOrder.notes}
+                      {formatTransactionHash(selectedOrder.notes, selectedOrder.paymentMethod)}
                     </p>
                   </div>
                 </div>

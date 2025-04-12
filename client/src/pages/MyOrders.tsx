@@ -7,7 +7,7 @@ import { ArrowLeft, ExternalLink, Truck, Calendar, CreditCard, Package, AlertCir
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatTransactionHash } from "@/lib/utils";
 import { OrderStatusBadge } from "@/components/ui/order-status-badge";
 
 // 订单类型定义

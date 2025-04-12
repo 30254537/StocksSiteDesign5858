@@ -14,6 +14,37 @@ export function formatCurrency(value: number, currency = 'USD'): string {
   }).format(value);
 }
 
+/**
+ * 格式化交易哈希显示，移除多余前缀
+ * @param hash - 交易哈希字符串
+ * @param paymentMethod - 支付方式 (usdt 或 crypto/stonks)
+ * @returns 格式化后的交易哈希字符串
+ */
+export function formatTransactionHash(hash: string | null | undefined, paymentMethod: string): string {
+  if (!hash) return "";
+  
+  // 清除 "USDT transaction on trc20 network: 1" 前缀
+  if (paymentMethod === 'usdt' && hash.includes('USDT transaction on trc20 network: 1')) {
+    return hash.replace('USDT transaction on trc20 network: 1', 'USDT/TRC20:');
+  }
+  
+  // 清除 "CRYPTO transaction: 1" 前缀
+  if ((paymentMethod === 'crypto' || paymentMethod === 'stonks') && hash.includes('CRYPTO transaction: 1')) {
+    return hash.replace('CRYPTO transaction: 1', 'STONKS:');
+  }
+  
+  // 如果已经是正确格式或其他格式，添加前缀
+  if (paymentMethod === 'usdt' && !hash.startsWith('USDT/TRC20:')) {
+    return `USDT/TRC20: ${hash}`;
+  }
+  
+  if ((paymentMethod === 'crypto' || paymentMethod === 'stonks') && !hash.startsWith('STONKS:')) {
+    return `STONKS: ${hash}`;
+  }
+  
+  return hash;
+}
+
 export function formatEth(value: number): string {
   return `⊙ ${value.toFixed(6)} $STONKS`;
 }
