@@ -382,8 +382,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contactInfo = await storage.getAllContactInfo();
       res.status(200).json(contactInfo);
     } catch (error) {
-      console.error('获取联系信息错误:', error);
-      res.status(500).json({ message: "获取联系信息失败" });
+      console.error("获取联系信息出错:", error);
+      res.status(500).json({ 
+        message: "获取联系信息失败",
+        error: error.message
+      });
     }
   });
   

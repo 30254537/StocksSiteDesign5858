@@ -664,11 +664,11 @@ export class DatabaseStorage implements IStorage {
     try {
       // 查找email联系方式
       const [emailInfo] = await db.select().from(contactInfo)
-        .where(eq(contactInfo.key, 'email'));
+        .where(eq(contactInfo.key, "email"));
       
       // 查找address联系方式
       const [addressInfo] = await db.select().from(contactInfo)
-        .where(eq(contactInfo.key, 'address'));
+        .where(eq(contactInfo.key, "address"));
       
       return {
         email: emailInfo?.value || '',
