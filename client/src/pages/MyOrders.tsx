@@ -237,9 +237,9 @@ export default function MyOrders() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-24 max-w-6xl">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">
+    <div className="container mx-auto px-4 py-32 pt-40 max-w-6xl">
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-3xl font-bold text-white">
           {language === 'zh' ? '我的订单' : 'My Orders'}
         </h1>
         <Button asChild variant="outline">
