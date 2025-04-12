@@ -72,6 +72,9 @@ const UsdtDirectForm = () => {
       const response = await apiRequest('POST', '/api/crypto-checkout', {
         paymentMethod: 'usdt',
         transactionHash,
+        customerName,
+        customerEmail,
+        customerPhone,
         shippingAddress,
         network: selectedUsdtChain
       });
@@ -244,6 +247,11 @@ const CryptoForm = () => {
   const { cartItems, totalEthPrice, totalPrice, clearCart } = useCart();
   const { toast } = useToast();
   const { currentPrice, convertUsdToStonks } = useStonksPrice();
+  
+  // 顾客联系信息
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -267,6 +275,9 @@ const CryptoForm = () => {
       const response = await apiRequest('POST', '/api/crypto-checkout', {
         paymentMethod: 'crypto',
         transactionHash,
+        customerName,
+        customerEmail,
+        customerPhone,
         shippingAddress
       });
       
