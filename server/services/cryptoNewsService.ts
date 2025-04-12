@@ -28,12 +28,12 @@ const NEWS_SOURCES = {
  */
 export async function fetchCoinGeckoNews(): Promise<InsertCryptoNews[]> {
   try {
-    // CoinGecko需要页码参数
-    const response = await axios.get(`${NEWS_SOURCES.COINGECKO.url}?page=1`, {
-      headers: NEWS_SOURCES.COINGECKO.apiKey ? {
-        'x-cg-api-key': NEWS_SOURCES.COINGECKO.apiKey
-      } : {}
-    });
+    // CoinGecko需要页码参数，使用查询参数方式添加API密钥
+    const apiUrl = NEWS_SOURCES.COINGECKO.apiKey 
+      ? `${NEWS_SOURCES.COINGECKO.url}?page=1&x_cg_pro_api_key=${NEWS_SOURCES.COINGECKO.apiKey}`
+      : `${NEWS_SOURCES.COINGECKO.url}?page=1`;
+      
+    const response = await axios.get(apiUrl);
 
     if (response.data && Array.isArray(response.data.data)) {
       return response.data.data.map((item: any) => {

@@ -779,14 +779,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // 首先尝试使用CoinGecko Pro API获取STONKS价格
     if (process.env.COINGECKO_API_KEY) {
       try {
-        const coinGeckoProApiUrl = 'https://pro-api.coingecko.com/api/v3/coins/stonks';
+        // 使用查询参数方式添加API密钥
+        const coinGeckoProApiUrl = `https://pro-api.coingecko.com/api/v3/coins/stonks?x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
         
         console.log('优先使用CoinGecko Pro API直接获取STONKS价格...');
         
         const cgProResponse = await axios.get(coinGeckoProApiUrl, {
           headers: {
             'Accept': 'application/json',
-            'X-CG-Pro-API-Key': process.env.COINGECKO_API_KEY,
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
           },
           timeout: 5000
