@@ -145,8 +145,8 @@ const OrderLookup: React.FC = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl text-white font-bold mb-6">{t('orderLookup.title')}</h1>
+    <div className="container mx-auto px-4 py-24 mt-10">
+      <h1 className="text-2xl text-white font-bold mb-8">{t('orderLookup.title')}</h1>
       
       <div className="bg-primary-900 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6 border-b border-primary-700">

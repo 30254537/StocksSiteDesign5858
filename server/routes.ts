@@ -659,9 +659,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/cart", async (req, res) => {
     try {
       const sessionId = getSessionId(req);
-      const cartItems = await storage.getCartItems(sessionId);
+      const cartItems = await storage.getCart(sessionId);
       res.json(cartItems);
     } catch (error) {
+      console.error("Error fetching cart items:", error);
       res.status(500).json({ message: "Error fetching cart items" });
     }
   });
