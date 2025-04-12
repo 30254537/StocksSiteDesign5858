@@ -162,7 +162,7 @@ const OrderLookup: React.FC = () => {
                       <Input 
                         placeholder={t('orderLookup.orderNumberPlaceholder')} 
                         {...field} 
-                        className="bg-primary-800 border-primary-700 text-white h-11 relative z-20" 
+                        className="bg-primary-800 border-primary-700 text-accent h-11 relative z-20" 
                       />
                     </FormControl>
                     <FormMessage />
@@ -180,7 +180,7 @@ const OrderLookup: React.FC = () => {
                       <Input 
                         placeholder={t('orderLookup.emailPlaceholder')} 
                         {...field} 
-                        className="bg-primary-800 border-primary-700 text-white h-11 relative z-20" 
+                        className="bg-primary-800 border-primary-700 text-accent h-11 relative z-20" 
                       />
                     </FormControl>
                     <FormDescription className="text-primary-300 mt-2">
