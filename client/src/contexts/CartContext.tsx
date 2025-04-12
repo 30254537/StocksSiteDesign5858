@@ -85,11 +85,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       console.log('Add to cart response:', response.status); // Debugging
       
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Item added to cart",
-          variant: "default"
-        });
+        // Removed toast notification as per user request
+        
         // Force a delay before refreshing to ensure server has updated
         setTimeout(async () => {
           await refreshCart();
