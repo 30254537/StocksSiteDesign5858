@@ -513,6 +513,7 @@ export default function OrderManagement() {
                     <div className="mt-2">
                       <p className="text-sm font-medium text-accent">交易哈希:</p>
                       <p className="text-xs break-all bg-primary/20 p-2 rounded border border-accent/30">
+                        {selectedOrder.paymentMethod === 'usdt' ? 'USDT/TRC20: ' : 'STONKS: '}
                         {selectedOrder.transactionHash}
                       </p>
                     </div>
@@ -627,7 +628,10 @@ export default function OrderManagement() {
                 <div className="mb-6">
                   <h4 className="font-medium text-accent mb-2">交易哈希:</h4>
                   <div className="bg-primary/20 p-3 rounded border border-accent/30">
-                    <p className="whitespace-pre-line">{selectedOrder.notes}</p>
+                    <p className="whitespace-pre-line">
+                      {selectedOrder.paymentMethod === 'usdt' ? 'USDT/TRC20: ' : 'STONKS: '}
+                      {selectedOrder.notes}
+                    </p>
                   </div>
                 </div>
               )}
