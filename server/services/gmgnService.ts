@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { load } from 'cheerio';
+import { getStonksPrice as getJupiterStonksPrice } from './jupiterService';
 
 // STONKS代币合约地址
 const STONKS_CONTRACT_ADDRESS = '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump';
@@ -11,13 +12,30 @@ const SOL_STONKS_RATIO = 3531;
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 
 /**
- * 直接从CoinGecko API获取STONKS价格 (使用Pro API)
+ * 获取STONKS价格，使用多种数据源进行冗余
+ * 优先顺序：
+ * 1. Jupiter API (最准确)
+ * 2. CoinGecko Pro API
+ * 3. CoinGecko 免费API
+ * 4. 通过SOL价格和比率计算
  */
 export async function getStonksPriceFromGmgn(): Promise<number> {
   try {
-    console.log('使用CoinGecko Pro API直接获取STONKS价格...');
+    // 首先尝试使用Jupiter API获取STONKS价格
+    try {
+      console.log('优先使用Jupiter API获取STONKS实时价格...');
+      const jupiterPrice = await getJupiterStonksPrice();
+      
+      if (jupiterPrice && jupiterPrice > 0) {
+        console.log(`从Jupiter API获取STONKS价格成功: $${jupiterPrice}`);
+        return jupiterPrice;
+      }
+    } catch (jupiterError) {
+      console.error("从Jupiter API获取STONKS价格失败:", jupiterError);
+    }
     
-    // 首先尝试使用CoinGecko Pro API直接获取STONKS价格
+    // 如果Jupiter API失败，尝试使用CoinGecko Pro API
+    console.log('Jupiter API获取失败，尝试使用CoinGecko Pro API...');
     try {
       // 使用CoinGecko Pro API v3搜索端点获取STONKS价格
       // 修改API URL以包含API密钥作为查询参数
