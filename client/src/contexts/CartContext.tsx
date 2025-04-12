@@ -106,7 +106,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateCartItem = async (itemId: number, quantity: number, size?: string) => {
+  const updateCart = async (itemId: number, quantity: number, size?: string) => {
     try {
       setIsLoading(true);
       const response = await apiRequest('PUT', `/api/cart/${itemId}`, {
@@ -189,7 +189,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         totalPrice,
         totalEthPrice,
         addToCart,
-        updateCartItem,
+        updateCart,
         removeCartItem,
         clearCart,
         isCartOpen,
