@@ -777,7 +777,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 从OKX和GMGN平台获取实时价格
   async function fetchGmgnPrice(): Promise<number> {
     try {
-      // 优先使用OKX API获取价格
+      // 首先尝试使用GMGN API直接获取STONKS价格
+      console.log('使用GMGN API直接获取STONKS价格...');
+      
+      // 导入GMGN API服务
+      const { getStonksPriceFromGmgn } = await import('./services/gmgnService');
+      
+      // 从GMGN API获取STONKS价格
+      const price = await getStonksPriceFromGmgn();
+      
+      if (price && price > 0) {
+        console.log(`从GMGN API获取STONKS价格成功: ${price} USD`);
+        return price;
+      }
+      
+      throw new Error('GMGN API返回的价格无效');
+    } catch (gmgnError) {
+      console.error("从GMGN API获取价格失败，尝试备用方法:", gmgnError);
+      
+      // 备用方法1：使用OKX API
       if (process.env.OKX_API_KEY && process.env.OKX_SECRET_KEY && process.env.OKX_PASSPHRASE) {
         try {
           console.log('使用OKX API获取实时STONKS价格...');
@@ -793,74 +811,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             return price;
           }
         } catch (okxError) {
-          console.error("从OKX获取STONKS价格失败，尝试备用方法:", okxError);
+          console.error("从OKX获取STONKS价格失败，尝试下一个备用方法:", okxError);
         }
       }
       
-      // 如果OKX API失败，回退到GMGN平台
-      // 使用GMGN平台的Solana交易API获取实时价格
-      const STONKS_ADDRESS = '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump';
-      const SOL_ADDRESS = 'So11111111111111111111111111111111111111112';
-      
-      // 使用您提供的API端点获取交易路由信息
-      const gmgnRouterApiUrl = 'https://gmgn.ai/defi/router/v1/sol/tx/get_swap_route';
-      
-      console.log('使用GMGN Solana交易API获取实时STONKS价格...');
-      
-      // API请求参数
-      const params = {
-        token_in_address: SOL_ADDRESS,
-        token_out_address: STONKS_ADDRESS,
-        in_amount: '1000000', // 0.001 SOL
-        from_address: '3GgDt5NTx37uNzDBJ8UwFy9CHBKPzUDdiWr3ymUFH3ZD', // 任意Solana地址
-        slippage: 0.5
-      };
-      
-      // 获取SOL价格（USD）
-      const coingeckoApiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd';
-      const solanaResponse = await axios.get(coingeckoApiUrl, {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        },
-        timeout: 5000
-      });
-      
-      if (!solanaResponse.data || !solanaResponse.data.solana || !solanaResponse.data.solana.usd) {
-        throw new Error('无法获取SOL/USD价格');
-      }
-      
-      const solUsdPrice = solanaResponse.data.solana.usd;
-      console.log(`获取SOL价格成功: ${solUsdPrice} USD`);
-      
-      // 使用交易路由API获取STONKS实时价格
-      const routeResponse = await axios.get(gmgnRouterApiUrl, {
-        params: params,
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Referer': 'https://gmgn.ai/sol',
-          'Origin': 'https://gmgn.ai'
-        },
-        timeout: 8000
-      });
-      
-      if (routeResponse.status === 200 && routeResponse.data && routeResponse.data.success) {
-        const outAmount = parseFloat(routeResponse.data.data.out_amount);
-        // 计算价格：0.001 SOL可以换到多少STONKS
-        const priceInSol = 1000000 / outAmount; // SOL/STONKS比率
-        
-        // 换算成USD价格
-        const priceInUsd = parseFloat((priceInSol * solUsdPrice).toFixed(6));
-        
-        console.log(`GMGN平台上STONKS实时价格: ${priceInUsd} USD (${priceInSol} SOL)`);
-        return priceInUsd;
-      } else {
-        throw new Error('GMGN交易API响应无效');
-      }
-    } catch (error) {
-      console.error("从GMGN平台获取价格失败:", error);
-      
+      // 备用方法2：使用CoinGecko API
       try {
         // 尝试使用CoinGecko直接获取STONKS价格
         const coinGeckoApiUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=stonks&per_page=1';
@@ -887,7 +842,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("从CoinGecko获取STONKS价格失败:", backupError);
       }
       
-      // 所有API调用失败时使用COINGECKO_API_KEY访问高级API
+      // 备用方法3：使用CoinGecko Pro API
       if (process.env.COINGECKO_API_KEY) {
         try {
           const proApiUrl = `https://pro-api.coingecko.com/api/v3/coins/stonks/market_chart?vs_currency=usd&days=1&interval=hourly&x_cg_pro_api_key=${process.env.COINGECKO_API_KEY}`;
