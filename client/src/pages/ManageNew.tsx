@@ -1339,68 +1339,79 @@ export default function Manage() {
             <CardTitle>网站内容管理</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              <form 
-                className="space-y-4" 
-                onSubmit={async (e) => {
-                  e.preventDefault();
+            {/* 网站内容表单 */}
+            <form
+              className="mb-8 border-b border-accent/30 pb-8"
+              id="website-content-form"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                const contentId = document.getElementById("content-id")?.getAttribute("value");
+                const key = (document.getElementById("content-key") as HTMLInputElement).value.trim();
+                const value = (document.getElementById("content-value") as HTMLTextAreaElement).value.trim();
+                const type = "text"; // 默认类型
+                const language = "zh"; // 默认语言
+                const section = key.split('.')[0] || "other"; // 根据key提取section
+                
+                if (!key || !value) {
+                  toast({
+                    title: "表单错误",
+                    description: "内容标识符和内容文本都不能为空",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                try {
+                  let response;
                   
-                  const key = (document.getElementById("content-key") as HTMLInputElement).value;
-                  const value = (document.getElementById("content-value") as HTMLTextAreaElement).value;
-                  const contentId = document.getElementById("content-id")?.getAttribute("value");
-                  
-                  if (!key || !value) {
-                    toast({
-                      title: "表单错误",
-                      description: "标识符和内容不能为空",
-                      variant: "destructive",
+                  if (contentId) {
+                    // 编辑模式
+                    response = await apiRequest("PUT", `/api/website-contents/${contentId}`, {
+                      key,
+                      value,
+                      type,
+                      language,
+                      section,
+                      isActive: true
                     });
-                    return;
-                  }
-                  
-                  try {
-                    let response;
-                    
-                    if (contentId) {
-                      // 更新内容
-                      response = await apiRequest("PUT", `/api/website-contents/${contentId}`, {
-                        key,
-                        value
-                      });
-                    } else {
-                      // 创建新内容
-                      response = await apiRequest("POST", "/api/website-contents", {
-                        key,
-                        value
-                      });
-                    }
-                    
-                    if (response.ok) {
-                      toast({
-                        title: contentId ? "更新成功" : "添加成功",
-                        description: contentId ? "网站内容已成功更新" : "网站内容已成功添加",
-                      });
-                      
-                      // 重置表单
-                      (document.getElementById("website-content-form") as HTMLFormElement).reset();
-                      document.getElementById("content-id")?.removeAttribute("value");
-                      
-                      // 重新获取数据
-                      // 此处应添加获取网站内容的函数调用
-                    } else {
-                      throw new Error(await response.text());
-                    }
-                  } catch (error) {
-                    console.error("提交网站内容表单错误:", error);
-                    toast({
-                      title: "提交失败",
-                      description: "无法保存网站内容，请稍后再试",
-                      variant: "destructive",
+                  } else {
+                    // 新增模式
+                    response = await apiRequest("POST", "/api/website-contents", {
+                      key,
+                      value,
+                      type,
+                      language,
+                      section,
+                      isActive: true
                     });
                   }
-                }}
-                id="website-content-form"
-              >
+                  
+                  if (response.ok) {
+                    // 重置表单
+                    (document.getElementById("website-content-form") as HTMLFormElement).reset();
+                    document.getElementById("content-id")?.removeAttribute("value");
+                    setEditingContent(null);
+                    
+                    toast({
+                      title: contentId ? "更新成功" : "添加成功",
+                      description: contentId ? "网站内容已成功更新" : "新网站内容已成功添加",
+                    });
+                    
+                    // 重新获取内容列表
+                    await fetchWebsiteContents();
+                  } else {
+                    throw new Error(await response.text());
+                  }
+                } catch (error) {
+                  console.error("保存网站内容错误:", error);
+                  toast({
+                    title: "保存失败",
+                    description: "无法保存网站内容，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}>
                 <input type="hidden" id="content-id" />
                 
                 <div className="space-y-2">
@@ -1409,10 +1420,19 @@ export default function Manage() {
                   </label>
                   <Input
                     id="content-key"
-                    placeholder="输入内容的唯一标识符 (例如: home.banner.title)"
+                    placeholder="例如: footer.description, about.team.title, about.community.description"
                     className="bg-primary/50 border-accent"
                     required
                   />
+                  <p className="text-xs text-gray-400 mt-1">
+                    推荐的内容标识符格式：
+                    <br />
+                    - 关于我们/团队内容: <span className="text-accent">about.team.title</span> 和 <span className="text-accent">about.team.description</span>
+                    <br />
+                    - 社区内容: <span className="text-accent">about.community.title</span> 和 <span className="text-accent">about.community.description</span>
+                    <br />
+                    - 页脚公司描述: <span className="text-accent">footer.description</span>
+                  </p>
                 </div>
                 
                 <div className="space-y-2">
@@ -1422,18 +1442,33 @@ export default function Manage() {
                   <Textarea
                     id="content-value"
                     placeholder="输入网站内容文本"
-                    className="bg-primary/50 border-accent min-h-[120px]"
+                    className="bg-primary/50 border-accent min-h-[150px]"
                     required
                   />
                 </div>
                 
-                <div className="flex gap-4">
-                  <Button
-                    type="submit"
-                    className="bg-accent hover:bg-accent/80 text-black"
-                  >
-                    保存内容
+                <div className="flex justify-between items-center mt-4">
+                  <Button type="submit" className="bg-accent hover:bg-accent/80 text-black">
+                    {editingContent ? "更新内容" : "保存内容"}
                   </Button>
+                  
+                  {editingContent && (
+                    <Button 
+                      type="button" 
+                      variant="destructive" 
+                      onClick={() => {
+                        document.getElementById("content-id")?.removeAttribute("value");
+                        (document.getElementById("website-content-form") as HTMLFormElement).reset();
+                        setEditingContent(null);
+                        toast({
+                          title: "已取消编辑",
+                          description: "已退出编辑模式",
+                        });
+                      }}
+                    >
+                      取消编辑
+                    </Button>
+                  )}
                 </div>
               </form>
               
@@ -1449,13 +1484,87 @@ export default function Manage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* 此处应显示网站内容列表 */}
-                      {/* 暂时显示提示信息 */}
-                      <TableRow>
-                        <TableCell colSpan={3} className="text-center py-8 text-gray-400">
-                          网站内容将在此处显示
-                        </TableCell>
-                      </TableRow>
+                      {loadingWebsiteContents ? (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center py-8">
+                            <div className="flex justify-center">
+                              <div className="animate-spin w-6 h-6 border-2 border-accent border-t-transparent rounded-full" />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : websiteContents.length > 0 ? (
+                        websiteContents.map((content) => (
+                          <TableRow key={content.id}>
+                            <TableCell className="font-medium">{content.key}</TableCell>
+                            <TableCell className="max-w-md">
+                              <div className="max-h-20 overflow-y-auto">
+                                {content.value}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex space-x-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-8 px-2 border-accent text-accent hover:bg-accent hover:text-black"
+                                  onClick={() => {
+                                    // 设置编辑的内容
+                                    setEditingContent(content);
+                                    // 将内容填充到表单中
+                                    document.getElementById("content-id")?.setAttribute("value", content.id.toString());
+                                    (document.getElementById("content-key") as HTMLInputElement).value = content.key;
+                                    (document.getElementById("content-value") as HTMLTextAreaElement).value = content.value;
+                                    
+                                    // 滚动到表单
+                                    document.getElementById("website-content-form")?.scrollIntoView({ behavior: "smooth" });
+                                  }}
+                                >
+                                  编辑
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  className="h-8 px-2"
+                                  onClick={async () => {
+                                    if (window.confirm(`确定要删除 "${content.key}" 吗?`)) {
+                                      try {
+                                        const response = await apiRequest("DELETE", `/api/website-contents/${content.id}`);
+                                        
+                                        if (response.ok) {
+                                          toast({
+                                            title: "删除成功",
+                                            description: "网站内容已成功删除",
+                                          });
+                                          
+                                          // 重新获取内容列表
+                                          await fetchWebsiteContents();
+                                        } else {
+                                          throw new Error(await response.text());
+                                        }
+                                      } catch (error) {
+                                        console.error("删除网站内容错误:", error);
+                                        toast({
+                                          title: "删除失败",
+                                          description: "无法删除网站内容，请稍后再试",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }
+                                  }}
+                                >
+                                  删除
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center py-8 text-gray-400">
+                            暂无网站内容，请添加新内容
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                 </div>
