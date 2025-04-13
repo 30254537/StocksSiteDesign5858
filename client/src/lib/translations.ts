@@ -79,6 +79,8 @@ export const translations: Translations = {
     "product.returnPolicy": "30-Day Return Policy",
     "product.cryptoPayment": "Cryptocurrency Payment",
     "product.secureTransaction": "Secure Transaction",
+    "product.inStock": "In Stock",
+    "product.onlyLeft": "Only {0} left",
     
     // About Us
     "about.title": "About Us",
@@ -299,9 +301,15 @@ export const translations: Translations = {
     "product.description.1": "Premium hoodie featuring the KUBE logo. Made with high-quality materials for comfort and style.",
     "product.description.2": "Classic baseball cap design with the DEX logo embroidered on the front. Adjustable size suits all occasions.",
     "product.description.3": "STONKS DEX official T-shirt made from 100% organic cotton. Features DEX logo on front.",
+    "product.description.6": "High-quality STONKS collectible poster featuring iconic crypto art perfect for your wall.",
+    "product.description.7": "High-resolution printed poster featuring STONKS DEX branded imagery and logo elements.",
     "product.description.8": "Limited Edition NFT collectible. Digital asset with provable scarcity on the blockchain.",
     "product.description.15": "STONKS DEX branded ceramic mug. Perfect for your morning coffee while checking crypto prices.",
-    "product.description.19": "Custom Nike shoes with STONKS DEX branding. Limited edition collaboration with Nike."
+    "product.description.16": "Premium quality hoodie with STONKS DEX logo. Warm and comfortable for crypto trading in any weather.",
+    "product.description.17": "Collectible trading card set featuring STONKS DEX characters and crypto themes.",
+    "product.description.18": "Adjustable baseball cap with embroidered STONKS DEX logo. Perfect for casual wear.",
+    "product.description.19": "Custom Nike shoes with STONKS DEX branding. Limited edition collaboration with Nike.",
+    "product.description.20": "Limited edition jacket featuring STONKS DEX premium design. Water-resistant with inner pockets."
   },
   zh: {
     // Navigation
@@ -385,6 +393,8 @@ export const translations: Translations = {
     "product.returnPolicy": "30天退换政策",
     "product.cryptoPayment": "加密货币支付",
     "product.secureTransaction": "安全交易",
+    "product.inStock": "有货",
+    "product.onlyLeft": "仅剩 {0} 件",
     
     // About Us
     "about.title": "关于我们",
