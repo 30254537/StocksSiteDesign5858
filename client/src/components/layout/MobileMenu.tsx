@@ -56,14 +56,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Brand */}
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
-              <img 
-                src="/images/logo.svg" 
-                alt="STONKS Logo" 
-                className="w-8 h-8 mr-2" 
-              />
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
-            <span className="text-accent text-xs ml-7">Powered by $STONKS</span>
+            <span className="text-accent text-xs ml-1">Powered by $STONKS</span>
           </div>
           
           {/* Close Button */}
