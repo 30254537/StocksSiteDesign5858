@@ -98,7 +98,7 @@ export default function ProductDetail() {
           {/* Product Image Gallery */}
           <div className="flex flex-col justify-center">
             {/* Back to Products Button */}
-            <Link href="/#products" className="self-start mb-2">
+            <Link href="/merchandise" className="self-start mb-2">
               <Button variant="ghost" size="sm" className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all">
                 <ArrowLeft size={18} className="mr-1" />
                 <span>{t("product.backToProducts", "Back to Products")}</span>

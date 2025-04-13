@@ -48,7 +48,7 @@ export default function CartModal() {
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <i className="fas fa-shopping-cart text-4xl text-gray-500 mb-4"></i>
                 <p id="cart-description" className="text-gray-300 mb-4">{t("cart.emptyCart")}</p>
-                <Link href="/#products">
+                <Link href="/merchandise">
                   <Button 
                     variant="outline" 
                     className="border-accent text-accent hover:bg-accent hover:text-primary"
@@ -134,13 +134,15 @@ export default function CartModal() {
               </Link>
               
               {/* Continue Shopping */}
-              <Button 
-                variant="outline"
-                className="w-full mt-3 border border-accent text-accent py-2 rounded-lg font-medium hover:bg-accent/10 transition-colors duration-300"
-                onClick={closeCart}
-              >
-                {t("cart.continueShopping")}
-              </Button>
+              <Link href="/merchandise">
+                <Button 
+                  variant="outline"
+                  className="w-full mt-3 border border-accent text-accent py-2 rounded-lg font-medium hover:bg-accent/10 transition-colors duration-300"
+                  onClick={closeCart}
+                >
+                  {t("cart.continueShopping")}
+                </Button>
+              </Link>
             </div>
           )}
         </div>
