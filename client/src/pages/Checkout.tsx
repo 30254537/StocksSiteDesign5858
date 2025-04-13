@@ -110,13 +110,13 @@ const UsdtDirectForm = () => {
     <form onSubmit={handleSubmit}>
       <div className="mb-6">
         <p className="mb-4 text-sm">
-          发送USDT到地址:
+          {t('checkout.sendUsdtTo')}
         </p>
         
         {/* USDT链选择 */}
         <div className="mb-6">
           <label className="block mb-2 text-sm font-medium text-accent">
-            选择USDT网络:
+            {t('checkout.selectUsdtNetwork')}
           </label>
           <div className="grid grid-cols-2 gap-2">
             {usdtChains.map(chain => (
@@ -310,7 +310,7 @@ const CryptoForm = () => {
     <form onSubmit={handleSubmit}>
       <div className="mb-6">
         <p className="mb-4 text-sm">
-          发送USDT到地址:
+          {t('checkout.sendUsdtTo')}
         </p>
         <div className="bg-slate-800 p-3 rounded-md font-mono text-sm mb-4 break-all user-select-all">
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
