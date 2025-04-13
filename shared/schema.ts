@@ -308,3 +308,5 @@ export const insertTweetSchema = createInsertSchema(tweets).omit({
 
 export type Tweet = typeof tweets.$inferSelect;
 export type InsertTweet = z.infer<typeof insertTweetSchema>;
+
+

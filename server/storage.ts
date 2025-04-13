@@ -9,7 +9,8 @@ import {
   CryptoTweet, InsertCryptoTweet,
   TelegramMessage, InsertTelegramMessage,
   CryptoNews, InsertCryptoNews,
-  ContractAddress, InsertContractAddress
+  ContractAddress, InsertContractAddress,
+  Subscriber, InsertSubscriber
 } from "@shared/schema";
 import {
   users, products, cartItems, 
