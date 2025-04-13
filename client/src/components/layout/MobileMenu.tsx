@@ -63,24 +63,38 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 xmlns="http://www.w3.org/2000/svg"
                 className="mr-2"
               >
-                <path 
-                  d="M50 75 L100 45 L150 75 L150 125 L100 155 L50 125 Z" 
-                  fill="none" 
-                  stroke="#00ffcc" 
-                  strokeWidth="15" 
-                />
-                <path 
-                  d="M50 90 L100 120 L150 90" 
-                  fill="none" 
-                  stroke="#00ffcc" 
-                  strokeWidth="15" 
-                />
-                <path 
-                  d="M100 45 L100 155" 
-                  fill="none" 
-                  stroke="#00ffcc" 
-                  strokeWidth="15" 
-                />
+                <g transform="translate(20, 20) scale(0.8)">
+                  <path 
+                    d="M100 10 L180 60 L180 140 L100 190 L20 140 L20 60 Z" 
+                    fill="none" 
+                    stroke="#00ffcc" 
+                    strokeWidth="1" 
+                  />
+                  <path 
+                    d="M100 10 L20 60 L75 90 L155 40 Z" 
+                    fill="#00ffcc"
+                  />
+                  <path 
+                    d="M20 60 L20 140 L75 110 L75 90 Z" 
+                    fill="#00ffcc"
+                  />
+                  <path 
+                    d="M75 110 L20 140 L100 190 L155 140 Z" 
+                    fill="#00ffcc"
+                  />
+                  <path 
+                    d="M155 40 L155 140 L100 190 L100 160 Z" 
+                    fill="#00ffcc"
+                  />
+                  <path 
+                    d="M100 70 L100 160 L45 130 L45 100 Z" 
+                    fill="#00ffcc"
+                  />
+                  <path 
+                    d="M100 70 L180 60 L180 140 L125 110 Z" 
+                    fill="#00ffcc"
+                  />
+                </g>
               </svg>
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
