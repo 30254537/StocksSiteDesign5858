@@ -94,9 +94,9 @@ export default function Header() {
               >
                 <div className="flex items-center justify-center mr-3">
                   <img 
-                    src="/images/stonks-characters.png" 
+                    src="/images/stonks-characters-2.png" 
                     alt="STONKS Characters" 
-                    className="w-8 h-8 rounded-full" 
+                    className="w-10 h-10 rounded-full bg-black" 
                     style={{ objectFit: 'contain' }}
                   />
                 </div>
