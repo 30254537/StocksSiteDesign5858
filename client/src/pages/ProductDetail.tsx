@@ -223,7 +223,10 @@ export default function ProductDetail() {
             <div className="mb-6">
               <div className="inline-block px-3 py-1 bg-accent/10 border border-accent/30 rounded-md text-accent text-sm">
                 <i className="fas fa-check-circle mr-1"></i>
-                {product.stock > 10 ? 'In Stock' : `Only ${product.stock} left`}
+                {product.stock > 10 
+                  ? (language === 'zh' ? '有货' : t('product.inStock', 'In Stock'))
+                  : (language === 'zh' ? `仅剩 ${product.stock} 件` : t('product.onlyLeft', `Only ${product.stock} left`))
+                }
               </div>
             </div>
             
