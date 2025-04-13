@@ -35,14 +35,14 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartModal from "@/components/ui/cart-modal";
 
-// 页面切换加载动画
+// 页面切换加载动画 - 更轻量级的加载动画
 const PageLoading = () => (
-  <div className="flex items-center justify-center min-h-[50vh]">
-    <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+  <div className="flex items-center justify-center min-h-[30vh]">
+    <div className="w-10 h-10 border-3 border-accent border-t-transparent rounded-full animate-spin"></div>
   </div>
 );
 
-// 页面切换动画
+// 页面切换动画 - 减少动画时间加快页面切换速度
 const pageVariants = {
   initial: {
     opacity: 0,
@@ -50,13 +50,13 @@ const pageVariants = {
   animate: {
     opacity: 1,
     transition: {
-      duration: 0.3,
+      duration: 0.15, // 减少动画时间加快响应
     },
   },
   exit: {
     opacity: 0,
     transition: {
-      duration: 0.2,
+      duration: 0.1, // 减少退出动画时间
     },
   },
 };
@@ -91,7 +91,7 @@ function Router() {
   }, [location]);
   
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync" initial={false}>
       <Suspense fallback={<PageLoading />}>
         <Switch key={location}>
           <Route path="/">
@@ -244,12 +244,23 @@ function App() {
   // 预加载常用页面减少延迟
   useEffect(() => {
     const preloadPages = async () => {
-      // 预加载首页和关于页面
+      // 首批预加载最常用的页面
       await Promise.all([
         import("@/pages/Home"),
-        import("@/pages/About"),
-        import("@/pages/Music")
+        import("@/pages/Merchandise"),
+        import("@/pages/CryptoNews"),
       ]);
+      
+      // 延迟加载次要页面，优先保证主页面响应速度
+      setTimeout(async () => {
+        await Promise.all([
+          import("@/pages/About"),
+          import("@/pages/Music"),
+          import("@/pages/Community"),
+          import("@/pages/MyOrders"),
+          import("@/pages/OrderLookup"),
+        ]);
+      }, 2000);
     };
     
     preloadPages();

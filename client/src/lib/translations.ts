@@ -635,8 +635,10 @@ export function clearTranslationCache(keyPrefix?: string): void {
 }
 
 export function getTranslation(key: TranslationKey, language: string): string {
-  // 添加调试信息
-  console.log(`获取翻译, 键: ${key}, 语言: ${language}`);
+  // 仅在开发环境输出调试信息
+  if (import.meta.env.DEV) {
+    console.log(`获取翻译, 键: ${key}, 语言: ${language}`);
+  }
   
   // 确保 language 是有效值
   const validLanguage = ['en', 'zh'].includes(language) ? language : defaultLanguage;
@@ -650,7 +652,6 @@ export function getTranslation(key: TranslationKey, language: string): string {
   } 
   // 其他键使用缓存
   else if (translationCache[cacheKey] !== undefined) {
-    console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${translationCache[cacheKey]} (缓存)`);
     return translationCache[cacheKey];
   }
   
@@ -661,7 +662,6 @@ export function getTranslation(key: TranslationKey, language: string): string {
     if (!key.startsWith('product.name.')) {
       translationCache[cacheKey] = translation;
     }
-    console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${translation}`);
     return translation;
   }
   
@@ -672,12 +672,10 @@ export function getTranslation(key: TranslationKey, language: string): string {
     if (!key.startsWith('product.name.')) {
       translationCache[cacheKey] = translation;
     }
-    console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${translation} (默认语言)`);
     return translation;
   }
   
   // 如果都没有，返回键名
-  console.log(`翻译请求 - 键: ${key}, 语言: ${language}, 结果: ${key} (未找到翻译)`);
   return key;
 }
 
@@ -697,25 +695,49 @@ export function setUserLanguage(language: string): void {
   }
 }
 
-// 翻译Hook
+// 创建语言上下文对象
+const currentLanguageRef = { current: getUserLanguage() };
 
+// 高性能翻译Hook
 export function useTranslation() {
-  const [language, setLanguage] = useState(getUserLanguage());
-
-  // 加载时读取用户语言设置
+  const [language, setLanguage] = useState(currentLanguageRef.current);
+  
+  // 预计算语言选择的影响，减少页面切换时的计算负担
   useEffect(() => {
+    // 确保我们有一致的内部状态
     setLanguage(getUserLanguage());
+    
+    // 注册语言变更监听器
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'language') {
+        const newLang = getUserLanguage();
+        currentLanguageRef.current = newLang;
+        setLanguage(newLang);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
-  // 切换语言
+  // 切换语言 - 优化版本
   const changeLanguage = useCallback((newLanguage: string) => {
-    if (['en', 'zh'].includes(newLanguage)) {
+    if (['en', 'zh'].includes(newLanguage) && newLanguage !== language) {
       setUserLanguage(newLanguage);
+      currentLanguageRef.current = newLanguage;
       setLanguage(newLanguage);
+      
+      // 触发存储事件，让其他组件知道语言变更了
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'language',
+        newValue: newLanguage
+      }));
     }
-  }, []);
+  }, [language]);
 
-  // 翻译函数
+  // 翻译函数 - 使用记忆化避免不必要的重新渲染
   const t = useCallback((key: TranslationKey, fallback?: string) => {
     return getTranslation(key, language);
   }, [language]);
