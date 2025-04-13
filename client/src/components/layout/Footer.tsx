@@ -3,12 +3,35 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Footer() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
+  const [contactInfo, setContactInfo] = useState({
+    email: "stonksdexshop@gmail.com",
+    address: "香港岛中西区中环金融街8号"
+  });
+  
+  // 获取联系信息
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await apiRequest("GET", "/api/contact-info");
+        const data = await response.json();
+        setContactInfo({
+          email: data.email || contactInfo.email,
+          address: data.address || contactInfo.address
+        });
+      } catch (error) {
+        console.error("获取联系信息失败:", error);
+      }
+    };
+    
+    fetchContactInfo();
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,13 +133,13 @@ export default function Footer() {
               <li className="flex items-start">
                 <i className="fas fa-envelope mt-1 mr-2 text-accent"></i>
                 <span>
-                  邮箱: <a href="mailto:stonksdexshop@gmail.com" className="text-white hover:underline">stonksdexshop@gmail.com</a>
+                  邮箱: <a href={`mailto:${contactInfo.email}`} className="text-white hover:underline">{contactInfo.email}</a>
                 </span>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-2 text-accent"></i>
                 <span>
-                  地址: 香港岛中西区中环金融街8号
+                  地址: {contactInfo.address}
                 </span>
               </li>
             </ul>
