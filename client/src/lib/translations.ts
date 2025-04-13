@@ -235,6 +235,25 @@ export const translations: Translations = {
     "cryptoNews.noNews": "No news available",
     "cryptoNews.stayUpdated": "Follow us for more crypto updates",
     
+    // Team Section
+    "about.teamTitle": "Team Members",
+    "about.dev001Title": "DEV 001",
+    "about.dev001Role": "Chief Developer",
+    "about.dev001Description": "STONKS DEX core developer, responsible for the smart contracts and blockchain interactions of the decentralized STONKS DEX.",
+    "about.trader025Title": "TRADER 025",
+    "about.trader025Role": "Trading Strategist", 
+    "about.trader025Description": "Capital market expert and DEX liquidity provider, designing optimal trading paths and strategies for STONKS DEX.",
+    "about.artist108Title": "ARTIST 108",
+    "about.artist108Role": "Creative Director",
+    "about.artist108Description": "Responsible for all STONKS DEX merchandise design concepts, creating a unique decentralized brand image.",
+    "about.communityTitle": "Community",
+    "about.communityDescription": "STONKS DEX is community-driven, with members playing a crucial role in platform development.",
+    "about.communityPoint1": "Participate in platform governance by holding $STONKS tokens",
+    "about.communityPoint2": "Get discounts and early access to exclusive merchandise",
+    "about.communityPoint3": "Join community events including airdrops, mining challenges, and merchandise design contests",
+    "about.communityPoint4": "Provide feedback and suggestions for improving the decentralized STONKS DEX",
+    "about.joinTelegram": "Join our Telegram Community",
+    
     // Contact Info
     "contact.supportEmail": "support@stonksdex.io",
     "contact.companyAddress": "Singapore, Blockchain Tower #42-01",
@@ -274,7 +293,15 @@ export const translations: Translations = {
     "product.name.18": "STONKS DEX Baseball Cap",
     "product.name.19": "STONKS DEX Custom Nike Shoes",
     "product.name.20": "STONKS DEX Limited Edition Jacket",
-    "product.backToProducts": "Back to Products"
+    "product.backToProducts": "Back to Products",
+    
+    // Product Descriptions
+    "product.description.1": "Premium hoodie featuring the KUBE logo. Made with high-quality materials for comfort and style.",
+    "product.description.2": "Classic baseball cap design with the DEX logo embroidered on the front. Adjustable size suits all occasions.",
+    "product.description.3": "STONKS DEX official T-shirt made from 100% organic cotton. Features DEX logo on front.",
+    "product.description.8": "Limited Edition NFT collectible. Digital asset with provable scarcity on the blockchain.",
+    "product.description.15": "STONKS DEX branded ceramic mug. Perfect for your morning coffee while checking crypto prices.",
+    "product.description.19": "Custom Nike shoes with STONKS DEX branding. Limited edition collaboration with Nike."
   },
   zh: {
     // Navigation
