@@ -48,6 +48,8 @@ export interface IStorage {
   getFeaturedProducts(): Promise<Product[]>;
   getProductsByCategory(category: string): Promise<Product[]>;
   searchProducts(query: string): Promise<Product[]>;
+  setProductFeatured(id: number, featured: boolean): Promise<Product | undefined>;
+  updateProductOrder(id: number, displayOrder: number): Promise<Product | undefined>;
 
   // 购物车相关方法
   getCart(sessionId: string): Promise<CartItem[]>;
@@ -191,9 +193,37 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getFeaturedProducts(): Promise<Product[]> {
+    // 先按照displayOrder降序，然后按照id降序排序
     return db.select().from(products)
       .where(eq(products.featured, 1))
+      .orderBy(desc(products.displayOrder))
       .orderBy(desc(products.id));
+  }
+  
+  // 设置商品是否为置顶商品
+  async setProductFeatured(id: number, featured: boolean): Promise<Product | undefined> {
+    const [updatedProduct] = await db.update(products)
+      .set({ 
+        featured: featured ? 1 : 0,
+        updatedAt: new Date()
+      })
+      .where(eq(products.id, id))
+      .returning();
+    
+    return updatedProduct;
+  }
+  
+  // 更新商品的显示顺序
+  async updateProductOrder(id: number, displayOrder: number): Promise<Product | undefined> {
+    const [updatedProduct] = await db.update(products)
+      .set({ 
+        displayOrder,
+        updatedAt: new Date()
+      })
+      .where(eq(products.id, id))
+      .returning();
+    
+    return updatedProduct;
   }
   
   async getProductsByCategory(category: string): Promise<Product[]> {
@@ -485,7 +515,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getMusicTracks(): Promise<MusicTrack[]> {
-    return db.select().from(musicTracks).orderBy(asc(musicTracks.order));
+    return db.select().from(musicTracks).orderBy(asc(musicTracks.id));
   }
   
   async getMusicTrack(id: number): Promise<MusicTrack | undefined> {
