@@ -17,7 +17,7 @@ import { Loader2, Bitcoin, RefreshCw, DollarSign, User, Mail, Phone, MapPin } fr
 import { StonksPriceDisplay } from '@/components/ui/stonks-price-display';
 import { CustomerInfoForm } from '@/components/ui/customer-info-form';
 
-// USDT直接支付表单
+// USDT Direct Payment Form
 const UsdtDirectForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,14 +26,14 @@ const UsdtDirectForm = () => {
   const { toast } = useToast();
   const { clearCart, totalPrice } = useCart();
   
-  // 顾客联系信息
+  // Customer contact information
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
   const [transactionHash, setTransactionHash] = useState('');
 
-  // 添加USDT链选择
+  // Add USDT chain selection
   const [selectedUsdtChain, setSelectedUsdtChain] = useState('trc20');
   
   // USDT链选项
