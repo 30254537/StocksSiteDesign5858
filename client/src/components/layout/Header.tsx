@@ -95,15 +95,22 @@ export default function Header() {
                 <svg 
                   width="40" 
                   height="40" 
-                  viewBox="0 0 400 400" 
+                  viewBox="0 0 300 300" 
                   xmlns="http://www.w3.org/2000/svg"
                   className="mr-3"
                 >
+                  {/* 外部六边形 */}
                   <path 
-                    d="M200 40 L340 120 L340 280 L200 360 L60 280 L60 120 Z M140 120 L140 160 L200 200 L260 160 L260 120 L200 80 L140 120 Z M260 280 L260 240 L200 200 L140 240 L140 280 L200 320 L260 280 Z M200 160 L200 240 M120 140 L120 260 M280 140 L280 260" 
+                    d="M150 30 L270 100 L270 200 L150 270 L30 200 L30 100 Z" 
                     stroke="#00ffcc" 
-                    strokeWidth="30" 
+                    strokeWidth="8" 
                     fill="none"
+                  />
+                  
+                  {/* S形状 */}
+                  <path 
+                    d="M120 90 L180 90 L180 120 L90 120 L90 180 L180 180 L180 210 L120 210 L120 180 L210 180 L210 120 L120 120 Z" 
+                    fill="#00ffcc" 
                   />
                 </svg>
                 <div className="flex flex-col md:flex-row items-center">
