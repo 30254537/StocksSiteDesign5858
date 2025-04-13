@@ -424,11 +424,11 @@ const OrderSummary = () => {
       
 
       
-      {/* 添加STONKS实时价格转换信息 */}
+      {/* Add STONKS real-time price conversion information */}
       <div className="mt-4 border-t border-gray-700 pt-4">
         <StonksPriceDisplay amount={totalPrice} showConverter={false} />
         
-        {/* USDT到STONKS换算器 */}
+        {/* USDT to STONKS converter */}
         <div className="mt-4 pt-3 border-t border-gray-700">
           <h4 className="text-sm mb-2 text-center text-accent font-semibold">{t('stonksPrice.converter')}</h4>
           <div className="flex items-center space-x-2">
