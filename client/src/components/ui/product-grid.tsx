@@ -8,17 +8,22 @@ import { Product } from "@shared/schema";
 
 interface ProductGridProps {
   category?: string;
+  products?: Product[];
 }
 
-export function ProductGrid({ category = "all" }: ProductGridProps) {
+export function ProductGrid({ category = "all", products: externalProducts }: ProductGridProps) {
   const { t } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
-  const { data: products = [], isLoading } = useQuery<Product[]>({
+  // 如果外部传入了products数组，则使用它，否则从API获取
+  const { data: fetchedProducts = [], isLoading } = useQuery<Product[]>({
     queryKey: category === "all" ? ['/api/products'] : [`/api/products/category/${category}`],
-    enabled: true
+    enabled: !externalProducts // 只有在没有外部提供的products时才触发查询
   });
+  
+  // 使用外部传入的products或者从API获取的products
+  const products = externalProducts || fetchedProducts;
 
   const handleQuickView = (product: Product) => {
     setSelectedProduct(product);
