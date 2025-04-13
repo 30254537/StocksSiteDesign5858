@@ -13,6 +13,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 const NotFound = lazy(() => import("@/pages/not-found"));
 const Home = lazy(() => import("@/pages/Home"));
 const ProductDetail = lazy(() => import("@/pages/ProductDetail"));
+const Merchandise = lazy(() => import("@/pages/Merchandise"));
 const Checkout = lazy(() => import("@/pages/Checkout"));
 const CheckoutSuccess = lazy(() => import("@/pages/CheckoutSuccess"));
 const PaymentCallback = lazy(() => import("@/pages/PaymentCallback"));

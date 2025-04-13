@@ -105,7 +105,7 @@ export default function ProductDetail() {
               </Button>
             </Link>
             
-            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mt-2">
+            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mt-2 shadow-xl border border-accent/20">
               {/* Main Image - Clickable for zoom */}
               <div
                 onClick={() => setZoomModalOpen(true)}
@@ -117,9 +117,15 @@ export default function ProductDetail() {
                     : product.imageUrl} 
                   alt={product.name} 
                   className="w-full h-full object-cover" 
+                  style={{ 
+                    imageRendering: 'auto',
+                    objectFit: 'contain',
+                    backgroundColor: 'rgba(0,0,0,0.5)'
+                  }}
+                  loading="eager"
                 />
                 {/* Zoom indicator */}
-                <div className="absolute bottom-3 right-3 bg-black/70 hover:bg-accent/90 text-white p-2 rounded-full opacity-70 hover:opacity-100 shadow-lg transition-all">
+                <div className="absolute bottom-3 right-3 bg-black/70 hover:bg-accent/90 text-white p-2 rounded-full opacity-70 hover:opacity-100 shadow-lg transition-all backdrop-blur-sm">
                   <ZoomIn size={20} />
                 </div>
               </div>
@@ -163,21 +169,26 @@ export default function ProductDetail() {
             
             {/* Thumbnail Gallery */}
             {Array.isArray(product.imageUrls) && product.imageUrls.length > 1 && (
-              <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+              <div className="flex gap-3 mt-6 overflow-x-auto pb-3 px-1">
                 {product.imageUrls.map((url: string, index: number) => (
                   <button 
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`w-16 h-16 rounded overflow-hidden flex-shrink-0 border-2 transition-all ${
+                    className={`w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 transition-all shadow-lg transform hover:scale-105 ${
                       currentImageIndex === index 
-                        ? "border-accent" 
-                        : "border-transparent hover:border-gray-400"
+                        ? "border-2 border-accent ring-2 ring-accent/30" 
+                        : "border border-gray-600/50 hover:border-accent/50"
                     }`}
                   >
                     <img 
                       src={url} 
                       alt={`${product.name} view ${index + 1}`} 
                       className="w-full h-full object-cover"
+                      style={{ 
+                        imageRendering: 'auto',
+                        objectFit: 'cover'
+                      }}
+                      loading="eager"
                     />
                   </button>
                 ))}
