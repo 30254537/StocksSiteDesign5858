@@ -93,9 +93,9 @@ export default function Header() {
                 onClick={scrollToTop}
               >
                 <img 
-                  src="/stonks-logo.svg" 
+                  src="/stonks-logo-small.svg" 
                   alt="STONKS DEX SHOP Logo" 
-                  className="h-12 mr-3" 
+                  className="h-10 mr-3" 
                 />
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
