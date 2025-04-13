@@ -59,22 +59,38 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <svg 
                 width="32" 
                 height="32" 
-                viewBox="0 0 300 300" 
+                viewBox="0 0 100 100" 
                 xmlns="http://www.w3.org/2000/svg"
                 className="mr-2"
               >
-                {/* 外部六边形 */}
+                {/* 六边形外框 */}
                 <path 
-                  d="M150 30 L270 100 L270 200 L150 270 L30 200 L30 100 Z" 
-                  stroke="#00ffcc" 
-                  strokeWidth="8" 
+                  d="M50 10 L87 30 L87 70 L50 90 L13 70 L13 30 Z" 
+                  fill="white" 
+                />
+                
+                {/* S形状 - 使用两条粗线段形成S */}
+                <path 
+                  d="M35 30 L65 30 L65 50 L35 50 L35 70 L65 70" 
+                  stroke="white" 
+                  strokeWidth="0" 
                   fill="none"
                 />
                 
-                {/* S形状 */}
+                {/* 右上到左下的斜线 */}
                 <path 
-                  d="M120 90 L180 90 L180 120 L90 120 L90 180 L180 180 L180 210 L120 210 L120 180 L210 180 L210 120 L120 120 Z" 
-                  fill="#00ffcc" 
+                  d="M65 30 L35 70" 
+                  stroke="#00ffcc" 
+                  strokeWidth="12" 
+                  strokeLinecap="round"
+                />
+                
+                {/* 左上到右下的斜线 */}
+                <path 
+                  d="M35 30 L65 70" 
+                  stroke="#00ffcc" 
+                  strokeWidth="12" 
+                  strokeLinecap="round"
                 />
               </svg>
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
