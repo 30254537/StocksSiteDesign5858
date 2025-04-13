@@ -11,11 +11,46 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Product } from '@shared/schema';
-import { useProductTranslations } from '@/hooks/use-product-translations';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+// 创建简单的翻译函数，因为useProductTranslations不包含通用翻译功能
+function useTranslations() {
+  const { language } = useLanguage();
+  
+  const t = (key: string, defaultValue: string) => {
+    // 简单的翻译实现
+    const translations: Record<string, Record<string, string>> = {
+      'zh': {
+        'category.clothing': '服装',
+        'category.accessory': '配件',
+        'category.collectible': '收藏品',
+        'category.digital': '数字产品',
+        'category.limited': '限量版',
+      },
+      'en': {
+        'category.clothing': 'Clothing',
+        'category.accessory': 'Accessory',
+        'category.collectible': 'Collectible',
+        'category.digital': 'Digital',
+        'category.limited': 'Limited Edition',
+      }
+    };
+    
+    const langKey = language === 'CN' ? 'zh' : 'en';
+    return translations[langKey]?.[key] || defaultValue;
+  };
+  
+  // 增加产品名称翻译方法
+  const getTranslatedName = (product: Product) => {
+    // 这里我们只返回原始名称，因为实际的翻译逻辑在别处处理
+    return product.name;
+  };
+  
+  return { t, getTranslatedName };
+}
+
 export default function ProductManagement() {
-  const { t } = useProductTranslations();
+  const { t, getTranslatedName } = useTranslations();
   const { language } = useLanguage();
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
