@@ -176,6 +176,11 @@ export const translations: Translations = {
     "footer.privacy": "Privacy Policy",
     "footer.terms": "Terms of Use",
     "footer.refund": "Refund Policy",
+    "footer.error": "Error",
+    "footer.success": "Success",
+    "footer.invalidEmail": "Please enter a valid email address",
+    "footer.subscribeSuccess": "You've been subscribed to our newsletter",
+    "footer.subscribeFailed": "Failed to subscribe. Please try again later",
     
     // Audio
     "audio.play": "Play background music",
@@ -503,6 +508,11 @@ export const translations: Translations = {
     "footer.privacy": "隐私政策",
     "footer.terms": "使用条款",
     "footer.refund": "退款政策",
+    "footer.error": "错误",
+    "footer.success": "成功",
+    "footer.invalidEmail": "请输入有效的邮箱地址",
+    "footer.subscribeSuccess": "您已成功订阅我们的通讯",
+    "footer.subscribeFailed": "订阅失败，请稍后再试",
     
     // Audio
     "audio.play": "播放背景音乐",
