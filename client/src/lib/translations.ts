@@ -541,6 +541,25 @@ export const translations: Translations = {
     "cryptoNews.noNews": "暂无可用新闻",
     "cryptoNews.stayUpdated": "关注我们以获取更多加密货币更新",
     
+    // Team Section
+    "about.teamTitle": "团队成员",
+    "about.dev001Title": "DEV 001",
+    "about.dev001Role": "首席开发官",
+    "about.dev001Description": "STONKS DEX核心开发者，负责去中心化STONKS DEX的智能合约和区块链交互。",
+    "about.trader025Title": "TRADER 025",
+    "about.trader025Role": "交易策略师", 
+    "about.trader025Description": "资深交易员和DEX流动性提供者，为STONKS DEX设计最佳交易路径和策略。",
+    "about.artist108Title": "ARTIST 108",
+    "about.artist108Role": "创意总监",
+    "about.artist108Description": "负责所有STONKS DEX周边的设计创意，打造独特的去中心化品牌形象。",
+    "about.communityTitle": "社区",
+    "about.communityDescription": "STONKS DEX由社区驱动，社区成员在平台发展中扮演着重要角色。",
+    "about.communityPoint1": "通过持有$STONKS代币参与平台治理",
+    "about.communityPoint2": "获取独家周边商品的折扣和早期访问权限",
+    "about.communityPoint3": "参与社区活动，包括空投、挖矿挑战和周边设计比赛",
+    "about.communityPoint4": "为去中心化 STONKS DEX 的改进提供反馈和建议",
+    "about.joinTelegram": "加入我们的Telegram社区",
+    
     // Contact Info
     "contact.supportEmail": "support@stonksdex.io",
     "contact.companyAddress": "新加坡, 区块链大厦 #42-01",
