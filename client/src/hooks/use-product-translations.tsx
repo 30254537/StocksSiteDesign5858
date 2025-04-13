@@ -37,9 +37,12 @@ export function useProductTranslations() {
     if (stock > 10) {
       return language === 'zh' ? '有货' : t('product.inStock', 'In Stock');
     } else {
-      return language === 'zh' 
-        ? `仅剩 ${stock} 件` 
-        : t('product.onlyLeft', `Only ${stock} left`);
+      // 处理数量格式化和翻译，确保替换 {0} 为实际数量
+      const stockText = language === 'zh' 
+        ? t('product.onlyLeft', `仅剩 {0} 件`).replace('{0}', stock.toString())
+        : t('product.onlyLeft', `Only {0} left`).replace('{0}', stock.toString());
+      
+      return stockText;
     }
   };
 

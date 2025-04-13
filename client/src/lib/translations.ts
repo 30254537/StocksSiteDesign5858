@@ -301,6 +301,7 @@ export const translations: Translations = {
     "product.description.1": "Premium hoodie featuring the KUBE logo. Made with high-quality materials for comfort and style.",
     "product.description.2": "Classic baseball cap design with the DEX logo embroidered on the front. Adjustable size suits all occasions.",
     "product.description.3": "STONKS DEX official T-shirt made from 100% organic cotton. Features DEX logo on front.",
+    "product.description.5": "Premium Bitcoin-themed STONKS hoodie with high-quality fabric. Features STONKS and BTC graphics on front and back.",
     "product.description.6": "High-quality STONKS collectible poster featuring iconic crypto art perfect for your wall.",
     "product.description.7": "High-resolution printed poster featuring STONKS DEX branded imagery and logo elements.",
     "product.description.8": "Limited Edition NFT collectible. Digital asset with provable scarcity on the blockchain.",
@@ -312,6 +313,8 @@ export const translations: Translations = {
     "product.description.20": "Limited edition jacket featuring STONKS DEX premium design. Water-resistant with inner pockets."
   },
   zh: {
+    // Product Descriptions
+    "product.description.5": "高品质比特币主题STONKS连帽衫，采用优质面料。前后印有STONKS和BTC图案。",
     // Navigation
     "nav.home": "首页",
     "nav.products": "周边产品",
