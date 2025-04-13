@@ -1,5 +1,5 @@
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Product } from '@/types/product';
+import { Product } from '@shared/schema';
 
 /**
  * 专门用于处理产品翻译的Hook，集中处理产品相关的所有翻译逻辑

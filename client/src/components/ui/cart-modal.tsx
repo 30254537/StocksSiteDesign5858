@@ -11,12 +11,14 @@ import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStonksPrice } from "@/contexts/StonksPriceContext";
+import { useProductTranslations } from "@/hooks/use-product-translations";
 import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib/utils";
 
 export default function CartModal() {
   const { cartItems, totalPrice, totalEthPrice, isCartOpen, closeCart, removeCartItem, updateCart } = useCart();
   const { t, language } = useLanguage();
   const { currentPrice } = useStonksPrice();
+  const { getTranslatedName } = useProductTranslations();
 
   const handleRemoveItem = (itemId: number) => {
     removeCartItem(itemId);
@@ -73,7 +75,7 @@ export default function CartModal() {
                     />
                     <div className="ml-4 flex-grow">
                       <h4 className="font-medium">
-                        {language === 'zh' ? item.product.name : (t(`product.name.${item.product.id}`, item.product.name))}
+                        {getTranslatedName(item.product)}
                       </h4>
                       {item.size && (
                         <span className="text-sm text-gray-400 mr-2">

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStonksPrice } from "@/contexts/StonksPriceContext";
+import { useProductTranslations } from "@/hooks/use-product-translations";
 import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ZoomIn, ArrowLeft } from "lucide-react";
 import { Product } from "@shared/schema";
@@ -16,6 +17,7 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
   const { t, language } = useLanguage();
   const { currentPrice } = useStonksPrice();
+  const { getTranslatedName, getTranslatedDescription, getTranslatedStockStatus } = useProductTranslations();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -199,8 +201,8 @@ export default function ProductDetail() {
           {/* Product Details */}
           <div className="flex flex-col justify-center md:h-full py-8 mt-8">
             <h1 className="text-3xl font-orbitron font-bold mb-4">
-              {/* 使用当前语言下的翻译名称，如果不存在则使用产品的原始名称 */}
-              {language === 'zh' ? product.name : (t(`product.name.${product.id}`, product.name))}
+              {/* 使用专用翻译Hook获取产品名称的翻译 */}
+              {getTranslatedName(product)}
             </h1>
             
             {/* Price */}
@@ -215,7 +217,8 @@ export default function ProductDetail() {
             <div className="mb-6">
               <p className="text-gray-400 mb-1">{t("product.description")}</p>
               <p className="text-gray-300">
-                {language === 'zh' ? product.description : (t(`product.description.${product.id}`, product.description))}
+                {/* 使用专用翻译Hook获取产品描述的翻译 */}
+                {getTranslatedDescription(product)}
               </p>
             </div>
             
@@ -223,10 +226,8 @@ export default function ProductDetail() {
             <div className="mb-6">
               <div className="inline-block px-3 py-1 bg-accent/10 border border-accent/30 rounded-md text-accent text-sm">
                 <i className="fas fa-check-circle mr-1"></i>
-                {product.stock > 10 
-                  ? (language === 'zh' ? '有货' : t('product.inStock', 'In Stock'))
-                  : (language === 'zh' ? `仅剩 ${product.stock} 件` : t('product.onlyLeft', `Only ${product.stock} left`))
-                }
+                {/* 使用专用翻译Hook获取库存状态的翻译 */}
+                {getTranslatedStockStatus(product.stock)}
               </div>
             </div>
             
