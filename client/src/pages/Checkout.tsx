@@ -36,7 +36,7 @@ const UsdtDirectForm = () => {
   // Add USDT chain selection
   const [selectedUsdtChain, setSelectedUsdtChain] = useState('trc20');
   
-  // USDT链选项
+  // USDT chain options
   const usdtChains = [
     { id: 'trc20', name: 'TRC20 (TRON)', logo: '⚡️', address: 'TNVaUw4sDHsVzsHx7ZQKGQQGbM12QyR4TF' },
     { id: 'erc20', name: 'ERC20 (Ethereum)', logo: '🔷', address: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e' },
@@ -44,7 +44,7 @@ const UsdtDirectForm = () => {
     { id: 'sol', name: 'Solana', logo: '🟣', address: '6NcdiK8B5KK2DzKvzvCfqi8EHaEqu48fyEzC8Mm9pump' }
   ];
   
-  // 获取当前选择的链的地址
+  // Get the address for the currently selected chain
   const currentChainAddress = usdtChains.find(chain => chain.id === selectedUsdtChain)?.address || '';
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,7 +56,7 @@ const UsdtDirectForm = () => {
     }
     
     if (!customerEmail) {
-      setError('请提供您的电子邮箱，以便我们联系您');
+      setError(t('checkout.emailRequired'));
       return;
     }
     
@@ -69,7 +69,7 @@ const UsdtDirectForm = () => {
     setError(null);
     
     try {
-      // 提交USDT支付详情
+      // Submit USDT payment details
       const response = await apiRequest('POST', '/api/crypto-checkout', {
         paymentMethod: 'usdt',
         transactionHash,
