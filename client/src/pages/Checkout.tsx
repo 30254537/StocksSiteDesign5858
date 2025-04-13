@@ -199,13 +199,13 @@ const UsdtDirectForm = () => {
   );
 };
 
-// USDT到STONKS换算器组件
+// USDT to STONKS Converter Component
 const UsdtToStonksConverter = () => {
   const [usdtAmount, setUsdtAmount] = useState<string>('0.00900000000000000001');
   const { convertUsdToStonks } = useStonksPrice();
   const { t, language } = useLanguage();
   
-  // 计算等值的STONKS数量
+  // Calculate equivalent STONKS amount
   const stonksAmount = !isNaN(parseFloat(usdtAmount)) 
     ? convertUsdToStonks(parseFloat(usdtAmount)) 
     : 0;
@@ -233,8 +233,8 @@ const UsdtToStonksConverter = () => {
   );
 };
 
-// 旧的基于Stripe的USDT表单已被移除
-// 替换为了全新的UsdtDirectForm组件
+// Old Stripe-based USDT form has been removed
+// Replaced with the new UsdtDirectForm component
 
 // Crypto checkout form
 const CryptoForm = () => {
@@ -247,7 +247,7 @@ const CryptoForm = () => {
   const { toast } = useToast();
   const { currentPrice, convertUsdToStonks } = useStonksPrice();
   
-  // 顾客联系信息
+  // Customer contact information
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
