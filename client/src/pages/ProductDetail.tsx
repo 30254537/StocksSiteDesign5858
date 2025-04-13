@@ -94,7 +94,7 @@ export default function ProductDetail() {
   return (
     <div className="container mx-auto px-4 pt-24 pb-16">
       <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-6 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-6">
           {/* Product Image Gallery */}
           <div className="flex flex-col">
             <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group">
@@ -178,7 +178,7 @@ export default function ProductDetail() {
           </div>
           
           {/* Product Details */}
-          <div className="flex flex-col justify-center md:h-full border-t border-b border-accent/30 py-6 my-4">
+          <div className="flex flex-col justify-center md:h-full py-8 my-6">
             <h1 className="text-3xl font-orbitron font-bold mb-4">
               {/* 使用当前语言下的翻译名称，如果不存在则使用产品的原始名称 */}
               {language === 'zh' ? product.name : (t(`product.name.${product.id}`, product.name))}
