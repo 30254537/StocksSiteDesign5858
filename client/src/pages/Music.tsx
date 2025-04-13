@@ -127,17 +127,15 @@ export default function MusicPage() {
         <div className="relative mb-12">
           <div className="absolute inset-0 z-0 overflow-hidden rounded-xl">
             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10"></div>
-            <div className="absolute bottom-0 left-0 right-0 z-5 h-1/4">
-              <MusicVisualizer 
-                className="w-full h-full" 
-                height={isMobile ? 60 : 80} // 更小的高度，位于页面最底部
-                barCount={isMobile ? 180 : 320} // 增加更多条数，使竖条更密集
-                barWidth={1} // 极细的条
-                gap={0.5} // 进一步减小间隙
-                sensitivity={1.5} // 降低灵敏度，使条的高度变化更自然
-                position="bottom" // 将波纹放在底部黑色背景上
-              />
-            </div>
+            <MusicVisualizer 
+              className="w-full h-full" 
+              height={isMobile ? 100 : 120} // 更小的高度，类似图片中的效果
+              barCount={isMobile ? 120 : 240} // 进一步增加条数，使竖条更密集
+              barWidth={1} // 极细的条
+              gap={1} // 减小间隙使竖条更密集，更接近图片中的效果
+              sensitivity={1.8} // 增加灵敏度，使条的高度变化更明显
+              position="bottom" // 将波纹放在底部黑色背景上
+            />
           </div>
           
           <div className="relative z-20 p-8 sm:p-12 flex flex-col items-center justify-center text-center">

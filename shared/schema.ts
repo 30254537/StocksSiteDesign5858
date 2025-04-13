@@ -41,15 +41,15 @@ export const products = pgTable("products", {
   stock: integer("stock").notNull().default(10),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  featured: integer("featured").default(0), // 是否置顶(1=置顶)
+  featured: integer("featured").default(0),
   hasSizes: integer("has_sizes").default(0),
-  displayOrder: integer("display_order").default(0), // 排序顺序，数字越大越靠前
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+  featured: true,
 });
 
 // Cart item model
