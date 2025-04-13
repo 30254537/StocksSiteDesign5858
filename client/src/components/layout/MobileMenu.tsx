@@ -56,11 +56,32 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Brand */}
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
-              <img 
-                src="/images/logo.svg" 
-                alt="STONKS Logo" 
-                className="w-8 h-8 mr-2" 
-              />
+              <svg 
+                width="32" 
+                height="32" 
+                viewBox="0 0 200 200" 
+                xmlns="http://www.w3.org/2000/svg"
+                className="mr-2"
+              >
+                <path 
+                  d="M50 75 L100 45 L150 75 L150 125 L100 155 L50 125 Z" 
+                  fill="none" 
+                  stroke="#00ffcc" 
+                  strokeWidth="15" 
+                />
+                <path 
+                  d="M50 90 L100 120 L150 90" 
+                  fill="none" 
+                  stroke="#00ffcc" 
+                  strokeWidth="15" 
+                />
+                <path 
+                  d="M100 45 L100 155" 
+                  fill="none" 
+                  stroke="#00ffcc" 
+                  strokeWidth="15" 
+                />
+              </svg>
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
             <span className="text-accent text-xs ml-7">Powered by $STONKS</span>
