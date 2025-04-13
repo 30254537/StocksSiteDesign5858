@@ -214,7 +214,9 @@ export default function ProductDetail() {
             {/* Description */}
             <div className="mb-6">
               <p className="text-gray-400 mb-1">{t("product.description")}</p>
-              <p className="text-gray-300">{product.description}</p>
+              <p className="text-gray-300">
+                {language === 'zh' ? product.description : (t(`product.description.${product.id}`, product.description))}
+              </p>
             </div>
             
             {/* Stock Info */}
@@ -230,9 +232,9 @@ export default function ProductDetail() {
               <div className="mb-6">
                 <p className="text-gray-400 mb-2">{t("product.size")}</p>
                 <div className="flex space-x-3">
-                  {/* 根据产品类别显示不同的尺码选项 */}
+                  {/* Display different size options based on product category */}
                   {product.category === "shoes" ? 
-                    // 鞋子尺码选项
+                    // Shoe size options
                     ["38", "39", "40", "41", "42", "43", "44", "45"].map((size) => (
                       <button 
                         key={size}
@@ -247,7 +249,7 @@ export default function ProductDetail() {
                       </button>
                     ))
                     : 
-                    // 服装尺码选项
+                    // Clothing size options
                     ["S", "M", "L", "XL"].map((size) => (
                       <button 
                         key={size}

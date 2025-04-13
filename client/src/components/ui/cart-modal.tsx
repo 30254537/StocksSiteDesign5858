@@ -15,7 +15,7 @@ import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib
 
 export default function CartModal() {
   const { cartItems, totalPrice, totalEthPrice, isCartOpen, closeCart, removeCartItem, updateCart } = useCart();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { currentPrice } = useStonksPrice();
 
   const handleRemoveItem = (itemId: number) => {
@@ -72,10 +72,12 @@ export default function CartModal() {
                       className="w-16 h-16 object-cover rounded" 
                     />
                     <div className="ml-4 flex-grow">
-                      <h4 className="font-medium">{item.product.name}</h4>
+                      <h4 className="font-medium">
+                        {language === 'zh' ? item.product.name : (t(`product.name.${item.product.id}`, item.product.name))}
+                      </h4>
                       {item.size && (
                         <span className="text-sm text-gray-400 mr-2">
-                          Size: {item.size}
+                          {t("product.size").replace(":", "")}: {item.size}
                         </span>
                       )}
                       <div className="flex items-center mt-1">
