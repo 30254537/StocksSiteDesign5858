@@ -105,15 +105,15 @@ export default function Footer() {
           
           {/* Column 3: Contact */}
           <div>
-            <h3 className="text-xl font-orbitron font-medium mb-4 text-white">{t("footer.contactUs")}</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-xl font-orbitron font-medium mb-4 text-white">联系我们</h3>
+            <ul className="space-y-3 text-sm">
               <li className="flex items-start">
-                <i className="fas fa-envelope mt-1 mr-2 text-accent"></i>
-                <span>{t("contact.email")}</span>
+                <span className="text-accent mr-2">📧</span>
+                <span className="text-white">support@stonksdex.io</span>
               </li>
               <li className="flex items-start">
-                <i className="fas fa-map-marker-alt mt-1 mr-2 text-accent"></i>
-                <span>{t("contact.address")}</span>
+                <span className="text-accent mr-2">📍</span>
+                <span className="text-white">新加坡, 区块大厦 #42-01</span>
               </li>
             </ul>
           </div>

@@ -108,20 +108,20 @@ export default function ProductManagement() {
     if (selectedCategory === 'all') {
       return [...products].sort((a, b) => {
         // 先按特色产品排序
-        if (a.is_featured && !b.is_featured) return -1;
-        if (!a.is_featured && b.is_featured) return 1;
+        if ((a.featured && !b.featured) || (a.featured === 1 && b.featured !== 1)) return -1;
+        if ((!a.featured && b.featured) || (a.featured !== 1 && b.featured === 1)) return 1;
         
         // 再按显示顺序排序
-        return (a.display_order || 0) - (b.display_order || 0);
+        return (a.displayOrder || 0) - (b.displayOrder || 0);
       });
     }
     
     return products
       .filter(product => product.category === selectedCategory)
       .sort((a, b) => {
-        if (a.is_featured && !b.is_featured) return -1;
-        if (!a.is_featured && b.is_featured) return 1;
-        return (a.display_order || 0) - (b.display_order || 0);
+        if ((a.featured && !b.featured) || (a.featured === 1 && b.featured !== 1)) return -1;
+        if ((!a.featured && b.featured) || (a.featured !== 1 && b.featured === 1)) return 1;
+        return (a.displayOrder || 0) - (b.displayOrder || 0);
       });
   }, [products, selectedCategory]);
 
@@ -131,12 +131,26 @@ export default function ProductManagement() {
     const categorySet = new Set(products.map(p => p.category));
     return Array.from(categorySet);
   }, [products]);
+  
+  // 计算Stonks价格和USDT价格的帮助函数
+  const calculatePrices = React.useCallback((product: Product) => {
+    // 假设我们有一个全局STONKS价格为0.04USD
+    const stonksPrice = 0.04;
+    
+    // 计算STONKS价格，将产品价格除以STONKS价格
+    const priceStonks = product.price / stonksPrice;
+    
+    // USDT价格通常等于USD价格
+    const priceUsdt = product.price;
+    
+    return { priceStonks, priceUsdt };
+  }, []);
 
   // 处理特色产品切换
   const handleFeatureToggle = (product: Product) => {
     featureMutation.mutate({ 
       id: product.id, 
-      featured: !product.is_featured 
+      featured: !(product.featured === 1 || product.featured === true) 
     });
   };
 
@@ -213,7 +227,7 @@ export default function ProductManagement() {
               {language === 'CN' ? '总产品:' : 'Total:'} {products?.length || 0}
             </Badge>
             <Badge variant="secondary" className="text-xs">
-              {language === 'CN' ? '特色产品:' : 'Featured:'} {products?.filter(p => p.is_featured).length || 0}
+              {language === 'CN' ? '特色产品:' : 'Featured:'} {products?.filter(p => p.featured === 1 || p.featured === true).length || 0}
             </Badge>
             <Badge variant="secondary" className="text-xs">
               {language === 'CN' ? '已筛选:' : 'Filtered:'} {filteredProducts.length}
@@ -233,14 +247,14 @@ export default function ProductManagement() {
           </div>
         ) : (
           filteredProducts.map((product, index) => (
-            <Card key={product.id} className={`p-4 ${product.is_featured ? 'border-accent' : ''}`}>
+            <Card key={product.id} className={`p-4 ${product.featured === 1 || product.featured === true ? 'border-accent' : ''}`}>
               <div className="flex flex-col sm:flex-row justify-between gap-4">
                 <div className="flex flex-1 gap-4">
-                  {product.image_url ? (
+                  {product.imageUrl ? (
                     <div className="w-16 h-16 rounded overflow-hidden bg-muted flex-shrink-0">
                       <img 
-                        src={product.image_url} 
-                        alt={t(product.id, 'name', product.name)}
+                        src={product.imageUrl} 
+                        alt={product.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -253,9 +267,9 @@ export default function ProductManagement() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-lg">
-                        {t(product.id, 'name', product.name)}
+                        {product.name}
                       </h3>
-                      {product.is_featured && (
+                      {(product.featured === 1 || product.featured === true) && (
                         <Badge className="bg-accent text-primary">
                           {language === 'CN' ? '特色' : 'Featured'}
                         </Badge>
@@ -268,13 +282,13 @@ export default function ProductManagement() {
                     
                     <div className="flex items-center gap-2 text-xs">
                       <Badge variant="outline" className="text-xs">
-                        {language === 'CN' ? '显示顺序:' : 'Order:'} {product.display_order || 0}
+                        {language === 'CN' ? '显示顺序:' : 'Order:'} {product.displayOrder || 0}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
-                        ⊙ {product.price_stonks.toFixed(6)} $STONKS
+                        ⊙ {calculatePrices(product).priceStonks.toFixed(6)} $STONKS
                       </Badge>
                       <Badge variant="outline" className="text-xs">
-                        USDT ${product.price_usdt}
+                        USDT ${calculatePrices(product).priceUsdt}
                       </Badge>
                     </div>
                   </div>
