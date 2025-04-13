@@ -95,42 +95,14 @@ export default function Header() {
                 <svg 
                   width="40" 
                   height="40" 
-                  viewBox="0 0 200 200" 
+                  viewBox="0 0 24 24" 
                   xmlns="http://www.w3.org/2000/svg"
                   className="mr-3"
                 >
-                  <g transform="translate(20, 20) scale(0.8)">
-                    <path 
-                      d="M100 10 L180 60 L180 140 L100 190 L20 140 L20 60 Z" 
-                      fill="none" 
-                      stroke="#00ffcc" 
-                      strokeWidth="1" 
-                    />
-                    <path 
-                      d="M100 10 L20 60 L75 90 L155 40 Z" 
-                      fill="#00ffcc"
-                    />
-                    <path 
-                      d="M20 60 L20 140 L75 110 L75 90 Z" 
-                      fill="#00ffcc"
-                    />
-                    <path 
-                      d="M75 110 L20 140 L100 190 L155 140 Z" 
-                      fill="#00ffcc"
-                    />
-                    <path 
-                      d="M155 40 L155 140 L100 190 L100 160 Z" 
-                      fill="#00ffcc"
-                    />
-                    <path 
-                      d="M100 70 L100 160 L45 130 L45 100 Z" 
-                      fill="#00ffcc"
-                    />
-                    <path 
-                      d="M100 70 L180 60 L180 140 L125 110 Z" 
-                      fill="#00ffcc"
-                    />
-                  </g>
+                  <path 
+                    d="M7 6 L17 6 L17 11 L12 11 L12 13 L17 13 L17 18 L7 18 L7 13 L12 13 L12 11 L7 11 Z" 
+                    fill="#00ffcc"
+                  />
                 </svg>
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
