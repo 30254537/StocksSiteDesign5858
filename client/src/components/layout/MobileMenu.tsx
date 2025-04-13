@@ -59,13 +59,15 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <svg 
                 width="32" 
                 height="32" 
-                viewBox="0 0 24 24" 
+                viewBox="0 0 400 400" 
                 xmlns="http://www.w3.org/2000/svg"
                 className="mr-2"
               >
                 <path 
-                  d="M7 6 L17 6 L17 11 L12 11 L12 13 L17 13 L17 18 L7 18 L7 13 L12 13 L12 11 L7 11 Z" 
-                  fill="#00ffcc"
+                  d="M200 40 L340 120 L340 280 L200 360 L60 280 L60 120 Z M140 120 L140 160 L200 200 L260 160 L260 120 L200 80 L140 120 Z M260 280 L260 240 L200 200 L140 240 L140 280 L200 320 L260 280 Z M200 160 L200 240 M120 140 L120 260 M280 140 L280 260" 
+                  stroke="#00ffcc" 
+                  strokeWidth="30" 
+                  fill="none"
                 />
               </svg>
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
