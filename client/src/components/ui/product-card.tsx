@@ -62,8 +62,8 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         <div className="p-4 flex-grow flex flex-col justify-between">
           <Link href={`/product/${product.id}`}>
             <h3 className="font-orbitron text-lg font-medium mb-3 hover:text-accent transition-colors cursor-pointer line-clamp-2">
-              {/* 始终优先使用产品的实际名称 */}
-              {product.name || t(`product.name.${product.id}`)}
+              {/* 使用当前语言下的翻译名称，如果不存在则使用产品的原始名称 */}
+              {language === 'zh' ? product.name : (t(`product.name.${product.id}`, product.name))}
             </h3>
           </Link>
           <div className="flex justify-between items-center mt-auto">
