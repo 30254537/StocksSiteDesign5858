@@ -29,18 +29,18 @@ export function CustomerInfoForm({
   
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-medium mb-4">联系信息</h3>
+      <h3 className="text-lg font-medium mb-4">{t('contact.title', 'Contact Information')}</h3>
       
       <div className="space-y-4">
         {/* 姓名 */}
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="customerName">
             <User className="w-4 h-4 inline mr-2" />
-            姓名:
+            {t('contact.name', 'Name:')}
           </Label>
           <Input
             id="customerName"
-            placeholder="请输入您的姓名"
+            placeholder={t('contact.namePlaceholder', 'Enter your name')}
             className="mt-1 bg-slate-800 border-gray-700"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
@@ -51,19 +51,19 @@ export function CustomerInfoForm({
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="customerEmail">
             <Mail className="w-4 h-4 inline mr-2" />
-            电子邮箱: <span className="text-red-500">*</span>
+            {t('contact.emailRequired', 'Email: *')}
           </Label>
           <Input
             id="customerEmail"
             type="email"
-            placeholder="请输入您的电子邮箱"
+            placeholder={t('contact.emailPlaceholder', 'Enter your email address')}
             className="mt-1 bg-slate-800 border-gray-700"
             value={customerEmail}
             onChange={(e) => setCustomerEmail(e.target.value)}
             required
           />
           <p className="mt-1 text-xs text-gray-500">
-            用于接收订单确认和状态更新
+            {t('contact.emailHint', 'Used for order confirmation and status updates')}
           </p>
         </div>
         
@@ -71,11 +71,11 @@ export function CustomerInfoForm({
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="customerPhone">
             <Phone className="w-4 h-4 inline mr-2" />
-            联系电话:
+            {t('contact.phone', 'Phone:')}
           </Label>
           <Input
             id="customerPhone"
-            placeholder="请输入您的联系电话"
+            placeholder={t('contact.phonePlaceholder', 'Enter your phone number')}
             className="mt-1 bg-slate-800 border-gray-700"
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
@@ -86,11 +86,11 @@ export function CustomerInfoForm({
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="shippingAddress">
             <MapPin className="w-4 h-4 inline mr-2" />
-            收货地址: <span className="text-red-500">*</span>
+            {t('contact.addressRequired', 'Shipping Address: *')}
           </Label>
           <Textarea
             id="shippingAddress"
-            placeholder={t('checkout.enterShippingAddress')}
+            placeholder={t('contact.addressPlaceholder', 'Enter your shipping address')}
             className="mt-1 bg-slate-800 border-gray-700"
             value={shippingAddress}
             onChange={(e) => setShippingAddress(e.target.value)}

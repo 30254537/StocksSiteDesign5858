@@ -228,8 +228,28 @@ export const translations: Translations = {
     "cryptoNews.stayUpdated": "Follow us for more crypto updates",
     
     // Contact Info
-    "contact.email": "support@stonksdex.io",
-    "contact.address": "Singapore, Blockchain Tower #42-01",
+    "contact.supportEmail": "support@stonksdex.io",
+    "contact.companyAddress": "Singapore, Blockchain Tower #42-01",
+    "contact.title": "Contact Information",
+    "contact.name": "Name:",
+    "contact.nameRequired": "Name:",
+    "contact.namePlaceholder": "Enter your name",
+    "contact.email": "Email:", 
+    "contact.emailRequired": "Email: *",
+    "contact.emailPlaceholder": "Enter your email address",
+    "contact.emailHint": "Used for order confirmation and status updates",
+    "contact.phone": "Phone:",
+    "contact.phonePlaceholder": "Enter your phone number",
+    "contact.address": "Shipping Address:",
+    "contact.addressRequired": "Shipping Address: *",
+    "contact.addressPlaceholder": "Enter your shipping address",
+    
+    // Checkout Page
+    "checkout.sendUsdtTo": "Send USDT to this address:",
+    "checkout.amountToSend": "Amount to send:",
+    "checkout.transactionHash": "Transaction Hash:",
+    "checkout.transactionHashPlaceholder": "Enter the transaction hash after sending STONKS",
+    "checkout.transactionHashHint": "Enter the transaction hash after sending",
     
     // Product Names
     "product.name.1": "KUBE Hoodie",
@@ -241,7 +261,18 @@ export const translations: Translations = {
     "product.name.7": "STONKS Poster",
     "product.name.8": "Limited NFT",
     "product.name.9": "STONKS Hoodie",
-    "product.name.10": "STONKS DEX Custom Sneakers"
+    "product.name.10": "STONKS DEX Custom Sneakers",
+    "product.name.11": "STONKS DEX Beach Towel",
+    "product.name.12": "STONKS DEX Water Bottle",
+    "product.name.13": "STONKS DEX Phone Case",
+    "product.name.14": "STONKS DEX Laptop Sleeve",
+    "product.name.15": "STONKS DEX Mug",
+    "product.name.16": "STONKS DEX Hoodie",
+    "product.name.17": "STONKS DEX Trading Card Set",
+    "product.name.18": "STONKS DEX Baseball Cap",
+    "product.name.19": "STONKS DEX Custom Nike Shoes",
+    "product.name.20": "STONKS DEX Limited Edition Jacket",
+    "product.backToProducts": "Back to Products"
   },
   zh: {
     // Navigation
@@ -474,8 +505,21 @@ export const translations: Translations = {
     "cryptoNews.stayUpdated": "关注我们以获取更多加密货币更新",
     
     // Contact Info
-    "contact.email": "support@stonksdex.io",
-    "contact.address": "新加坡, 区块链大厦 #42-01"
+    "contact.supportEmail": "support@stonksdex.io",
+    "contact.companyAddress": "新加坡, 区块链大厦 #42-01",
+    "contact.title": "联系信息",
+    "contact.name": "姓名:",
+    "contact.nameRequired": "姓名:",
+    "contact.namePlaceholder": "请输入您的姓名",
+    "contact.email": "电子邮箱:", 
+    "contact.emailRequired": "电子邮箱: *",
+    "contact.emailPlaceholder": "请输入您的电子邮箱",
+    "contact.emailHint": "用于接收订单确认和状态更新",
+    "contact.phone": "联系电话:",
+    "contact.phonePlaceholder": "请输入您的联系电话",
+    "contact.address": "收货地址:",
+    "contact.addressRequired": "收货地址: *",
+    "contact.addressPlaceholder": "请输入您的收货地址"
   }
 };
 
