@@ -174,7 +174,7 @@ export default function MyOrders() {
         {order.transactionHash && (
           <div className="p-3 rounded-lg bg-primary-foreground/5 border border-border/50">
             <p className="text-sm font-medium text-accent mb-1">
-              {t('checkout.transactionHash', 'Transaction Hash')}
+              {t('orders.transactionHash')}
             </p>
             <p className="text-sm font-mono overflow-auto break-all">
               {formatTransactionHash(order.transactionHash, order.paymentMethod)}
