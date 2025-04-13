@@ -109,11 +109,15 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-start">
                 <i className="fas fa-envelope mt-1 mr-2 text-accent"></i>
-                <span>{t("contact.email")}</span>
+                <span>
+                  {t("contact.email")} <a href="mailto:stonksdexshop@gmail.com" className="text-accent hover:underline">stonksdexshop@gmail.com</a>
+                </span>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-2 text-accent"></i>
-                <span>{t("contact.address")}</span>
+                <span>
+                  {t("contact.address")} 香港岛中西区中环金融街8号
+                </span>
               </li>
             </ul>
           </div>
