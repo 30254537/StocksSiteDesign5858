@@ -110,13 +110,13 @@ export default function Footer() {
               <li className="flex items-start">
                 <i className="fas fa-envelope mt-1 mr-2 text-accent"></i>
                 <span>
-                  {t("contact.email")} <a href="mailto:stonksdexshop@gmail.com" className="text-accent hover:underline">stonksdexshop@gmail.com</a>
+                  邮箱: <a href="mailto:stonksdexshop@gmail.com" className="text-white hover:underline">stonksdexshop@gmail.com</a>
                 </span>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-2 text-accent"></i>
                 <span>
-                  {t("contact.address")} 香港岛中西区中环金融街8号
+                  地址: 香港岛中西区中环金融街8号
                 </span>
               </li>
             </ul>
