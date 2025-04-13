@@ -115,13 +115,13 @@ export default function Header() {
               </Link>
             </div>
             
-            {/* 主导航 - 中间 - 错落设计 */}
+            {/* 主导航 - 中间 - 统一单行布局 */}
             <nav className="hidden md:flex flex-1 justify-center">
-              <div className="flex flex-col items-center">
-                <div className="flex items-center space-x-10 mb-3">
+              <div className="flex items-center">
+                <div className="flex items-center justify-between mx-auto px-4 w-full max-w-4xl">
                   <Link 
                     href="/" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
                       location === "/" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
@@ -131,7 +131,7 @@ export default function Header() {
                   
                   <Link 
                     href="/about" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
                       location === "/about" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
@@ -141,19 +141,17 @@ export default function Header() {
                   
                   <Link 
                     href="/order-lookup" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
                       location === "/order-lookup" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
                   >
                     {t("nav.orderLookup")}
                   </Link>
-                </div>
-                
-                <div className="flex items-center space-x-12 mt-3">
+                  
                   <a 
                     href="/#products" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
                       location.includes("#products") ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={handleProductsClick}
@@ -163,7 +161,7 @@ export default function Header() {
                   
                   <Link 
                     href="/telegram-messages" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap ${
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
                       location === "/telegram-messages" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
@@ -174,7 +172,7 @@ export default function Header() {
                   <a 
                     href="https://t.me/STONKSOPEN" 
                     target="_blank"
-                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 whitespace-nowrap"
+                    className="font-medium text-base text-white hover:text-accent transition-colors duration-300 whitespace-nowrap px-4 py-2"
                   >
                     {t("nav.community")}
                   </a>
