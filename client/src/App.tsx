@@ -220,6 +220,13 @@ function Router() {
               </PageWrapper>
             )}
           </Route>
+          <Route path="/merchandise">
+            {() => (
+              <PageWrapper>
+                <Merchandise />
+              </PageWrapper>
+            )}
+          </Route>
           <Route>
             {() => (
               <PageWrapper>

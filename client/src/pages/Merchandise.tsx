@@ -5,27 +5,28 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { NeonText } from "@/components/ui/neon-text";
 import { Helmet } from "react-helmet";
 import { Sparkles } from "lucide-react";
+import { Product } from "@shared/schema";
 
 export default function Merchandise() {
   const { t, language } = useLanguage();
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // 获取产品数据
-  const { data: products = [] } = useQuery({
+  const { data: products = [] } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
 
   // 过滤产品
   const filteredProducts = selectedCategory === "all"
     ? products
-    : products.filter((product) => product.category === selectedCategory);
+    : products.filter((product: Product) => product.category === selectedCategory);
 
   // 获取所有可用的产品类别
-  const categories = ["all", ...new Set(products.map(product => product.category))];
+  const categories = ["all", ...Array.from(new Set(products.map((product: Product) => product.category)))];
 
   // 将内部类别ID翻译为用户友好的显示名称
-  const getCategoryDisplayName = (categoryId) => {
-    const categoryNames = {
+  const getCategoryDisplayName = (categoryId: string): string => {
+    const categoryNames: Record<string, string> = {
       all: t("products.allCategories", "All Items"),
       clothing: t("products.clothingCategory", "Clothing"),
       accessories: t("products.accessoriesCategory", "Accessories"),

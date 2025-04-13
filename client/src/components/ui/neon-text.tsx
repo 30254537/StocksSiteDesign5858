@@ -2,10 +2,14 @@ import { ReactNode } from 'react';
 import { useAudio } from '@/contexts/AudioContext';
 import { cn } from '@/lib/utils';
 
-interface NeonTextProps {
-  children: ReactNode;
+export interface NeonTextProps {
+  children?: ReactNode;
+  text?: string;
   className?: string;
   style?: React.CSSProperties;
+  color?: string;
+  glowIntensity?: 'light' | 'medium' | 'strong';
+  as?: string;
 }
 
 export function NeonText({ children, className, style }: NeonTextProps) {
