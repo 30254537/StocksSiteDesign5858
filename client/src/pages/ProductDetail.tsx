@@ -6,7 +6,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStonksPrice } from "@/contexts/StonksPriceContext";
 import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn, ArrowLeft } from "lucide-react";
 import { Product } from "@shared/schema";
 import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
 
@@ -97,7 +97,15 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-6">
           {/* Product Image Gallery */}
           <div className="flex flex-col justify-center">
-            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mt-8">
+            {/* Back to Products Button */}
+            <Link href="/#products" className="self-start mb-2">
+              <Button variant="ghost" size="sm" className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all">
+                <ArrowLeft size={18} className="mr-1" />
+                <span>{t("product.backToProducts", "Back to Products")}</span>
+              </Button>
+            </Link>
+            
+            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mt-2">
               {/* Main Image - Clickable for zoom */}
               <div
                 onClick={() => setZoomModalOpen(true)}
