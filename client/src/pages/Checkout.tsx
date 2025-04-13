@@ -150,7 +150,7 @@ const UsdtDirectForm = () => {
       
       <div className="mb-6">
         <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.transactionHash')}:
+          {t('checkout.transactionHash')}
         </label>
         <input
           type="text"
@@ -322,7 +322,7 @@ const CryptoForm = () => {
       
       <div className="mb-6">
         <label className="block mb-2 text-sm font-medium text-accent">
-          {t('checkout.transactionHash')}:
+          {t('checkout.transactionHash')}
         </label>
         <input
           type="text"
