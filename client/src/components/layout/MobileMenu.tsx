@@ -114,17 +114,16 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </li>
             <li>
               <Link 
-                href="/about" 
+                href="/order-lookup" 
                 className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
                 onClick={() => {
                   scrollToTop();
                   onClose();
                 }}
               >
-                {t("nav.about")}
+                {t("nav.orderLookup")}
               </Link>
             </li>
-
             <li>
               <Link 
                 href="/telegram-messages" 
@@ -139,14 +138,14 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </li>
             <li>
               <Link 
-                href="/order-lookup" 
+                href="/about" 
                 className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
                 onClick={() => {
                   scrollToTop();
                   onClose();
                 }}
               >
-                {t("nav.orderLookup")}
+                {t("nav.about")}
               </Link>
             </li>
             <li>

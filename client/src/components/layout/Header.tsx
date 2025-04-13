@@ -129,26 +129,6 @@ export default function Header() {
                     {t("nav.home")}
                   </Link>
                   
-                  <Link 
-                    href="/about" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
-                      location === "/about" ? "text-accent" : "text-white hover:text-accent"
-                    }`}
-                    onClick={scrollToTop}
-                  >
-                    {t("nav.about")}
-                  </Link>
-                  
-                  <Link 
-                    href="/order-lookup" 
-                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
-                      location === "/order-lookup" ? "text-accent" : "text-white hover:text-accent"
-                    }`}
-                    onClick={scrollToTop}
-                  >
-                    {t("nav.orderLookup")}
-                  </Link>
-                  
                   <a 
                     href="/#products" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
@@ -160,6 +140,16 @@ export default function Header() {
                   </a>
                   
                   <Link 
+                    href="/order-lookup" 
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
+                      location === "/order-lookup" ? "text-accent" : "text-white hover:text-accent"
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    {t("nav.orderLookup")}
+                  </Link>
+                  
+                  <Link 
                     href="/telegram-messages" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
                       location === "/telegram-messages" ? "text-accent" : "text-white hover:text-accent"
@@ -167,6 +157,16 @@ export default function Header() {
                     onClick={scrollToTop}
                   >
                     {language === 'zh' ? '加密快讯' : 'Crypto News'}
+                  </Link>
+                  
+                  <Link 
+                    href="/about" 
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
+                      location === "/about" ? "text-accent" : "text-white hover:text-accent"
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    {t("nav.about")}
                   </Link>
                   
                   <a 

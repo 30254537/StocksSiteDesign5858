@@ -397,7 +397,7 @@ const OrderSummary = () => {
               {item.size && <span className="ml-1 text-sm text-gray-500">({item.size})</span>}
             </div>
             <div>
-              {formatCurrency(item.product.price * item.quantity)}
+              {formatCurrency(item.product.price * item.quantity, 'USD', false)}
             </div>
           </div>
         ))}
@@ -407,7 +407,7 @@ const OrderSummary = () => {
       
       <div className="flex justify-between mb-2">
         <div>{t('checkout.subtotal')}:</div>
-        <div>{formatCurrency(totalPrice)}</div>
+        <div>{formatCurrency(totalPrice, 'USD', false)}</div>
       </div>
       
       <div className="flex justify-between mb-4">
@@ -419,7 +419,7 @@ const OrderSummary = () => {
       
       <div className="flex justify-between font-bold mb-2">
         <div>{t('checkout.total')}:</div>
-        <div>{formatCurrency(totalPrice)}</div>
+        <div>{formatCurrency(totalPrice, 'USD', false)}</div>
       </div>
       
 
