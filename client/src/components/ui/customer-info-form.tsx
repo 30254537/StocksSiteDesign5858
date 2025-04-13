@@ -32,7 +32,7 @@ export function CustomerInfoForm({
       <h3 className="text-lg font-medium mb-4">{t('contact.title', 'Contact Information')}</h3>
       
       <div className="space-y-4">
-        {/* 姓名 */}
+        {/* Name */}
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="customerName">
             <User className="w-4 h-4 inline mr-2" />
@@ -47,7 +47,7 @@ export function CustomerInfoForm({
           />
         </div>
         
-        {/* 邮箱 */}
+        {/* Email */}
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="customerEmail">
             <Mail className="w-4 h-4 inline mr-2" />
@@ -67,7 +67,7 @@ export function CustomerInfoForm({
           </p>
         </div>
         
-        {/* 电话 */}
+        {/* Phone */}
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="customerPhone">
             <Phone className="w-4 h-4 inline mr-2" />
@@ -82,7 +82,7 @@ export function CustomerInfoForm({
           />
         </div>
         
-        {/* 收货地址 */}
+        {/* Shipping Address */}
         <div>
           <Label className="text-sm font-medium text-accent" htmlFor="shippingAddress">
             <MapPin className="w-4 h-4 inline mr-2" />

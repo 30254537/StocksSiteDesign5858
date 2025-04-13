@@ -113,7 +113,7 @@ const UsdtDirectForm = () => {
           {t('checkout.sendUsdtTo')}
         </p>
         
-        {/* USDT链选择 */}
+        {/* USDT Chain Selection */}
         <div className="mb-6">
           <label className="block mb-2 text-sm font-medium text-accent">
             {t('checkout.selectUsdtNetwork')}
