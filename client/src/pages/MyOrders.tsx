@@ -87,6 +87,7 @@ export default function MyOrders() {
     const methodMap: Record<string, string> = {
       stonks: "STONKS",
       usdt: "USDT",
+      crypto: "STONKS", // 将crypto替换为具体币种STONKS
       fiat: language === 'zh' ? "法币支付" : "Fiat"
     };
     return methodMap[method] || method;
@@ -143,7 +144,7 @@ export default function MyOrders() {
               <Gift className="h-4 w-4 text-accent" />
               <div>
                 <p className="text-sm font-medium text-accent">{t('orders.items')}</p>
-                <p className="text-sm">{order.items.length} {order.items.length > 1 ? t('items') : t('item')}</p>
+                <p className="text-sm">{order.items.length} {language === 'zh' ? '件商品' : (order.items.length > 1 ? 'items' : 'item')}</p>
               </div>
             </div>
             
@@ -221,7 +222,7 @@ export default function MyOrders() {
         </div>
 
         <div className="flex justify-between font-medium">
-          <p>{language === 'zh' ? '总计' : 'Total'}</p>
+          <p>{language === 'zh' ? '总计:' : 'Total:'}</p>
           <p>USDT ${Math.floor(order.total)}</p>
         </div>
       </div>
