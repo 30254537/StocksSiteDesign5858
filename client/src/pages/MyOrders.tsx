@@ -72,14 +72,7 @@ export default function MyOrders() {
 
   // 订单状态映射
   const getStatusDisplay = (status: string): string => {
-    const statusMap: Record<string, string> = {
-      pending: language === 'zh' ? "待付款" : "Pending",
-      paid: language === 'zh' ? "已付款" : "Paid",
-      shipped: language === 'zh' ? "已发货" : "Shipped",
-      completed: language === 'zh' ? "已完成" : "Completed",
-      cancelled: language === 'zh' ? "已取消" : "Cancelled"
-    };
-    return statusMap[status] || status;
+    return t(`orders.status.${status}`, status);
   };
 
   // 支付方式映射
@@ -181,7 +174,7 @@ export default function MyOrders() {
         {order.transactionHash && (
           <div className="p-3 rounded-lg bg-primary-foreground/5 border border-border/50">
             <p className="text-sm font-medium text-accent mb-1">
-              {language === 'zh' ? '交易哈希' : 'Transaction Hash'}
+              {t('checkout.transactionHash', 'Transaction Hash')}
             </p>
             <p className="text-sm font-mono overflow-auto break-all">
               {formatTransactionHash(order.transactionHash, order.paymentMethod)}
@@ -191,7 +184,7 @@ export default function MyOrders() {
 
         <div>
           <p className="text-sm font-medium text-accent mb-2">
-            {language === 'zh' ? '订单商品' : 'Order Items'}
+            {t('orders.orderItems', 'Order Items')}
           </p>
           <div className="space-y-4">
             {order.items.map((item) => (
@@ -222,7 +215,7 @@ export default function MyOrders() {
         </div>
 
         <div className="flex justify-between font-medium">
-          <p>{language === 'zh' ? '总计:' : 'Total:'}</p>
+          <p>{t('cart.total', 'Total:')}</p>
           <p>USDT ${Math.floor(order.total)}</p>
         </div>
       </div>
@@ -233,12 +226,12 @@ export default function MyOrders() {
     <div className="container mx-auto px-4 py-32 pt-40 max-w-6xl">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl font-bold text-white">
-          {language === 'zh' ? '我的订单' : 'My Orders'}
+          {t('orders.title', 'My Orders')}
         </h1>
         <Button asChild variant="outline">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {language === 'zh' ? '返回首页' : 'Back to Home'}
+            {t('orders.backToHome', 'Back to Home')}
           </Link>
         </Button>
       </div>
