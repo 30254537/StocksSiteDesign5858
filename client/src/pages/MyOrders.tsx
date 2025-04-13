@@ -262,7 +262,7 @@ export default function MyOrders() {
             </p>
             <Button asChild className="mt-4">
               <Link href="/">
-                {language === 'zh' ? '开始购物' : 'Start Shopping'}
+                {t('cart.startShopping', 'Start Shopping')}
               </Link>
             </Button>
           </CardContent>
@@ -272,11 +272,11 @@ export default function MyOrders() {
           <div className="md:col-span-1">
             <Card className="sticky top-24">
               <CardHeader>
-                <CardTitle>{language === 'zh' ? '订单列表' : 'Order List'}</CardTitle>
+                <CardTitle>{t('orders.orderList', 'Order List')}</CardTitle>
                 <CardDescription>
                   {language === 'zh' 
                     ? `共 ${orders.length} 个订单` 
-                    : `${orders.length} orders in total`}
+                    : `${orders.length} ${orders.length > 1 ? 'orders' : 'order'} in total`}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -310,18 +310,16 @@ export default function MyOrders() {
             <Card>
               <CardHeader className="pb-6">
                 <CardTitle className="text-xl mb-2">
-                  {language === 'zh' ? '订单详情' : 'Order Details'}
+                  {t('orders.orderDetails', 'Order Details')}
                 </CardTitle>
                 <CardDescription className="flex items-center">
                   {selectedOrderId ? (
                     <>
-                      <span className="font-semibold text-accent mr-1">订单号:</span> 
+                      <span className="font-semibold text-accent mr-1">{t('orders.orderNumber', 'Order Number')}:</span> 
                       <span className="font-mono">#{selectedOrderId}</span>
                     </>
                   ) : (
-                    language === 'zh' 
-                      ? '选择一个订单查看详情' 
-                      : 'Select an order to view details'
+                    t('orders.selectToView', 'Select an order to view details')
                   )}
                 </CardDescription>
               </CardHeader>
@@ -332,9 +330,7 @@ export default function MyOrders() {
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Package className="h-12 w-12 text-muted-foreground mb-4" />
                     <p>
-                      {language === 'zh' 
-                        ? '请从左侧选择一个订单查看详情' 
-                        : 'Please select an order from the list to view details'}
+                      {t('orders.selectToView', 'Select an order to view details')}
                     </p>
                   </div>
                 )}
