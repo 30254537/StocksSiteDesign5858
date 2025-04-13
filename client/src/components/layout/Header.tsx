@@ -94,14 +94,12 @@ export default function Header() {
               >
                 <div className="flex items-center justify-center mr-3">
                   <img 
-                    src="/images/stonks-characters-2.png" 
-                    alt="STONKS Characters" 
-                    className="w-10 h-10 rounded-full bg-black" 
-                    style={{ objectFit: 'contain' }}
+                    src="/images/stonks-logo.png" 
+                    alt="STONKS Logo" 
+                    className="h-8" 
                   />
                 </div>
                 <div className="flex flex-col md:flex-row items-center">
-                  <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
                   <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
                 </div>
               </Link>
