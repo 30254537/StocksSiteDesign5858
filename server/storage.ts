@@ -803,6 +803,66 @@ export class DatabaseStorage implements IStorage {
       items: itemsWithProducts
     };
   }
+
+  // 邮件订阅相关方法
+  async createSubscriber(email: string): Promise<Subscriber> {
+    try {
+      const [subscriber] = await db.insert(subscribers)
+        .values({
+          email,
+          subscribed: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      
+      return subscriber;
+    } catch (error) {
+      console.error('添加订阅者时出错:', error);
+      // 可能是因为邮箱已存在（唯一约束），尝试获取现有记录
+      const existingSubscriber = await this.getSubscriberByEmail(email);
+      if (existingSubscriber) {
+        return existingSubscriber;
+      }
+      throw error;
+    }
+  }
+
+  async getSubscriberByEmail(email: string): Promise<Subscriber | undefined> {
+    const [subscriber] = await db.select().from(subscribers)
+      .where(eq(subscribers.email, email));
+    
+    return subscriber;
+  }
+
+  async getAllSubscribers(): Promise<Subscriber[]> {
+    return db.select().from(subscribers)
+      .where(eq(subscribers.subscribed, true))
+      .orderBy(desc(subscribers.createdAt));
+  }
+
+  async unsubscribe(email: string): Promise<boolean> {
+    try {
+      const [subscriber] = await db.select().from(subscribers)
+        .where(eq(subscribers.email, email));
+      
+      if (!subscriber) {
+        return false;
+      }
+      
+      await db.update(subscribers)
+        .set({ 
+          subscribed: false,
+          updatedAt: new Date()
+        })
+        .where(eq(subscribers.email, email));
+      
+      return true;
+    } catch (error) {
+      console.error('取消订阅时出错:', error);
+      return false;
+    }
+  }
 }
 
 // 创建并导出存储实例
