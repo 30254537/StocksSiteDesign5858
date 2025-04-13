@@ -52,7 +52,8 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart(product.id, quantity, product.category === "clothing" ? selectedSize : undefined);
+      // 根据产品是否有尺码属性决定是否传递尺码信息
+      addToCart(product.id, quantity, product.hasSizes === 1 ? selectedSize : undefined);
     }
   };
 
@@ -179,8 +180,8 @@ export default function ProductDetail() {
           {/* Product Details */}
           <div>
             <h1 className="text-3xl font-orbitron font-bold mb-4">
-              {/* 始终优先使用产品的实际名称 */}
-              {product.name || t(`product.name.${product.id}`)}
+              {/* 使用当前语言下的翻译名称，如果不存在则使用产品的原始名称 */}
+              {language === 'zh' ? product.name : (t(`product.name.${product.id}`, product.name))}
             </h1>
             
             {/* Price */}
@@ -205,24 +206,43 @@ export default function ProductDetail() {
               </div>
             </div>
             
-            {/* Size Selector - Only show for clothing */}
-            {product.category === "clothing" && (
+            {/* Size Selector - Show based on product hasSizes flag */}
+            {product.hasSizes === 1 && (
               <div className="mb-6">
                 <p className="text-gray-400 mb-2">{t("product.size")}</p>
                 <div className="flex space-x-3">
-                  {["S", "M", "L", "XL"].map((size) => (
-                    <button 
-                      key={size}
-                      className={`w-10 h-10 rounded-md border flex items-center justify-center transition-all duration-300 ${
-                        selectedSize === size 
-                          ? "border-accent bg-accent/10 text-accent" 
-                          : "border-gray-700 hover:border-accent hover:text-accent"
-                      }`}
-                      onClick={() => setSelectedSize(size)}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                  {/* 根据产品类别显示不同的尺码选项 */}
+                  {product.category === "shoes" ? 
+                    // 鞋子尺码选项
+                    ["38", "39", "40", "41", "42", "43", "44", "45"].map((size) => (
+                      <button 
+                        key={size}
+                        className={`w-10 h-10 rounded-md border flex items-center justify-center transition-all duration-300 ${
+                          selectedSize === size 
+                            ? "border-accent bg-accent/10 text-accent" 
+                            : "border-gray-700 hover:border-accent hover:text-accent"
+                        }`}
+                        onClick={() => setSelectedSize(size)}
+                      >
+                        {size}
+                      </button>
+                    ))
+                    : 
+                    // 服装尺码选项
+                    ["S", "M", "L", "XL"].map((size) => (
+                      <button 
+                        key={size}
+                        className={`w-10 h-10 rounded-md border flex items-center justify-center transition-all duration-300 ${
+                          selectedSize === size 
+                            ? "border-accent bg-accent/10 text-accent" 
+                            : "border-gray-700 hover:border-accent hover:text-accent"
+                        }`}
+                        onClick={() => setSelectedSize(size)}
+                      >
+                        {size}
+                      </button>
+                    ))
+                  }
                 </div>
               </div>
             )}
