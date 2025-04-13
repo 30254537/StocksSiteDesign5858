@@ -466,8 +466,8 @@ export default function Checkout() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Order Summary */}
         <Card>
-          <CardHeader>
-            <CardTitle>{t('checkout.orderSummary')}</CardTitle>
+          <CardHeader className="pt-8 pb-6">
+            <CardTitle className="mb-2">{t('checkout.orderSummary')}</CardTitle>
             <CardDescription>{`${cartItems.length} ${t('checkout.itemsInCart')}`}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -477,21 +477,21 @@ export default function Checkout() {
         
         {/* Payment Methods */}
         <Card>
-          <CardHeader>
-            <CardTitle>{t('checkout.payment')}</CardTitle>
+          <CardHeader className="pt-8 pb-6">
+            <CardTitle className="mb-2">{t('checkout.payment')}</CardTitle>
             <CardDescription>{t('checkout.choosePaymentMethod')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="card">
+            <Tabs defaultValue="crypto">
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="card">USDT</TabsTrigger>
                 <TabsTrigger value="crypto">$STONKS</TabsTrigger>
+                <TabsTrigger value="card">USDT</TabsTrigger>
               </TabsList>
-              <TabsContent value="card">
-                <UsdtDirectForm />
-              </TabsContent>
               <TabsContent value="crypto">
                 <CryptoForm />
+              </TabsContent>
+              <TabsContent value="card">
+                <UsdtDirectForm />
               </TabsContent>
             </Tabs>
           </CardContent>
