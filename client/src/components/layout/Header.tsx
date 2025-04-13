@@ -92,8 +92,13 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <div className="flex items-center justify-center bg-gradient-to-r from-accent/30 to-accent/10 p-2 rounded-md mr-3">
-                  <span className="text-accent text-sm">🤡🌱👨‍🚀</span>
+                <div className="flex items-center justify-center mr-3">
+                  <img 
+                    src="/images/stonks-characters.png" 
+                    alt="STONKS Characters" 
+                    className="w-8 h-8 rounded-full" 
+                    style={{ objectFit: 'contain' }}
+                  />
                 </div>
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
