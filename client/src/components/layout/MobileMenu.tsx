@@ -56,43 +56,11 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Brand */}
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
-              <svg 
-                width="32" 
-                height="32" 
-                viewBox="0 0 100 100" 
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-2"
-              >
-                {/* 六边形外框 */}
-                <path 
-                  d="M50 10 L87 30 L87 70 L50 90 L13 70 L13 30 Z" 
-                  fill="white" 
-                />
-                
-                {/* S形状 - 使用两条粗线段形成S */}
-                <path 
-                  d="M35 30 L65 30 L65 50 L35 50 L35 70 L65 70" 
-                  stroke="white" 
-                  strokeWidth="0" 
-                  fill="none"
-                />
-                
-                {/* 右上到左下的斜线 */}
-                <path 
-                  d="M65 30 L35 70" 
-                  stroke="#00ffcc" 
-                  strokeWidth="12" 
-                  strokeLinecap="round"
-                />
-                
-                {/* 左上到右下的斜线 */}
-                <path 
-                  d="M35 30 L65 70" 
-                  stroke="#00ffcc" 
-                  strokeWidth="12" 
-                  strokeLinecap="round"
-                />
-              </svg>
+              <img 
+                src="/images/logo.svg" 
+                alt="STONKS Logo" 
+                className="w-8 h-8 mr-2" 
+              />
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
             <span className="text-accent text-xs ml-7">Powered by $STONKS</span>

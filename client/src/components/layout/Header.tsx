@@ -92,43 +92,11 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <svg 
-                  width="40" 
-                  height="40" 
-                  viewBox="0 0 100 100" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mr-3"
-                >
-                  {/* 六边形外框 */}
-                  <path 
-                    d="M50 10 L87 30 L87 70 L50 90 L13 70 L13 30 Z" 
-                    fill="white" 
-                  />
-                  
-                  {/* S形状 - 使用两条粗线段形成S */}
-                  <path 
-                    d="M35 30 L65 30 L65 50 L35 50 L35 70 L65 70" 
-                    stroke="white" 
-                    strokeWidth="0" 
-                    fill="none"
-                  />
-                  
-                  {/* 右上到左下的斜线 */}
-                  <path 
-                    d="M65 30 L35 70" 
-                    stroke="#00ffcc" 
-                    strokeWidth="12" 
-                    strokeLinecap="round"
-                  />
-                  
-                  {/* 左上到右下的斜线 */}
-                  <path 
-                    d="M35 30 L65 70" 
-                    stroke="#00ffcc" 
-                    strokeWidth="12" 
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <img 
+                  src="/images/logo.svg" 
+                  alt="STONKS Logo" 
+                  className="w-10 h-10 mr-3" 
+                />
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
                   <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
