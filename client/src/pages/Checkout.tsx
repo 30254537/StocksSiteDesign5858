@@ -393,7 +393,7 @@ const OrderSummary = () => {
         {cartItems.map((item) => (
           <div key={item.id} className="flex justify-between">
             <div>
-              <span className="font-medium">{item.quantity}x</span> {item.product.name}
+              <span className="font-medium">{item.quantity}x</span> {language === 'zh' ? item.product.name : (t(`product.name.${item.product.id}`, item.product.name))}
               {item.size && <span className="ml-1 text-sm text-gray-500">({item.size})</span>}
             </div>
             <div>
