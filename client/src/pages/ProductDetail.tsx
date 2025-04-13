@@ -96,7 +96,7 @@ export default function ProductDetail() {
       <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Gallery */}
-          <div>
+          <div className="flex flex-col">
             <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group">
               {/* Main Image - Clickable for zoom */}
               <div
@@ -178,7 +178,7 @@ export default function ProductDetail() {
           </div>
           
           {/* Product Details */}
-          <div>
+          <div className="flex flex-col justify-center md:h-full border-t border-b border-accent/30 py-6 my-4">
             <h1 className="text-3xl font-orbitron font-bold mb-4">
               {/* 使用当前语言下的翻译名称，如果不存在则使用产品的原始名称 */}
               {language === 'zh' ? product.name : (t(`product.name.${product.id}`, product.name))}
