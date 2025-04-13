@@ -92,11 +92,9 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <img 
-                  src="/stonks-logo-small.svg" 
-                  alt="STONKS DEX SHOP Logo" 
-                  className="h-10 mr-3" 
-                />
+                <div className="flex items-center justify-center bg-gradient-to-r from-accent/30 to-accent/10 p-2 rounded-md mr-3">
+                  <span className="text-accent text-sm">🤡🌱👨‍🚀</span>
+                </div>
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
                   <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
