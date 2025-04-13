@@ -17,7 +17,7 @@ import {
   orders, orderItems, musicTracks, 
   cryptoTweets, telegramMessages, 
   cryptoNews, contractAddresses, tweets,
-  contactInfo
+  contactInfo, subscribers
 } from "@shared/schema";
 import { eq, and, or, like, desc, count, isNull, asc } from "drizzle-orm";
 import * as bcrypt from "bcryptjs";
@@ -117,6 +117,12 @@ export interface IStorage {
   // 联系信息相关方法
   getAllContactInfo(): Promise<{email: string, address: string}>;
   updateContactInfo(key: string, value: string): Promise<boolean>;
+  
+  // 邮件订阅相关方法
+  createSubscriber(email: string): Promise<Subscriber>;
+  getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
+  getAllSubscribers(): Promise<Subscriber[]>;
+  unsubscribe(email: string): Promise<boolean>;
   
   // 会话存储
   sessionStore: session.Store;
