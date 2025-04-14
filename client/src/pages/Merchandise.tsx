@@ -27,12 +27,13 @@ export default function Merchandise() {
   // 将内部类别ID翻译为用户友好的显示名称
   const getCategoryDisplayName = (categoryId: string): string => {
     const categoryNames: Record<string, string> = {
-      all: t("products.allCategories", "All Items"),
-      clothing: t("products.clothingCategory", "Clothing"),
-      accessories: t("products.accessoriesCategory", "Accessories"),
-      collectibles: t("products.collectiblesCategory", "Collectibles"),
-      electronics: t("products.electronicsCategory", "Electronics"),
-      shoes: t("products.shoesCategory", "Shoes")
+      all: t("products.all", "All Items"),
+      clothing: t("products.clothing", "Clothing"),
+      accessories: t("products.accessories", "Accessories"),
+      digital: t("products.digital", "Digital"),
+      collectibles: t("products.collectibles", "Collectibles"),
+      electronics: t("products.electronics", "Electronics"),
+      shoes: t("products.shoes", "Shoes")
     };
     
     return categoryNames[categoryId] || categoryId;
@@ -45,7 +46,7 @@ export default function Merchandise() {
         <meta name="description" content={t("merchandise.metaDescription", "Explore our exclusive crypto-themed merchandise. From apparel to collectibles, show your support for STONKS DEX.")} />
       </Helmet>
       
-      <section className="container mx-auto px-4 pt-24 pb-10">
+      <section className="container mx-auto px-4 pt-32 pb-10">
         <div className="flex flex-col items-center mb-10">
           <div className="inline-block relative mb-2">
             <NeonText 
