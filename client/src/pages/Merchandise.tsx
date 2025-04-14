@@ -45,7 +45,7 @@ export default function Merchandise() {
         <meta name="description" content={t("merchandise.metaDescription", "Explore our exclusive crypto-themed merchandise. From apparel to collectibles, show your support for STONKS DEX.")} />
       </Helmet>
       
-      <section className="container mx-auto px-4 py-10">
+      <section className="container mx-auto px-4 pt-24 pb-10">
         <div className="flex flex-col items-center mb-10">
           <div className="inline-block relative mb-2">
             <NeonText 

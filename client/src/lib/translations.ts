@@ -328,6 +328,12 @@ export const translations: Translations = {
     "product.description.20": "Limited edition jacket featuring STONKS DEX premium design. Water-resistant with inner pockets."
   },
   zh: {
+    // merchandise
+    "merchandise.title": "STONKS 周边产品",
+    "merchandise.description": "STONKS DEX 独家限量版周边产品。穿上你的加密货币激情，展示你对STONKS生态系统的支持。",
+    "merchandise.pageTitle": "STONKS DEX SHOP - 周边产品",
+    "merchandise.metaDescription": "探索我们独家的加密货币主题周边产品。从服装到收藏品，展示您对STONKS DEX的支持。",
+    
     // Product Descriptions
     "product.description.5": "高品质比特币主题STONKS连帽衫，采用优质面料。前后印有STONKS和BTC图案。",
     // Navigation
