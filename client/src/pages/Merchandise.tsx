@@ -32,7 +32,8 @@ export default function Merchandise() {
       accessories: t("products.accessoriesCategory", "配件"),
       collectibles: t("products.collectiblesCategory", "收藏品"),
       electronics: t("products.electronicsCategory", "电子产品"),
-      shoes: t("products.shoesCategory", "鞋类")
+      shoes: t("products.shoesCategory", "鞋类"),
+      digital: t("products.digitalCategory", "数字产品")
     };
     
     return categoryNames[categoryId] || categoryId;

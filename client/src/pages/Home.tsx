@@ -142,10 +142,10 @@ export default function Home() {
             
             {/* Product Filter Tabs - Hidden by user request */}
             <div className="hidden">
-              <Button onClick={() => handleCategoryChange("all")}>{t("products.all")}</Button>
-              <Button onClick={() => handleCategoryChange("clothing")}>{t("products.clothing")}</Button>
-              <Button onClick={() => handleCategoryChange("digital")}>{t("products.digital")}</Button>
-              <Button onClick={() => handleCategoryChange("accessories")}>{t("products.accessories")}</Button>
+              <Button onClick={() => handleCategoryChange("all")}>{t("products.all", "所有产品")}</Button>
+              <Button onClick={() => handleCategoryChange("clothing")}>{t("products.clothing", "服装")}</Button>
+              <Button onClick={() => handleCategoryChange("digital")}>{t("products.digital", "数字产品")}</Button>
+              <Button onClick={() => handleCategoryChange("accessories")}>{t("products.accessories", "配件")}</Button>
             </div>
           </div>
           
