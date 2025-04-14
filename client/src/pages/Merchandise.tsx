@@ -16,13 +16,8 @@ export default function Merchandise() {
     queryKey: ["/api/products"],
   });
 
-  // 过滤产品
-  const filteredProducts = selectedCategory === "all"
-    ? products
-    : products.filter((product: Product) => product.category === selectedCategory);
-
-  // 获取所有可用的产品类别
-  const categories = ["all", ...Array.from(new Set(products.map((product: Product) => product.category)))];
+  // 不再过滤产品，直接显示所有产品
+  const filteredProducts = products;
 
   // 将内部类别ID翻译为用户友好的显示名称
   const getCategoryDisplayName = (categoryId: string): string => {
@@ -58,22 +53,7 @@ export default function Merchandise() {
             />
           </div>
           
-          {/* Category Filters */}
-          <div className="flex flex-wrap justify-center gap-2 mt-8 mb-4">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full transition-all duration-300 text-sm ${
-                  selectedCategory === category
-                    ? "bg-accent text-primary shadow-glow-sm"
-                    : "bg-gray-800/50 text-gray-300 hover:bg-gray-700"
-                }`}
-              >
-                {getCategoryDisplayName(category)}
-              </button>
-            ))}
-          </div>
+          {/* 移除了分类筛选按钮 */}
         </div>
 
         {/* Products Display */}
