@@ -47,19 +47,14 @@ export default function Merchandise() {
       
       <section className="container mx-auto px-4 py-10">
         <div className="flex flex-col items-center mb-10">
-          <div className="inline-block relative mb-2">
-            <NeonText 
-              as="h1" 
-              text={t("merchandise.title", "STONKS Merchandise")} 
-              className="text-4xl md:text-5xl font-orbitron font-bold mb-4 text-center" 
-              color="accent"
-              glowIntensity="strong"
-            />
-            <Sparkles className="absolute -top-6 -right-8 text-accent w-10 h-10 opacity-80" />
+          {/* 标题改为带霓虹边框的容器 */}
+          <div className="border-2 border-accent rounded-lg px-8 py-3 mb-8 glow-border-accent">
+            <h1 className="text-2xl md:text-3xl font-orbitron font-bold text-white">
+              STONKS DEX {t("merchandise.title", "周边产品")}
+            </h1>
           </div>
-          <p className="text-lg text-center max-w-2xl text-gray-300 mb-8">
-            {t("merchandise.description", "Exclusive limited edition merchandise from STONKS DEX. Wear your crypto passion and show your support for the STONKS ecosystem.")}
-          </p>
+          
+          {/* 移除原来的描述文字 */}
           
           {/* Category Filters */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">

@@ -92,6 +92,11 @@
     box-shadow: 0 0 5px #00ffcc, 0 0 15px rgba(0, 255, 204, 0.5);
   }
   
+  .glow-border-accent {
+    box-shadow: 0 0 5px var(--accent), 0 0 15px rgba(0, 255, 204, 0.5);
+    animation: borderPulse 2s ease-in-out infinite alternate;
+  }
+  
   .glass-effect {
     background: rgba(26, 26, 46, 0.7);
     backdrop-filter: blur(8px);
@@ -282,5 +287,17 @@
   100% {
     transform: translateY(-120%) rotate(-3deg) scale(0.9);
     opacity: 0;
+  }
+}
+
+@keyframes borderPulse {
+  0% {
+    box-shadow: 0 0 5px var(--accent), 0 0 10px rgba(0, 255, 204, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 8px var(--accent), 0 0 15px rgba(0, 255, 204, 0.6), 0 0 20px rgba(0, 255, 204, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 5px var(--accent), 0 0 10px rgba(0, 255, 204, 0.5);
   }
 }
