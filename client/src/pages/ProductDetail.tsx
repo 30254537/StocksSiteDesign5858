@@ -53,8 +53,7 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
-    // 检查产品是否有库存，如果没有则不添加到购物车
-    if (product && product.inStock !== 0) {
+    if (product) {
       // 根据产品是否有尺码属性决定是否传递尺码信息
       addToCart(product.id, quantity, product.hasSizes === 1 ? selectedSize : undefined);
     }
@@ -225,14 +224,10 @@ export default function ProductDetail() {
             
             {/* Stock Info */}
             <div className="mb-6">
-              <div className={`inline-block px-3 py-1 rounded-md text-sm ${
-                product.inStock === 0 
-                  ? "bg-red-500/10 border border-red-500/30 text-red-500" 
-                  : "bg-accent/10 border border-accent/30 text-accent"
-              }`}>
-                <i className={`fas ${product.inStock === 0 ? "fa-times-circle" : "fa-check-circle"} mr-1`}></i>
+              <div className="inline-block px-3 py-1 bg-accent/10 border border-accent/30 rounded-md text-accent text-sm">
+                <i className="fas fa-check-circle mr-1"></i>
                 {/* 使用专用翻译Hook获取库存状态的翻译 */}
-                {getTranslatedStockStatus(product)}
+                {getTranslatedStockStatus(product.stock)}
               </div>
             </div>
             
@@ -302,18 +297,11 @@ export default function ProductDetail() {
             
             {/* Add to Cart Button */}
             <Button 
-              className={`w-full py-6 rounded-lg font-medium transition-colors duration-300 mb-4 ${
-                product.inStock === 0
-                  ? "bg-gray-600 hover:bg-gray-700 text-gray-300 cursor-not-allowed"
-                  : "bg-accent text-primary hover:bg-white"
-              }`}
+              className="w-full bg-accent text-primary py-6 rounded-lg font-medium hover:bg-white transition-colors duration-300 mb-4"
               onClick={handleAddToCart}
               size="lg"
-              disabled={product.inStock === 0}
             >
-              {product.inStock === 0 
-                ? t("product.outOfStock", "Out of Stock") 
-                : t("product.addToCart", "Add to Cart")}
+              {t("product.addToCart")}
             </Button>
             
             {/* Features */}
