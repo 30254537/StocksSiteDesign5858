@@ -165,7 +165,28 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getProducts(): Promise<Product[]> {
-    return db.select().from(products).orderBy(desc(products.id));
+    try {
+      console.log("开始获取所有产品...");
+      const productList = await db.select().from(products).orderBy(desc(products.id));
+      
+      // 为缺少status字段的产品添加默认值
+      const processedProducts = productList.map(product => {
+        if (!product.status) {
+          return {
+            ...product,
+            status: 'in_stock' // 默认为有货
+          };
+        }
+        return product;
+      });
+      
+      console.log(`成功获取 ${processedProducts.length} 个产品`);
+      return processedProducts;
+    } catch (error) {
+      console.error("获取产品列表时出错:", error);
+      // 返回空数组而不是抛出错误，避免前端崩溃
+      return [];
+    }
   }
   
   async getProduct(id: number): Promise<Product | undefined> {
@@ -198,27 +219,87 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getFeaturedProducts(): Promise<Product[]> {
-    return db.select().from(products)
-      .where(eq(products.featured, 1))
-      .orderBy(desc(products.id));
+    try {
+      console.log("开始获取精选产品...");
+      const productList = await db.select().from(products)
+        .where(eq(products.featured, 1))
+        .orderBy(desc(products.id));
+      
+      // 为缺少status字段的产品添加默认值
+      const processedProducts = productList.map(product => {
+        if (!product.status) {
+          return {
+            ...product,
+            status: 'in_stock' // 默认为有货
+          };
+        }
+        return product;
+      });
+      
+      console.log(`成功获取 ${processedProducts.length} 个精选产品`);
+      return processedProducts;
+    } catch (error) {
+      console.error("获取精选产品列表时出错:", error);
+      return [];
+    }
   }
   
   async getProductsByCategory(category: string): Promise<Product[]> {
-    return db.select().from(products)
-      .where(eq(products.category, category))
-      .orderBy(desc(products.id));
+    try {
+      console.log(`开始获取分类 ${category} 的产品...`);
+      const productList = await db.select().from(products)
+        .where(eq(products.category, category))
+        .orderBy(desc(products.id));
+      
+      // 为缺少status字段的产品添加默认值
+      const processedProducts = productList.map(product => {
+        if (!product.status) {
+          return {
+            ...product,
+            status: 'in_stock' // 默认为有货
+          };
+        }
+        return product;
+      });
+      
+      console.log(`成功获取 ${processedProducts.length} 个分类 ${category} 的产品`);
+      return processedProducts;
+    } catch (error) {
+      console.error(`获取分类 ${category} 的产品列表时出错:`, error);
+      return [];
+    }
   }
   
   async searchProducts(query: string): Promise<Product[]> {
-    return db.select().from(products)
-      .where(
-        or(
-          like(products.name, `%${query}%`),
-          like(products.description, `%${query}%`),
-          like(products.category, `%${query}%`)
+    try {
+      console.log(`搜索产品，关键词: "${query}"...`);
+      const productList = await db.select().from(products)
+        .where(
+          or(
+            like(products.name, `%${query}%`),
+            like(products.description, `%${query}%`),
+            like(products.category, `%${query}%`)
+          )
         )
-      )
-      .orderBy(desc(products.id));
+        .orderBy(desc(products.id));
+      
+      // 为缺少status字段的产品添加默认值
+      const processedProducts = productList.map(product => {
+        if (!product.status) {
+          return {
+            ...product,
+            status: 'in_stock' // 默认为有货
+          };
+        }
+        return product;
+      });
+      
+      console.log(`搜索结果: 找到 ${processedProducts.length} 个产品`);
+      return processedProducts;
+    } catch (error) {
+      console.error(`搜索产品时出错:`, error);
+      return [];
+    }
   }
   
   // 购物车相关方法
