@@ -417,6 +417,7 @@ export const translations: Translations = {
     "product.size": "尺寸:",
     "product.quantity": "数量:",
     "product.addToCart": "加入购物车",
+    "product.backToProducts": "返回商品列表",
     "product.globalShipping": "全球配送",
     "product.returnPolicy": "30天退换政策",
     "product.cryptoPayment": "加密货币支付",

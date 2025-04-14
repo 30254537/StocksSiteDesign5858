@@ -95,19 +95,21 @@ export default function ProductDetail() {
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-16">
+      {/* 返回按钮 - 位于页面顶部 */}
+      <div className="max-w-6xl mx-auto mb-4">
+        <Link href="/merchandise" className="inline-block">
+          <Button variant="ghost" size="sm" className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all">
+            <ArrowLeft size={18} className="mr-1" />
+            <span>{t("product.backToProducts")}</span>
+          </Button>
+        </Link>
+      </div>
+      
       <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-6">
           {/* Product Image Gallery */}
-          <div className="flex flex-col justify-center">
-            {/* Back to Products Button */}
-            <Link href="/merchandise" className="self-start mb-2">
-              <Button variant="ghost" size="sm" className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all">
-                <ArrowLeft size={18} className="mr-1" />
-                <span>{t("product.backToProducts", "Back to Products")}</span>
-              </Button>
-            </Link>
-            
-            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mt-2 shadow-xl border border-accent/20">
+          <div className="flex flex-col justify-center">           
+            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mb-6 shadow-xl border border-accent/20">
               {/* Main Image - Clickable for zoom */}
               <div
                 onClick={() => setZoomModalOpen(true)}
