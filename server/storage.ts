@@ -17,7 +17,7 @@ import {
   orders, orderItems, musicTracks, 
   cryptoTweets, telegramMessages, 
   cryptoNews, contractAddresses, tweets,
-  contactInfo, subscribers
+  contactInfo
 } from "@shared/schema";
 import { eq, and, or, like, desc, count, isNull, asc } from "drizzle-orm";
 import * as bcrypt from "bcryptjs";
@@ -117,12 +117,6 @@ export interface IStorage {
   // 联系信息相关方法
   getAllContactInfo(): Promise<{email: string, address: string}>;
   updateContactInfo(key: string, value: string): Promise<boolean>;
-  
-  // 邮件订阅相关方法
-  createSubscriber(email: string): Promise<Subscriber>;
-  getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
-  getAllSubscribers(): Promise<Subscriber[]>;
-  unsubscribe(email: string): Promise<boolean>;
   
   // 会话存储
   sessionStore: session.Store;
@@ -802,66 +796,6 @@ export class DatabaseStorage implements IStorage {
       ...order,
       items: itemsWithProducts
     };
-  }
-
-  // 邮件订阅相关方法
-  async createSubscriber(email: string): Promise<Subscriber> {
-    try {
-      const [subscriber] = await db.insert(subscribers)
-        .values({
-          email,
-          subscribed: true,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
-        .returning();
-      
-      return subscriber;
-    } catch (error) {
-      console.error('添加订阅者时出错:', error);
-      // 可能是因为邮箱已存在（唯一约束），尝试获取现有记录
-      const existingSubscriber = await this.getSubscriberByEmail(email);
-      if (existingSubscriber) {
-        return existingSubscriber;
-      }
-      throw error;
-    }
-  }
-
-  async getSubscriberByEmail(email: string): Promise<Subscriber | undefined> {
-    const [subscriber] = await db.select().from(subscribers)
-      .where(eq(subscribers.email, email));
-    
-    return subscriber;
-  }
-
-  async getAllSubscribers(): Promise<Subscriber[]> {
-    return db.select().from(subscribers)
-      .where(eq(subscribers.subscribed, true))
-      .orderBy(desc(subscribers.createdAt));
-  }
-
-  async unsubscribe(email: string): Promise<boolean> {
-    try {
-      const [subscriber] = await db.select().from(subscribers)
-        .where(eq(subscribers.email, email));
-      
-      if (!subscriber) {
-        return false;
-      }
-      
-      await db.update(subscribers)
-        .set({ 
-          subscribed: false,
-          updatedAt: new Date()
-        })
-        .where(eq(subscribers.email, email));
-      
-      return true;
-    } catch (error) {
-      console.error('取消订阅时出错:', error);
-      return false;
-    }
   }
 }
 

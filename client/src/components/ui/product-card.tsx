@@ -31,46 +31,58 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
   };
 
   return (
-    <Link href={`/product/${product.id}`}>
-      <div 
-        className="product-card relative group w-full h-full cursor-pointer" 
-        data-category={product.category}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div className="bg-primary/30 border border-accent/30 rounded-xl overflow-hidden transition-all duration-500 hover:border-accent/70 h-full flex flex-col">
-          {/* 产品图片 */}
-          <div className="relative h-56 overflow-hidden">
-            <img 
-              src={product.imageUrl} 
-              alt={product.name} 
-              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" 
-            />
-            
-            {/* 点击查看详情按钮 */}
-            <div className={`absolute inset-0 bg-primary/60 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+    <div 
+      className="product-card relative group w-full h-full" 
+      data-category={product.category}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="bg-secondary border border-accent/30 rounded-xl overflow-hidden transition-all duration-500 hover:glow-border h-full flex flex-col">
+        {/* Product Image */}
+        <div className="relative h-60 overflow-hidden">
+          <img 
+            src={product.imageUrl} 
+            alt={product.name} 
+            className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110" 
+          />
+          
+          {/* Product Detail Link */}
+          <div className={`absolute inset-0 bg-primary/60 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+            <Link href={`/product/${product.id}`}>
               <Button 
                 className="bg-accent text-primary font-medium hover:bg-white transition-colors duration-300"
               >
                 {t("products.viewDetails")}
               </Button>
-            </div>
+            </Link>
           </div>
-          
-          {/* 产品信息 - 简化显示 */}
-          <div className="p-2 pb-3 flex-grow flex flex-col justify-between">
-            <h3 className="font-orbitron text-lg font-bold text-center text-white hover:text-accent transition-colors line-clamp-1">
+        </div>
+        
+        {/* Product Info */}
+        <div className="p-4 flex-grow flex flex-col justify-between">
+          <Link href={`/product/${product.id}`}>
+            <h3 className="font-orbitron text-lg font-medium mb-3 hover:text-accent transition-colors cursor-pointer line-clamp-2">
+              {/* 使用当前语言下的翻译名称，如果不存在则使用产品的原始名称 */}
               {language === 'zh' ? product.name : (t(`product.name.${product.id}`, product.name))}
             </h3>
-            
-            <div className="flex justify-center items-center mt-2">
-              <span className="text-accent font-medium">
-                {formatUsdToStonks(product.price, currentPrice)}
-              </span>
+          </Link>
+          <div className="flex justify-between items-center mt-auto">
+            <div>
+              <p className="text-gray-300 text-sm mb-1">{t("products.price")}</p>
+              <div className="flex items-center">
+                <span className="text-accent">{formatUsdToStonks(product.price, currentPrice)}</span>
+              </div>
             </div>
+            <Button 
+              className="w-10 h-10 rounded-full bg-accent/20 hover:bg-accent flex items-center justify-center text-accent hover:text-primary transition-colors duration-300"
+              onClick={handleAddToCart}
+              aria-label="Add to cart"
+            >
+              <i className="fas fa-plus"></i>
+            </Button>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

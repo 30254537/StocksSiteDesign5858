@@ -33,44 +33,26 @@ export default function Footer() {
     fetchContactInfo();
   }, []);
 
-  const handleSubscribe = async (e: React.FormEvent) => {
+  const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email || !email.includes('@')) {
       toast({
-        title: t("footer.error"),
-        description: t("footer.invalidEmail"),
+        title: "Error",
+        description: "Please enter a valid email address",
         variant: "destructive"
       });
       return;
     }
     
-    try {
-      const response = await apiRequest("POST", "/api/subscribe", { email });
-      const data = await response.json();
-      
-      if (data.success) {
-        toast({
-          title: t("footer.success"),
-          description: data.message || t("footer.subscribeSuccess"),
-          variant: "default"
-        });
-        setEmail("");
-      } else {
-        toast({
-          title: t("footer.error"),
-          description: data.message || t("footer.subscribeFailed"),
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error("订阅失败:", error);
-      toast({
-        title: t("footer.error"),
-        description: t("footer.subscribeFailed"),
-        variant: "destructive"
-      });
-    }
+    // In a real app, this would send the email to a backend service
+    toast({
+      title: "Success",
+      description: "You've been subscribed to our newsletter",
+      variant: "default"
+    });
+    
+    setEmail("");
   };
 
   return (
@@ -167,11 +149,10 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-orbitron font-medium mb-4 text-white">{t("footer.subscribeTitle")}</h3>
             <p className="mb-4 text-sm">{t("footer.subscribeDescription")}</p>
-            <form className="flex subscribe-form" onSubmit={handleSubscribe}>
+            <form className="flex subscribe-form" action="https://your-mailchimp-url" method="post" target="_blank">
               <Input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="EMAIL"
                 placeholder={t("footer.email")}
                 required
                 className="bg-secondary text-white border border-accent/30 rounded-l-lg px-4 py-2 focus:outline-none focus:border-accent w-full"

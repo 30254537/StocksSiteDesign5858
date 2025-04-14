@@ -99,17 +99,15 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-6">
           {/* Product Image Gallery */}
           <div className="flex flex-col justify-center">
-            {/* 返回按钮 - 位于商品图左上角，直接链接到商品页面 */}
-            <div className="mb-3">
-              <Link href="/merchandise" className="inline-block">
-                <Button variant="outline" size="sm" className="flex items-center bg-secondary text-accent hover:text-white hover:bg-accent/20 transition-all border border-accent/50 shadow-md py-2 px-4">
-                  <ArrowLeft size={18} className="mr-1" />
-                  <span>{t("product.backToProducts")}</span>
-                </Button>
-              </Link>
-            </div>
+            {/* Back to Products Button */}
+            <Link href="/merchandise" className="self-start mb-2">
+              <Button variant="ghost" size="sm" className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all">
+                <ArrowLeft size={18} className="mr-1" />
+                <span>{t("product.backToProducts", "Back to Products")}</span>
+              </Button>
+            </Link>
             
-            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mb-6 shadow-xl border border-accent/20">
+            <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mt-2 shadow-xl border border-accent/20">
               {/* Main Image - Clickable for zoom */}
               <div
                 onClick={() => setZoomModalOpen(true)}

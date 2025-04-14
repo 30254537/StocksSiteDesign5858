@@ -176,11 +176,6 @@ export const translations: Translations = {
     "footer.privacy": "Privacy Policy",
     "footer.terms": "Terms of Use",
     "footer.refund": "Refund Policy",
-    "footer.error": "Error",
-    "footer.success": "Success",
-    "footer.invalidEmail": "Please enter a valid email address",
-    "footer.subscribeSuccess": "You've been subscribed to our newsletter",
-    "footer.subscribeFailed": "Failed to subscribe. Please try again later",
     
     // Audio
     "audio.play": "Play background music",
@@ -328,12 +323,6 @@ export const translations: Translations = {
     "product.description.20": "Limited edition jacket featuring STONKS DEX premium design. Water-resistant with inner pockets."
   },
   zh: {
-    // merchandise
-    "merchandise.title": "STONKS 周边产品",
-    "merchandise.description": "STONKS DEX 独家限量版周边产品。穿上你的加密货币激情，展示你对STONKS生态系统的支持。",
-    "merchandise.pageTitle": "STONKS DEX SHOP - 周边产品",
-    "merchandise.metaDescription": "探索我们独家的加密货币主题周边产品。从服装到收藏品，展示您对STONKS DEX的支持。",
-    
     // Product Descriptions
     "product.description.5": "高品质比特币主题STONKS连帽衫，采用优质面料。前后印有STONKS和BTC图案。",
     // Navigation
@@ -423,7 +412,6 @@ export const translations: Translations = {
     "product.size": "尺寸:",
     "product.quantity": "数量:",
     "product.addToCart": "加入购物车",
-    "product.backToProducts": "返回商品列表",
     "product.globalShipping": "全球配送",
     "product.returnPolicy": "30天退换政策",
     "product.cryptoPayment": "加密货币支付",
@@ -515,11 +503,6 @@ export const translations: Translations = {
     "footer.privacy": "隐私政策",
     "footer.terms": "使用条款",
     "footer.refund": "退款政策",
-    "footer.error": "错误",
-    "footer.success": "成功",
-    "footer.invalidEmail": "请输入有效的邮箱地址",
-    "footer.subscribeSuccess": "您已成功订阅我们的通讯",
-    "footer.subscribeFailed": "订阅失败，请稍后再试",
     
     // Audio
     "audio.play": "播放背景音乐",
