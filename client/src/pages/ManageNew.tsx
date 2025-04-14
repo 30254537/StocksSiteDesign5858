@@ -418,6 +418,8 @@ export default function Manage() {
                 const featured = (document.getElementById("product-featured") as HTMLInputElement).checked;
                 const categoryElement = document.querySelector('[data-id="product-category"]');
                 const category = categoryElement ? categoryElement.getAttribute('data-value') || 'clothing' : 'clothing';
+                const statusElement = document.querySelector('[data-id="product-status"]');
+                const status = statusElement ? statusElement.getAttribute('data-value') || 'in_stock' : 'in_stock';
                 const hasSizes = (document.getElementById("product-hasSizes") as HTMLInputElement).checked;
                 
                 // 基本验证
@@ -438,6 +440,7 @@ export default function Manage() {
                   stock: isNaN(stock) ? 0 : stock,
                   featured: featured ? 1 : 0,  // 转换为整数
                   category,
+                  status, // 添加产品状态
                   hasSizes: hasSizes ? 1 : 0   // 转换为整数
                 };
                 
@@ -585,6 +588,22 @@ export default function Manage() {
                     min="0"
                     className="bg-primary/50 border-accent"
                   />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="product-status" className="block text-sm font-medium">
+                    产品状态
+                  </label>
+                  <Select defaultValue="in_stock">
+                    <SelectTrigger className="bg-primary/50 border-accent" data-id="product-status">
+                      <SelectValue placeholder="选择状态" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="in_stock">有货</SelectItem>
+                      <SelectItem value="out_of_stock">无货</SelectItem>
+                      <SelectItem value="pending">待上架</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div className="flex items-center space-x-6">
@@ -763,6 +782,7 @@ export default function Manage() {
                         <TableHead className="text-accent">名称</TableHead>
                         <TableHead className="text-accent">价格</TableHead>
                         <TableHead className="text-accent">库存</TableHead>
+                        <TableHead className="text-accent">状态</TableHead>
                         <TableHead className="text-accent">类别</TableHead>
                         <TableHead className="text-accent">操作</TableHead>
                       </TableRow>
