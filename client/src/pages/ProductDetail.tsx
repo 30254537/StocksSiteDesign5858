@@ -14,10 +14,12 @@ import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
 // 返回按钮组件，保持语言状态
 const BackToProductsButton = ({ 
   t, 
-  language 
+  language,
+  isErrorPage = false
 }: { 
   t: (key: string, fallback?: string) => string; 
   language: string;
+  isErrorPage?: boolean;
 }) => {
   const [, setLocation] = useLocation();
   
@@ -29,15 +31,23 @@ const BackToProductsButton = ({
   }, [setLocation]);
   
   return (
-    <div className="self-start mb-2">
+    <div className={isErrorPage ? "inline-block" : "self-start mb-2"}>
       <Button 
-        variant="ghost" 
-        size="sm" 
-        className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all"
+        variant={isErrorPage ? "default" : "ghost"} 
+        size={isErrorPage ? "default" : "sm"} 
+        className={`
+          flex items-center 
+          ${isErrorPage 
+            ? "bg-accent text-primary hover:bg-white transition-colors" 
+            : "text-accent hover:text-white hover:bg-accent/20 transition-all"}
+        `}
         onClick={handleBackClick}
       >
-        <ArrowLeft size={18} className="mr-1" />
-        <span>{t("product.backToProducts", "Back to Products")}</span>
+        {!isErrorPage && <ArrowLeft size={18} className="mr-1" />}
+        <span>{isErrorPage 
+          ? t("product.returnToProducts", "Return to Products") 
+          : t("product.backToProducts", "Back to Products")}
+        </span>
       </Button>
     </div>
   );
@@ -50,6 +60,7 @@ export default function ProductDetail() {
   const { t, language } = useLanguage();
   const { currentPrice } = useStonksPrice();
   const { getTranslatedName, getTranslatedDescription, getTranslatedStockStatus } = useProductTranslations();
+  const [, setLocation] = useLocation();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -115,11 +126,17 @@ export default function ProductDetail() {
         <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-8 text-center">
           <h2 className="text-2xl font-orbitron font-bold mb-4">Product Not Found</h2>
           <p className="mb-6">The product you are looking for does not exist or has been removed.</p>
-          <Link href="/#products">
-            <Button className="bg-accent text-primary hover:bg-white transition-colors">
-              Return to Products
+          <div>
+            <Button
+              className="bg-accent text-primary hover:bg-white transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                setLocation('/merchandise');
+              }}
+            >
+              {t("product.returnToProducts", "Return to Products")}
             </Button>
-          </Link>
+          </div>
         </div>
       </div>
     );
