@@ -27,12 +27,12 @@ export default function Merchandise() {
   // 将内部类别ID翻译为用户友好的显示名称
   const getCategoryDisplayName = (categoryId: string): string => {
     const categoryNames: Record<string, string> = {
-      all: t("products.allCategories", "All Items"),
-      clothing: t("products.clothingCategory", "Clothing"),
-      accessories: t("products.accessoriesCategory", "Accessories"),
-      collectibles: t("products.collectiblesCategory", "Collectibles"),
-      electronics: t("products.electronicsCategory", "Electronics"),
-      shoes: t("products.shoesCategory", "Shoes")
+      all: t("products.allCategories", "全部商品"),
+      clothing: t("products.clothingCategory", "服装"),
+      accessories: t("products.accessoriesCategory", "配件"),
+      collectibles: t("products.collectiblesCategory", "收藏品"),
+      electronics: t("products.electronicsCategory", "电子产品"),
+      shoes: t("products.shoesCategory", "鞋类")
     };
     
     return categoryNames[categoryId] || categoryId;

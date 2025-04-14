@@ -74,10 +74,10 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center text-center">
             <div className="w-full max-w-3xl">
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 font-orbitron leading-tight">
-                <span className="block">Trade</span>
-                <span className="block">Decentralized,</span>
-                <span className="text-accent animate-glow block">Wear the</span>
-                <span className="text-accent animate-glow block">Future</span>
+                <span className="block">{t("hero.trade", "去中心化")}</span>
+                <span className="block">{t("hero.decentralized", "交易平台")}</span>
+                <span className="text-accent animate-glow block">{t("hero.wear", "穿着")}</span>
+                <span className="text-accent animate-glow block">{t("hero.future", "未来")}</span>
               </h1>
               <p className="text-lg md:text-xl mb-8 text-gray-300">{t("hero.subtitle")}</p>
               <div className="flex flex-wrap gap-4 justify-center">
