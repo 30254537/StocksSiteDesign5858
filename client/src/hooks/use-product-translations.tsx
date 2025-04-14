@@ -30,17 +30,23 @@ export function useProductTranslations() {
 
   /**
    * 获取库存状态的翻译
-   * @param stock 库存数量
+   * @param product 产品对象
    * @returns 根据当前语言返回翻译后的库存状态
    */
-  const getTranslatedStockStatus = (stock: number): string => {
-    if (stock > 10) {
+  const getTranslatedStockStatus = (product: Product): string => {
+    // 首先检查inStock字段，如果是0则显示无货
+    if (product.inStock === 0) {
+      return language === 'zh' ? '无货' : t('product.outOfStock', 'Out of Stock');
+    }
+    
+    // 如果有货，则根据库存数量显示不同的提示
+    if (product.stock > 10) {
       return language === 'zh' ? '有货' : t('product.inStock', 'In Stock');
     } else {
       // 处理数量格式化和翻译，确保替换 {0} 为实际数量
       const stockText = language === 'zh' 
-        ? t('product.onlyLeft', `仅剩 {0} 件`).replace('{0}', stock.toString())
-        : t('product.onlyLeft', `Only {0} left`).replace('{0}', stock.toString());
+        ? t('product.onlyLeft', `仅剩 {0} 件`).replace('{0}', product.stock.toString())
+        : t('product.onlyLeft', `Only {0} left`).replace('{0}', product.stock.toString());
       
       return stockText;
     }
