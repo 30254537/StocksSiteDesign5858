@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "wouter";
+import { useState, useEffect, useCallback } from "react";
+import { useParams, Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
@@ -10,6 +10,38 @@ import { formatCurrency, formatEth, formatPrice, formatUsdToStonks } from "@/lib
 import { ChevronLeft, ChevronRight, ZoomIn, ArrowLeft } from "lucide-react";
 import { Product } from "@shared/schema";
 import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
+
+// 返回按钮组件，保持语言状态
+const BackToProductsButton = ({ 
+  t, 
+  language 
+}: { 
+  t: (key: string, fallback?: string) => string; 
+  language: string;
+}) => {
+  const [, setLocation] = useLocation();
+  
+  // 使用useCallback处理返回导航，保持语言状态
+  const handleBackClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault(); // 阻止默认链接行为
+    // 手动导航到产品列表页，不重置语言上下文
+    setLocation('/merchandise');
+  }, [setLocation]);
+  
+  return (
+    <div className="self-start mb-2">
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all"
+        onClick={handleBackClick}
+      >
+        <ArrowLeft size={18} className="mr-1" />
+        <span>{t("product.backToProducts", "Back to Products")}</span>
+      </Button>
+    </div>
+  );
+};
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -99,13 +131,8 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-6">
           {/* Product Image Gallery */}
           <div className="flex flex-col justify-center">
-            {/* Back to Products Button */}
-            <Link href="/merchandise" className="self-start mb-2">
-              <Button variant="ghost" size="sm" className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all">
-                <ArrowLeft size={18} className="mr-1" />
-                <span>{t("product.backToProducts", "Back to Products")}</span>
-              </Button>
-            </Link>
+            {/* Back to Products Button - With language preservation */}
+            <BackToProductsButton t={t} language={language} />
             
             <div className="relative aspect-square bg-primary/50 rounded-lg overflow-hidden group mt-2 shadow-xl border border-accent/20">
               {/* Main Image - Clickable for zoom */}
