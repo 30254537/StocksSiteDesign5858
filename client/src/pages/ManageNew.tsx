@@ -225,29 +225,8 @@ export default function Manage() {
           valueElement.textContent = categoryMap[product.category] || '服装';
         }
       }
-      
-      // 设置产品状态选择器
-      const statusTrigger = document.querySelector('[data-id="product-status"]');
-      if (statusTrigger) {
-        // 默认状态为有货，如果没有设置状态
-        const status = product.status || 'in_stock';
-        
-        // 更新 data-value 属性
-        statusTrigger.setAttribute('data-value', status);
-        
-        // 更新显示文本
-        const statusValueElement = statusTrigger.querySelector('[data-radix-select-value-id]');
-        if (statusValueElement) {
-          const statusMap: {[key: string]: string} = {
-            'in_stock': '有货',
-            'out_of_stock': '无货',
-            'pending': '待上架'
-          };
-          statusValueElement.textContent = statusMap[status] || '有货';
-        }
-      }
     } catch (e) {
-      console.error("设置类别或状态选择器失败:", e);
+      console.error("设置类别选择器失败:", e);
     }
     
     // 设置复选框
@@ -439,8 +418,6 @@ export default function Manage() {
                 const featured = (document.getElementById("product-featured") as HTMLInputElement).checked;
                 const categoryElement = document.querySelector('[data-id="product-category"]');
                 const category = categoryElement ? categoryElement.getAttribute('data-value') || 'clothing' : 'clothing';
-                const statusElement = document.querySelector('[data-id="product-status"]');
-                const status = statusElement ? statusElement.getAttribute('data-value') || 'in_stock' : 'in_stock';
                 const hasSizes = (document.getElementById("product-hasSizes") as HTMLInputElement).checked;
                 
                 // 基本验证
@@ -461,7 +438,6 @@ export default function Manage() {
                   stock: isNaN(stock) ? 0 : stock,
                   featured: featured ? 1 : 0,  // 转换为整数
                   category,
-                  status, // 添加产品状态
                   hasSizes: hasSizes ? 1 : 0   // 转换为整数
                 };
                 
@@ -609,22 +585,6 @@ export default function Manage() {
                     min="0"
                     className="bg-primary/50 border-accent"
                   />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="product-status" className="block text-sm font-medium">
-                    产品状态
-                  </label>
-                  <Select defaultValue="in_stock">
-                    <SelectTrigger className="bg-primary/50 border-accent" data-id="product-status">
-                      <SelectValue placeholder="选择状态" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="in_stock">有货</SelectItem>
-                      <SelectItem value="out_of_stock">无货</SelectItem>
-                      <SelectItem value="pending">待上架</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
                 
                 <div className="flex items-center space-x-6">
@@ -803,7 +763,6 @@ export default function Manage() {
                         <TableHead className="text-accent">名称</TableHead>
                         <TableHead className="text-accent">价格</TableHead>
                         <TableHead className="text-accent">库存</TableHead>
-                        <TableHead className="text-accent">状态</TableHead>
                         <TableHead className="text-accent">类别</TableHead>
                         <TableHead className="text-accent">操作</TableHead>
                       </TableRow>
@@ -811,7 +770,7 @@ export default function Manage() {
                     <TableBody>
                       {products.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={7} className="text-center py-8">
+                          <TableCell colSpan={6} className="text-center py-8">
                             暂无产品
                           </TableCell>
                         </TableRow>
@@ -848,28 +807,6 @@ export default function Manage() {
                               </div>
                             </TableCell>
                             <TableCell>{product.stock || "无限"}</TableCell>
-                            <TableCell>
-                              {product.status === "in_stock" && (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-400">
-                                  有货
-                                </span>
-                              )}
-                              {product.status === "out_of_stock" && (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-400">
-                                  无货
-                                </span>
-                              )}
-                              {product.status === "pending" && (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-400">
-                                  待上架
-                                </span>
-                              )}
-                              {!product.status && (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-400">
-                                  未设置
-                                </span>
-                              )}
-                            </TableCell>
                             <TableCell>
                               <span className="capitalize">{product.category || "未分类"}</span>
                             </TableCell>

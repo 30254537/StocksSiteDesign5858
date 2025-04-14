@@ -657,7 +657,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Product routes
   app.get("/api/products", async (req, res) => {
     try {
-      console.log("API: 开始获取所有产品...");
       // 添加缓存控制头，禁止浏览器缓存
       res.set({
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
@@ -667,17 +666,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       const products = await storage.getProducts();
-      console.log(`API: 成功获取产品列表，共 ${products.length} 个产品`);
-      
-      if (products.length === 0) {
-        console.log("API: 警告 - 获取到的产品列表为空");
-      } else {
-        console.log("API: 第一个产品示例:", JSON.stringify(products[0], null, 2));
-      }
-      
       res.json(products);
     } catch (error) {
-      console.error("API: 获取产品列表时出错:", error);
       res.status(500).json({ message: "Error fetching products" });
     }
   });
