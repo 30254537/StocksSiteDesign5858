@@ -46,9 +46,9 @@ export default function Merchandise() {
         <meta name="description" content={t("merchandise.metaDescription", "Explore our exclusive crypto-themed merchandise. From apparel to collectibles, show your support for STONKS DEX.")} />
       </Helmet>
       
-      <section className="container mx-auto px-4 pt-24 pb-10">
-        <div className="flex flex-col items-center mb-10">
-          <div className="inline-block relative mb-6 px-10 py-4 rounded-xl border-2 border-accent/60 bg-primary/40 shadow-glow-sm">
+      <section className="container mx-auto px-4 pt-32 pb-10">
+        <div className="flex flex-col items-center mb-12">
+          <div className="inline-block relative px-12 py-5 rounded-lg border-2 border-accent/60 bg-primary/20 shadow-glow-sm">
             <NeonText 
               as="h1" 
               text="STONKS DEX 周边产品" 
@@ -59,7 +59,7 @@ export default function Merchandise() {
           </div>
           
           {/* Category Filters */}
-          <div className="flex flex-wrap justify-center gap-2 mt-4 mb-8">
+          <div className="flex flex-wrap justify-center gap-2 mt-8 mb-4">
             {categories.map((category) => (
               <button
                 key={category}

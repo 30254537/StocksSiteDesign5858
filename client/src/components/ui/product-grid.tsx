@@ -55,7 +55,7 @@ export function ProductGrid({ category = "all", products: externalProducts }: Pr
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 pt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-4 pt-2">
           {products.map((product: Product) => (
             <ProductCard
               key={product.id}
