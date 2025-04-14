@@ -225,8 +225,29 @@ export default function Manage() {
           valueElement.textContent = categoryMap[product.category] || '服装';
         }
       }
+      
+      // 设置产品状态选择器
+      const statusTrigger = document.querySelector('[data-id="product-status"]');
+      if (statusTrigger) {
+        // 默认状态为有货，如果没有设置状态
+        const status = product.status || 'in_stock';
+        
+        // 更新 data-value 属性
+        statusTrigger.setAttribute('data-value', status);
+        
+        // 更新显示文本
+        const statusValueElement = statusTrigger.querySelector('[data-radix-select-value-id]');
+        if (statusValueElement) {
+          const statusMap: {[key: string]: string} = {
+            'in_stock': '有货',
+            'out_of_stock': '无货',
+            'pending': '待上架'
+          };
+          statusValueElement.textContent = statusMap[status] || '有货';
+        }
+      }
     } catch (e) {
-      console.error("设置类别选择器失败:", e);
+      console.error("设置类别或状态选择器失败:", e);
     }
     
     // 设置复选框
@@ -790,7 +811,7 @@ export default function Manage() {
                     <TableBody>
                       {products.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8">
+                          <TableCell colSpan={7} className="text-center py-8">
                             暂无产品
                           </TableCell>
                         </TableRow>
@@ -827,6 +848,28 @@ export default function Manage() {
                               </div>
                             </TableCell>
                             <TableCell>{product.stock || "无限"}</TableCell>
+                            <TableCell>
+                              {product.status === "in_stock" && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-400">
+                                  有货
+                                </span>
+                              )}
+                              {product.status === "out_of_stock" && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-400">
+                                  无货
+                                </span>
+                              )}
+                              {product.status === "pending" && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-400">
+                                  待上架
+                                </span>
+                              )}
+                              {!product.status && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-400">
+                                  未设置
+                                </span>
+                              )}
+                            </TableCell>
                             <TableCell>
                               <span className="capitalize">{product.category || "未分类"}</span>
                             </TableCell>
