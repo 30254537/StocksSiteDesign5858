@@ -169,15 +169,13 @@ export class DatabaseStorage implements IStorage {
       console.log("开始获取所有产品...");
       const productList = await db.select().from(products).orderBy(desc(products.id));
       
-      // 为缺少status字段的产品添加默认值
+      // 根据库存量来动态添加虚拟状态字段
       const processedProducts = productList.map(product => {
-        if (!product.status) {
-          return {
-            ...product,
-            status: 'in_stock' // 默认为有货
-          };
-        }
-        return product;
+        return {
+          ...product,
+          // 根据stock字段确定产品状态
+          status: (product.stock > 0) ? 'in_stock' : 'out_of_stock'
+        };
       });
       
       console.log(`成功获取 ${processedProducts.length} 个产品`);
@@ -225,15 +223,13 @@ export class DatabaseStorage implements IStorage {
         .where(eq(products.featured, 1))
         .orderBy(desc(products.id));
       
-      // 为缺少status字段的产品添加默认值
+      // 根据库存量来动态添加虚拟状态字段
       const processedProducts = productList.map(product => {
-        if (!product.status) {
-          return {
-            ...product,
-            status: 'in_stock' // 默认为有货
-          };
-        }
-        return product;
+        return {
+          ...product,
+          // 根据stock字段确定产品状态
+          status: (product.stock > 0) ? 'in_stock' : 'out_of_stock'
+        };
       });
       
       console.log(`成功获取 ${processedProducts.length} 个精选产品`);
