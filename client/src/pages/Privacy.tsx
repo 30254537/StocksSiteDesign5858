@@ -31,7 +31,7 @@ export default function Privacy() {
           </p>
           
           <p className="mt-8">
-            如有任何疑问，请通过 <a href="mailto:stonksdexshop@gmail.com" className="text-accent hover:underline">stonksdexshop@gmail.com</a> 联系我们。
+            如有任何疑问，请通过 <a href="mailto:stonksdex-shop@gmail.com" className="text-accent hover:underline">stonksdex-shop@gmail.com</a> 联系我们。
           </p>
         </div>
       </section>

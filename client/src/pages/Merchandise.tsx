@@ -27,13 +27,12 @@ export default function Merchandise() {
   // 将内部类别ID翻译为用户友好的显示名称
   const getCategoryDisplayName = (categoryId: string): string => {
     const categoryNames: Record<string, string> = {
-      all: t("products.allCategories", "全部商品"),
-      clothing: t("products.clothingCategory", "服装"),
-      accessories: t("products.accessoriesCategory", "配件"),
-      collectibles: t("products.collectiblesCategory", "收藏品"),
-      electronics: t("products.electronicsCategory", "电子产品"),
-      shoes: t("products.shoesCategory", "鞋类"),
-      digital: t("products.digitalCategory", "数字产品")
+      all: t("products.allCategories", "All Items"),
+      clothing: t("products.clothingCategory", "Clothing"),
+      accessories: t("products.accessoriesCategory", "Accessories"),
+      collectibles: t("products.collectiblesCategory", "Collectibles"),
+      electronics: t("products.electronicsCategory", "Electronics"),
+      shoes: t("products.shoesCategory", "Shoes")
     };
     
     return categoryNames[categoryId] || categoryId;
@@ -59,7 +58,7 @@ export default function Merchandise() {
             <Sparkles className="absolute -top-6 -right-8 text-accent w-10 h-10 opacity-80" />
           </div>
           <p className="text-lg text-center max-w-2xl text-gray-300 mb-8">
-            {t("merchandise.description", "STONKS DEX 限量版周边商品。展示您对加密货币的热爱，支持STONKS生态系统。")}
+            {t("merchandise.description", "Exclusive limited edition merchandise from STONKS DEX. Wear your crypto passion and show your support for the STONKS ecosystem.")}
           </p>
           
           {/* Category Filters */}

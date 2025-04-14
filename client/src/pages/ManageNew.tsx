@@ -1083,7 +1083,6 @@ export default function Manage() {
                 const address = (document.getElementById("contact-address") as HTMLTextAreaElement).value;
                 
                 try {
-                  // 正确调用API端点: /api/contact-info/:key
                   // 更新联系邮箱
                   await apiRequest("PUT", "/api/contact-info/email", { value: email });
                   
