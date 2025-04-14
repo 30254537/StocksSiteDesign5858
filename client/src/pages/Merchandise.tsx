@@ -46,24 +46,20 @@ export default function Merchandise() {
         <meta name="description" content={t("merchandise.metaDescription", "Explore our exclusive crypto-themed merchandise. From apparel to collectibles, show your support for STONKS DEX.")} />
       </Helmet>
       
-      <section className="container mx-auto px-4 pt-32 pb-10">
+      <section className="container mx-auto px-4 pt-24 pb-10">
         <div className="flex flex-col items-center mb-10">
-          <div className="inline-block relative mb-2">
+          <div className="inline-block relative mb-6 px-10 py-4 rounded-xl border-2 border-accent/60 bg-primary/40 shadow-glow-sm">
             <NeonText 
               as="h1" 
-              text={t("merchandise.title", "STONKS Merchandise")} 
-              className="text-4xl md:text-5xl font-orbitron font-bold mb-4 text-center" 
+              text="STONKS DEX 周边产品" 
+              className="text-2xl md:text-3xl font-orbitron font-bold text-center" 
               color="accent"
-              glowIntensity="strong"
+              glowIntensity="medium"
             />
-            <Sparkles className="absolute -top-6 -right-8 text-accent w-10 h-10 opacity-80" />
           </div>
-          <p className="text-lg text-center max-w-2xl text-gray-300 mb-8">
-            {t("merchandise.description", "Exclusive limited edition merchandise from STONKS DEX. Wear your crypto passion and show your support for the STONKS ecosystem.")}
-          </p>
           
           {/* Category Filters */}
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
+          <div className="flex flex-wrap justify-center gap-2 mt-4 mb-8">
             {categories.map((category) => (
               <button
                 key={category}
