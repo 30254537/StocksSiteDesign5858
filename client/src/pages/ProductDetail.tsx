@@ -95,10 +95,10 @@ export default function ProductDetail() {
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-16">
-      {/* 返回按钮 - 位于页面顶部 */}
+      {/* 返回按钮 - 位于页面顶部，样式更加明显 */}
       <div className="max-w-6xl mx-auto mb-4">
-        <Link href="/merchandise" className="inline-block">
-          <Button variant="ghost" size="sm" className="flex items-center text-accent hover:text-white hover:bg-accent/20 transition-all">
+        <Link href="/#products" className="inline-block">
+          <Button variant="outline" size="sm" className="flex items-center bg-secondary text-accent hover:text-white hover:bg-accent/20 transition-all border border-accent/50 shadow-md py-2 px-4">
             <ArrowLeft size={18} className="mr-1" />
             <span>{t("product.backToProducts")}</span>
           </Button>
