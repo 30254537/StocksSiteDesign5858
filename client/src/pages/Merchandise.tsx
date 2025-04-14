@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductGrid } from "@/components/ui/product-grid";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -6,10 +6,15 @@ import { NeonText } from "@/components/ui/neon-text";
 import { Helmet } from "react-helmet";
 import { Sparkles } from "lucide-react";
 import { Product } from "@shared/schema";
+import { useLocation } from "wouter";
 
 export default function Merchandise() {
   const { t, language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [location] = useLocation();
+  
+  // 检查URL中是否包含no-header参数，用于控制是否显示标题
+  const showHeader = !location.includes("no-header");
 
   // 获取产品数据
   const { data: products = [] } = useQuery<Product[]>({
@@ -47,14 +52,14 @@ export default function Merchandise() {
       
       <section className="container mx-auto px-4 py-10">
         <div className="flex flex-col items-center mb-10">
-          {/* 标题改为带霓虹边框的容器 */}
-          <div className="border-2 border-accent rounded-lg px-8 py-3 mb-8 glow-border-accent">
-            <h1 className="text-2xl md:text-3xl font-orbitron font-bold text-white">
-              STONKS DEX {t("merchandise.title", "周边产品")}
-            </h1>
-          </div>
-          
-          {/* 移除原来的描述文字 */}
+          {/* 标题改为带霓虹边框的容器 - 只在showHeader为true时显示 */}
+          {showHeader && (
+            <div className="border-2 border-accent rounded-lg px-8 py-3 mb-8 glow-border-accent">
+              <h1 className="text-2xl md:text-3xl font-orbitron font-bold text-white">
+                STONKS DEX {t("merchandise.title", "周边产品")}
+              </h1>
+            </div>
+          )}
           
           {/* Category Filters */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">

@@ -227,6 +227,13 @@ function Router() {
               </PageWrapper>
             )}
           </Route>
+          <Route path="/merchandise/no-header">
+            {() => (
+              <PageWrapper>
+                <Merchandise />
+              </PageWrapper>
+            )}
+          </Route>
           <Route>
             {() => (
               <PageWrapper>

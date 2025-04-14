@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight, ZoomIn, ArrowLeft } from "lucide-react";
 import { Product } from "@shared/schema";
 import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
 
-// 返回按钮组件，保持语言状态并直接跳转到商品列表页
+// 返回按钮组件，保持语言状态并直接跳转到商品列表页（无标题版本）
 const BackToProductsButton = ({ 
   t, 
   language,
@@ -27,8 +27,8 @@ const BackToProductsButton = ({
   const handleBackClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); // 阻止默认链接行为
     
-    // 直接跳转到周边产品页面
-    setLocation('/merchandise');
+    // 直接跳转到周边产品页面，添加no-header参数以隐藏标题
+    setLocation('/merchandise/no-header');
     
     // 滚动到页面顶部，确保页面显示完整内容
     window.scrollTo({
