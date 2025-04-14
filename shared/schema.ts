@@ -39,6 +39,7 @@ export const products = pgTable("products", {
   imageUrl: text("image_url").notNull(), // 保留主图兼容旧数据
   imageUrls: text("image_urls").array(), // 新增多图支持
   stock: integer("stock").notNull().default(10),
+  inStock: integer("in_stock").default(1), // 库存状态：1=有货，0=无货
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   featured: integer("featured").default(0),

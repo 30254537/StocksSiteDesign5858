@@ -206,6 +206,18 @@ export default function Manage() {
     const stockInput = document.getElementById("product-stock") as HTMLInputElement;
     if (stockInput) stockInput.value = product.stock?.toString() || "0";
     
+    // 设置库存状态
+    const inStockSelect = document.querySelector('[data-id="product-in-stock"]') as HTMLElement;
+    if (inStockSelect) {
+      const inStockValue = product.inStock !== undefined ? (product.inStock ? "1" : "0") : "1";
+      inStockSelect.setAttribute('data-value', inStockValue);
+      
+      const valueElement = inStockSelect.querySelector('[data-radix-select-value-id]');
+      if (valueElement) {
+        valueElement.textContent = inStockValue === "1" ? "有货" : "无货";
+      }
+    }
+    
     // 设置类别
     try {
       const categoryTrigger = document.querySelector('[data-id="product-category"]');
@@ -420,6 +432,10 @@ export default function Manage() {
                 const category = categoryElement ? categoryElement.getAttribute('data-value') || 'clothing' : 'clothing';
                 const hasSizes = (document.getElementById("product-hasSizes") as HTMLInputElement).checked;
                 
+                // 获取库存状态
+                const inStockElement = document.querySelector('[data-id="product-in-stock"]');
+                const inStock = inStockElement ? parseInt(inStockElement.getAttribute('data-value') || "1") : 1;
+                
                 // 基本验证
                 if (!name || isNaN(price) || price <= 0) {
                   toast({
@@ -436,6 +452,7 @@ export default function Manage() {
                   price,
                   description,
                   stock: isNaN(stock) ? 0 : stock,
+                  inStock, // 添加库存状态
                   featured: featured ? 1 : 0,  // 转换为整数
                   category,
                   hasSizes: hasSizes ? 1 : 0   // 转换为整数
@@ -585,6 +602,21 @@ export default function Manage() {
                     min="0"
                     className="bg-primary/50 border-accent"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="product-in-stock" className="block text-sm font-medium">
+                    库存状态
+                  </label>
+                  <Select defaultValue="1">
+                    <SelectTrigger className="bg-primary/50 border-accent" data-id="product-in-stock">
+                      <SelectValue placeholder="选择库存状态" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">有货</SelectItem>
+                      <SelectItem value="0">无货</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div className="flex items-center space-x-6">
@@ -806,7 +838,14 @@ export default function Manage() {
                                 <span className="text-xs text-gray-400">${product.price.toFixed(2)}</span>
                               </div>
                             </TableCell>
-                            <TableCell>{product.stock || "无限"}</TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <span className={product.inStock ? "text-green-400" : "text-red-400"}>
+                                  {product.inStock ? "有货" : "无货"}
+                                </span>
+                                <span className="text-xs text-gray-400">库存: {product.stock || "无限"}</span>
+                              </div>
+                            </TableCell>
                             <TableCell>
                               <span className="capitalize">{product.category || "未分类"}</span>
                             </TableCell>
