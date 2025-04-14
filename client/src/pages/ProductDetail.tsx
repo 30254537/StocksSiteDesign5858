@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight, ZoomIn, ArrowLeft } from "lucide-react";
 import { Product } from "@shared/schema";
 import { ImageZoomModal } from "@/components/ui/image-zoom-modal";
 
-// 返回按钮组件，保持语言状态
+// 返回按钮组件，保持语言状态并直接跳转到商品列表页
 const BackToProductsButton = ({ 
   t, 
   language,
@@ -26,8 +26,15 @@ const BackToProductsButton = ({
   // 使用useCallback处理返回导航，保持语言状态
   const handleBackClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); // 阻止默认链接行为
-    // 手动导航到产品列表页，不重置语言上下文
+    
+    // 直接跳转到周边产品页面
     setLocation('/merchandise');
+    
+    // 滚动到页面顶部，确保页面显示完整内容
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant'
+    });
   }, [setLocation]);
   
   return (
@@ -124,18 +131,16 @@ export default function ProductDetail() {
     return (
       <div className="container mx-auto px-4 pt-24 pb-16">
         <div className="max-w-6xl mx-auto bg-secondary border border-accent/30 rounded-xl p-8 text-center">
-          <h2 className="text-2xl font-orbitron font-bold mb-4">Product Not Found</h2>
-          <p className="mb-6">The product you are looking for does not exist or has been removed.</p>
+          <h2 className="text-2xl font-orbitron font-bold mb-4">
+            {language === 'zh' ? '未找到产品' : 'Product Not Found'}
+          </h2>
+          <p className="mb-6">
+            {language === 'zh' 
+              ? '您查找的产品不存在或已被移除。' 
+              : 'The product you are looking for does not exist or has been removed.'}
+          </p>
           <div>
-            <Button
-              className="bg-accent text-primary hover:bg-white transition-colors"
-              onClick={(e) => {
-                e.preventDefault();
-                setLocation('/merchandise');
-              }}
-            >
-              {t("product.returnToProducts", "Return to Products")}
-            </Button>
+            <BackToProductsButton t={t} language={language} isErrorPage={true} />
           </div>
         </div>
       </div>
