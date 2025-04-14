@@ -58,7 +58,7 @@ export default function Merchandise() {
             <Sparkles className="absolute -top-6 -right-8 text-accent w-10 h-10 opacity-80" />
           </div>
           <p className="text-lg text-center max-w-2xl text-gray-300 mb-8">
-            {t("merchandise.description", "Exclusive limited edition merchandise from STONKS DEX. Wear your crypto passion and show your support for the STONKS ecosystem.")}
+            {t("merchandise.description", "STONKS DEX 限量版周边商品。展示您对加密货币的热爱，支持STONKS生态系统。")}
           </p>
           
           {/* Category Filters */}
