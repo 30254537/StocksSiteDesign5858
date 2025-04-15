@@ -32,13 +32,13 @@ export default function GoldDogMonitor() {
   // 获取金狗监测列表
   const { data: monitors, isLoading, error } = useQuery<GoldDogMonitor[]>({
     queryKey: ['/api/gold-dog-monitors'],
-    staleTime: 1000 * 60 * 5, // 5分钟缓存
+    // 使用默认的staleTime配置，允许数据自动刷新
   });
   
   // 获取热门金狗监测
   const { data: topMonitors, isLoading: isLoadingTop } = useQuery<GoldDogMonitor[]>({
     queryKey: ['/api/gold-dog-monitors/top'],
-    staleTime: 1000 * 60 * 5, // 5分钟缓存
+    // 使用默认的staleTime配置，允许数据自动刷新
   });
   
   // 处理加载错误

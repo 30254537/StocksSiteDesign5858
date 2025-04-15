@@ -102,9 +102,11 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      refetchOnWindowFocus: true, // 允许在窗口获得焦点时重新获取数据
+      staleTime: 1000 * 30, // 修改为30秒过期，允许更频繁刷新
       retry: false,
+      // TanStack Query v5使用gcTime代替cacheTime
+      gcTime: 1000 * 60 * 5, // 5分钟后垃圾回收缓存
     },
     mutations: {
       retry: false,
