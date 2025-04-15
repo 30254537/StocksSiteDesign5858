@@ -136,6 +136,28 @@ export function setupCommunityRoutes(app: Express) {
   });
 
   // 删除社区活动（需要管理员权限）
+  app.delete('/api/community/:id', async (req, res) => {
+    try {
+      if (!global.adminLoggedIn) {
+        return res.status(401).json({ message: '需要管理员权限' });
+      }
+
+      const { id } = req.params;
+      const success = await storage.deleteCommunityActivity(parseInt(id));
+      
+      if (!success) {
+        res.status(404).json({ message: '未找到指定的社区活动或删除失败' });
+        return;
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      console.error('删除社区活动时出错:', error);
+      res.status(500).json({ message: '服务器错误' });
+    }
+  });
+  
+  // 保留旧的路由以确保兼容性
   app.delete('/api/admin/community/:id', async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
