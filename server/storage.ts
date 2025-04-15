@@ -11,14 +11,15 @@ import {
   CryptoNews, InsertCryptoNews,
   ContractAddress, InsertContractAddress,
   AboutContent, InsertAboutContent,
-  CommunityActivity, InsertCommunityActivity
+  CommunityActivity, InsertCommunityActivity,
+  GoldDogMonitor, InsertGoldDogMonitor
 } from "@shared/schema";
 import {
   users, products, cartItems, 
   orders, orderItems, musicTracks, 
   cryptoTweets, telegramMessages, 
   cryptoNews, contractAddresses, tweets,
-  contactInfo, aboutContent, communityActivities
+  contactInfo, aboutContent, communityActivities, goldDogMonitor
 } from "@shared/schema";
 import { eq, and, or, like, desc, count, isNull, asc } from "drizzle-orm";
 import * as bcrypt from "bcryptjs";
@@ -136,6 +137,15 @@ export interface IStorage {
   
   // 会话存储
   sessionStore: session.Store;
+  
+  // 金狗监测相关方法
+  createGoldDogMonitor(data: InsertGoldDogMonitor): Promise<GoldDogMonitor>;
+  getGoldDogMonitor(id: number): Promise<GoldDogMonitor | undefined>;
+  getGoldDogMonitors(limit?: number, publishedOnly?: boolean): Promise<GoldDogMonitor[]>;
+  updateGoldDogMonitor(id: number, data: Partial<GoldDogMonitor>): Promise<GoldDogMonitor | undefined>;
+  deleteGoldDogMonitor(id: number): Promise<boolean>;
+  incrementGoldDogMonitorViews(id: number): Promise<boolean>;
+  getTopGoldDogMonitors(limit: number): Promise<GoldDogMonitor[]>;
 }
 
 // 内存存储实现

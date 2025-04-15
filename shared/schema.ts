@@ -357,3 +357,28 @@ export const insertCommunityActivitySchema = createInsertSchema(communityActivit
 
 export type CommunityActivity = typeof communityActivities.$inferSelect;
 export type InsertCommunityActivity = z.infer<typeof insertCommunityActivitySchema>;
+
+// 金狗监测内容
+export const goldDogMonitor = pgTable("gold_dog_monitor", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(), // 标题
+  content: text("content").notNull(), // 内容（支持HTML或Markdown）
+  imageUrl: text("image_url"), // 可选的相关图片
+  sourceUrl: text("source_url"), // 来源链接
+  publishTime: timestamp("publish_time"), // 发布时间，可以预设未来发布
+  isPublished: boolean("is_published").default(false), // 是否已发布
+  isTop: boolean("is_top").default(false), // 是否置顶
+  views: integer("views").default(0), // 浏览次数
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertGoldDogMonitorSchema = createInsertSchema(goldDogMonitor).omit({
+  id: true,
+  views: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type GoldDogMonitor = typeof goldDogMonitor.$inferSelect;
+export type InsertGoldDogMonitor = z.infer<typeof insertGoldDogMonitorSchema>;
