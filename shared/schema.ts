@@ -382,3 +382,46 @@ export const insertGoldDogMonitorSchema = createInsertSchema(goldDogMonitor).omi
 
 export type GoldDogMonitor = typeof goldDogMonitor.$inferSelect;
 export type InsertGoldDogMonitor = z.infer<typeof insertGoldDogMonitorSchema>;
+
+// 团队成员管理
+export const teamMembers = pgTable("team_members", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull(), // 成员代码，如 "DEV 001"
+  title: text("title").notNull(), // 职位或头衔，如 "首席开发者"
+  description: text("description").notNull(), // 成员描述
+  imageUrl: text("image_url"), // 可选的成员头像
+  orderIndex: integer("order_index").default(0), // 排序索引
+  isActive: boolean("is_active").default(true), // 是否启用
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type TeamMember = typeof teamMembers.$inferSelect;
+export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
+
+// 社区特点管理
+export const communityFeatures = pgTable("community_features", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(), // 特点标题，如 "通过持有$STONKS代币参与平台治理"
+  description: text("description"), // 可选的详细描述
+  icon: text("icon"), // 可选的图标名称或URL
+  orderIndex: integer("order_index").default(0), // 排序索引
+  isActive: boolean("is_active").default(true), // 是否启用
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertCommunityFeatureSchema = createInsertSchema(communityFeatures).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type CommunityFeature = typeof communityFeatures.$inferSelect;
+export type InsertCommunityFeature = z.infer<typeof insertCommunityFeatureSchema>;
