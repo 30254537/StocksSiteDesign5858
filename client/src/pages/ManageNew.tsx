@@ -336,6 +336,11 @@ export default function Manage() {
   // 处理编辑社区活动
   const handleEditCommunityActivity = (activity: CommunityActivity) => {
     console.log('编辑活动:', activity);
+    console.log('活动图片信息:', {
+      imageUrl: activity.imageUrl,
+      imageUrls: activity.imageUrls
+    });
+    
     setEditingCommunityActivity(activity);
     
     // 重置文件输入框，但不要直接清空状态
@@ -345,6 +350,40 @@ export default function Manage() {
     
     // 保留图片文件状态，暂不重置 
     // setActivityImageFiles([]);
+    
+    // 添加现有图片的显示逻辑，可以加一个额外的div来显示
+    const existingImagesContainer = document.getElementById("existing-activity-images");
+    if (existingImagesContainer) {
+      // 清空现有内容
+      existingImagesContainer.innerHTML = "";
+      
+      // 如果有多张图片，优先使用imageUrls数组
+      if (activity.imageUrls && activity.imageUrls.length > 0) {
+        const imagesHtml = activity.imageUrls.map((url, index) => 
+          `<div class="inline-block mr-2 mb-2">
+            <img src="${url}" alt="活动图片 ${index + 1}" class="h-16 w-auto rounded border border-accent/30" />
+           </div>`
+        ).join("");
+        
+        existingImagesContainer.innerHTML = `
+          <div class="mb-4">
+            <p class="text-sm text-muted-foreground mb-2">现有图片 (${activity.imageUrls.length}张):</p>
+            <div class="flex flex-wrap">${imagesHtml}</div>
+          </div>
+        `;
+      } 
+      // 如果没有imageUrls但有单张imageUrl
+      else if (activity.imageUrl) {
+        existingImagesContainer.innerHTML = `
+          <div class="mb-4">
+            <p class="text-sm text-muted-foreground mb-2">现有图片:</p>
+            <div class="inline-block mr-2 mb-2">
+              <img src="${activity.imageUrl}" alt="活动主图" class="h-16 w-auto rounded border border-accent/30" />
+            </div>
+          </div>
+        `;
+      }
+    }
     
     // 填充表单
     document.getElementById("activity-id")?.setAttribute("value", activity.id.toString());
@@ -1558,6 +1597,9 @@ export default function Manage() {
                     activityImageFiles.forEach(file => {
                       formData.append("images", file);
                     });
+                    console.log(`准备上传 ${activityImageFiles.length} 张图片文件`, activityImageFiles);
+                  } else {
+                    console.log("没有图片文件需要上传");
                   }
                   
                   console.log("准备发送活动数据");
@@ -1678,6 +1720,12 @@ export default function Manage() {
                   <label htmlFor="activity-images" className="block text-sm font-medium">
                     上传图片
                   </label>
+                  
+                  {/* 现有图片显示区域 */}
+                  <div id="existing-activity-images" className="mb-3">
+                    {/* handleEditCommunityActivity中会填充现有图片的显示 */}
+                  </div>
+                  
                   <div className="flex flex-col space-y-2">
                     <Input
                       id="activity-images"
@@ -1704,6 +1752,39 @@ export default function Manage() {
                       multiple
                     />
                     <p className="text-xs text-gray-400">支持JPG, PNG, GIF等图片格式，最大10MB</p>
+                    
+                    {/* 显示已选择的图片文件 */}
+                    {activityImageFiles.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          已选择上传 {activityImageFiles.length} 张新图片:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {activityImageFiles.map((file, index) => (
+                            <div key={index} className="relative group">
+                              <div className="h-16 w-auto border border-accent/30 rounded flex items-center justify-center p-1">
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt={`预览 ${index + 1}`}
+                                  className="h-full w-auto object-cover"
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                className="absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
+                                  setActivityImageFiles(prev => 
+                                    prev.filter((_, i) => i !== index)
+                                  );
+                                }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
