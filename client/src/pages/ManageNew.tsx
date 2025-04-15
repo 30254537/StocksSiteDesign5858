@@ -584,6 +584,17 @@ export default function Manage() {
         >
           订单管理
         </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "goldDogMonitor" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("goldDogMonitor")}
+        >
+          金狗监测管理
+        </button>
       </div>
       
       {/* 关于我们内容管理 */}
@@ -1804,6 +1815,30 @@ export default function Manage() {
       
       {/* 订单管理 */}
       {activeTab === "orders" && <OrderManagement />}
+      
+      {/* 金狗监测管理 */}
+      {activeTab === "goldDogMonitor" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>金狗监测管理</CardTitle>
+            <CardDescription>添加、编辑和管理金狗监测内容</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-end mb-4">
+              <Button 
+                className="bg-accent text-black hover:bg-accent/80"
+                onClick={() => setLocation("/manage-gold-dog-monitor")}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                管理金狗监测内容
+              </Button>
+            </div>
+            <p className="text-center text-muted-foreground">
+              点击上方按钮进入金狗监测专用管理界面，在那里您可以添加、编辑和管理所有金狗监测内容。
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
