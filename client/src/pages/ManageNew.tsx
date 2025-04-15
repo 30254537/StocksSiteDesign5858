@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { Product, ContractAddress, AboutContent, CommunityActivity } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -272,8 +273,9 @@ export default function Manage() {
     const titleInput = document.getElementById("activity-title") as HTMLInputElement;
     if (titleInput) titleInput.value = activity.title;
     
-    const descriptionInput = document.getElementById("activity-description") as HTMLTextAreaElement;
-    if (descriptionInput) descriptionInput.value = activity.description || "";
+    // 使用 content 而不是 description（根据schema定义）
+    const contentInput = document.getElementById("activity-content") as HTMLTextAreaElement;
+    if (contentInput) contentInput.value = activity.content || "";
     
     const locationInput = document.getElementById("activity-location") as HTMLInputElement;
     if (locationInput) locationInput.value = activity.location || "";
@@ -296,7 +298,7 @@ export default function Manage() {
     if (imageUrlInput) imageUrlInput.value = activity.imageUrl || "";
     
     const activeCheckbox = document.getElementById("activity-active") as HTMLInputElement;
-    if (activeCheckbox) activeCheckbox.checked = Boolean(activity.active);
+    if (activeCheckbox) activeCheckbox.checked = Boolean(activity.isActive); // 使用 isActive 而不是 active
     
     // 滚动到表单
     window.scrollTo({ top: document.getElementById("activity-form")?.offsetTop || 0, behavior: "smooth" });
