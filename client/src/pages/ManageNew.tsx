@@ -134,7 +134,9 @@ export default function Manage() {
   const fetchTeamMembers = async () => {
     setLoadingTeamMembers(true);
     try {
-      const response = await apiRequest("GET", "/api/team-members");
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/team-members?t=${timestamp}`);
       const data = await response.json();
       setTeamMembers(data);
     } catch (error) {
@@ -296,7 +298,13 @@ export default function Manage() {
   const handleDeleteAboutContent = async (contentId: number) => {
     if (window.confirm("确定要删除此关于我们内容吗？此操作无法撤销。")) {
       try {
-        await apiRequest("DELETE", `/api/about/${contentId}`);
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/about/${contentId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除关于我们内容失败');
+        }
         
         toast({
           title: "删除成功",
@@ -366,14 +374,20 @@ export default function Manage() {
   const handleDeleteCommunityActivity = async (activityId: number) => {
     if (window.confirm("确定要删除此社区活动吗？此操作无法撤销。")) {
       try {
-        await apiRequest("DELETE", `/api/community/${activityId}`);
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/community/${activityId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除社区活动失败');
+        }
         
         toast({
           title: "删除成功",
           description: "社区活动已成功删除",
         });
         
-        // 重新获取活动列表以更新UI
+        // 重新获取活动列表以更新UI，确保使用最新数据
         await fetchCommunityActivities();
       } catch (error) {
         console.error("删除社区活动错误:", error);
@@ -448,7 +462,13 @@ export default function Manage() {
   const handleDeleteTeamMember = async (memberId: number) => {
     if (window.confirm("确定要删除此团队成员吗？此操作无法撤销。")) {
       try {
-        await apiRequest("DELETE", `/api/team-members/${memberId}`);
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/team-members/${memberId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除团队成员失败');
+        }
         
         toast({
           title: "删除成功",
@@ -503,7 +523,13 @@ export default function Manage() {
   const handleDeleteCommunityFeature = async (featureId: number) => {
     if (window.confirm("确定要删除此社区特点吗？此操作无法撤销。")) {
       try {
-        await apiRequest("DELETE", `/api/community-features/${featureId}`);
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/community-features/${featureId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除社区特点失败');
+        }
         
         toast({
           title: "删除成功",
@@ -585,7 +611,13 @@ export default function Manage() {
   const handleDeleteProduct = async (productId: number) => {
     if (window.confirm("确定要删除此产品吗？此操作无法撤销。")) {
       try {
-        await apiRequest("DELETE", `/api/products/${productId}`);
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/products/${productId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除产品失败');
+        }
         
         toast({
           title: "删除成功",
