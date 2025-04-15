@@ -1537,6 +1537,14 @@ export default function Manage() {
                   isActive // Boolean 值, 后端会处理转换
                 };
                 
+                console.log("活动数据:", JSON.stringify(activityData, (key, value) => {
+                  // 特殊处理Date对象，确保正确序列化
+                  if (value instanceof Date) {
+                    return value.toISOString();
+                  }
+                  return value;
+                }));
+                
                 try {
                   // 发送请求
                   let response;
