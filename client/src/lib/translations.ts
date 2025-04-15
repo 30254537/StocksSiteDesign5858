@@ -15,7 +15,7 @@ export const translations: Translations = {
     "nav.products": "Merchandise",
     "nav.manage": "Management",
     "nav.about": "About Us",
-    "nav.community": "Community",
+    "nav.activities": "Community Activities",
     "nav.myOrders": "My Orders",
     "nav.orderLookup": "Order Lookup",
     
@@ -330,7 +330,7 @@ export const translations: Translations = {
     "nav.products": "周边产品",
     "nav.manage": "后台管理",
     "nav.about": "关于我们",
-    "nav.community": "社区",
+    "nav.activities": "社区活动",
     "nav.myOrders": "我的订单",
     "nav.orderLookup": "订单查询",
     
@@ -565,14 +565,14 @@ export const translations: Translations = {
     "cryptoTweets.translated": "已从英文翻译",
     
     // Crypto News
-    "nav.cryptoNews": "加密新闻",
-    "cryptoNews.title": "加密货币新闻",
-    "cryptoNews.featured": "置顶新闻",
-    "cryptoNews.readMore": "阅读更多",
-    "cryptoNews.allNews": "全部新闻",
-    "cryptoNews.error": "获取新闻失败",
-    "cryptoNews.noNews": "暂无可用新闻",
-    "cryptoNews.stayUpdated": "关注我们以获取更多加密货币更新",
+    "nav.cryptoNews": "社区活动",
+    "cryptoNews.title": "社区活动",
+    "cryptoNews.featured": "置顶活动",
+    "cryptoNews.readMore": "了解更多",
+    "cryptoNews.allNews": "全部活动",
+    "cryptoNews.error": "获取社区活动失败",
+    "cryptoNews.noNews": "暂无社区活动",
+    "cryptoNews.stayUpdated": "关注我们以获取更多社区活动信息",
     
     // Team Section
     "about.teamTitle": "团队成员",
