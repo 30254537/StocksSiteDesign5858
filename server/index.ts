@@ -10,6 +10,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// 设置正确的编码
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  next();
+});
+
 // Set up session middleware
 app.use(session({
   secret: 'stonksdexshop-session-secret',
