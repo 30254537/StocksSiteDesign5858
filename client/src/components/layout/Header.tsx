@@ -150,9 +150,9 @@ export default function Header() {
                   </Link>
                   
                   <Link 
-                    href="/telegram-messages" 
+                    href="/community" 
                     className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
-                      location === "/telegram-messages" ? "text-accent" : "text-white hover:text-accent"
+                      location === "/community" ? "text-accent" : "text-white hover:text-accent"
                     }`}
                     onClick={scrollToTop}
                   >

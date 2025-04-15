@@ -126,7 +126,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </li>
             <li>
               <Link 
-                href="/telegram-messages" 
+                href="/community" 
                 className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
                 onClick={() => {
                   scrollToTop();
