@@ -524,7 +524,7 @@ const CryptoPulse: React.FC = () => {
     
     // 添加推文（如果有）
     if (tweetsData && tweetsData.length > 0) {
-      const tweetPosts = tweetsData.map(tweet => ({
+      const tweetPosts = tweetsData.map((tweet: any) => ({
         id: tweet.tweetId || tweet.id,
         content: tweet.text,
         author: {

@@ -169,6 +169,16 @@ export default function Header() {
                     {t("nav.about")}
                   </Link>
                   
+                  <Link 
+                    href="/crypto-pulse" 
+                    className={`font-medium text-base transition-colors duration-300 whitespace-nowrap px-4 py-2 ${
+                      location === "/crypto-pulse" ? "text-accent" : "text-white hover:text-accent"
+                    }`}
+                    onClick={scrollToTop}
+                  >
+                    {language === 'zh' ? '加密脉搏' : 'Crypto Pulse'}
+                  </Link>
+                  
                   <a 
                     href="https://mystonks.org" 
                     target="_blank"
