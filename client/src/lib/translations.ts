@@ -267,7 +267,7 @@ export const translations: Translations = {
     "about.joinTelegram": "Join our Telegram Community",
     
     // Contact Info
-    "contact.supportEmail": "support@stonksdex.io",
+    "contact.supportEmail": "support@stonksdexshop.com",
     "contact.companyAddress": "Singapore, Blockchain Tower #42-01",
     "contact.title": "Contact Information",
     "contact.name": "Name:",
@@ -594,7 +594,7 @@ export const translations: Translations = {
     "about.joinTelegram": "加入我们的Telegram社区",
     
     // Contact Info
-    "contact.supportEmail": "support@stonksdex.io",
+    "contact.supportEmail": "support@stonksdexshop.com",
     "contact.companyAddress": "新加坡, 区块链大厦 #42-01",
     "contact.title": "联系信息",
     "contact.name": "姓名:",
