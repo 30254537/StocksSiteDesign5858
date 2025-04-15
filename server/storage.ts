@@ -921,6 +921,94 @@ export class DatabaseStorage implements IStorage {
       .where(eq(communityActivities.isActive, true))
       .orderBy(desc(communityActivities.startDate));
   }
+  
+  // 金狗监测相关方法
+  async createGoldDogMonitor(data: InsertGoldDogMonitor): Promise<GoldDogMonitor> {
+    const [createdMonitor] = await db.insert(goldDogMonitor)
+      .values({
+        ...data,
+        views: 0, // 新创建的监测记录默认浏览量为0
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    
+    return createdMonitor;
+  }
+  
+  async getGoldDogMonitor(id: number): Promise<GoldDogMonitor | undefined> {
+    const [monitor] = await db.select().from(goldDogMonitor)
+      .where(eq(goldDogMonitor.id, id));
+    
+    return monitor;
+  }
+  
+  async getGoldDogMonitors(limit?: number, publishedOnly?: boolean): Promise<GoldDogMonitor[]> {
+    let query = db.select().from(goldDogMonitor)
+      .orderBy(desc(goldDogMonitor.createdAt));
+    
+    if (publishedOnly) {
+      query = query.where(eq(goldDogMonitor.isPublished, true));
+    }
+    
+    if (limit) {
+      query = query.limit(limit);
+    }
+    
+    return query;
+  }
+  
+  async updateGoldDogMonitor(id: number, data: Partial<GoldDogMonitor>): Promise<GoldDogMonitor | undefined> {
+    const [updatedMonitor] = await db.update(goldDogMonitor)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(goldDogMonitor.id, id))
+      .returning();
+    
+    return updatedMonitor;
+  }
+  
+  async deleteGoldDogMonitor(id: number): Promise<boolean> {
+    try {
+      await db.delete(goldDogMonitor).where(eq(goldDogMonitor.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除金狗监测时出错:', error);
+      return false;
+    }
+  }
+  
+  async incrementGoldDogMonitorViews(id: number): Promise<boolean> {
+    try {
+      const [monitor] = await db.select().from(goldDogMonitor)
+        .where(eq(goldDogMonitor.id, id));
+      
+      if (!monitor) {
+        return false;
+      }
+      
+      await db.update(goldDogMonitor)
+        .set({ 
+          views: monitor.views + 1,
+          updatedAt: new Date()
+        })
+        .where(eq(goldDogMonitor.id, id));
+      
+      return true;
+    } catch (error) {
+      console.error('增加金狗监测浏览量时出错:', error);
+      return false;
+    }
+  }
+  
+  async getTopGoldDogMonitors(limit: number): Promise<GoldDogMonitor[]> {
+    return db.select().from(goldDogMonitor)
+      .where(eq(goldDogMonitor.isPublished, true))
+      .orderBy(desc(goldDogMonitor.views))
+      .limit(limit);
+  }
 }
 
 // 创建并导出存储实例

@@ -25,6 +25,7 @@ import { getAudioDurationInSeconds } from "get-audio-duration";
 import { setupCryptoNewsRoutes } from "./routes/cryptoNewsRoutes";
 import { setupAboutRoutes } from "./routes/aboutRoutes";
 import { setupCommunityRoutes } from "./routes/communityRoutes";
+import { setupGoldDogRoutes } from "./routes/goldDogRoutes";
 import { syncCryptoNews } from "./services/cryptoNewsService";
 // 注意：financeNewsRoutes 不存在，将在下面注释相关代码
 import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
