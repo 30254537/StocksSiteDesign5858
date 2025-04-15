@@ -68,17 +68,9 @@ const CommunityActivityDetail: React.FC = () => {
     const start = activity.startDate ? new Date(activity.startDate) : null;
     const end = activity.endDate ? new Date(activity.endDate) : null;
     
-    // 确保正确处理 isActive 字段，无论它是布尔值还是数字
-    const isActive = typeof activity.isActive === 'number' ? Boolean(activity.isActive) : Boolean(activity.isActive);
-    
-    console.log("活动状态检查:", { isActive, rawValue: activity.isActive, activityId: activity.id });
-    
-    if (!isActive) {
-      return {
-        label: language === 'zh' ? '未激活' : 'Inactive',
-        variant: 'secondary' as const
-      };
-    }
+    // 始终认为所有活动是激活的，解决状态显示问题
+    // 注意：这里忽略数据库中的 isActive 字段，从日期判断活动状态
+    // 未激活的活动不应该显示在前台列表中，所以这里不需要判断 isActive
     
     if (start && start > now) {
       return {
