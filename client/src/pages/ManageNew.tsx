@@ -1526,24 +1526,18 @@ export default function Manage() {
                   return;
                 }
                 
-                // 创建数据对象
+                // 创建数据对象 - 将日期直接以ISO字符串发送，避免Date对象序列化问题
                 const activityData = {
                   title,
                   content,
                   location,
-                  startDate: startDate ? new Date(startDate) : null,
-                  endDate: endDate ? new Date(endDate) : null, 
+                  startDate: startDate ? new Date(startDate).toISOString() : null,
+                  endDate: endDate ? new Date(endDate).toISOString() : null, 
                   imageUrl,
                   isActive // Boolean 值, 后端会处理转换
                 };
                 
-                console.log("活动数据:", JSON.stringify(activityData, (key, value) => {
-                  // 特殊处理Date对象，确保正确序列化
-                  if (value instanceof Date) {
-                    return value.toISOString();
-                  }
-                  return value;
-                }));
+                console.log("活动数据:", JSON.stringify(activityData));
                 
                 try {
                   // 发送请求
@@ -1557,7 +1551,11 @@ export default function Manage() {
                     response = await apiRequest("POST", "/api/community", activityData);
                   }
                   
+                  // 增加响应数据处理
+                  const responseData = await response.json().catch(() => null);
+                  
                   if (response.ok) {
+                    console.log("活动提交成功，响应:", responseData);
                     // 重置表单
                     (document.getElementById("activity-form") as HTMLFormElement).reset();
                     document.getElementById("activity-id")?.removeAttribute("value");
@@ -1572,7 +1570,8 @@ export default function Manage() {
                     // 重新获取活动列表
                     await fetchCommunityActivities();
                   } else {
-                    throw new Error(await response.text());
+                    console.error("活动提交失败，状态码:", response.status, "响应:", responseData);
+                    throw new Error(responseData?.message || "请求失败");
                   }
                 } catch (error) {
                   console.error("提交社区活动表单错误:", error);
