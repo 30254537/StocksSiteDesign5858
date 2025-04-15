@@ -150,12 +150,12 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </li>
             <li>
               <a 
-                href="https://t.me/STONKSOPEN" 
+                href="https://mystonks.org" 
                 target="_blank"
                 className="text-xl hover:text-accent transition-colors duration-300 block py-3"
                 onClick={onClose}
               >
-                {t("nav.community")}
+                My stonks
               </a>
             </li>
           </ul>

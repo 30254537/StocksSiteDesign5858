@@ -170,11 +170,11 @@ export default function Header() {
                   </Link>
                   
                   <a 
-                    href="https://t.me/STONKSOPEN" 
+                    href="https://mystonks.org" 
                     target="_blank"
                     className="font-medium text-base text-white hover:text-accent transition-colors duration-300 whitespace-nowrap px-4 py-2"
                   >
-                    {t("nav.community")}
+                    My stonks
                   </a>
                 </div>
               </div>
