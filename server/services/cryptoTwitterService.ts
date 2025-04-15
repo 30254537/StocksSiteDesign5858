@@ -127,12 +127,9 @@ async function fetchTwitterData(): Promise<any[]> {
       return {
         tweetId: tweet.id,
         text: tweet.text,
-        authorId: tweet.author_id,
         authorName: user.name || 'Unknown',
         authorUsername: user.username || 'unknown',
         authorProfileImage: user.profile_image_url || '',
-        authorVerified: user.verified || false,
-        createdAt: new Date(tweet.created_at),
         likeCount: tweet.public_metrics?.like_count || 0,
         retweetCount: tweet.public_metrics?.retweet_count || 0,
         replyCount: tweet.public_metrics?.reply_count || 0,
@@ -165,17 +162,16 @@ async function storeTweetsToDatabase(tweets: any[]): Promise<void> {
     const tweetsToInsert: InsertCryptoTweet[] = tweets.map(tweet => ({
       tweetId: tweet.tweetId,
       text: tweet.text,
-      authorId: tweet.authorId,
       authorName: tweet.authorName,
       authorUsername: tweet.authorUsername,
       authorProfileImage: tweet.authorProfileImage,
-      authorVerified: tweet.authorVerified ? 1 : 0,
-      createdAt: new Date(tweet.createdAt),
       likeCount: tweet.likeCount,
       retweetCount: tweet.retweetCount,
       replyCount: tweet.replyCount,
       quoteCount: tweet.quoteCount,
-      url: tweet.url
+      url: tweet.url,
+      source: "x",
+      category: "crypto"
     }));
     
     // 批量插入
