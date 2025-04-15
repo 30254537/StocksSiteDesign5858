@@ -9,14 +9,16 @@ import {
   CryptoTweet, InsertCryptoTweet,
   TelegramMessage, InsertTelegramMessage,
   CryptoNews, InsertCryptoNews,
-  ContractAddress, InsertContractAddress
+  ContractAddress, InsertContractAddress,
+  AboutContent, InsertAboutContent,
+  CommunityActivity, InsertCommunityActivity
 } from "@shared/schema";
 import {
   users, products, cartItems, 
   orders, orderItems, musicTracks, 
   cryptoTweets, telegramMessages, 
   cryptoNews, contractAddresses, tweets,
-  contactInfo
+  contactInfo, aboutContent, communityActivities
 } from "@shared/schema";
 import { eq, and, or, like, desc, count, isNull, asc } from "drizzle-orm";
 import * as bcrypt from "bcryptjs";

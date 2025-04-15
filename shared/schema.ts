@@ -43,6 +43,8 @@ export const products = pgTable("products", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   featured: integer("featured").default(0),
   hasSizes: integer("has_sizes").default(0),
+  status: text("status").default("available").notNull(), // 商品状态: available(有货), unavailable(无货), upcoming(待上架)
+  shoeSizes: text("shoe_sizes").array(), // 鞋类尺码选项，如果是鞋类商品使用
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
@@ -50,6 +52,7 @@ export const insertProductSchema = createInsertSchema(products).omit({
   createdAt: true,
   updatedAt: true,
   featured: true,
+  status: true,
 });
 
 // Cart item model
@@ -308,3 +311,47 @@ export const insertTweetSchema = createInsertSchema(tweets).omit({
 
 export type Tweet = typeof tweets.$inferSelect;
 export type InsertTweet = z.infer<typeof insertTweetSchema>;
+
+// 关于我们内容管理
+export const aboutContent = pgTable("about_content", {
+  id: serial("id").primaryKey(),
+  section: text("section").notNull(), // 区块标识，如"mission", "team", "values"等
+  title: text("title").notNull(), // 区块标题
+  content: text("content").notNull(), // 内容（支持HTML或Markdown）
+  orderIndex: integer("order_index").default(0), // 排序索引
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertAboutContentSchema = createInsertSchema(aboutContent).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type AboutContent = typeof aboutContent.$inferSelect;
+export type InsertAboutContent = z.infer<typeof insertAboutContentSchema>;
+
+// 社区活动
+export const communityActivities = pgTable("community_activities", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  imageUrl: text("image_url"), // 可选的活动图片
+  startDate: timestamp("start_date"), // 活动开始时间
+  endDate: timestamp("end_date"), // 活动结束时间
+  location: text("location"), // 活动地点或链接
+  isOnline: boolean("is_online").default(true), // 是否为线上活动
+  isActive: boolean("is_active").default(true), // 是否启用
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertCommunityActivitySchema = createInsertSchema(communityActivities).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export type CommunityActivity = typeof communityActivities.$inferSelect;
+export type InsertCommunityActivity = z.infer<typeof insertCommunityActivitySchema>;
