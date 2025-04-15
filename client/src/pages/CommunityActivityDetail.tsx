@@ -31,6 +31,7 @@ interface CommunityActivity {
   startDate: string | null;
   endDate: string | null;
   imageUrl: string | null;
+  imageUrls: string[] | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
