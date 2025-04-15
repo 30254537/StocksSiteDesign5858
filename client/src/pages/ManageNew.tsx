@@ -819,7 +819,7 @@ export default function Manage() {
                   startDate: startDate || null,
                   endDate: endDate || null,
                   imageUrl,
-                  isActive: isActive ? 1 : 0
+                  isActive // Boolean 值, 后端会处理转换
                 };
                 
                 try {
