@@ -339,7 +339,8 @@ export const communityActivities = pgTable("community_activities", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   content: text("content").notNull(),
-  imageUrl: text("image_url"), // 可选的活动图片
+  imageUrl: text("image_url"), // 可选的活动主图片（兼容性字段）
+  imageUrls: text("image_urls").array(), // 新增：多图片支持
   startDate: timestamp("start_date"), // 活动开始时间
   endDate: timestamp("end_date"), // 活动结束时间
   location: text("location"), // 活动地点或链接

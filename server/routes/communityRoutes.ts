@@ -75,7 +75,7 @@ export function setupCommunityRoutes(app: Express) {
     }
   });
 
-  // 添加社区活动（需要管理员权限）- 支持图片上传
+  // 添加社区活动（需要管理员权限）- 支持多图片上传
   app.post('/api/community', upload.array('images', 5), async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
@@ -84,15 +84,25 @@ export function setupCommunityRoutes(app: Express) {
 
       // 处理上传的图片文件
       let imageUrl = req.body.imageUrl || '';
+      let imageUrls: string[] = [];
+
       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-        // 使用第一张图片作为主图片
-        imageUrl = `/uploads/community/${req.files[0].filename}`;
+        // 处理所有上传的图片
+        imageUrls = (req.files as Express.Multer.File[]).map(file => 
+          `/uploads/community/${file.filename}`
+        );
+        
+        // 使用第一张图片作为主图片（保留兼容性）
+        imageUrl = imageUrls[0];
+        
+        console.log(`上传了 ${req.files.length} 张图片:`, imageUrls);
       }
 
       // 合并表单数据和图片URL
       const formData = {
         ...req.body,
         imageUrl,
+        imageUrls,
         isActive: req.body.isActive === 'true'
       };
 
@@ -143,7 +153,7 @@ export function setupCommunityRoutes(app: Express) {
     }
   });
 
-  // 更新社区活动（需要管理员权限）- 支持图片上传
+  // 更新社区活动（需要管理员权限）- 支持多图片上传
   app.put('/api/community/:id', upload.array('images', 5), async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
@@ -161,28 +171,51 @@ export function setupCommunityRoutes(app: Express) {
       
       // 处理上传的图片文件
       let imageUrl = req.body.imageUrl || existingActivity.imageUrl || '';
+      // 保持现有的图片数组，如果没有上传新图片则使用原来的
+      let imageUrls = existingActivity.imageUrls || [];
+
       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-        // 使用第一张图片作为主图片
-        imageUrl = `/uploads/community/${req.files[0].filename}`;
+        // 创建新的图片URL数组
+        const newImageUrls = (req.files as Express.Multer.File[]).map(file => 
+          `/uploads/community/${file.filename}`
+        );
+
+        // 使用第一张新上传的图片作为主图片
+        imageUrl = newImageUrls[0];
         
-        // 如果上传了新图片且原来有图片，可以删除旧图片
-        if (existingActivity.imageUrl && existingActivity.imageUrl.startsWith('/uploads/community/')) {
-          const oldImagePath = path.resolve(`public${existingActivity.imageUrl}`);
-          if (fs.existsSync(oldImagePath)) {
-            try {
-              fs.unlinkSync(oldImagePath);
-              console.log(`已删除旧图片: ${oldImagePath}`);
-            } catch (err) {
-              console.error(`删除旧图片时出错:`, err);
-            }
+        // 如果明确选择了替换所有图片（而不是添加），可以删除旧图片文件
+        if (req.body.replaceAllImages === 'true') {
+          // 删除旧的图片文件
+          if (existingActivity.imageUrls && existingActivity.imageUrls.length > 0) {
+            existingActivity.imageUrls.forEach(imgUrl => {
+              if (imgUrl && imgUrl.startsWith('/uploads/community/')) {
+                const oldImagePath = path.resolve(`public${imgUrl}`);
+                if (fs.existsSync(oldImagePath)) {
+                  try {
+                    fs.unlinkSync(oldImagePath);
+                    console.log(`已删除旧图片: ${oldImagePath}`);
+                  } catch (err) {
+                    console.error(`删除旧图片时出错:`, err);
+                  }
+                }
+              }
+            });
           }
+          // 替换为新图片数组
+          imageUrls = newImageUrls;
+        } else {
+          // 将新图片添加到现有图片数组中
+          imageUrls = [...imageUrls, ...newImageUrls];
         }
+        
+        console.log(`更新后的图片URL数组:`, imageUrls);
       }
 
       // 合并表单数据和图片URL
       const formData = {
         ...req.body,
         imageUrl,
+        imageUrls,
         isActive: req.body.isActive === 'true'
       };
       

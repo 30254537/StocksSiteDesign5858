@@ -65,31 +65,39 @@ const CommunityActivityDetail: React.FC = () => {
   // 计算活动状态
   const getActivityStatus = (activity: CommunityActivity) => {
     const now = new Date();
+    // 确保日期字符串正确解析为日期对象
     const start = activity.startDate ? new Date(activity.startDate) : null;
     const end = activity.endDate ? new Date(activity.endDate) : null;
     
-    // 始终认为所有活动是激活的，解决状态显示问题
-    // 注意：这里忽略数据库中的 isActive 字段，从日期判断活动状态
-    // 未激活的活动不应该显示在前台列表中，所以这里不需要判断 isActive
+    console.log('活动日期信息:', {
+      now: now.toISOString(),
+      start: start ? start.toISOString() : null,
+      end: end ? end.toISOString() : null
+    });
     
-    if (start && start > now) {
+    // 即将开始状态: 开始日期存在且在未来
+    if (start && start.getTime() > now.getTime()) {
+      console.log('活动状态: 即将开始');
       return {
         label: language === 'zh' ? '即将开始' : 'Upcoming',
         variant: 'outline' as const
       };
     }
     
-    if (!end || (end && end >= now)) {
+    // 已结束状态: 结束日期存在且在过去
+    if (end && end.getTime() < now.getTime()) {
+      console.log('活动状态: 已结束');
       return {
-        label: language === 'zh' ? '进行中' : 'Ongoing',
-        // 由于Shadcn UI的Badge组件不支持success变体，我们使用默认变体来显示活跃状态
-        variant: 'default' as const
+        label: language === 'zh' ? '已结束' : 'Completed',
+        variant: 'secondary' as const
       };
     }
     
+    // 正在进行状态: 所有其他情况
+    console.log('活动状态: 进行中');
     return {
-      label: language === 'zh' ? '已结束' : 'Completed',
-      variant: 'secondary' as const
+      label: language === 'zh' ? '进行中' : 'Ongoing',
+      variant: 'default' as const
     };
   };
   
