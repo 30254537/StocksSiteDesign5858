@@ -1,11 +1,18 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
 import { CommunityFeature } from "@shared/schema";
 
+// 定义扩展 Session 类型
+declare module 'express-session' {
+  interface SessionData {
+    isAdmin?: boolean;
+  }
+}
+
 // 管理员权限验证中间件
-const requireAdmin = (req, res, next) => {
-  // 检查会话中是否有管理员标志
-  if (req.session && req.session.isAdmin) {
+const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  // 检查全局管理员登录状态
+  if (global.adminLoggedIn) {
     next();
   } else {
     res.status(401).json({ message: "未授权操作，需要管理员权限" });
@@ -53,18 +60,18 @@ export function setupCommunityFeaturesRoutes(app: Express) {
   // 创建社区特点（需要管理员权限）
   app.post('/api/community-features', requireAdmin, async (req, res) => {
     try {
-      const { title, description, iconUrl, orderIndex = 0 } = req.body;
+      const { title, description, icon, orderIndex = 0 } = req.body;
 
       // 验证必要字段
-      if (!title || !description) {
-        return res.status(400).json({ message: "标题和描述是必填字段" });
+      if (!title) {
+        return res.status(400).json({ message: "标题是必填字段" });
       }
 
       // 创建新社区特点
       const newFeature = await storage.createCommunityFeature({
         title,
-        description,
-        iconUrl: iconUrl || '',
+        description: description || null,
+        icon: icon || null,
         orderIndex: orderIndex || 0,
         isActive: true
       });
@@ -87,10 +94,10 @@ export function setupCommunityFeaturesRoutes(app: Express) {
         return res.status(400).json({ message: "无效的社区特点ID" });
       }
 
-      const { title, description, iconUrl, orderIndex, isActive } = req.body;
+      const { title, description, icon, orderIndex, isActive } = req.body;
 
       // 至少需要一个更新字段
-      if (!title && !description && !iconUrl && orderIndex === undefined && isActive === undefined) {
+      if (!title && description === undefined && icon === undefined && orderIndex === undefined && isActive === undefined) {
         return res.status(400).json({ message: "请提供至少一个更新字段" });
       }
 
@@ -104,7 +111,7 @@ export function setupCommunityFeaturesRoutes(app: Express) {
       const updateData: Partial<CommunityFeature> = {};
       if (title !== undefined) updateData.title = title;
       if (description !== undefined) updateData.description = description;
-      if (iconUrl !== undefined) updateData.iconUrl = iconUrl;
+      if (icon !== undefined) updateData.icon = icon;
       if (orderIndex !== undefined) updateData.orderIndex = orderIndex;
       if (isActive !== undefined) updateData.isActive = isActive;
 

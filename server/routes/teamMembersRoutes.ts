@@ -1,11 +1,18 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
 import { TeamMember } from "@shared/schema";
 
+// 定义扩展 Session 类型
+declare module 'express-session' {
+  interface SessionData {
+    isAdmin?: boolean;
+  }
+}
+
 // 管理员权限验证中间件
-const requireAdmin = (req, res, next) => {
-  // 检查会话中是否有管理员标志
-  if (req.session && req.session.isAdmin) {
+const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  // 检查全局管理员登录状态
+  if (global.adminLoggedIn) {
     next();
   } else {
     res.status(401).json({ message: "未授权操作，需要管理员权限" });
@@ -53,20 +60,21 @@ export function setupTeamMembersRoutes(app: Express) {
   // 创建团队成员（需要管理员权限）
   app.post('/api/team-members', requireAdmin, async (req, res) => {
     try {
-      const { name, title, bio, photoUrl, orderIndex = 0 } = req.body;
+      const { title, description, code, imageUrl, orderIndex = 0 } = req.body;
 
       // 验证必要字段
-      if (!name || !title) {
-        return res.status(400).json({ message: "姓名和职位是必填字段" });
+      if (!title || !code || !description) {
+        return res.status(400).json({ message: "标题、代码和描述是必填字段" });
       }
 
       // 创建新团队成员
       const newMember = await storage.createTeamMember({
-        name,
         title,
-        bio: bio || '',
-        photoUrl: photoUrl || '',
-        orderIndex: orderIndex || 0
+        code,
+        description,
+        imageUrl: imageUrl || null,
+        orderIndex: orderIndex || 0,
+        isActive: true
       });
 
       res.status(201).json(newMember);
@@ -87,10 +95,10 @@ export function setupTeamMembersRoutes(app: Express) {
         return res.status(400).json({ message: "无效的团队成员ID" });
       }
 
-      const { name, title, bio, photoUrl, orderIndex } = req.body;
+      const { title, description, code, imageUrl, orderIndex, isActive } = req.body;
 
       // 至少需要一个更新字段
-      if (!name && !title && !bio && !photoUrl && orderIndex === undefined) {
+      if (!title && !description && !code && imageUrl === undefined && orderIndex === undefined && isActive === undefined) {
         return res.status(400).json({ message: "请提供至少一个更新字段" });
       }
 
@@ -102,11 +110,12 @@ export function setupTeamMembersRoutes(app: Express) {
 
       // 准备更新数据
       const updateData: Partial<TeamMember> = {};
-      if (name !== undefined) updateData.name = name;
       if (title !== undefined) updateData.title = title;
-      if (bio !== undefined) updateData.bio = bio;
-      if (photoUrl !== undefined) updateData.photoUrl = photoUrl;
+      if (description !== undefined) updateData.description = description;
+      if (code !== undefined) updateData.code = code;
+      if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
       if (orderIndex !== undefined) updateData.orderIndex = orderIndex;
+      if (isActive !== undefined) updateData.isActive = isActive;
 
       // 更新团队成员
       const updatedMember = await storage.updateTeamMember(id, updateData);
