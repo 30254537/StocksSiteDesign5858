@@ -66,27 +66,37 @@ const CommunityActivityDetail: React.FC = () => {
   // 计算活动状态
   const getActivityStatus = (activity: CommunityActivity) => {
     const now = new Date();
+    console.log('活动状态计算:', {
+      now: now.toISOString(),
+      startDate: activity.startDate,
+      endDate: activity.endDate
+    });
+    
     // 确保日期字符串正确解析为日期对象
     const start = activity.startDate ? new Date(activity.startDate) : null;
     const end = activity.endDate ? new Date(activity.endDate) : null;
     
-    // 即将开始状态: 开始日期存在且在未来
-    if (start && start.getTime() > now.getTime()) {
-      return {
-        label: language === 'zh' ? '即将开始' : 'Upcoming',
-        variant: 'outline' as const
-      };
-    }
+    // 调试时间比较逻辑
+    if (start) console.log('开始日期比较:', { start: start.toISOString(), isBeforeNow: start.getTime() > now.getTime() });
+    if (end) console.log('结束日期比较:', { end: end.toISOString(), isPastNow: end.getTime() < now.getTime() });
     
     // 已结束状态: 结束日期存在且在过去
-    if (end && end.getTime() < now.getTime()) {
+    if (end && now.getTime() > end.getTime()) {
       return {
         label: language === 'zh' ? '已结束' : 'Completed',
         variant: 'secondary' as const
       };
     }
     
-    // 正在进行状态: 所有其他情况
+    // 即将开始状态: 开始日期存在且在未来
+    if (start && now.getTime() < start.getTime()) {
+      return {
+        label: language === 'zh' ? '即将开始' : 'Upcoming',
+        variant: 'outline' as const
+      };
+    }
+    
+    // 正在进行状态: 如果当前时间在开始和结束之间，或没有明确的开始/结束时间
     return {
       label: language === 'zh' ? '进行中' : 'Ongoing',
       variant: 'default' as const

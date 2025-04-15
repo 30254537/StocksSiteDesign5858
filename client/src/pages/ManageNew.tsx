@@ -335,9 +335,16 @@ export default function Manage() {
   
   // 处理编辑社区活动
   const handleEditCommunityActivity = (activity: CommunityActivity) => {
+    console.log('编辑活动:', activity);
     setEditingCommunityActivity(activity);
-    // 重置图片文件状态
-    setActivityImageFiles([]);
+    
+    // 重置文件输入框，但不要直接清空状态
+    // 我们将在提交表单时使用现有图片
+    const fileInput = document.getElementById("activity-images") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+    
+    // 保留图片文件状态，暂不重置 
+    // setActivityImageFiles([]);
     
     // 填充表单
     document.getElementById("activity-id")?.setAttribute("value", activity.id.toString());
@@ -366,10 +373,11 @@ export default function Manage() {
       endDateInput.value = formattedDate;
     }
     
-    // 移除URL输入框的引用，现在我们只使用文件上传
-    
+    // 设置活动状态复选框
     const activeCheckbox = document.getElementById("activity-active") as HTMLInputElement;
     if (activeCheckbox) activeCheckbox.checked = Boolean(activity.isActive); // 使用 isActive 而不是 active
+    
+    // 移除URL输入框的引用，现在我们只使用文件上传
     
     // 滚动到表单
     window.scrollTo({ top: document.getElementById("activity-form")?.offsetTop || 0, behavior: "smooth" });
