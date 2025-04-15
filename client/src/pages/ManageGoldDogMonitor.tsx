@@ -152,7 +152,7 @@ export default function ManageGoldDogMonitor() {
   // 创建金狗监测
   const createMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const response = await apiRequest('POST', '/api/gold-dog-monitors', formData, false);
+      const response = await apiRequest('POST', '/api/gold-dog-monitors', formData);
       return response.json();
     },
     onSuccess: () => {
@@ -176,7 +176,7 @@ export default function ManageGoldDogMonitor() {
   // 更新金狗监测
   const updateMutation = useMutation({
     mutationFn: async ({ id, formData }: { id: number; formData: FormData }) => {
-      const response = await apiRequest('PUT', `/api/gold-dog-monitors/${id}`, formData, false);
+      const response = await apiRequest('PUT', `/api/gold-dog-monitors/${id}`, formData);
       return response.json();
     },
     onSuccess: () => {
