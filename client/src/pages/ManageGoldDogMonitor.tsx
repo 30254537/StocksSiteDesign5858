@@ -157,24 +157,32 @@ export default function ManageGoldDogMonitor() {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
       const response = await apiRequest('POST', `/api/gold-dog-monitors?t=${timestamp}`, formData);
+      
+      // 先尝试获取响应数据，不管成功或失败
+      const responseData = await response.json().catch(() => null);
+      console.log("金狗监测API响应:", response.status, responseData);
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '创建失败，请重试');
+        throw new Error(responseData?.message || '创建失败，请重试');
       }
-      return response.json();
+      
+      return responseData; // 已经解析过的JSON响应
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('金狗监测创建成功返回数据:', data);
+      
       // 使用更新的invalidateQueries方法，并确保完全失效相关查询
       queryClient.invalidateQueries({ queryKey: ['/api/gold-dog-monitors'] });
       // 额外触发强制刷新
       queryClient.refetchQueries({ queryKey: ['/api/gold-dog-monitors'] });
       
+      setIsCreateDialogOpen(false);
+      resetCreateForm();
+      
       toast({
         title: '创建成功',
         description: '金狗监测创建成功',
       });
-      setIsCreateDialogOpen(false);
-      resetCreateForm();
     },
     onError: (error: any) => {
       console.error('创建金狗监测失败:', error);
@@ -290,6 +298,7 @@ export default function ManageGoldDogMonitor() {
   
   // 处理创建表单提交
   const onCreateSubmit = (values: MonitorFormValues) => {
+    console.log("开始创建金狗监测", values);
     const formData = new FormData();
     formData.append('title', values.title);
     formData.append('content', values.content);
@@ -299,6 +308,13 @@ export default function ManageGoldDogMonitor() {
     if (values.network) formData.append('network', values.network);
     if (values.contractAddress) formData.append('contractAddress', values.contractAddress);
     if (imageFile) formData.append('image', imageFile);
+    
+    // 添加时间戳字段，确保创建时间被正确设置
+    formData.append('createdAt', new Date().toISOString());
+    formData.append('updatedAt', new Date().toISOString());
+    
+    // 添加客户端时间戳，防止缓存问题
+    formData.append('_timestamp', Date.now().toString());
     
     createMutation.mutate(formData);
   };
@@ -307,6 +323,7 @@ export default function ManageGoldDogMonitor() {
   const onEditSubmit = (values: MonitorFormValues) => {
     if (!selectedMonitor) return;
     
+    console.log("开始更新金狗监测", values);
     const formData = new FormData();
     formData.append('title', values.title);
     formData.append('content', values.content);
@@ -316,6 +333,12 @@ export default function ManageGoldDogMonitor() {
     if (values.network) formData.append('network', values.network);
     if (values.contractAddress) formData.append('contractAddress', values.contractAddress);
     if (imageFile) formData.append('image', imageFile);
+    
+    // 添加updatedAt时间戳
+    formData.append('updatedAt', new Date().toISOString());
+    
+    // 添加客户端时间戳，防止缓存问题
+    formData.append('_timestamp', Date.now().toString());
     
     updateMutation.mutate({ id: selectedMonitor.id, formData });
   };
