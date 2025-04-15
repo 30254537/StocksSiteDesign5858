@@ -45,7 +45,8 @@ export const products = pgTable("products", {
   hasSizes: integer("has_sizes").default(0),
   // status: text("status").default("available").notNull(), // 商品状态: available(有货), unavailable(无货), upcoming(待上架)
   // NOTE: status column is not in the actual database
-  shoeSizes: text("shoe_sizes").array(), // 鞋类尺码选项，如果是鞋类商品使用
+  // shoeSizes: text("shoe_sizes").array(), // 鞋类尺码选项，如果是鞋类商品使用
+  // NOTE: shoe_sizes column is not in the actual database
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
