@@ -58,6 +58,16 @@ export default function Manage() {
   const [loadingCommunityActivities, setLoadingCommunityActivities] = useState(false);
   const [editingCommunityActivity, setEditingCommunityActivity] = useState<CommunityActivity | null>(null);
   
+  // 团队成员管理状态
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [loadingTeamMembers, setLoadingTeamMembers] = useState(false);
+  const [editingTeamMember, setEditingTeamMember] = useState<TeamMember | null>(null);
+  
+  // 社区特点管理状态
+  const [communityFeatures, setCommunityFeatures] = useState<CommunityFeature[]>([]);
+  const [loadingCommunityFeatures, setLoadingCommunityFeatures] = useState(false);
+  const [editingCommunityFeature, setEditingCommunityFeature] = useState<CommunityFeature | null>(null);
+  
   // 获取商品列表
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -117,6 +127,44 @@ export default function Manage() {
     }
   };
   
+  // 获取团队成员
+  const fetchTeamMembers = async () => {
+    setLoadingTeamMembers(true);
+    try {
+      const response = await apiRequest("GET", "/api/team-members");
+      const data = await response.json();
+      setTeamMembers(data);
+    } catch (error) {
+      console.error("获取团队成员失败:", error);
+      toast({
+        title: "获取团队成员失败",
+        description: "无法获取团队成员信息，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingTeamMembers(false);
+    }
+  };
+  
+  // 获取社区特点
+  const fetchCommunityFeatures = async () => {
+    setLoadingCommunityFeatures(true);
+    try {
+      const response = await apiRequest("GET", "/api/community-features");
+      const data = await response.json();
+      setCommunityFeatures(data);
+    } catch (error) {
+      console.error("获取社区特点失败:", error);
+      toast({
+        title: "获取社区特点失败",
+        description: "无法获取社区特点信息，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCommunityFeatures(false);
+    }
+  };
+
   // 检查管理员身份验证
   useEffect(() => {
     const checkAuth = async () => {
@@ -130,6 +178,8 @@ export default function Manage() {
           fetchContractAddresses();
           fetchAboutContents();
           fetchCommunityActivities();
+          fetchTeamMembers();
+          fetchCommunityFeatures();
         } else {
           toast({
             title: "需要管理员权限",
@@ -357,6 +407,119 @@ export default function Manage() {
     }
   };
   
+  // 处理编辑团队成员
+  const handleEditTeamMember = (member: TeamMember) => {
+    setEditingTeamMember(member);
+    
+    // 填充表单
+    document.getElementById("member-id")?.setAttribute("value", member.id.toString());
+    
+    const codeInput = document.getElementById("member-code") as HTMLInputElement;
+    if (codeInput) codeInput.value = member.code;
+    
+    const titleInput = document.getElementById("member-title") as HTMLInputElement;
+    if (titleInput) titleInput.value = member.title;
+    
+    const descInput = document.getElementById("member-description") as HTMLTextAreaElement;
+    if (descInput) descInput.value = member.description || "";
+    
+    const imageUrlInput = document.getElementById("member-imageUrl") as HTMLInputElement;
+    if (imageUrlInput) imageUrlInput.value = member.imageUrl || "";
+    
+    const orderIndexInput = document.getElementById("member-orderIndex") as HTMLInputElement;
+    if (orderIndexInput) orderIndexInput.value = member.orderIndex?.toString() || "0";
+    
+    const activeCheckbox = document.getElementById("member-active") as HTMLInputElement;
+    if (activeCheckbox) activeCheckbox.checked = Boolean(member.isActive);
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("member-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑团队成员",
+      description: `正在编辑: ${member.title}`,
+    });
+  };
+  
+  // 处理删除团队成员
+  const handleDeleteTeamMember = async (memberId: number) => {
+    if (window.confirm("确定要删除此团队成员吗？此操作无法撤销。")) {
+      try {
+        await apiRequest("DELETE", `/api/team-members/${memberId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "团队成员已成功删除",
+        });
+        
+        // 重新获取成员列表以更新UI
+        await fetchTeamMembers();
+      } catch (error) {
+        console.error("删除团队成员错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除团队成员，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+  // 处理编辑社区特点
+  const handleEditCommunityFeature = (feature: CommunityFeature) => {
+    setEditingCommunityFeature(feature);
+    
+    // 填充表单
+    document.getElementById("feature-id")?.setAttribute("value", feature.id.toString());
+    
+    const titleInput = document.getElementById("feature-title") as HTMLInputElement;
+    if (titleInput) titleInput.value = feature.title;
+    
+    const descInput = document.getElementById("feature-description") as HTMLTextAreaElement;
+    if (descInput) descInput.value = feature.description || "";
+    
+    const iconInput = document.getElementById("feature-icon") as HTMLInputElement;
+    if (iconInput) iconInput.value = feature.icon || "";
+    
+    const orderIndexInput = document.getElementById("feature-orderIndex") as HTMLInputElement;
+    if (orderIndexInput) orderIndexInput.value = feature.orderIndex?.toString() || "0";
+    
+    const activeCheckbox = document.getElementById("feature-active") as HTMLInputElement;
+    if (activeCheckbox) activeCheckbox.checked = Boolean(feature.isActive);
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("feature-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑社区特点",
+      description: `正在编辑: ${feature.title}`,
+    });
+  };
+  
+  // 处理删除社区特点
+  const handleDeleteCommunityFeature = async (featureId: number) => {
+    if (window.confirm("确定要删除此社区特点吗？此操作无法撤销。")) {
+      try {
+        await apiRequest("DELETE", `/api/community-features/${featureId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "社区特点已成功删除",
+        });
+        
+        // 重新获取特点列表以更新UI
+        await fetchCommunityFeatures();
+      } catch (error) {
+        console.error("删除社区特点错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除社区特点，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
   // 处理编辑产品
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
@@ -539,6 +702,28 @@ export default function Manage() {
           onClick={() => setActiveTab("about")}
         >
           关于我们管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "team" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("team")}
+        >
+          团队成员管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "features" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("features")}
+        >
+          社区特点管理
         </button>
         
         <button
