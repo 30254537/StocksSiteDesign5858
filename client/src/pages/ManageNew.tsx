@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { apiRequest } from "@/lib/queryClient";
-import { Product, ContractAddress } from "@shared/schema";
+import { Product, ContractAddress, AboutContent, CommunityActivity } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -47,6 +47,16 @@ export default function Manage() {
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [editingAddress, setEditingAddress] = useState<ContractAddress | null>(null);
   
+  // 关于我们内容管理状态
+  const [aboutContents, setAboutContents] = useState<AboutContent[]>([]);
+  const [loadingAboutContents, setLoadingAboutContents] = useState(false);
+  const [editingAboutContent, setEditingAboutContent] = useState<AboutContent | null>(null);
+  
+  // 社区活动管理状态
+  const [communityActivities, setCommunityActivities] = useState<CommunityActivity[]>([]);
+  const [loadingCommunityActivities, setLoadingCommunityActivities] = useState(false);
+  const [editingCommunityActivity, setEditingCommunityActivity] = useState<CommunityActivity | null>(null);
+  
   // 获取商品列表
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -68,6 +78,44 @@ export default function Manage() {
     }
   };
 
+  // 获取关于我们内容
+  const fetchAboutContents = async () => {
+    setLoadingAboutContents(true);
+    try {
+      const response = await apiRequest("GET", "/api/about");
+      const data = await response.json();
+      setAboutContents(data);
+    } catch (error) {
+      console.error("获取关于我们内容失败:", error);
+      toast({
+        title: "获取关于我们内容失败",
+        description: "无法获取关于我们内容，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAboutContents(false);
+    }
+  };
+  
+  // 获取社区活动
+  const fetchCommunityActivities = async () => {
+    setLoadingCommunityActivities(true);
+    try {
+      const response = await apiRequest("GET", "/api/community");
+      const data = await response.json();
+      setCommunityActivities(data);
+    } catch (error) {
+      console.error("获取社区活动失败:", error);
+      toast({
+        title: "获取社区活动失败",
+        description: "无法获取社区活动，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCommunityActivities(false);
+    }
+  };
+  
   // 检查管理员身份验证
   useEffect(() => {
     const checkAuth = async () => {
@@ -79,6 +127,8 @@ export default function Manage() {
           fetchProducts();
           fetchContactInfo();
           fetchContractAddresses();
+          fetchAboutContents();
+          fetchCommunityActivities();
         } else {
           toast({
             title: "需要管理员权限",
@@ -161,6 +211,124 @@ export default function Manage() {
       title: "编辑合约地址",
       description: `正在编辑: ${address.network} - ${address.coinType}`,
     });
+  };
+  
+  // 处理编辑关于我们内容
+  const handleEditAboutContent = (content: AboutContent) => {
+    setEditingAboutContent(content);
+    
+    // 填充表单
+    document.getElementById("about-id")?.setAttribute("value", content.id.toString());
+    
+    const sectionInput = document.getElementById("about-section") as HTMLInputElement;
+    if (sectionInput) sectionInput.value = content.section;
+    
+    const titleInput = document.getElementById("about-title") as HTMLInputElement;
+    if (titleInput) titleInput.value = content.title || "";
+    
+    const contentInput = document.getElementById("about-content") as HTMLTextAreaElement;
+    if (contentInput) contentInput.value = content.content || "";
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("about-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑关于我们内容",
+      description: `正在编辑: ${content.section}`,
+    });
+  };
+  
+  // 处理删除关于我们内容
+  const handleDeleteAboutContent = async (contentId: number) => {
+    if (window.confirm("确定要删除此关于我们内容吗？此操作无法撤销。")) {
+      try {
+        await apiRequest("DELETE", `/api/about/${contentId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "关于我们内容已成功删除",
+        });
+        
+        // 重新获取内容列表以更新UI
+        await fetchAboutContents();
+      } catch (error) {
+        console.error("删除关于我们内容错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除关于我们内容，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+  // 处理编辑社区活动
+  const handleEditCommunityActivity = (activity: CommunityActivity) => {
+    setEditingCommunityActivity(activity);
+    
+    // 填充表单
+    document.getElementById("activity-id")?.setAttribute("value", activity.id.toString());
+    
+    const titleInput = document.getElementById("activity-title") as HTMLInputElement;
+    if (titleInput) titleInput.value = activity.title;
+    
+    const descriptionInput = document.getElementById("activity-description") as HTMLTextAreaElement;
+    if (descriptionInput) descriptionInput.value = activity.description || "";
+    
+    const locationInput = document.getElementById("activity-location") as HTMLInputElement;
+    if (locationInput) locationInput.value = activity.location || "";
+    
+    const startDateInput = document.getElementById("activity-startDate") as HTMLInputElement;
+    if (startDateInput && activity.startDate) {
+      const date = new Date(activity.startDate);
+      const formattedDate = date.toISOString().split('T')[0];
+      startDateInput.value = formattedDate;
+    }
+    
+    const endDateInput = document.getElementById("activity-endDate") as HTMLInputElement;
+    if (endDateInput && activity.endDate) {
+      const date = new Date(activity.endDate);
+      const formattedDate = date.toISOString().split('T')[0];
+      endDateInput.value = formattedDate;
+    }
+    
+    const imageUrlInput = document.getElementById("activity-imageUrl") as HTMLInputElement;
+    if (imageUrlInput) imageUrlInput.value = activity.imageUrl || "";
+    
+    const activeCheckbox = document.getElementById("activity-active") as HTMLInputElement;
+    if (activeCheckbox) activeCheckbox.checked = Boolean(activity.active);
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("activity-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑社区活动",
+      description: `正在编辑: ${activity.title}`,
+    });
+  };
+  
+  // 处理删除社区活动
+  const handleDeleteCommunityActivity = async (activityId: number) => {
+    if (window.confirm("确定要删除此社区活动吗？此操作无法撤销。")) {
+      try {
+        await apiRequest("DELETE", `/api/community/${activityId}`);
+        
+        toast({
+          title: "删除成功",
+          description: "社区活动已成功删除",
+        });
+        
+        // 重新获取活动列表以更新UI
+        await fetchCommunityActivities();
+      } catch (error) {
+        console.error("删除社区活动错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除社区活动，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
   };
   
   // 处理删除合约地址
@@ -362,6 +530,28 @@ export default function Manage() {
         
         <button
           className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "about" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("about")}
+        >
+          关于我们管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "community" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("community")}
+        >
+          社区活动管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
             activeTab === "contact" 
               ? "text-accent border-b-2 border-accent" 
               : "text-gray-400 hover:text-accent"
@@ -393,6 +583,458 @@ export default function Manage() {
           订单管理
         </button>
       </div>
+      
+      {/* 关于我们内容管理 */}
+      {activeTab === "about" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>关于我们内容管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* 关于我们内容表单 */}
+            <form
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const aboutId = document.getElementById("about-id")?.getAttribute("value");
+                const section = (document.getElementById("about-section") as HTMLInputElement).value;
+                const title = (document.getElementById("about-title") as HTMLInputElement).value;
+                const content = (document.getElementById("about-content") as HTMLTextAreaElement).value;
+                
+                // 基本验证
+                if (!section || !content) {
+                  toast({
+                    title: "表单错误",
+                    description: "请填写栏目名称和内容",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                // 创建数据对象
+                const aboutData = {
+                  section,
+                  title,
+                  content
+                };
+                
+                try {
+                  // 发送请求
+                  let response;
+                  
+                  if (aboutId) {
+                    // 编辑模式
+                    response = await apiRequest("PUT", `/api/about/${aboutId}`, aboutData);
+                  } else {
+                    // 新增模式
+                    response = await apiRequest("POST", "/api/about", aboutData);
+                  }
+                  
+                  if (response.ok) {
+                    // 重置表单
+                    (document.getElementById("about-form") as HTMLFormElement).reset();
+                    document.getElementById("about-id")?.removeAttribute("value");
+                    setEditingAboutContent(null);
+                    
+                    // 提示成功
+                    toast({
+                      title: aboutId ? "更新成功" : "添加成功",
+                      description: aboutId ? "关于我们内容已成功更新" : "关于我们内容已成功添加",
+                    });
+                    
+                    // 重新获取内容列表
+                    await fetchAboutContents();
+                  } else {
+                    throw new Error(await response.text());
+                  }
+                } catch (error) {
+                  console.error("提交关于我们内容表单错误:", error);
+                  toast({
+                    title: "提交失败",
+                    description: "无法保存关于我们内容，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              id="about-form"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <input type="hidden" id="about-id" />
+                
+                <div className="space-y-2">
+                  <label htmlFor="about-section" className="block text-sm font-medium">
+                    栏目名称
+                  </label>
+                  <Input
+                    id="about-section"
+                    placeholder="输入栏目名称，例如：公司简介"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="about-title" className="block text-sm font-medium">
+                    标题
+                  </label>
+                  <Input
+                    id="about-title"
+                    placeholder="输入标题（可选）"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="about-content" className="block text-sm font-medium">
+                    内容
+                  </label>
+                  <Textarea
+                    id="about-content"
+                    placeholder="输入内容正文"
+                    className="bg-primary/50 border-accent min-h-[150px]"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-accent text-accent"
+                  onClick={() => {
+                    // 重置表单
+                    (document.getElementById("about-form") as HTMLFormElement).reset();
+                    document.getElementById("about-id")?.removeAttribute("value");
+                    setEditingAboutContent(null);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button type="submit" className="bg-accent text-black hover:bg-accent/80">
+                  {editingAboutContent ? "更新内容" : "添加内容"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 关于我们内容列表 */}
+            <div>
+              <h3 className="text-xl font-medium mb-4">现有内容</h3>
+              
+              {loadingAboutContents ? (
+                <div className="flex justify-center p-4">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : aboutContents.length === 0 ? (
+                <div className="text-center text-gray-400 p-6">
+                  <p>暂无内容，请添加内容</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>栏目名称</TableHead>
+                        <TableHead>标题</TableHead>
+                        <TableHead>内容预览</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {aboutContents.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">{item.section}</TableCell>
+                          <TableCell>{item.title || "-"}</TableCell>
+                          <TableCell className="max-w-[300px] truncate">{item.content}</TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-accent text-accent"
+                              onClick={() => handleEditAboutContent(item)}
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteAboutContent(item.id)}
+                            >
+                              删除
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* 社区活动管理 */}
+      {activeTab === "community" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>社区活动管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* 社区活动表单 */}
+            <form
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const activityId = document.getElementById("activity-id")?.getAttribute("value");
+                const title = (document.getElementById("activity-title") as HTMLInputElement).value;
+                const content = (document.getElementById("activity-content") as HTMLTextAreaElement).value;
+                const location = (document.getElementById("activity-location") as HTMLInputElement).value;
+                const startDate = (document.getElementById("activity-startDate") as HTMLInputElement).value;
+                const endDate = (document.getElementById("activity-endDate") as HTMLInputElement).value;
+                const imageUrl = (document.getElementById("activity-imageUrl") as HTMLInputElement).value;
+                const isActive = (document.getElementById("activity-active") as HTMLInputElement).checked;
+                
+                // 基本验证
+                if (!title || !content) {
+                  toast({
+                    title: "表单错误",
+                    description: "请填写活动标题和内容",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                // 创建数据对象
+                const activityData = {
+                  title,
+                  content,
+                  location,
+                  startDate: startDate || null,
+                  endDate: endDate || null,
+                  imageUrl,
+                  isActive: isActive ? 1 : 0
+                };
+                
+                try {
+                  // 发送请求
+                  let response;
+                  
+                  if (activityId) {
+                    // 编辑模式
+                    response = await apiRequest("PUT", `/api/community/${activityId}`, activityData);
+                  } else {
+                    // 新增模式
+                    response = await apiRequest("POST", "/api/community", activityData);
+                  }
+                  
+                  if (response.ok) {
+                    // 重置表单
+                    (document.getElementById("activity-form") as HTMLFormElement).reset();
+                    document.getElementById("activity-id")?.removeAttribute("value");
+                    setEditingCommunityActivity(null);
+                    
+                    // 提示成功
+                    toast({
+                      title: activityId ? "更新成功" : "添加成功",
+                      description: activityId ? "社区活动已成功更新" : "社区活动已成功添加",
+                    });
+                    
+                    // 重新获取活动列表
+                    await fetchCommunityActivities();
+                  } else {
+                    throw new Error(await response.text());
+                  }
+                } catch (error) {
+                  console.error("提交社区活动表单错误:", error);
+                  toast({
+                    title: "提交失败",
+                    description: "无法保存社区活动，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              id="activity-form"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <input type="hidden" id="activity-id" />
+                
+                <div className="space-y-2">
+                  <label htmlFor="activity-title" className="block text-sm font-medium">
+                    活动标题
+                  </label>
+                  <Input
+                    id="activity-title"
+                    placeholder="输入活动标题"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="activity-location" className="block text-sm font-medium">
+                    活动地点
+                  </label>
+                  <Input
+                    id="activity-location"
+                    placeholder="输入活动地点"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="activity-startDate" className="block text-sm font-medium">
+                    开始日期
+                  </label>
+                  <Input
+                    id="activity-startDate"
+                    type="date"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="activity-endDate" className="block text-sm font-medium">
+                    结束日期
+                  </label>
+                  <Input
+                    id="activity-endDate"
+                    type="date"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="activity-content" className="block text-sm font-medium">
+                    活动内容
+                  </label>
+                  <Textarea
+                    id="activity-content"
+                    placeholder="输入活动详细内容"
+                    className="bg-primary/50 border-accent min-h-[150px]"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="activity-imageUrl" className="block text-sm font-medium">
+                    图片URL
+                  </label>
+                  <Input
+                    id="activity-imageUrl"
+                    placeholder="输入图片URL（可选）"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="activity-active"
+                    className="w-4 h-4 mr-2 accent-accent"
+                    defaultChecked={true}
+                  />
+                  <label htmlFor="activity-active" className="text-sm font-medium">
+                    显示活动（设为激活状态）
+                  </label>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-accent text-accent"
+                  onClick={() => {
+                    // 重置表单
+                    (document.getElementById("activity-form") as HTMLFormElement).reset();
+                    document.getElementById("activity-id")?.removeAttribute("value");
+                    setEditingCommunityActivity(null);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button type="submit" className="bg-accent text-black hover:bg-accent/80">
+                  {editingCommunityActivity ? "更新活动" : "添加活动"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 社区活动列表 */}
+            <div>
+              <h3 className="text-xl font-medium mb-4">现有社区活动</h3>
+              
+              {loadingCommunityActivities ? (
+                <div className="flex justify-center p-4">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : communityActivities.length === 0 ? (
+                <div className="text-center text-gray-400 p-6">
+                  <p>暂无活动，请添加活动</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>活动标题</TableHead>
+                        <TableHead>开始日期</TableHead>
+                        <TableHead>结束日期</TableHead>
+                        <TableHead>地点</TableHead>
+                        <TableHead>状态</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {communityActivities.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">{item.title}</TableCell>
+                          <TableCell>
+                            {item.startDate ? new Date(item.startDate).toLocaleDateString() : "-"}
+                          </TableCell>
+                          <TableCell>
+                            {item.endDate ? new Date(item.endDate).toLocaleDateString() : "-"}
+                          </TableCell>
+                          <TableCell>{item.location || "-"}</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={item.isActive ? "default" : "outline"}
+                              className={item.isActive ? "bg-green-600" : ""}
+                            >
+                              {item.isActive ? "激活" : "未激活"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-accent text-accent"
+                              onClick={() => handleEditCommunityActivity(item)}
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteCommunityActivity(item.id)}
+                            >
+                              删除
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* 产品管理 */}
       {activeTab === "products" && (
