@@ -309,7 +309,7 @@ export default function Manage() {
       try {
         // 添加时间戳参数以避免缓存问题
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/about/${contentId}?t=${timestamp}`);
+        const response = await apiRequest("DELETE", `/api/admin/about/${contentId}?t=${timestamp}`);
         
         if (!response.ok) {
           throw new Error('删除关于我们内容失败');
