@@ -121,9 +121,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://goldmonitor.dog" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors duration-300">
+                <Link href="/gold-dog-monitor" className="hover:text-accent transition-colors duration-300">
                   {t("footer.goldDogMonitor")}
-                </a>
+                </Link>
               </li>
               <li>
                 <Link href="/privacy" className="hover:text-accent transition-colors duration-300">

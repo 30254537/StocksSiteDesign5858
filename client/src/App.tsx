@@ -30,6 +30,9 @@ const NewsDetail = lazy(() => import("@/pages/NewsDetail"));
 const TestTools = lazy(() => import("@/pages/TestTools"));
 const MyOrders = lazy(() => import("@/pages/MyOrders"));
 const OrderLookup = lazy(() => import("@/pages/OrderLookup"));
+const GoldDogMonitor = lazy(() => import("@/pages/GoldDogMonitor"));
+const GoldDogMonitorDetail = lazy(() => import("@/pages/GoldDogMonitorDetail"));
+const ManageGoldDogMonitor = lazy(() => import("@/pages/ManageGoldDogMonitor"));
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -225,6 +228,27 @@ function Router() {
             {() => (
               <PageWrapper>
                 <Merchandise />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/gold-dog-monitor">
+            {() => (
+              <PageWrapper>
+                <GoldDogMonitor />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/gold-dog-monitor/:id">
+            {(params) => (
+              <PageWrapper>
+                <GoldDogMonitorDetail />
+              </PageWrapper>
+            )}
+          </Route>
+          <Route path="/manage-gold-dog-monitor">
+            {() => (
+              <PageWrapper>
+                <ManageGoldDogMonitor />
               </PageWrapper>
             )}
           </Route>

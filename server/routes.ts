@@ -2412,6 +2412,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 添加社区活动管理路由
   setupCommunityRoutes(app);
+  
+  // 添加金狗监测路由
+  setupGoldDogRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
