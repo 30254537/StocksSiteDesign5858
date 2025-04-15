@@ -113,7 +113,9 @@ export default function Manage() {
   const fetchCommunityActivities = async () => {
     setLoadingCommunityActivities(true);
     try {
-      const response = await apiRequest("GET", "/api/community");
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/community?t=${timestamp}`);
       const data = await response.json();
       setCommunityActivities(data);
     } catch (error) {

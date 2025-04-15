@@ -224,10 +224,20 @@ export default function ManageGoldDogMonitor() {
   // 删除金狗监测
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/gold-dog-monitors/${id}`);
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest('DELETE', `/api/gold-dog-monitors/${id}?t=${timestamp}`);
+      if (!response.ok) {
+        throw new Error('删除失败，请重试');
+      }
+      return id;
     },
     onSuccess: () => {
+      // 使用更新的invalidateQueries方法，并确保完全失效相关查询
       queryClient.invalidateQueries({ queryKey: ['/api/gold-dog-monitors'] });
+      // 额外触发强制刷新
+      queryClient.refetchQueries({ queryKey: ['/api/gold-dog-monitors'] });
+      
       toast({
         title: '删除成功',
         description: '金狗监测已删除',
@@ -236,6 +246,7 @@ export default function ManageGoldDogMonitor() {
       setSelectedMonitor(null);
     },
     onError: (error: any) => {
+      console.error('删除金狗监测失败:', error);
       toast({
         title: '删除失败',
         description: error.message || '无法删除金狗监测，请重试',
