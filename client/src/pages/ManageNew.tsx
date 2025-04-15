@@ -337,7 +337,7 @@ export default function Manage() {
   const handleEditCommunityActivity = (activity: CommunityActivity) => {
     setEditingCommunityActivity(activity);
     // 重置图片文件状态
-    setActivityImageFile(null);
+    setActivityImageFiles([]);
     
     // 填充表单
     document.getElementById("activity-id")?.setAttribute("value", activity.id.toString());
@@ -366,8 +366,7 @@ export default function Manage() {
       endDateInput.value = formattedDate;
     }
     
-    const imageUrlInput = document.getElementById("activity-imageUrl") as HTMLInputElement;
-    if (imageUrlInput) imageUrlInput.value = activity.imageUrl || "";
+    // 移除URL输入框的引用，现在我们只使用文件上传
     
     const activeCheckbox = document.getElementById("activity-active") as HTMLInputElement;
     if (activeCheckbox) activeCheckbox.checked = Boolean(activity.isActive); // 使用 isActive 而不是 active
@@ -1545,9 +1544,12 @@ export default function Manage() {
                   
                   formData.append("isActive", isActive.toString());
                   
-                  // 添加图片文件 (如果有)
-                  if (activityImageFile) {
-                    formData.append("images", activityImageFile);
+                  // 添加多个图片文件 (如果有)
+                  if (activityImageFiles.length > 0) {
+                    // 遍历所有图片并添加到formData
+                    activityImageFiles.forEach(file => {
+                      formData.append("images", file);
+                    });
                   }
                   
                   console.log("准备发送活动数据");
@@ -1579,6 +1581,7 @@ export default function Manage() {
                     (document.getElementById("activity-form") as HTMLFormElement).reset();
                     document.getElementById("activity-id")?.removeAttribute("value");
                     setEditingCommunityActivity(null);
+                    setActivityImageFiles([]); // 清空图片文件列表
                     
                     // 提示成功
                     toast({
@@ -1675,7 +1678,9 @@ export default function Manage() {
                       className="bg-primary/50 border-accent"
                       onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0) {
-                          setActivityImageFile(e.target.files[0]);
+                          // 将FileList转换为数组
+                          const files = Array.from(e.target.files);
+                          setActivityImageFiles(files);
                         }
                       }}
                       multiple
@@ -1707,6 +1712,7 @@ export default function Manage() {
                     (document.getElementById("activity-form") as HTMLFormElement).reset();
                     document.getElementById("activity-id")?.removeAttribute("value");
                     setEditingCommunityActivity(null);
+                    setActivityImageFiles([]); // 清空文件列表
                   }}
                 >
                   取消
