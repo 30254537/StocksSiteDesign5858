@@ -63,7 +63,7 @@ export default function GoldDogMonitor() {
   const noDataText = language === 'zh' ? '暂无数据' : 'No data available';
   
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6">
+    <div className="container mx-auto py-24 px-4 sm:px-6">
       <h1 className="text-3xl font-bold mb-6 text-[#00ffcc]">{pageTitle}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
