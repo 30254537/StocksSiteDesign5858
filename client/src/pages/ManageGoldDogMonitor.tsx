@@ -96,7 +96,9 @@ export default function ManageGoldDogMonitor() {
   const { data: monitors, isLoading, error } = useQuery<GoldDogMonitor[]>({
     queryKey: ['/api/gold-dog-monitors', { publishedOnly: false }],
     queryFn: async () => {
-      const res = await apiRequest('GET', '/api/gold-dog-monitors?publishedOnly=false');
+      // 添加一个时间戳参数来避免缓存
+      const timestamp = new Date().getTime();
+      const res = await apiRequest('GET', `/api/gold-dog-monitors?publishedOnly=false&t=${timestamp}`);
       return res.json();
     },
   });
@@ -152,11 +154,21 @@ export default function ManageGoldDogMonitor() {
   // 创建金狗监测
   const createMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const response = await apiRequest('POST', '/api/gold-dog-monitors', formData);
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest('POST', `/api/gold-dog-monitors?t=${timestamp}`, formData);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '创建失败，请重试');
+      }
       return response.json();
     },
     onSuccess: () => {
+      // 使用更新的invalidateQueries方法，并确保完全失效相关查询
       queryClient.invalidateQueries({ queryKey: ['/api/gold-dog-monitors'] });
+      // 额外触发强制刷新
+      queryClient.refetchQueries({ queryKey: ['/api/gold-dog-monitors'] });
+      
       toast({
         title: '创建成功',
         description: '金狗监测创建成功',
@@ -165,6 +177,7 @@ export default function ManageGoldDogMonitor() {
       resetCreateForm();
     },
     onError: (error: any) => {
+      console.error('创建金狗监测失败:', error);
       toast({
         title: '创建失败',
         description: error.message || '无法创建金狗监测，请重试',
@@ -176,11 +189,21 @@ export default function ManageGoldDogMonitor() {
   // 更新金狗监测
   const updateMutation = useMutation({
     mutationFn: async ({ id, formData }: { id: number; formData: FormData }) => {
-      const response = await apiRequest('PUT', `/api/gold-dog-monitors/${id}`, formData);
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest('PUT', `/api/gold-dog-monitors/${id}?t=${timestamp}`, formData);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '更新失败，请重试');
+      }
       return response.json();
     },
     onSuccess: () => {
+      // 使用更新的invalidateQueries方法，并确保完全失效相关查询
       queryClient.invalidateQueries({ queryKey: ['/api/gold-dog-monitors'] });
+      // 额外触发强制刷新
+      queryClient.refetchQueries({ queryKey: ['/api/gold-dog-monitors'] });
+      
       toast({
         title: '更新成功',
         description: '金狗监测更新成功',
@@ -189,6 +212,7 @@ export default function ManageGoldDogMonitor() {
       setSelectedMonitor(null);
     },
     onError: (error: any) => {
+      console.error('更新金狗监测失败:', error);
       toast({
         title: '更新失败',
         description: error.message || '无法更新金狗监测，请重试',
