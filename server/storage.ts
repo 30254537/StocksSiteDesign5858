@@ -119,6 +119,21 @@ export interface IStorage {
   getAllContactInfo(): Promise<{email: string, address: string}>;
   updateContactInfo(key: string, value: string): Promise<boolean>;
   
+  // 关于我们内容管理
+  getAboutContents(): Promise<AboutContent[]>;
+  getAboutContentBySection(section: string): Promise<AboutContent | undefined>;
+  createAboutContent(content: InsertAboutContent): Promise<AboutContent>;
+  updateAboutContent(id: number, content: Partial<AboutContent>): Promise<AboutContent | undefined>;
+  deleteAboutContent(id: number): Promise<boolean>;
+  
+  // 社区活动管理
+  getCommunityActivities(limit?: number): Promise<CommunityActivity[]>;
+  getCommunityActivity(id: number): Promise<CommunityActivity | undefined>;
+  createCommunityActivity(activity: InsertCommunityActivity): Promise<CommunityActivity>;
+  updateCommunityActivity(id: number, activity: Partial<CommunityActivity>): Promise<CommunityActivity | undefined>;
+  deleteCommunityActivity(id: number): Promise<boolean>;
+  getActiveActivities(): Promise<CommunityActivity[]>;
+  
   // 会话存储
   sessionStore: session.Store;
 }
@@ -797,6 +812,104 @@ export class DatabaseStorage implements IStorage {
       ...order,
       items: itemsWithProducts
     };
+  }
+  
+  // 关于我们内容管理
+  async getAboutContents(): Promise<AboutContent[]> {
+    return await db.select().from(aboutContent)
+      .orderBy(asc(aboutContent.orderIndex));
+  }
+  
+  async getAboutContentBySection(section: string): Promise<AboutContent | undefined> {
+    const [content] = await db.select().from(aboutContent)
+      .where(eq(aboutContent.section, section));
+    
+    return content;
+  }
+  
+  async createAboutContent(content: InsertAboutContent): Promise<AboutContent> {
+    const [newContent] = await db.insert(aboutContent)
+      .values(content)
+      .returning();
+    
+    return newContent;
+  }
+  
+  async updateAboutContent(id: number, content: Partial<AboutContent>): Promise<AboutContent | undefined> {
+    const [updatedContent] = await db.update(aboutContent)
+      .set({
+        ...content,
+        updatedAt: new Date()
+      })
+      .where(eq(aboutContent.id, id))
+      .returning();
+    
+    return updatedContent;
+  }
+  
+  async deleteAboutContent(id: number): Promise<boolean> {
+    try {
+      await db.delete(aboutContent).where(eq(aboutContent.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除关于我们内容时出错:', error);
+      return false;
+    }
+  }
+  
+  // 社区活动管理
+  async getCommunityActivities(limit?: number): Promise<CommunityActivity[]> {
+    const query = db.select().from(communityActivities)
+      .orderBy(desc(communityActivities.createdAt));
+    
+    if (limit) {
+      return query.limit(limit);
+    }
+    
+    return query;
+  }
+  
+  async getCommunityActivity(id: number): Promise<CommunityActivity | undefined> {
+    const [activity] = await db.select().from(communityActivities)
+      .where(eq(communityActivities.id, id));
+    
+    return activity;
+  }
+  
+  async createCommunityActivity(activity: InsertCommunityActivity): Promise<CommunityActivity> {
+    const [newActivity] = await db.insert(communityActivities)
+      .values(activity)
+      .returning();
+    
+    return newActivity;
+  }
+  
+  async updateCommunityActivity(id: number, activity: Partial<CommunityActivity>): Promise<CommunityActivity | undefined> {
+    const [updatedActivity] = await db.update(communityActivities)
+      .set({
+        ...activity,
+        updatedAt: new Date()
+      })
+      .where(eq(communityActivities.id, id))
+      .returning();
+    
+    return updatedActivity;
+  }
+  
+  async deleteCommunityActivity(id: number): Promise<boolean> {
+    try {
+      await db.delete(communityActivities).where(eq(communityActivities.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除社区活动时出错:', error);
+      return false;
+    }
+  }
+  
+  async getActiveActivities(): Promise<CommunityActivity[]> {
+    return db.select().from(communityActivities)
+      .where(eq(communityActivities.isActive, true))
+      .orderBy(desc(communityActivities.startDate));
   }
 }
 
