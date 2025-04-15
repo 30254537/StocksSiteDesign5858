@@ -144,7 +144,7 @@ export default function Footer() {
                   {isLoadingContact ? (
                     <p className="text-gray-500">Loading...</p>
                   ) : (
-                    <p className="text-accent">{contactInfo.email}</p>
+                    <p className="text-white">{contactInfo.email}</p>
                   )}
                 </div>
               </li>
@@ -155,7 +155,7 @@ export default function Footer() {
                   {isLoadingContact ? (
                     <p className="text-gray-500">Loading...</p>
                   ) : (
-                    <p className="text-accent">{contactInfo.address}</p>
+                    <p className="text-white">{contactInfo.address}</p>
                   )}
                 </div>
               </li>

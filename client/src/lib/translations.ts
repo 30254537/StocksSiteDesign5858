@@ -606,9 +606,9 @@ export const translations: Translations = {
     "contact.emailHint": "用于接收订单确认和状态更新",
     "contact.phone": "联系电话:",
     "contact.phonePlaceholder": "请输入您的联系电话",
-    "contact.address": "收货地址:",
-    "contact.addressRequired": "收货地址: *",
-    "contact.addressPlaceholder": "请输入您的收货地址"
+    "contact.address": "联系地址:",
+    "contact.addressRequired": "联系地址: *",
+    "contact.addressPlaceholder": "请输入您的联系地址"
   }
 };
 
