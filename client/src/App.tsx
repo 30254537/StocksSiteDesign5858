@@ -24,7 +24,7 @@ const AdminLogin = lazy(() => import("@/pages/AdminLogin"));
 const About = lazy(() => import("@/pages/About"));
 const Music = lazy(() => import("@/pages/Music"));
 const CryptoNews = lazy(() => import("@/pages/CryptoNews"));
-const Community = lazy(() => import("@/pages/Community"));
+// 不再使用单独的Community页面，而是使用CryptoNews页面作为社区活动页面
 const TelegramMessages = lazy(() => import("@/pages/TelegramMessages"));
 const NewsDetail = lazy(() => import("@/pages/NewsDetail"));
 const TestTools = lazy(() => import("@/pages/TestTools"));
@@ -171,13 +171,7 @@ function Router() {
               </PageWrapper>
             )}
           </Route>
-          <Route path="/community">
-            {() => (
-              <PageWrapper>
-                <Community />
-              </PageWrapper>
-            )}
-          </Route>
+          {/* 社区页面已被替换为社区活动页面 */}
           <Route path="/admin-stonks-dex-secret-login">
             {() => (
               <PageWrapper>
@@ -263,7 +257,6 @@ function App() {
         await Promise.all([
           import("@/pages/About"),
           import("@/pages/Music"),
-          import("@/pages/Community"),
           import("@/pages/MyOrders"),
           import("@/pages/OrderLookup"),
         ]);

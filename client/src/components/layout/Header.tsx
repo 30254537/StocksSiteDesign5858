@@ -156,7 +156,7 @@ export default function Header() {
                     }`}
                     onClick={scrollToTop}
                   >
-                    {language === 'zh' ? '加密快讯' : 'Crypto News'}
+                    {t("nav.activities")}
                   </Link>
                   
                   <Link 
