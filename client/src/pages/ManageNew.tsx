@@ -1243,7 +1243,7 @@ export default function Manage() {
                             )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant={item.isActive ? "success" : "secondary"}>{item.isActive ? "激活" : "未激活"}</Badge>
+                            <Badge variant={item.isActive ? "default" : "secondary"}>{item.isActive ? "激活" : "未激活"}</Badge>
                           </TableCell>
                           <TableCell className="text-right space-x-2">
                             <Button
@@ -1466,7 +1466,7 @@ export default function Manage() {
                           <TableCell>{item.icon || "-"}</TableCell>
                           <TableCell className="max-w-[300px] truncate">{item.description}</TableCell>
                           <TableCell>
-                            <Badge variant={item.isActive ? "success" : "secondary"}>{item.isActive ? "激活" : "未激活"}</Badge>
+                            <Badge variant={item.isActive ? "default" : "secondary"}>{item.isActive ? "激活" : "未激活"}</Badge>
                           </TableCell>
                           <TableCell className="text-right space-x-2">
                             <Button
