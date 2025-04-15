@@ -58,6 +58,8 @@ export function setupGoldDogRoutes(app: Express) {
       const publishedOnly = req.query.publishedOnly !== "false"; // 默认只返回已发布的
       
       const monitors = await storage.getGoldDogMonitors(limit, publishedOnly);
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      console.log("获取金狗监测列表:", JSON.stringify(monitors).slice(0, 100)); // 记录日志以便调试
       res.json(monitors);
     } catch (error) {
       console.error("获取金狗监测列表失败:", error);
@@ -70,6 +72,8 @@ export function setupGoldDogRoutes(app: Express) {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 5;
       const topMonitors = await storage.getTopGoldDogMonitors(limit);
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      console.log("获取热门金狗监测:", JSON.stringify(topMonitors).slice(0, 100)); // 记录日志以便调试
       res.json(topMonitors);
     } catch (error) {
       console.error("获取热门金狗监测失败:", error);
@@ -98,6 +102,9 @@ export function setupGoldDogRoutes(app: Express) {
       // 增加浏览量
       await storage.incrementGoldDogMonitorViews(id);
       
+      // 添加UTF-8编码响应头
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      console.log(`获取金狗监测详情ID=${id}:`, JSON.stringify(monitor).slice(0, 100)); // 记录日志以便调试
       res.json(monitor);
     } catch (error) {
       console.error("获取金狗监测详情失败:", error);

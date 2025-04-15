@@ -961,18 +961,21 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getGoldDogMonitors(limit?: number, publishedOnly?: boolean): Promise<GoldDogMonitor[]> {
-    let query = db.select().from(goldDogMonitor)
-      .orderBy(desc(goldDogMonitor.createdAt));
+    let query = db.select().from(goldDogMonitor);
     
     if (publishedOnly) {
       query = query.where(eq(goldDogMonitor.isPublished, true));
     }
     
+    // 添加排序
+    query = query.orderBy(desc(goldDogMonitor.createdAt));
+    
     if (limit) {
       query = query.limit(limit);
     }
     
-    return query;
+    // 执行查询并返回结果
+    return await query;
   }
   
   async updateGoldDogMonitor(id: number, data: Partial<GoldDogMonitor>): Promise<GoldDogMonitor | undefined> {
@@ -1006,9 +1009,12 @@ export class DatabaseStorage implements IStorage {
         return false;
       }
       
+      // 确保views是一个有效的数字
+      const currentViews = monitor.views || 0;
+      
       await db.update(goldDogMonitor)
         .set({ 
-          views: monitor.views + 1,
+          views: currentViews + 1,
           updatedAt: new Date()
         })
         .where(eq(goldDogMonitor.id, id));
