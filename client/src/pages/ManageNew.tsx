@@ -56,6 +56,7 @@ export default function Manage() {
   
   // 社区活动管理状态
   const [communityActivities, setCommunityActivities] = useState<CommunityActivity[]>([]);
+  const [activityImageFile, setActivityImageFile] = useState<File | null>(null);
   const [loadingCommunityActivities, setLoadingCommunityActivities] = useState(false);
   const [editingCommunityActivity, setEditingCommunityActivity] = useState<CommunityActivity | null>(null);
   
@@ -335,6 +336,8 @@ export default function Manage() {
   // 处理编辑社区活动
   const handleEditCommunityActivity = (activity: CommunityActivity) => {
     setEditingCommunityActivity(activity);
+    // 重置图片文件状态
+    setActivityImageFile(null);
     
     // 填充表单
     document.getElementById("activity-id")?.setAttribute("value", activity.id.toString());
@@ -1513,7 +1516,6 @@ export default function Manage() {
                 const location = (document.getElementById("activity-location") as HTMLInputElement).value;
                 const startDate = (document.getElementById("activity-startDate") as HTMLInputElement).value;
                 const endDate = (document.getElementById("activity-endDate") as HTMLInputElement).value;
-                const imageUrl = (document.getElementById("activity-imageUrl") as HTMLInputElement).value;
                 const isActive = (document.getElementById("activity-active") as HTMLInputElement).checked;
                 
                 // 基本验证
@@ -1526,29 +1528,46 @@ export default function Manage() {
                   return;
                 }
                 
-                // 创建数据对象 - 将日期直接以ISO字符串发送，避免Date对象序列化问题
-                const activityData = {
-                  title,
-                  content,
-                  location,
-                  startDate: startDate ? new Date(startDate).toISOString() : null,
-                  endDate: endDate ? new Date(endDate).toISOString() : null, 
-                  imageUrl,
-                  isActive // Boolean 值, 后端会处理转换
-                };
-                
-                console.log("活动数据:", JSON.stringify(activityData));
-                
                 try {
+                  // 创建 FormData 对象以支持文件上传
+                  const formData = new FormData();
+                  formData.append("title", title);
+                  formData.append("content", content);
+                  formData.append("location", location);
+                  
+                  if (startDate) {
+                    formData.append("startDate", new Date(startDate).toISOString());
+                  }
+                  
+                  if (endDate) {
+                    formData.append("endDate", new Date(endDate).toISOString());
+                  }
+                  
+                  formData.append("isActive", isActive.toString());
+                  
+                  // 添加图片文件 (如果有)
+                  if (activityImageFile) {
+                    formData.append("image", activityImageFile);
+                  }
+                  
+                  console.log("准备发送活动数据");
+                  
                   // 发送请求
                   let response;
                   
+                  // 自定义请求配置（不使用apiRequest以支持FormData）
+                  const fetchOptions: RequestInit = {
+                    method: activityId ? "PUT" : "POST",
+                    body: formData,
+                    credentials: "include",
+                  };
+                  
                   if (activityId) {
                     // 编辑模式
-                    response = await apiRequest("PUT", `/api/community/${activityId}`, activityData);
+                    response = await fetch(`/api/community/${activityId}`, fetchOptions);
                   } else {
                     // 新增模式
-                    response = await apiRequest("POST", "/api/community", activityData);
+                    response = await fetch("/api/community", fetchOptions);
                   }
                   
                   // 增加响应数据处理
@@ -1654,6 +1673,11 @@ export default function Manage() {
                       type="file"
                       accept="image/*"
                       className="bg-primary/50 border-accent"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          setActivityImageFile(e.target.files[0]);
+                        }
+                      }}
                     />
                     <p className="text-xs text-gray-400">支持JPG, PNG, GIF等图片格式，最大10MB</p>
                     {/* 保留原有的URL输入，以便兼容 */}
