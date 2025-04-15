@@ -48,6 +48,26 @@ export function setupCommunityRoutes(app: Express) {
   });
 
   // 添加社区活动（需要管理员权限）
+  app.post('/api/community', async (req, res) => {
+    try {
+      if (!global.adminLoggedIn) {
+        return res.status(401).json({ message: '需要管理员权限' });
+      }
+
+      const activityData = insertCommunityActivitySchema.parse(req.body);
+      const newActivity = await storage.createCommunityActivity(activityData);
+      res.status(200).json(newActivity); // 使用200而非201，更符合前端期望
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: '数据验证失败', errors: error.errors });
+      } else {
+        console.error('创建社区活动时出错:', error);
+        res.status(500).json({ message: '服务器错误' });
+      }
+    }
+  });
+  
+  // 保留旧的路由以确保兼容性
   app.post('/api/admin/community', async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
@@ -68,6 +88,30 @@ export function setupCommunityRoutes(app: Express) {
   });
 
   // 更新社区活动（需要管理员权限）
+  app.put('/api/community/:id', async (req, res) => {
+    try {
+      if (!global.adminLoggedIn) {
+        return res.status(401).json({ message: '需要管理员权限' });
+      }
+
+      const { id } = req.params;
+      const activityData = req.body;
+      
+      const updatedActivity = await storage.updateCommunityActivity(parseInt(id), activityData);
+      
+      if (!updatedActivity) {
+        res.status(404).json({ message: '未找到指定的社区活动' });
+        return;
+      }
+      
+      res.json(updatedActivity);
+    } catch (error) {
+      console.error('更新社区活动时出错:', error);
+      res.status(500).json({ message: '服务器错误' });
+    }
+  });
+  
+  // 保留旧的路由以确保兼容性
   app.put('/api/admin/community/:id', async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
