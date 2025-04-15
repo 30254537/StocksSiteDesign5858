@@ -90,7 +90,8 @@ const CommunityActivityDetail: React.FC = () => {
     if (!end || (end && end >= now)) {
       return {
         label: language === 'zh' ? '进行中' : 'Ongoing',
-        variant: 'success' as const
+        // 由于Shadcn UI的Badge组件不支持success变体，我们使用默认变体来显示活跃状态
+        variant: 'default' as const
       };
     }
     
