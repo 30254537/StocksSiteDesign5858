@@ -94,7 +94,9 @@ export default function Manage() {
   const fetchAboutContents = async () => {
     setLoadingAboutContents(true);
     try {
-      const response = await apiRequest("GET", "/api/about");
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/about?t=${timestamp}`);
       const data = await response.json();
       setAboutContents(data);
     } catch (error) {
@@ -155,7 +157,9 @@ export default function Manage() {
   const fetchCommunityFeatures = async () => {
     setLoadingCommunityFeatures(true);
     try {
-      const response = await apiRequest("GET", "/api/community-features");
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/community-features?t=${timestamp}`);
       const data = await response.json();
       setCommunityFeatures(data);
     } catch (error) {
@@ -207,7 +211,9 @@ export default function Manage() {
   const fetchContactInfo = async () => {
     setLoadingContactInfo(true);
     try {
-      const response = await apiRequest("GET", "/api/contact-info");
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/contact-info?t=${timestamp}`);
       const data = await response.json();
       setContactInfo({
         email: data.email || '',
@@ -404,7 +410,13 @@ export default function Manage() {
   const handleDeleteAddress = async (addressId: number) => {
     if (window.confirm("确定要删除此合约地址吗？此操作无法撤销。")) {
       try {
-        await apiRequest("DELETE", `/api/contract-addresses/${addressId}`);
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/contract-addresses/${addressId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除合约地址失败');
+        }
         
         toast({
           title: "删除成功",
