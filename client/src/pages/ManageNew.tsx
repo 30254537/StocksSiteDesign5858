@@ -974,6 +974,476 @@ export default function Manage() {
         </Card>
       )}
       
+      {/* 团队成员管理 */}
+      {activeTab === "team" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>团队成员管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* 团队成员表单 */}
+            <form
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const memberId = document.getElementById("member-id")?.getAttribute("value");
+                const code = (document.getElementById("member-code") as HTMLInputElement).value;
+                const title = (document.getElementById("member-title") as HTMLInputElement).value;
+                const description = (document.getElementById("member-description") as HTMLTextAreaElement).value;
+                const imageUrl = (document.getElementById("member-imageUrl") as HTMLInputElement).value;
+                const orderIndex = parseInt((document.getElementById("member-orderIndex") as HTMLInputElement).value || "0", 10);
+                const isActive = (document.getElementById("member-active") as HTMLInputElement).checked;
+                
+                // 基本验证
+                if (!code || !title || !description) {
+                  toast({
+                    title: "表单错误",
+                    description: "请填写成员代码、名称和介绍",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                // 创建数据对象
+                const memberData = {
+                  code,
+                  title,
+                  description,
+                  imageUrl,
+                  orderIndex,
+                  isActive // Boolean 值, 后端会处理转换
+                };
+                
+                try {
+                  // 发送请求
+                  let response;
+                  
+                  if (memberId) {
+                    // 编辑模式
+                    response = await apiRequest("PUT", `/api/team-members/${memberId}`, memberData);
+                  } else {
+                    // 新增模式
+                    response = await apiRequest("POST", "/api/team-members", memberData);
+                  }
+                  
+                  if (response.ok) {
+                    // 重置表单
+                    (document.getElementById("member-form") as HTMLFormElement).reset();
+                    document.getElementById("member-id")?.removeAttribute("value");
+                    setEditingTeamMember(null);
+                    
+                    // 提示成功
+                    toast({
+                      title: memberId ? "更新成功" : "添加成功",
+                      description: memberId ? "团队成员已成功更新" : "团队成员已成功添加",
+                    });
+                    
+                    // 重新获取成员列表
+                    await fetchTeamMembers();
+                  } else {
+                    throw new Error(await response.text());
+                  }
+                } catch (error) {
+                  console.error("提交团队成员表单错误:", error);
+                  toast({
+                    title: "提交失败",
+                    description: "无法保存团队成员，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              id="member-form"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <input type="hidden" id="member-id" />
+                
+                <div className="space-y-2">
+                  <label htmlFor="member-code" className="block text-sm font-medium">
+                    成员代码
+                  </label>
+                  <Input
+                    id="member-code"
+                    placeholder="输入成员代码，例如：CEO, CTO"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="member-title" className="block text-sm font-medium">
+                    成员名称
+                  </label>
+                  <Input
+                    id="member-title"
+                    placeholder="输入成员名称"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="member-imageUrl" className="block text-sm font-medium">
+                    头像图片URL
+                  </label>
+                  <Input
+                    id="member-imageUrl"
+                    placeholder="输入图片URL"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="member-orderIndex" className="block text-sm font-medium">
+                    排序索引
+                  </label>
+                  <Input
+                    id="member-orderIndex"
+                    type="number"
+                    placeholder="输入排序索引，数字越小越靠前"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="member-description" className="block text-sm font-medium">
+                    成员介绍
+                  </label>
+                  <Textarea
+                    id="member-description"
+                    placeholder="输入成员介绍"
+                    className="bg-primary/50 border-accent min-h-[120px]"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="member-active" defaultChecked />
+                    <label htmlFor="member-active" className="text-sm font-medium leading-none">
+                      是否激活
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-accent text-accent"
+                  onClick={() => {
+                    // 重置表单
+                    (document.getElementById("member-form") as HTMLFormElement).reset();
+                    document.getElementById("member-id")?.removeAttribute("value");
+                    setEditingTeamMember(null);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button type="submit" className="bg-accent text-black hover:bg-accent/80">
+                  {editingTeamMember ? "更新成员" : "添加成员"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 团队成员列表 */}
+            <div>
+              <h3 className="text-xl font-medium mb-4">现有团队成员</h3>
+              
+              {loadingTeamMembers ? (
+                <div className="flex justify-center p-4">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : teamMembers.length === 0 ? (
+                <div className="text-center text-gray-400 p-6">
+                  <p>暂无团队成员，请添加成员</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>排序</TableHead>
+                        <TableHead>代码</TableHead>
+                        <TableHead>名称</TableHead>
+                        <TableHead>头像</TableHead>
+                        <TableHead>状态</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {teamMembers.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell>{item.orderIndex}</TableCell>
+                          <TableCell className="font-medium">{item.code}</TableCell>
+                          <TableCell>{item.title}</TableCell>
+                          <TableCell>
+                            {item.imageUrl ? (
+                              <div className="w-10 h-10 overflow-hidden rounded-full">
+                                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                              </div>
+                            ) : (
+                              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                                <span className="text-xs">无图片</span>
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={item.isActive ? "success" : "secondary"}>{item.isActive ? "激活" : "未激活"}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-accent text-accent"
+                              onClick={() => handleEditTeamMember(item)}
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteTeamMember(item.id)}
+                            >
+                              删除
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* 社区特点管理 */}
+      {activeTab === "features" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>社区特点管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* 社区特点表单 */}
+            <form
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const featureId = document.getElementById("feature-id")?.getAttribute("value");
+                const title = (document.getElementById("feature-title") as HTMLInputElement).value;
+                const description = (document.getElementById("feature-description") as HTMLTextAreaElement).value;
+                const icon = (document.getElementById("feature-icon") as HTMLInputElement).value;
+                const orderIndex = parseInt((document.getElementById("feature-orderIndex") as HTMLInputElement).value || "0", 10);
+                const isActive = (document.getElementById("feature-active") as HTMLInputElement).checked;
+                
+                // 基本验证
+                if (!title || !description) {
+                  toast({
+                    title: "表单错误",
+                    description: "请填写特点标题和描述",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                // 创建数据对象
+                const featureData = {
+                  title,
+                  description,
+                  icon,
+                  orderIndex,
+                  isActive // Boolean 值, 后端会处理转换
+                };
+                
+                try {
+                  // 发送请求
+                  let response;
+                  
+                  if (featureId) {
+                    // 编辑模式
+                    response = await apiRequest("PUT", `/api/community-features/${featureId}`, featureData);
+                  } else {
+                    // 新增模式
+                    response = await apiRequest("POST", "/api/community-features", featureData);
+                  }
+                  
+                  if (response.ok) {
+                    // 重置表单
+                    (document.getElementById("feature-form") as HTMLFormElement).reset();
+                    document.getElementById("feature-id")?.removeAttribute("value");
+                    setEditingCommunityFeature(null);
+                    
+                    // 提示成功
+                    toast({
+                      title: featureId ? "更新成功" : "添加成功",
+                      description: featureId ? "社区特点已成功更新" : "社区特点已成功添加",
+                    });
+                    
+                    // 重新获取特点列表
+                    await fetchCommunityFeatures();
+                  } else {
+                    throw new Error(await response.text());
+                  }
+                } catch (error) {
+                  console.error("提交社区特点表单错误:", error);
+                  toast({
+                    title: "提交失败",
+                    description: "无法保存社区特点，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              id="feature-form"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <input type="hidden" id="feature-id" />
+                
+                <div className="space-y-2">
+                  <label htmlFor="feature-title" className="block text-sm font-medium">
+                    特点标题
+                  </label>
+                  <Input
+                    id="feature-title"
+                    placeholder="输入特点标题"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="feature-icon" className="block text-sm font-medium">
+                    图标名称
+                  </label>
+                  <Input
+                    id="feature-icon"
+                    placeholder="输入图标名称，例如：star, check, shield"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="feature-orderIndex" className="block text-sm font-medium">
+                    排序索引
+                  </label>
+                  <Input
+                    id="feature-orderIndex"
+                    type="number"
+                    placeholder="输入排序索引，数字越小越靠前"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="feature-active" defaultChecked />
+                    <label htmlFor="feature-active" className="text-sm font-medium leading-none">
+                      是否激活
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <label htmlFor="feature-description" className="block text-sm font-medium">
+                    特点描述
+                  </label>
+                  <Textarea
+                    id="feature-description"
+                    placeholder="输入特点描述"
+                    className="bg-primary/50 border-accent min-h-[120px]"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-accent text-accent"
+                  onClick={() => {
+                    // 重置表单
+                    (document.getElementById("feature-form") as HTMLFormElement).reset();
+                    document.getElementById("feature-id")?.removeAttribute("value");
+                    setEditingCommunityFeature(null);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button type="submit" className="bg-accent text-black hover:bg-accent/80">
+                  {editingCommunityFeature ? "更新特点" : "添加特点"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 社区特点列表 */}
+            <div>
+              <h3 className="text-xl font-medium mb-4">现有社区特点</h3>
+              
+              {loadingCommunityFeatures ? (
+                <div className="flex justify-center p-4">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : communityFeatures.length === 0 ? (
+                <div className="text-center text-gray-400 p-6">
+                  <p>暂无社区特点，请添加特点</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>排序</TableHead>
+                        <TableHead>标题</TableHead>
+                        <TableHead>图标</TableHead>
+                        <TableHead>描述预览</TableHead>
+                        <TableHead>状态</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {communityFeatures.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell>{item.orderIndex}</TableCell>
+                          <TableCell className="font-medium">{item.title}</TableCell>
+                          <TableCell>{item.icon || "-"}</TableCell>
+                          <TableCell className="max-w-[300px] truncate">{item.description}</TableCell>
+                          <TableCell>
+                            <Badge variant={item.isActive ? "success" : "secondary"}>{item.isActive ? "激活" : "未激活"}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-accent text-accent"
+                              onClick={() => handleEditCommunityFeature(item)}
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteCommunityFeature(item.id)}
+                            >
+                              删除
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* 社区活动管理 */}
       {activeTab === "community" && (
         <Card className="shadow-lg mb-8">
