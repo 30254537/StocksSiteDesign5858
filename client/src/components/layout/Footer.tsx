@@ -3,12 +3,42 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Footer() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
+  // 添加联系信息状态
+  const [contactInfo, setContactInfo] = useState({ 
+    email: "", 
+    address: "" 
+  });
+  const [isLoadingContact, setIsLoadingContact] = useState(true);
+
+  // 在组件挂载时获取联系信息
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      setIsLoadingContact(true);
+      try {
+        const response = await apiRequest("GET", "/api/contact-info");
+        if(response.ok) {
+          const data = await response.json();
+          setContactInfo({
+            email: data.email || '',
+            address: data.address || ''
+          });
+        }
+      } catch (error) {
+        console.error("获取联系信息失败:", error);
+      } finally {
+        setIsLoadingContact(false);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,11 +139,25 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-start">
                 <i className="fas fa-envelope mt-1 mr-2 text-accent"></i>
-                <span>{t("contact.email")}</span>
+                <div>
+                  <p>{t("contact.email")}</p>
+                  {isLoadingContact ? (
+                    <p className="text-gray-500">Loading...</p>
+                  ) : (
+                    <p className="text-accent">{contactInfo.email}</p>
+                  )}
+                </div>
               </li>
               <li className="flex items-start">
                 <i className="fas fa-map-marker-alt mt-1 mr-2 text-accent"></i>
-                <span>{t("contact.address")}</span>
+                <div>
+                  <p>{t("contact.address")}</p>
+                  {isLoadingContact ? (
+                    <p className="text-gray-500">Loading...</p>
+                  ) : (
+                    <p className="text-accent">{contactInfo.address}</p>
+                  )}
+                </div>
               </li>
             </ul>
           </div>
