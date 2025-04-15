@@ -23,6 +23,8 @@ import fs from "fs";
 import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 import { setupCryptoNewsRoutes } from "./routes/cryptoNewsRoutes";
+import { setupAboutRoutes } from "./routes/aboutRoutes";
+import { setupCommunityRoutes } from "./routes/communityRoutes";
 import { syncCryptoNews } from "./services/cryptoNewsService";
 // 注意：financeNewsRoutes 不存在，将在下面注释相关代码
 import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
@@ -2339,6 +2341,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 添加加密新闻路由
   setupCryptoNewsRoutes(app);
+  
+  // 添加关于我们内容管理路由
+  setupAboutRoutes(app);
+  
+  // 添加社区活动管理路由
+  setupCommunityRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
