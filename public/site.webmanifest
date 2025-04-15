@@ -1,0 +1,26 @@
+{
+  "name": "STONKS DEX SHOP",
+  "short_name": "STONKS SHOP",
+  "description": "STONKS DEX SHOP - 加密货币收藏品商店",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/images/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "display": "standalone",
+  "theme_color": "#00ffcc",
+  "background_color": "#121a29"
+}
