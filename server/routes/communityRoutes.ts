@@ -2,6 +2,34 @@ import type { Express } from "express";
 import { storage } from "../storage";
 import { insertCommunityActivitySchema } from "@shared/schema";
 import { z } from "zod";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// 配置multer用于处理社区活动图片上传
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadDir = path.resolve("public/uploads/community");
+      
+      // 确保目录存在
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      // 生成唯一文件名
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      cb(null, 'community-' + uniqueSuffix + ext);
+    }
+  }),
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 限制文件大小为10MB
+  }
+});
 
 // 设置社区活动路由
 export function setupCommunityRoutes(app: Express) {
@@ -47,14 +75,28 @@ export function setupCommunityRoutes(app: Express) {
     }
   });
 
-  // 添加社区活动（需要管理员权限）
-  app.post('/api/community', async (req, res) => {
+  // 添加社区活动（需要管理员权限）- 支持图片上传
+  app.post('/api/community', upload.array('images', 5), async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
         return res.status(401).json({ message: '需要管理员权限' });
       }
 
-      const activityData = insertCommunityActivitySchema.parse(req.body);
+      // 处理上传的图片文件
+      let imageUrl = req.body.imageUrl || '';
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        // 使用第一张图片作为主图片
+        imageUrl = `/uploads/community/${req.files[0].filename}`;
+      }
+
+      // 合并表单数据和图片URL
+      const formData = {
+        ...req.body,
+        imageUrl,
+        isActive: req.body.isActive === 'true'
+      };
+
+      const activityData = insertCommunityActivitySchema.parse(formData);
       const newActivity = await storage.createCommunityActivity(activityData);
       res.status(200).json(newActivity); // 使用200而非201，更符合前端期望
     } catch (error) {
@@ -68,13 +110,27 @@ export function setupCommunityRoutes(app: Express) {
   });
   
   // 保留旧的路由以确保兼容性
-  app.post('/api/admin/community', async (req, res) => {
+  app.post('/api/admin/community', upload.array('images', 5), async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
         return res.status(401).json({ message: '需要管理员权限' });
       }
 
-      const activityData = insertCommunityActivitySchema.parse(req.body);
+      // 处理上传的图片文件
+      let imageUrl = req.body.imageUrl || '';
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        // 使用第一张图片作为主图片
+        imageUrl = `/uploads/community/${req.files[0].filename}`;
+      }
+
+      // 合并表单数据和图片URL
+      const formData = {
+        ...req.body,
+        imageUrl,
+        isActive: req.body.isActive === 'true'
+      };
+
+      const activityData = insertCommunityActivitySchema.parse(formData);
       const newActivity = await storage.createCommunityActivity(activityData);
       res.status(201).json(newActivity);
     } catch (error) {
@@ -87,17 +143,50 @@ export function setupCommunityRoutes(app: Express) {
     }
   });
 
-  // 更新社区活动（需要管理员权限）
-  app.put('/api/community/:id', async (req, res) => {
+  // 更新社区活动（需要管理员权限）- 支持图片上传
+  app.put('/api/community/:id', upload.array('images', 5), async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
         return res.status(401).json({ message: '需要管理员权限' });
       }
 
       const { id } = req.params;
-      const activityData = req.body;
+      const activityId = parseInt(id);
+
+      // 获取现有活动信息
+      const existingActivity = await storage.getCommunityActivity(activityId);
+      if (!existingActivity) {
+        return res.status(404).json({ message: '未找到指定的社区活动' });
+      }
       
-      const updatedActivity = await storage.updateCommunityActivity(parseInt(id), activityData);
+      // 处理上传的图片文件
+      let imageUrl = req.body.imageUrl || existingActivity.imageUrl || '';
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        // 使用第一张图片作为主图片
+        imageUrl = `/uploads/community/${req.files[0].filename}`;
+        
+        // 如果上传了新图片且原来有图片，可以删除旧图片
+        if (existingActivity.imageUrl && existingActivity.imageUrl.startsWith('/uploads/community/')) {
+          const oldImagePath = path.resolve(`public${existingActivity.imageUrl}`);
+          if (fs.existsSync(oldImagePath)) {
+            try {
+              fs.unlinkSync(oldImagePath);
+              console.log(`已删除旧图片: ${oldImagePath}`);
+            } catch (err) {
+              console.error(`删除旧图片时出错:`, err);
+            }
+          }
+        }
+      }
+
+      // 合并表单数据和图片URL
+      const formData = {
+        ...req.body,
+        imageUrl,
+        isActive: req.body.isActive === 'true'
+      };
+      
+      const updatedActivity = await storage.updateCommunityActivity(activityId, formData);
       
       if (!updatedActivity) {
         res.status(404).json({ message: '未找到指定的社区活动' });
@@ -112,16 +201,49 @@ export function setupCommunityRoutes(app: Express) {
   });
   
   // 保留旧的路由以确保兼容性
-  app.put('/api/admin/community/:id', async (req, res) => {
+  app.put('/api/admin/community/:id', upload.array('images', 5), async (req, res) => {
     try {
       if (!global.adminLoggedIn) {
         return res.status(401).json({ message: '需要管理员权限' });
       }
 
       const { id } = req.params;
-      const activityData = req.body;
+      const activityId = parseInt(id);
       
-      const updatedActivity = await storage.updateCommunityActivity(parseInt(id), activityData);
+      // 获取现有活动信息
+      const existingActivity = await storage.getCommunityActivity(activityId);
+      if (!existingActivity) {
+        return res.status(404).json({ message: '未找到指定的社区活动' });
+      }
+      
+      // 处理上传的图片文件
+      let imageUrl = req.body.imageUrl || existingActivity.imageUrl || '';
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        // 使用第一张图片作为主图片
+        imageUrl = `/uploads/community/${req.files[0].filename}`;
+        
+        // 如果上传了新图片且原来有图片，可以删除旧图片
+        if (existingActivity.imageUrl && existingActivity.imageUrl.startsWith('/uploads/community/')) {
+          const oldImagePath = path.resolve(`public${existingActivity.imageUrl}`);
+          if (fs.existsSync(oldImagePath)) {
+            try {
+              fs.unlinkSync(oldImagePath);
+              console.log(`已删除旧图片: ${oldImagePath}`);
+            } catch (err) {
+              console.error(`删除旧图片时出错:`, err);
+            }
+          }
+        }
+      }
+
+      // 合并表单数据和图片URL
+      const formData = {
+        ...req.body,
+        imageUrl,
+        isActive: req.body.isActive === 'true'
+      };
+      
+      const updatedActivity = await storage.updateCommunityActivity(activityId, formData);
       
       if (!updatedActivity) {
         res.status(404).json({ message: '未找到指定的社区活动' });
@@ -143,10 +265,32 @@ export function setupCommunityRoutes(app: Express) {
       }
 
       const { id } = req.params;
-      const success = await storage.deleteCommunityActivity(parseInt(id));
+      const activityId = parseInt(id);
+      
+      // 获取活动信息，以便删除相关图片
+      const activity = await storage.getCommunityActivity(activityId);
+      if (!activity) {
+        return res.status(404).json({ message: '未找到指定的社区活动' });
+      }
+      
+      // 删除相关的图片文件
+      if (activity.imageUrl && activity.imageUrl.startsWith('/uploads/community/')) {
+        const imagePath = path.resolve(`public${activity.imageUrl}`);
+        if (fs.existsSync(imagePath)) {
+          try {
+            fs.unlinkSync(imagePath);
+            console.log(`已删除社区活动图片: ${imagePath}`);
+          } catch (err) {
+            console.error(`删除社区活动图片时出错:`, err);
+          }
+        }
+      }
+      
+      // 执行删除操作
+      const success = await storage.deleteCommunityActivity(activityId);
       
       if (!success) {
-        res.status(404).json({ message: '未找到指定的社区活动或删除失败' });
+        res.status(500).json({ message: '删除社区活动失败' });
         return;
       }
       
@@ -165,10 +309,32 @@ export function setupCommunityRoutes(app: Express) {
       }
 
       const { id } = req.params;
-      const success = await storage.deleteCommunityActivity(parseInt(id));
+      const activityId = parseInt(id);
+      
+      // 获取活动信息，以便删除相关图片
+      const activity = await storage.getCommunityActivity(activityId);
+      if (!activity) {
+        return res.status(404).json({ message: '未找到指定的社区活动' });
+      }
+      
+      // 删除相关的图片文件
+      if (activity.imageUrl && activity.imageUrl.startsWith('/uploads/community/')) {
+        const imagePath = path.resolve(`public${activity.imageUrl}`);
+        if (fs.existsSync(imagePath)) {
+          try {
+            fs.unlinkSync(imagePath);
+            console.log(`已删除社区活动图片: ${imagePath}`);
+          } catch (err) {
+            console.error(`删除社区活动图片时出错:`, err);
+          }
+        }
+      }
+      
+      // 执行删除操作
+      const success = await storage.deleteCommunityActivity(activityId);
       
       if (!success) {
-        res.status(404).json({ message: '未找到指定的社区活动或删除失败' });
+        res.status(500).json({ message: '删除社区活动失败' });
         return;
       }
       

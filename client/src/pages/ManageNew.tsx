@@ -1645,14 +1645,24 @@ export default function Manage() {
                 </div>
                 
                 <div className="space-y-2 md:col-span-2">
-                  <label htmlFor="activity-imageUrl" className="block text-sm font-medium">
-                    图片URL
+                  <label htmlFor="activity-images" className="block text-sm font-medium">
+                    上传图片
                   </label>
-                  <Input
-                    id="activity-imageUrl"
-                    placeholder="输入图片URL（可选）"
-                    className="bg-primary/50 border-accent"
-                  />
+                  <div className="flex flex-col space-y-2">
+                    <Input
+                      id="activity-images"
+                      type="file"
+                      accept="image/*"
+                      className="bg-primary/50 border-accent"
+                    />
+                    <p className="text-xs text-gray-400">支持JPG, PNG, GIF等图片格式，最大10MB</p>
+                    {/* 保留原有的URL输入，以便兼容 */}
+                    <Input
+                      id="activity-imageUrl"
+                      placeholder="或输入图片URL（可选）"
+                      className="bg-primary/50 border-accent mt-2"
+                    />
+                  </div>
                 </div>
                 
                 <div className="flex items-center">
