@@ -69,15 +69,8 @@ const CommunityActivityDetail: React.FC = () => {
     const start = activity.startDate ? new Date(activity.startDate) : null;
     const end = activity.endDate ? new Date(activity.endDate) : null;
     
-    console.log('活动日期信息:', {
-      now: now.toISOString(),
-      start: start ? start.toISOString() : null,
-      end: end ? end.toISOString() : null
-    });
-    
     // 即将开始状态: 开始日期存在且在未来
     if (start && start.getTime() > now.getTime()) {
-      console.log('活动状态: 即将开始');
       return {
         label: language === 'zh' ? '即将开始' : 'Upcoming',
         variant: 'outline' as const
@@ -86,7 +79,6 @@ const CommunityActivityDetail: React.FC = () => {
     
     // 已结束状态: 结束日期存在且在过去
     if (end && end.getTime() < now.getTime()) {
-      console.log('活动状态: 已结束');
       return {
         label: language === 'zh' ? '已结束' : 'Completed',
         variant: 'secondary' as const
@@ -94,7 +86,6 @@ const CommunityActivityDetail: React.FC = () => {
     }
     
     // 正在进行状态: 所有其他情况
-    console.log('活动状态: 进行中');
     return {
       label: language === 'zh' ? '进行中' : 'Ongoing',
       variant: 'default' as const
@@ -282,7 +273,7 @@ const CommunityActivityDetail: React.FC = () => {
           </div>
           
           {/* 图片显示区 - 支持多图片轮播 */}
-          {(activity.imageUrls && activity.imageUrls.length > 0) ? (
+          {(activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) ? (
             <div className="mb-6 space-y-4">
               {/* 主图 - 使用第一张图片 */}
               <div className="overflow-hidden rounded-lg">
@@ -296,7 +287,7 @@ const CommunityActivityDetail: React.FC = () => {
               {/* 额外图片 - 使用水平滚动容器 */}
               {activity.imageUrls.length > 1 && (
                 <div className="flex overflow-x-auto space-x-2 pb-2">
-                  {activity.imageUrls.map((imgUrl, index) => (
+                  {activity.imageUrls.map((imgUrl: string, index: number) => (
                     <div 
                       key={index} 
                       className="flex-shrink-0"
