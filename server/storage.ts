@@ -912,9 +912,27 @@ export class DatabaseStorage implements IStorage {
   }
   
   async updateCommunityActivity(id: number, activity: Partial<CommunityActivity>): Promise<CommunityActivity | undefined> {
+    // 手动处理日期字段，确保是 Date 对象
+    const processedActivity = { ...activity };
+    
+    // 处理 startDate (如果存在)
+    if (processedActivity.startDate) {
+      if (typeof processedActivity.startDate === 'string') {
+        processedActivity.startDate = new Date(processedActivity.startDate);
+      }
+    }
+    
+    // 处理 endDate (如果存在)
+    if (processedActivity.endDate) {
+      if (typeof processedActivity.endDate === 'string') {
+        processedActivity.endDate = new Date(processedActivity.endDate);
+      }
+    }
+    
+    // 执行更新
     const [updatedActivity] = await db.update(communityActivities)
       .set({
-        ...activity,
+        ...processedActivity,
         updatedAt: new Date()
       })
       .where(eq(communityActivities.id, id))
