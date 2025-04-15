@@ -6,6 +6,7 @@ import { FaTelegram, FaNewspaper } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/lib/translations';
 import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, Loader2, Clock } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -13,6 +14,7 @@ import { apiRequest } from '@/lib/queryClient';
 
 const TelegramMessages: React.FC = () => {
   const { language } = useLanguage();
+  const t = (key: string) => getTranslation(key, language);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isSyncing, setIsSyncing] = useState(false);
@@ -83,7 +85,7 @@ const TelegramMessages: React.FC = () => {
         <div className="flex items-center gap-2">
           <FaNewspaper className="text-2xl text-teal-400" />
           <PageHeaderHeading className="text-teal-400">
-            {language === 'zh' ? '加密快讯' : 'Crypto News'}
+            {t('cryptoNews.title')}
           </PageHeaderHeading>
         </div>
         <div className="flex justify-between items-center flex-wrap gap-2">

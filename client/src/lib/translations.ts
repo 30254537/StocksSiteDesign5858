@@ -226,8 +226,8 @@ export const translations: Translations = {
     "stonksPrice.converter": "USDT to STONKS Converter",
     "stonksPrice.contract": "Contract Address",
     
-    // Crypto News
-    "nav.cryptoNews": "Crypto News",
+    // Community Activities 
+    "nav.cryptoNews": "Community Activities",
     
     // Crypto Tweets
     "cryptoTweets.title": "Trending Crypto Tweets",
@@ -239,13 +239,13 @@ export const translations: Translations = {
     "cryptoTweets.error": "Failed to load tweets",
     "cryptoTweets.viewAll": "View All Tweets",
     "cryptoTweets.translated": "Translated from English",
-    "cryptoNews.title": "Cryptocurrency News",
+    "cryptoNews.title": "Community Activities",
     "cryptoNews.featured": "Featured",
     "cryptoNews.readMore": "Read More",
-    "cryptoNews.allNews": "All News",
-    "cryptoNews.error": "Error fetching news",
-    "cryptoNews.noNews": "No news available",
-    "cryptoNews.stayUpdated": "Follow us for more crypto updates",
+    "cryptoNews.allNews": "All Activities",
+    "cryptoNews.error": "Error fetching activities",
+    "cryptoNews.noNews": "No activities available",
+    "cryptoNews.stayUpdated": "Follow us for more community updates",
     
     // Team Section
     "about.teamTitle": "Team Members",
