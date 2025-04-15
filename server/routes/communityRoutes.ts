@@ -10,6 +10,7 @@ export function setupCommunityRoutes(app: Express) {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
       const activities = await storage.getCommunityActivities(limit);
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.json(activities);
     } catch (error) {
       console.error('获取社区活动时出错:', error);

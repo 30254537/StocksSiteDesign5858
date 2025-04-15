@@ -24,6 +24,7 @@ export function setupTeamMembersRoutes(app: Express) {
   app.get('/api/team-members', async (req, res) => {
     try {
       const members = await storage.getTeamMembers();
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.json(members);
     } catch (error) {
       console.error('获取团队成员列表失败:', error);

@@ -24,6 +24,7 @@ export function setupCommunityFeaturesRoutes(app: Express) {
   app.get('/api/community-features', async (req, res) => {
     try {
       const features = await storage.getCommunityFeatures();
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.json(features);
     } catch (error) {
       console.error('获取社区特点列表失败:', error);
