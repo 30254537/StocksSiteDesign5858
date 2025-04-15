@@ -23,6 +23,7 @@ import fs from "fs";
 import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 import { setupCryptoNewsRoutes } from "./routes/cryptoNewsRoutes";
+import { setupCryptoTweetRoutes } from "./routes/cryptoTweetRoutes";
 import { setupAboutRoutes } from "./routes/aboutRoutes";
 import { setupCommunityRoutes } from "./routes/communityRoutes";
 import { setupGoldDogRoutes } from "./routes/goldDogRoutes";
@@ -2408,6 +2409,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 添加加密新闻路由
   setupCryptoNewsRoutes(app);
+  setupCryptoTweetRoutes(app);
   
   // 添加关于我们内容管理路由
   setupAboutRoutes(app);
