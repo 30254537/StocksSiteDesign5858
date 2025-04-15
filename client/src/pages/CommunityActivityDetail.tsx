@@ -68,7 +68,12 @@ const CommunityActivityDetail: React.FC = () => {
     const start = activity.startDate ? new Date(activity.startDate) : null;
     const end = activity.endDate ? new Date(activity.endDate) : null;
     
-    if (!activity.isActive) {
+    // 确保正确处理 isActive 字段，无论它是布尔值还是数字
+    const isActive = typeof activity.isActive === 'number' ? Boolean(activity.isActive) : Boolean(activity.isActive);
+    
+    console.log("活动状态检查:", { isActive, rawValue: activity.isActive, activityId: activity.id });
+    
+    if (!isActive) {
       return {
         label: language === 'zh' ? '未激活' : 'Inactive',
         variant: 'secondary' as const
