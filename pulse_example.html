@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="google-site-verification" content="Qd8qVYUHM06mhDioGHYHO5HjWjvjwtNrjY7bFTBOINY" />
+		<link rel="preconnect" href="https://static.phemex.com" />
+		<link rel="preconnect" href="https://static.phemex.com" crossorigin />
+		<link
+			rel="preload"
+			href="https://static.phemex.com/s/common/font/Outfit-Regular.ttf"
+			as="font"
+			type="font/ttf"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="preload"
+			href="https://static.phemex.com/s/common/font/PaytoneOne.ttf"
+			as="font"
+			type="font/ttf"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="preload"
+			href="https://img.phemex.com/v1/0095e839-f5d3-4d89-a6a3-835e313c4a0c/new-pulse-bg.png"
+			as="image"
+		/>
+		<link
+			rel="prefetch"
+			href="https://img.phemex.com/v1/25695b41-a84e-4a22-b27e-e564c52cd20e/drawer-bg.jpg"
+			as="image/jpg"
+		/>
+		<style>
+			.iconfont {
+				font-family: 'phemex-icon' !important;
+				font-size: 16px;
+				font-style: normal;
+				-webkit-font-smoothing: antialiased;
+				-webkit-text-stroke-width: 0.2px;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			@font-face {
+				font-family: 'phemex-icon';
+				font-display: swap;
+				src:
+					url('https://static.phemex.com/s/common/iconfont/font_1488528_sj8zk7ios8s.woff2') format('woff2'),
+					url('https://static.phemex.com/s/common/iconfont/font_1488528_sj8zk7ios8s.woff') format('woff'),
+					url('https://static.phemex.com/s/common/iconfont/font_1488528_sj8zk7ios8s.ttf') format('truetype');
+			}
+		</style>
+
+		<!-- inline-js -->
+		<script>
+			window.process = {
+				browser: true
+			};
+		</script>
+		<link href="/_app/immutable/assets/unocss-svelte-scoped-global.C2oWfzhz.css" rel="stylesheet" /> 
+		<link href="../../_app/immutable/assets/2.DpZwTlax.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Loading.D_gku2nh.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/utils.Uc-o-wh6.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Drawer.D4D65ldp.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Button.aqtdfJZE.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Spin.jzDTHkPi.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Modal.CsxstZOr.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/ImageWrap.OT-uV9C8.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/streams-random-anchors.MB7sF10I.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/7.D_F4-eBH.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/utils.CisqNuZZ.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Scroller.DHOj6i4E.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/NumberInput2.CkbjawIa.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Skeleton.CG0jd1bX.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/utils.WE3vVWmg.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/ScrollerPage.CoHdzSh9.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/SwapDrawer.D-ImCS2n.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Divider.BCD_vGlb.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Button.Dqm2W9CL.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/SearchFrom.QtFqjRLJ.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Switch.yioN1405.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/InnerImageWrap.CtdP00lH.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/AvatarPendant.CnZU1Jz_.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Tabs.CUMWJkp5.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/DownloadPulseAppDialog.DdulvWSd.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/GiphyGif.CfQn6TZN.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/LayoutH5.Dfcua0yH.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/LanguageDialog.VtTmm0P2.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/28.cjYedHyp.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/LayoutMain.CbjkTgvR.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/PageHeaderBar.B_td_MeQ.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/TotalPulseView.DxxnQmYs.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/GroupItem.JPAn35sx.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/JoinButton.B_MyI2QL.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/CastExplore.B6KOVZnu.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/TrendingTokens.CSha8tKE.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/RecommendedHash.MLtYRioN.css" rel="stylesheet">
+		<link rel="modulepreload" href="../../_app/immutable/entry/start.C0UBrvlq.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DNsqq9UU.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Cy6OB7PX.js">
+		<link rel="modulepreload" href="../../_app/immutable/entry/app.B6Z5kiEa.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/C1FmrZbK.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BsP2ZDCq.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/0lkjLfbF.js">
+		<link rel="modulepreload" href="../../_app/immutable/nodes/0.BG2V4zw3.js">
+		<link rel="modulepreload" href="../../_app/immutable/nodes/2.Bs6yMIzU.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CKhwxf1m.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DoSNWyT5.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CAKTfvgR.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/mmn93WJQ.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BSMOZG9I.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/ibZ6cetC.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CD5To0jX.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CeC4I2Vq.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/C0cY61dm.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/pxkm2_K-.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/d4GehcfJ.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BPPi2lAk.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CnKuf7ge.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/B07v3tOs.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Q_iTN34a.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/_jE_bJat.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CBTsYIUj.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BinAl8Hl.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/B_aNOK2w.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/2k10s30T.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BmnOSRl_.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/C4pcoAIV.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/B_e2sMrf.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/tgNSkY5d.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/ETep1q8B.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BBjOT99z.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Cpalvsxi.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BDbA4Nc6.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/YsCXAj37.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BrwW7v71.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BcUOXiDo.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/C4fz4s6j.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CK7pdiUM.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/C_cIjqfX.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DTuHRY6p.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DZN6XioG.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/HggmpE97.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CZ-xGkon.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CnKvQtn0.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/mbk_RC5g.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/8HKJBBDS.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BL--hHsp.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/D_HZAqeO.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DNcgippH.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/o8yw1KzB.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/D5BShMtr.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DAuAZyoN.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BjlHxVWP.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/1LfXpUck.js">
+		<link rel="modulepreload" href="../../_app/immutable/nodes/7.DRe5Y_EK.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Bp1yFPIm.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CMjU8dvK.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DuqSkqtE.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/tc8_m0YD.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BqM1Zm8n.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CGG055o8.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/B9c_xAOG.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BSjajx5R.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/RRzyzk2F.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CxsO-J4X.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CTdV19tu.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/D_uvdBdK.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BMZ8PTBi.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CNPb-PsH.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DwgKXbvL.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BuxIofVj.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Dpu-jCDz.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CrY3YjhC.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BMiwdn7i.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CMBiYTiD.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CEfaF2WM.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Dcs7KoaJ.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BFQG3ly1.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/4WVP2swn.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/FKfEjs-r.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/9_fi5CA3.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Ds7NoQmU.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/D0QH3NT1.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CUt18oIE.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/Ch5EJ25R.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BI23pD5R.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DZ1Fx3Nn.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/y2EW0v_B.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BAYINs14.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/CEKVGnXN.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/B3V9cyob.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/C-hAT81v.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BMGCjkKw.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DYCa0AJo.js">
+		<link rel="modulepreload" href="../../_app/immutable/nodes/28.CUzQX4m2.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/gDj4XAyx.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/jYDbJeLw.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DYCY9Fga.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/SZTFS06F.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/jzf45cDq.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BXb7hCj9.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/B_5Bz2Ej.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BXzMZbq6.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/DaY1Xone.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/BKqk7RLF.js">
+		<link rel="modulepreload" href="../../_app/immutable/chunks/C82W7lBv.js"><title>Pulse - Your Network, Your Net Worth</title><!-- HEAD_svelte-e0nyxp_START --><meta name="robots" content="index, follow, max-image-preview:large">  <meta name="description" content="Pulse is a Web3 SocialFi platform serving as a decentralized hub for traders, merging social and trading experiences into a real yield protocol. Pulse enables traders to seamlessly turn discussions into instant trading actions and rewards, offering an intuitive and user-friendly experience that fosters community-driven innovation.">  <meta property="og:type" content="website"> <meta property="og:title" content="Pulse - Your Network, Your Net Worth"> <meta property="og:description" content="Pulse is a Web3 SocialFi platform serving as a decentralized hub for traders, merging social and trading experiences into a real yield protocol. Pulse enables traders to seamlessly turn discussions into instant trading actions and rewards, offering an intuitive and user-friendly experience that fosters community-driven innovation."> <meta property="og:image" content="https://img.phemex.com/v1/80700c17-e0e3-434f-ad10-20842d383ee9/og-1-2.png"> <meta name="twitter:card" content="summary_large_image">   <meta name="twitter:title" content="Pulse - Your Network, Your Net Worth"> <meta name="twitter:description" content="Pulse is a Web3 SocialFi platform serving as a decentralized hub for traders, merging social and trading experiences into a real yield protocol. Pulse enables traders to seamlessly turn discussions into instant trading actions and rewards, offering an intuitive and user-friendly experience that fosters community-driven innovation."> <meta name="twitter:image" content="https://img.phemex.com/v1/80700c17-e0e3-434f-ad10-20842d383ee9/og-1-2.png"><!-- HEAD_svelte-e0nyxp_END -->
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div>         <div class="pulse-main svelte-1qt24ji"><div class="uno-4xiw69 pulse-body svelte-1qt24ji"><div class="side-menu svelte-1qt24ji"><div style="display: contents; --width:216px;"><div class="uno-q3jnel pulse-menus-wrap svelte-14y7te"><div class="uno-xwa062"><div class="uno-wlsj8c"><div class="uno-avtd4r"><img draggable="false" src="../../favicon.png" alt="pulse-logo" width="28" height="28" srcset=""> <div class="uno-l0s793 ff-paytoneOne">Pulse</div></div></div> <div class="menu-list uno-c3kri8 svelte-10yocnj"><a class="uno-y6594j menu-item svelte-10yocnj active" href="/ja/pulse/"><div class="uno-fs52lr menu-icon"><svg class="svg-icon " aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-menu-square"></use></svg> </div> <div class="uno-tq8c7c">ホーム</div> </a><a class="uno-y6594j menu-item svelte-10yocnj" href="/ja/pulse/group/"><div class="uno-fs52lr menu-icon"><svg class="svg-icon " aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-menu-group"></use></svg> </div> <div class="uno-tq8c7c">グループ</div> </a><a class="uno-y6594j menu-item svelte-10yocnj  wallet-chroma" href="/ja/pulse/wallet/"><div class="uno-fs52lr menu-icon"><svg class="svg-icon " aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-wallet-chroma"></use></svg> </div> <div class="uno-tq8c7c">Pulse ウォレット</div> </a><a class="uno-y6594j menu-item svelte-10yocnj" href="/ja/pulse/soulpass/"><div class="uno-fs52lr menu-icon"><svg class="svg-icon " aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-menu-soul-pass"></use></svg> </div> <div class="uno-tq8c7c">パルスソウルパス</div> </a><a class="uno-y6594j menu-item svelte-10yocnj" href="/ja/pulse/invitation-code/"><div class="uno-fs52lr menu-icon"><svg class="svg-icon " aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-menu-invitation-code"></use></svg> </div> <div class="uno-tq8c7c">招待コード</div> </a><a class="uno-y6594j menu-item svelte-10yocnj" href="/ja/pulse/marketplace/"><div class="uno-fs52lr menu-icon"><svg class="svg-icon " aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-menu-marketplace"></use></svg> </div> <div class="uno-tq8c7c">キャンペーン</div> </a><a class="uno-y6594j menu-item svelte-10yocnj" href="/ja/pulse/profile/"><div class="uno-fs52lr menu-icon"><svg class="svg-icon " aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-menu-profile"></use></svg> </div> <div class="uno-tq8c7c">プロフィール</div> </a></div></div> <div class="uno-33r8tc"><div class="uno-gan0c3"> <button class="uno-cbyrfi login-btn medium primary svelte-ghn1e7"> <span></span></button></div></div></div></div></div> <div class="uno-ejhhze pulse-content svelte-1qt24ji"> <div class="uno-qqe2vj content-body  svelte-1rf7h3d have-sidebar"><div class="uno-qev7q2 content-main svelte-1rf7h3d" id="content-main"><div class="uno-qvjern header-bar uno-15wdyx svelte-smhd93"><div class="uno-vl8d8g">Square</div></div>  <div class="cast-explore svelte-1osqe4v"> <div class="tabs-wrap  svelte-oaurvn"><div class="uno-asvt9t tabs-header"><div class="uno-xsk6cu tab-items"><div class="uno-1rg86y tab-item T3 svelte-oaurvn"><img class="tab-prefix-img svelte-oaurvn" draggable="false" src="https://img.phemex.com/v1/d927246e-07ec-4ad5-80f9-495983c946a3/cast-trending.svg" alt="トレンド-image" srcset=""> <span class="uno-d8e514 tab-label"><!-- HTML_TAG_START -->トレンド<!-- HTML_TAG_END --></span> </div><div class="uno-1rg86y tab-item T3 svelte-oaurvn"><img class="tab-prefix-img svelte-oaurvn" draggable="false" src="https://img.phemex.com/v1/d627b1ae-ec29-4e9a-8342-3cfbfea9aa11/cast-latest.svg" alt="最新-image" srcset=""> <span class="uno-d8e514 tab-label"><!-- HTML_TAG_START -->最新<!-- HTML_TAG_END --></span> </div><div class="uno-1rg86y tab-item T3 svelte-oaurvn"><img class="tab-prefix-img svelte-oaurvn" draggable="false" src="https://img.phemex.com/v1/2b88843c-3d01-4e31-bea7-85bdc73d1af6/cast-group.svg" alt="私のグループ-image" srcset=""> <span class="uno-d8e514 tab-label"><!-- HTML_TAG_START -->私のグループ<!-- HTML_TAG_END --></span> </div><div class="uno-1rg86y tab-item T3 svelte-oaurvn"><img class="tab-prefix-img svelte-oaurvn" draggable="false" src="https://img.phemex.com/v1/5cb81d31-046c-4394-8f6e-49a4707e23b1/cast-tips.svg" alt="最もチップが多い-image" srcset=""> <span class="uno-d8e514 tab-label"><!-- HTML_TAG_START -->最もチップが多い<!-- HTML_TAG_END --></span> </div><div class="uno-1rg86y tab-item T3 svelte-oaurvn"><img class="tab-prefix-img svelte-oaurvn" draggable="false" src="https://img.phemex.com/v1/9e452f72-ed2f-4c05-9a50-a34f44895b0a/cast-like.svg" alt="最もいいねが多い-image" srcset=""> <span class="uno-d8e514 tab-label"><!-- HTML_TAG_START -->最もいいねが多い<!-- HTML_TAG_END --></span> </div><div class="uno-1rg86y tab-item T3 svelte-oaurvn"><img class="tab-prefix-img svelte-oaurvn" draggable="false" src="https://img.phemex.com/v1/b4ae2943-0e7e-4e57-af58-5e05d11348b2/official-cast.png" alt="Pulse Announcement-image" srcset=""> <span class="uno-d8e514 tab-label"><!-- HTML_TAG_START -->Pulse Announcement<!-- HTML_TAG_END --></span> </div> </div></div> </div> <div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div><div class="cast-skeleton-item cast-group-item svelte-1ipu2d7"><div class="uno-7sps0h">   <div class="skeleton  svelte-mpffga" style="height: 36px; width: 36px; border-radius: 50%; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-awdil2">   <div class="skeleton  svelte-mpffga" style="height: 21px; width: 120px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-34tg4d svelte-mpffga" style="height: 15px; width: 80px; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> <div style="padding-left: 44px; margin-top: 8px">   <div class="skeleton  svelte-mpffga" style="height: 40px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div style="margin-top: 10px;">   <div class="skeleton  svelte-mpffga" style="height: 120px; width: 100%; border-radius: 6px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div></div> </div></div></div></div> <div class="uno-b29ko8 pulse-sidebar svelte-1rf7h3d"> <div class="uno-l21aqc pulse-search svelte-crx2fj"><form class="uno-k407du search-form"><input class="uno-43f34j search-input T1  svelte-nf8r6h is-search"  spellcheck="false" type="text" placeholder="" value=""> <div class="uno-c1hy53 search-icon svelte-nf8r6h"><svg class="svg-icon uno-dqjukl" aria-hidden="true" style="width: 18px; height: 18px;"><use xlink:href="#icon-search"></use></svg></div> </form></div>  <div class="uno-qev7q2 slidebar-body svelte-1rf7h3d"><div class="uno-oq04da pulse-point uno-f0upg4 svelte-1ytzgi6"><a href="/pulse/pt-rewards/?[object Object]" class="disabled">   <div class="skeleton  svelte-mpffga" style="height: 25px; width: 130px; border-radius: 4px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="uno-kbgv12">Total $PULSE <svg class="svg-icon uno-jy2cfk" aria-hidden="true" style="width: 12px; height: 12px;"><use xlink:href="#icon-arrow-r"></use></svg></div></a></div>    <div class="skeleton uno-f0upg4 svelte-mpffga" style="height: 150px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> <div class="recommended-hashtag uno-awfjjw"><div hidden><h1 class="uno-j3iob1">トレンドトピック</h1> </div>    <div class="skeleton  svelte-mpffga" style="height: 25px; width: 100%; border-radius: 8px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-h7ovaq svelte-mpffga" style="height: 30px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>   <div class="skeleton uno-h7ovaq svelte-mpffga" style="height: 30px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>   <div class="skeleton uno-h7ovaq svelte-mpffga" style="height: 30px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>   <div class="skeleton uno-h7ovaq svelte-mpffga" style="height: 30px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>   <div class="skeleton uno-h7ovaq svelte-mpffga" style="height: 30px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>   <div class="skeleton uno-h7ovaq svelte-mpffga" style="height: 30px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div></div> <div class="uno-k4kffg trending-token uno-awfjjw svelte-fmeu7i"><div class="uno-3vwa78"><div class="uno-0fou64 ff-outfit">トレンドのトークン</div> <div class="uno-nd2xvb  svelte-7o0ezw"><div class="uno-4q9gdd" style=""><svg class="svg-icon uno-wbinsz" aria-hidden="true" style="width: 20px; height: 20px;"><use xlink:href="#icon-note"></use></svg></div> </div></div> <div class="uno-ybsu1f"><span class="uno-o9w80m ff-outfit">コイン/24 時間あたりの変化率</span> <span class="uno-9udpw0 ff-outfit">7 日間の変化率</span></div> </div> <div class="recommended-group-wrap uno-awfjjw"><div hidden><h1 class="uno-pdfv51">あなたにおすすめのグループ</h1> </div>    <div class="skeleton  svelte-mpffga" style="height: 25px; width: 100%; border-radius: 8px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>    <div class="skeleton uno-pjnhx1 svelte-mpffga" style="height: 84px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>   <div class="skeleton uno-pjnhx1 svelte-mpffga" style="height: 84px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div>   <div class="skeleton uno-pjnhx1 svelte-mpffga" style="height: 84px; width: 100%; border-radius: 16px; --baseColor: #1a1a1a; --highlightColor: #343434; --animationLength: 1.4s; "></div> </div> </div></div></div>  </div></div></div> <div class="uno-1prqzc wrap svelte-6e299x"></div>       
+			
+			<script>
+				{
+					__sveltekit_4styla = {
+						base: new URL("../..", location).pathname.slice(0, -1)
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("../../_app/immutable/entry/start.C0UBrvlq.js"),
+						import("../../_app/immutable/entry/app.B6Z5kiEa.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 2, 7, 28],
+							data: [null,{"type":"data","data":{currentLanguage:"ja"},"uses":{"params":["lang"]},"slash":"always"},null,{"type":"data","data":null,"uses":{}}],
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>
