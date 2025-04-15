@@ -1679,8 +1679,18 @@ export default function Manage() {
                       onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0) {
                           // 将FileList转换为数组
-                          const files = Array.from(e.target.files);
-                          setActivityImageFiles(files);
+                          const newFiles = Array.from(e.target.files);
+                          // 添加到现有集合，而不是替换
+                          setActivityImageFiles(prevFiles => [...prevFiles, ...newFiles]);
+                          
+                          // 更新UI提示
+                          toast({
+                            title: "已添加图片",
+                            description: `已添加${newFiles.length}张图片`,
+                          });
+                          
+                          // 重置文件输入框，以便用户可以再次选择同一文件
+                          e.target.value = '';
                         }
                       }}
                       multiple
