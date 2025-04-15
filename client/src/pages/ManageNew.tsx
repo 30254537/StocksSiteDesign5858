@@ -1531,8 +1531,8 @@ export default function Manage() {
                   title,
                   content,
                   location,
-                  startDate: startDate || null,
-                  endDate: endDate || null,
+                  startDate: startDate ? new Date(startDate) : null,
+                  endDate: endDate ? new Date(endDate) : null, 
                   imageUrl,
                   isActive // Boolean 值, 后端会处理转换
                 };
