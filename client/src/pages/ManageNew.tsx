@@ -235,7 +235,9 @@ export default function Manage() {
   const fetchContractAddresses = async () => {
     setLoadingAddresses(true);
     try {
-      const response = await apiRequest("GET", "/api/contract-addresses");
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/contract-addresses?t=${timestamp}`);
       const data = await response.json();
       setContractAddresses(data);
     } catch (error) {
