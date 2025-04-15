@@ -154,30 +154,53 @@ export default function ManageGoldDogMonitor() {
   // 创建金狗监测
   const createMutation = useMutation({
     mutationFn: async (formData: FormData) => {
+      console.log("开始发送金狗监测创建请求，表单数据键：", Array.from(formData.keys()));
+      
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest('POST', `/api/gold-dog-monitors?t=${timestamp}`, formData);
       
-      // 先尝试获取响应数据，不管成功或失败
-      const responseData = await response.json().catch(() => null);
-      console.log("金狗监测API响应:", response.status, responseData);
-      
-      if (!response.ok) {
-        throw new Error(responseData?.message || '创建失败，请重试');
+      try {
+        // 使用完整的请求URL包含时间戳
+        const response = await apiRequest('POST', `/api/gold-dog-monitors?t=${timestamp}`, formData, true);
+        
+        // 先尝试获取响应数据，不管成功或失败
+        const responseData = await response.json().catch(e => {
+          console.error("解析响应JSON失败:", e);
+          return null;
+        });
+        
+        console.log("金狗监测API响应状态:", response.status, "数据:", responseData);
+        
+        if (!response.ok) {
+          throw new Error(responseData?.message || `创建失败 (${response.status})，请重试`);
+        }
+        
+        return responseData; // 已经解析过的JSON响应
+      } catch (error) {
+        console.error("金狗监测请求异常:", error);
+        throw error;
       }
-      
-      return responseData; // 已经解析过的JSON响应
     },
     onSuccess: (data) => {
       console.log('金狗监测创建成功返回数据:', data);
+      
+      toast({
+        title: "创建成功",
+        description: "金狗监测内容已成功添加",
+      });
       
       // 使用更新的invalidateQueries方法，并确保完全失效相关查询
       queryClient.invalidateQueries({ queryKey: ['/api/gold-dog-monitors'] });
       // 额外触发强制刷新
       queryClient.refetchQueries({ queryKey: ['/api/gold-dog-monitors'] });
       
-      setIsCreateDialogOpen(false);
-      resetCreateForm();
+      // 延迟关闭对话框，确保UI状态更新
+      setTimeout(() => {
+        setIsCreateDialogOpen(false);
+        resetCreateForm();
+        setImageFile(null);
+        setImagePreview(null);
+      }, 500);
       
       toast({
         title: '创建成功',
@@ -197,27 +220,53 @@ export default function ManageGoldDogMonitor() {
   // 更新金狗监测
   const updateMutation = useMutation({
     mutationFn: async ({ id, formData }: { id: number; formData: FormData }) => {
+      console.log("开始更新金狗监测，ID:", id, "表单数据键:", Array.from(formData.keys()));
+      
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest('PUT', `/api/gold-dog-monitors/${id}?t=${timestamp}`, formData);
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '更新失败，请重试');
+      
+      try {
+        // 使用完整的请求URL包含时间戳
+        const response = await apiRequest('PUT', `/api/gold-dog-monitors/${id}?t=${timestamp}`, formData, true);
+        
+        // 先尝试获取响应数据，不管成功或失败
+        const responseData = await response.json().catch(e => {
+          console.error("解析响应JSON失败:", e);
+          return null;
+        });
+        
+        console.log("金狗监测更新API响应状态:", response.status, "数据:", responseData);
+        
+        if (!response.ok) {
+          throw new Error(responseData?.message || `更新失败 (${response.status})，请重试`);
+        }
+        
+        return responseData; // 已经解析过的JSON响应
+      } catch (error) {
+        console.error("金狗监测更新请求异常:", error);
+        throw error;
       }
-      return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('金狗监测更新成功返回数据:', data);
+      
+      toast({
+        title: '更新成功',
+        description: '金狗监测内容已成功更新',
+      });
+      
       // 使用更新的invalidateQueries方法，并确保完全失效相关查询
       queryClient.invalidateQueries({ queryKey: ['/api/gold-dog-monitors'] });
       // 额外触发强制刷新
       queryClient.refetchQueries({ queryKey: ['/api/gold-dog-monitors'] });
       
-      toast({
-        title: '更新成功',
-        description: '金狗监测更新成功',
-      });
-      setIsEditDialogOpen(false);
-      setSelectedMonitor(null);
+      // 延迟关闭对话框，确保UI状态更新
+      setTimeout(() => {
+        setIsEditDialogOpen(false);
+        setSelectedMonitor(null);
+        setImageFile(null);
+        setImagePreview(null);
+      }, 500);
     },
     onError: (error: any) => {
       console.error('更新金狗监测失败:', error);

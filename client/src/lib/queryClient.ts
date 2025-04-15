@@ -1,7 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
-async function throwIfResNotOk(res: Response) {
-  if (!res.ok) {
+async function throwIfResNotOk(res: Response, skipErrorHandling = false) {
+  if (!res.ok && !skipErrorHandling) {
     const text = (await res.text()) || res.statusText;
     throw new Error(`${res.status}: ${text}`);
   }
@@ -11,8 +11,15 @@ export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
+  skipErrorHandling?: boolean | RequestInit,
   options?: RequestInit
 ): Promise<Response> {
+  // 处理可选参数：如果skipErrorHandling是对象，则视为options
+  if (typeof skipErrorHandling === 'object' && skipErrorHandling !== null) {
+    options = skipErrorHandling;
+    skipErrorHandling = false;
+  }
+  
   // 默认配置
   const config: RequestInit = {
     method,
@@ -43,7 +50,7 @@ export async function apiRequest(
   }
   
   const res = await fetch(url, config);
-  await throwIfResNotOk(res);
+  await throwIfResNotOk(res, !!skipErrorHandling);
   
   // 检查特殊的缓存控制头，如果存在，则清除相关缓存
   const clearCacheHeader = res.headers.get('X-Clear-Translation-Cache');
