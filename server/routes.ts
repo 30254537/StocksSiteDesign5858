@@ -708,9 +708,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       const { category } = req.params;
-      const products = await storage.getProductsByCategory(category);
+      const productsFromDb = await storage.getProductsByCategory(category);
+      
+      // 转换数据库的snake_case列名到前端使用的camelCase属性名
+      const products = productsFromDb.map(product => {
+        const transformedProduct = { ...product };
+        
+        // 确保image_url映射到imageUrl属性（数据库中为snake_case，前端为camelCase）
+        if (product.image_url !== undefined) {
+          transformedProduct.imageUrl = product.image_url;
+          // 防止序列化时出现重复
+          delete transformedProduct.image_url;
+        }
+        
+        // 确保image_urls映射到imageUrls属性（数据库中为snake_case，前端为camelCase）
+        if (product.image_urls !== undefined) {
+          transformedProduct.imageUrls = product.image_urls;
+          // 防止序列化时出现重复
+          delete transformedProduct.image_urls;
+        }
+        
+        return transformedProduct;
+      });
+      
       res.json(products);
     } catch (error) {
+      console.error("Error fetching products by category:", error);
       res.status(500).json({ message: "Error fetching products by category" });
     }
   });
