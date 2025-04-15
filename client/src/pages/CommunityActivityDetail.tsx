@@ -281,7 +281,38 @@ const CommunityActivityDetail: React.FC = () => {
             )}
           </div>
           
-          {activity.imageUrl && (
+          {/* 图片显示区 - 支持多图片轮播 */}
+          {(activity.imageUrls && activity.imageUrls.length > 0) ? (
+            <div className="mb-6 space-y-4">
+              {/* 主图 - 使用第一张图片 */}
+              <div className="overflow-hidden rounded-lg">
+                <img 
+                  src={activity.imageUrls[0]} 
+                  alt={`${activity.title} - 主图`} 
+                  className="w-full max-h-[500px] object-cover"
+                />
+              </div>
+              
+              {/* 额外图片 - 使用水平滚动容器 */}
+              {activity.imageUrls.length > 1 && (
+                <div className="flex overflow-x-auto space-x-2 pb-2">
+                  {activity.imageUrls.map((imgUrl, index) => (
+                    <div 
+                      key={index} 
+                      className="flex-shrink-0"
+                    >
+                      <img 
+                        src={imgUrl} 
+                        alt={`${activity.title} - 图片 ${index + 1}`} 
+                        className="h-24 w-auto rounded-md border border-accent/20 hover:border-accent cursor-pointer"
+                        onClick={() => window.open(imgUrl, '_blank')}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : activity.imageUrl ? (
             <div className="mb-6">
               <img 
                 src={activity.imageUrl} 
@@ -289,7 +320,7 @@ const CommunityActivityDetail: React.FC = () => {
                 className="w-full rounded-lg max-h-[500px] object-cover"
               />
             </div>
-          )}
+          ) : null}
           
           <div className="prose prose-invert max-w-none">
             <div className="whitespace-pre-wrap text-foreground/90">

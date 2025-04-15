@@ -306,17 +306,34 @@ export function setupCommunityRoutes(app: Express) {
         return res.status(404).json({ message: '未找到指定的社区活动' });
       }
       
-      // 删除相关的图片文件
+      // 删除主图片文件
       if (activity.imageUrl && activity.imageUrl.startsWith('/uploads/community/')) {
         const imagePath = path.resolve(`public${activity.imageUrl}`);
         if (fs.existsSync(imagePath)) {
           try {
             fs.unlinkSync(imagePath);
-            console.log(`已删除社区活动图片: ${imagePath}`);
+            console.log(`已删除社区活动主图片: ${imagePath}`);
           } catch (err) {
-            console.error(`删除社区活动图片时出错:`, err);
+            console.error(`删除社区活动主图片时出错:`, err);
           }
         }
+      }
+      
+      // 删除所有附加图片文件
+      if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
+        activity.imageUrls.forEach(imgUrl => {
+          if (imgUrl && imgUrl.startsWith('/uploads/community/')) {
+            const imagePath = path.resolve(`public${imgUrl}`);
+            if (fs.existsSync(imagePath)) {
+              try {
+                fs.unlinkSync(imagePath);
+                console.log(`已删除社区活动附加图片: ${imagePath}`);
+              } catch (err) {
+                console.error(`删除社区活动附加图片时出错:`, err);
+              }
+            }
+          }
+        });
       }
       
       // 执行删除操作
@@ -350,17 +367,34 @@ export function setupCommunityRoutes(app: Express) {
         return res.status(404).json({ message: '未找到指定的社区活动' });
       }
       
-      // 删除相关的图片文件
+      // 删除主图片文件
       if (activity.imageUrl && activity.imageUrl.startsWith('/uploads/community/')) {
         const imagePath = path.resolve(`public${activity.imageUrl}`);
         if (fs.existsSync(imagePath)) {
           try {
             fs.unlinkSync(imagePath);
-            console.log(`已删除社区活动图片: ${imagePath}`);
+            console.log(`已删除社区活动主图片: ${imagePath}`);
           } catch (err) {
-            console.error(`删除社区活动图片时出错:`, err);
+            console.error(`删除社区活动主图片时出错:`, err);
           }
         }
+      }
+      
+      // 删除所有附加图片文件
+      if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
+        activity.imageUrls.forEach(imgUrl => {
+          if (imgUrl && imgUrl.startsWith('/uploads/community/')) {
+            const imagePath = path.resolve(`public${imgUrl}`);
+            if (fs.existsSync(imagePath)) {
+              try {
+                fs.unlinkSync(imagePath);
+                console.log(`已删除社区活动附加图片: ${imagePath}`);
+              } catch (err) {
+                console.error(`删除社区活动附加图片时出错:`, err);
+              }
+            }
+          }
+        });
       }
       
       // 执行删除操作
