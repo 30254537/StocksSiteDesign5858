@@ -490,9 +490,10 @@ export const translations: Translations = {
     // Footer
     "footer.about": "基于区块链技术的去中心化交易平台，为加密货币爱好者提供独家限量周边产品。",
     "footer.quickLinks": "快速链接",
-    "footer.tradingPlatform": "STONKS DEX",
-    "footer.nftMarketplace": "MY STONKS",
-    "footer.community": "社区论坛",
+    "footer.tradingPlatform": "",
+    "footer.nftMarketplace": "",
+    "footer.community": "电报社区",
+    "footer.goldDogMonitor": "金狗监测",
     "footer.faq": "常见问题",
     "footer.contactUs": "联系我们",
     "footer.subscribeTitle": "订阅更新",
