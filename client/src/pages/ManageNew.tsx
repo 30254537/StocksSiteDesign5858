@@ -56,7 +56,7 @@ export default function Manage() {
   
   // 社区活动管理状态
   const [communityActivities, setCommunityActivities] = useState<CommunityActivity[]>([]);
-  const [activityImageFile, setActivityImageFile] = useState<File | null>(null);
+  const [activityImageFiles, setActivityImageFiles] = useState<File[]>([]);
   const [loadingCommunityActivities, setLoadingCommunityActivities] = useState(false);
   const [editingCommunityActivity, setEditingCommunityActivity] = useState<CommunityActivity | null>(null);
   
@@ -1678,14 +1678,9 @@ export default function Manage() {
                           setActivityImageFile(e.target.files[0]);
                         }
                       }}
+                      multiple
                     />
                     <p className="text-xs text-gray-400">支持JPG, PNG, GIF等图片格式，最大10MB</p>
-                    {/* 保留原有的URL输入，以便兼容 */}
-                    <Input
-                      id="activity-imageUrl"
-                      placeholder="或输入图片URL（可选）"
-                      className="bg-primary/50 border-accent mt-2"
-                    />
                   </div>
                 </div>
                 
