@@ -876,10 +876,10 @@ export default function Manage() {
                   
                   if (aboutId) {
                     // 编辑模式
-                    response = await apiRequest("PUT", `/api/about/${aboutId}`, aboutData);
+                    response = await apiRequest("PUT", `/api/admin/about/${aboutId}`, aboutData);
                   } else {
                     // 新增模式
-                    response = await apiRequest("POST", "/api/about", aboutData);
+                    response = await apiRequest("POST", "/api/admin/about", aboutData);
                   }
                   
                   if (response.ok) {
