@@ -1547,7 +1547,7 @@ export default function Manage() {
                   
                   // 添加图片文件 (如果有)
                   if (activityImageFile) {
-                    formData.append("image", activityImageFile);
+                    formData.append("images", activityImageFile);
                   }
                   
                   console.log("准备发送活动数据");
