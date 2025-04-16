@@ -133,7 +133,7 @@ export const translations: Translations = {
     "checkout.sendStonksToAddress": "Send $STONKS to this address:",
     "checkout.amountToSend": "Amount to send:",
     "checkout.transactionHash": "Transaction Hash",
-    "checkout.transactionHashPlaceholder": "Enter the transaction hash after sending STONKS",
+    "checkout.transactionHashPlaceholder": "Enter the transaction hash after sending $STONKS",
     "checkout.transactionHashHint": "Enter the transaction hash after sending",
     "checkout.shippingAddressRequired": "Shipping address is required",
     "checkout.emailRequired": "Email address is required for order notifications",
@@ -153,7 +153,7 @@ export const translations: Translations = {
     
     // Checkout Success
     "checkoutSuccess.orderComplete": "Order Complete!",
-    "checkoutSuccess.thankYou": "Thank you for your purchase from STONKS DEX Merchandise Store",
+    "checkoutSuccess.thankYou": "Thank you for your purchase from STONKS DEX SHOP Merchandise Store",
     "checkoutSuccess.whatsNext": "What's Next?",
     "checkoutSuccess.emailConfirmation": "You will receive an email confirmation with your order details",
     "checkoutSuccess.shipmentInfo": "We will notify you when your order ships",
@@ -251,10 +251,10 @@ export const translations: Translations = {
     "about.teamTitle": "Team Members",
     "about.dev001Title": "DEV 001",
     "about.dev001Role": "Chief Developer",
-    "about.dev001Description": "STONKS DEX core developer, responsible for the smart contracts and blockchain interactions of the decentralized STONKS DEX.",
+    "about.dev001Description": "STONKS DEX SHOP core developer, responsible for the smart contracts and blockchain interactions of the decentralized STONKS DEX SHOP.",
     "about.trader025Title": "TRADER 025",
     "about.trader025Role": "Trading Strategist", 
-    "about.trader025Description": "Capital market expert and DEX liquidity provider, designing optimal trading paths and strategies for STONKS DEX.",
+    "about.trader025Description": "Capital market expert and DEX liquidity provider, designing optimal trading paths and strategies for STONKS DEX SHOP.",
     "about.artist108Title": "ARTIST 108",
     "about.artist108Role": "Creative Director",
     "about.artist108Description": "Responsible for all STONKS DEX merchandise design concepts, creating a unique decentralized brand image.",
@@ -460,7 +460,7 @@ export const translations: Translations = {
     "checkout.sendStonksToAddress": "发送$STONKS到地址:",
     "checkout.amountToSend": "发送金额",
     "checkout.transactionHash": "交易哈希值",
-    "checkout.transactionHashPlaceholder": "发送STONKS后输入交易哈希",
+    "checkout.transactionHashPlaceholder": "发送$STONKS后输入交易哈希",
     "checkout.transactionHashHint": "发送后输入交易哈希",
     "checkout.shippingAddressRequired": "请提供收货地址",
     "checkout.emailRequired": "请提供电子邮箱，以便我们联系您",
@@ -480,7 +480,7 @@ export const translations: Translations = {
     
     // Checkout Success
     "checkoutSuccess.orderComplete": "订单完成！",
-    "checkoutSuccess.thankYou": "感谢您在STONKS DEX周边商店的购买",
+    "checkoutSuccess.thankYou": "感谢您在STONKS DEX SHOP周边商店的购买",
     "checkoutSuccess.whatsNext": "接下来会发生什么？",
     "checkoutSuccess.emailConfirmation": "您将收到订单确认邮件",
     "checkoutSuccess.shipmentInfo": "商品发货时我们会通知您",
