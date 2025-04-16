@@ -46,13 +46,26 @@ const CommunityActivityDetail: React.FC = () => {
   const [isShareOpen, setIsShareOpen] = useState(false);
   
   // 获取社区活动数据
-  const { data: activity, isLoading, error } = useQuery<CommunityActivity>({
+  const { data: activity, isLoading, error } = useQuery<CommunityActivity, Error, CommunityActivity>({
     queryKey: ['/api/community', parseInt(id)],
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     staleTime: 0, // 不缓存数据，每次都重新获取
     retry: 3 // 出错时重试3次
   });
+  
+  // 使用副作用来监控和记录数据变化
+  React.useEffect(() => {
+    if (activity) {
+      console.log("活动数据获取成功:", activity);
+    }
+  }, [activity]);
+  
+  React.useEffect(() => {
+    if (error) {
+      console.error("获取活动数据失败:", error);
+    }
+  }, [error]);
   
   // 格式化日期
   const formatDate = (dateStr: string | null) => {
@@ -338,17 +351,23 @@ const CommunityActivityDetail: React.FC = () => {
             </div>
           ) : null}
           
-          {/* 活动内容展示区 */}
-          {activity.content && (
-            <div className="prose prose-invert max-w-none">
-              <h2 className="text-xl font-semibold text-accent mb-3">
-                {language === 'zh' ? '活动详情' : 'Event Details'}
-              </h2>
-              <div className="whitespace-pre-wrap text-foreground/90 mt-2">
-                {activity.content}
-              </div>
+          {/* 活动内容展示区 - 强制显示内容区域用于调试 */}
+          <div className="prose prose-invert max-w-none">
+            <h2 className="text-xl font-semibold text-accent mb-3">
+              {language === 'zh' ? '活动详情' : 'Event Details'}
+            </h2>
+            <div className="whitespace-pre-wrap text-foreground/90 mt-2 border border-accent/20 p-4 rounded-md">
+              {activity.content 
+                ? activity.content 
+                : <span className="text-amber-400 italic">（未提供活动内容）</span>}
             </div>
-          )}
+            <div className="mt-4 text-sm text-muted-foreground">
+              <p className="mb-2">活动ID: {activity.id}</p>
+              <p className="mb-2">标题: {activity.title}</p>
+              <p className="mb-2">内容长度: {activity.content?.length || 0}字符</p>
+              <p className="mb-2">图片数量: {activity.imageUrls?.length || 0}张</p>
+            </div>
+          </div>
         </div>
       </div>
       
