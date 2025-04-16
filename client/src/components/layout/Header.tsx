@@ -92,22 +92,11 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <svg 
-                  width="30" 
-                  height="30" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mr-1 text-accent"
-                >
-                  <path 
-                    d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
-                    stroke="#00FFCC" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <img 
+                  src="/images/fuzzy-logo.png" 
+                  alt="STONKS Fuzzy Logo" 
+                  className="w-10 h-10 mr-3"
+                />
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
                   <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
