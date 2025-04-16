@@ -140,7 +140,7 @@ export default function MusicPage() {
                   </ReactiveLogo>
                 </h1>
                 
-                <p className="text-xl text-[#00ffcc] font-bold mt-3">
+                <p className="text-4xl md:text-5xl text-[#00ffcc] font-bold mt-3 font-orbitron">
                   MUSIC
                 </p>
                 
