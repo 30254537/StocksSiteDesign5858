@@ -394,7 +394,7 @@ export default function CommunityActivityDetail() {
               <img 
                 src={data.imageUrl} 
                 alt={data.title} 
-                className="w-full rounded-lg object-cover h-[200px]"
+                className="max-w-[80%] mx-auto rounded-lg object-cover h-[220px]"
                 onClick={() => {
                   setEnlargedImageUrl(data.imageUrl);
                   setIsImageModalOpen(true);
