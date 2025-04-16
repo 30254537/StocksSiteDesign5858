@@ -59,7 +59,7 @@ export function ImageZoomModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto p-0 bg-black/90 border-accent/50" aria-describedby="zoom-modal-description">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto p-0 bg-black/90 border-0" aria-describedby="zoom-modal-description">
         <VisuallyHidden>
           <DialogTitle>{`${altText} - Image Zoom View`}</DialogTitle>
           <span id="zoom-modal-description">View larger image. Use arrow keys to navigate between images.</span>
@@ -74,17 +74,19 @@ export function ImageZoomModal({
           </button>
           
           <div className="relative w-[95vw] h-[90vh] max-h-[90vh] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-            <img
-              src={images[localIndex]}
-              alt={`${altText} - zoomed view`}
-              className="max-w-full max-h-full object-contain p-4"
-              style={{
-                imageRendering: 'auto',
-                filter: 'drop-shadow(0 0 10px rgba(0, 255, 204, 0.2))',
-                transition: 'transform 0.3s ease-out'
-              }}
-              loading="eager"
-            />
+            <div className="relative border border-accent/50 bg-black/50 inline-flex items-center justify-center overflow-hidden">
+              <img
+                src={images[localIndex]}
+                alt={`${altText} - zoomed view`}
+                className="max-w-full max-h-[85vh] object-contain"
+                style={{
+                  imageRendering: 'auto',
+                  filter: 'drop-shadow(0 0 10px rgba(0, 255, 204, 0.2))',
+                  transition: 'transform 0.3s ease-out'
+                }}
+                loading="eager"
+              />
+            </div>
             
             {images.length > 1 && (
               <>
