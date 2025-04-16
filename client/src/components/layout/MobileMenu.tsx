@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,28 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const { language, toggleLanguage, t } = useLanguage();
+  const [logo, setLogo] = useState<string | null>(null);
+  
+  // 获取LOGO
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const response = await fetch('/api/contact-info');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.logo) {
+            setLogo(data.logo);
+          }
+        }
+      } catch (error) {
+        console.error('获取LOGO失败:', error);
+      }
+    };
+    
+    if (isOpen) {
+      fetchLogo();
+    }
+  }, [isOpen]);
 
   if (!isOpen) {
     return null;
@@ -56,23 +79,31 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Brand */}
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
-              <svg 
-                width="30" 
-                height="30" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-1 text-accent"
-                style={{ verticalAlign: 'middle' }}
-              >
-                <path 
-                  d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
-                  stroke="#00FFCC" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
+              {logo ? (
+                <img 
+                  src={logo} 
+                  alt="STONKS DEX SHOP Logo" 
+                  className="h-8 w-auto mr-2" 
                 />
-              </svg>
+              ) : (
+                <svg 
+                  width="30" 
+                  height="30" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mr-1 text-accent"
+                  style={{ verticalAlign: 'middle' }}
+                >
+                  <path 
+                    d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
+                    stroke="#00FFCC" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
             <span className="text-accent text-xs ml-7">Powered by $STONKS</span>
