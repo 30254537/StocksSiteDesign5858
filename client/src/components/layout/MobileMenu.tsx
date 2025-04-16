@@ -58,7 +58,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <span className="font-bold flex items-center justify-start">
               <img 
                 src="/images/gt-stonks-logo.png" 
-                alt="GT STONKS Logo" 
+                alt="" 
                 className="h-7 mr-2"
                 style={{ 
                   verticalAlign: 'middle', 

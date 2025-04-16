@@ -94,7 +94,7 @@ export default function Header() {
               >
                 <img 
                   src="/images/gt-stonks-logo.png" 
-                  alt="GT STONKS Logo" 
+                  alt="" 
                   className="h-8 mr-3"
                   style={{ 
                     objectFit: "contain",
