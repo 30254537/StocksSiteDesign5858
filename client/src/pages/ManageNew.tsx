@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
-import { Product, ContractAddress, AboutContent, CommunityActivity, TeamMember, CommunityFeature } from "@shared/schema";
+import { Product, ContractAddress, AboutContent, CommunityActivity, TeamMember, CommunityFeature, MusicTrack } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -72,6 +72,12 @@ export default function Manage() {
   const [communityFeatures, setCommunityFeatures] = useState<CommunityFeature[]>([]);
   const [loadingCommunityFeatures, setLoadingCommunityFeatures] = useState(false);
   const [editingCommunityFeature, setEditingCommunityFeature] = useState<CommunityFeature | null>(null);
+  
+  // 音乐管理状态
+  const [musicTracks, setMusicTracks] = useState<MusicTrack[]>([]);
+  const [loadingMusicTracks, setLoadingMusicTracks] = useState(false);
+  const [editingMusicTrack, setEditingMusicTrack] = useState<MusicTrack | null>(null);
+  const [musicFile, setMusicFile] = useState<File | null>(null);
   
   // 获取商品列表
   const fetchProducts = async () => {
@@ -178,6 +184,27 @@ export default function Manage() {
     }
   };
 
+  // 获取音乐列表
+  const fetchMusicTracks = async () => {
+    setLoadingMusicTracks(true);
+    try {
+      // 添加时间戳参数以避免缓存问题
+      const timestamp = new Date().getTime();
+      const response = await apiRequest("GET", `/api/music?t=${timestamp}`);
+      const data = await response.json();
+      setMusicTracks(data);
+    } catch (error) {
+      console.error("获取音乐列表失败:", error);
+      toast({
+        title: "获取音乐列表失败",
+        description: "无法获取音乐列表，请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingMusicTracks(false);
+    }
+  };
+
   // 检查管理员身份验证
   useEffect(() => {
     const checkAuth = async () => {
@@ -193,6 +220,7 @@ export default function Manage() {
           fetchCommunityActivities();
           fetchTeamMembers();
           fetchCommunityFeatures();
+          fetchMusicTracks();
         } else {
           toast({
             title: "需要管理员权限",
