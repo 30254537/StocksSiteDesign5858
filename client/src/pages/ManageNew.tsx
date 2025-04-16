@@ -38,11 +38,14 @@ export default function Manage() {
   const [contactInfo, setContactInfo] = useState<{
     email: string;
     address: string;
+    logo?: string;
   }>({
     email: '',
-    address: ''
+    address: '',
+    logo: ''
   });
   const [loadingContactInfo, setLoadingContactInfo] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   
   // 合约地址状态
   const [contractAddresses, setContractAddresses] = useState<ContractAddress[]>([]);
@@ -218,7 +221,8 @@ export default function Manage() {
       const data = await response.json();
       setContactInfo({
         email: data.email || '',
-        address: data.address || ''
+        address: data.address || '',
+        logo: data.logo || ''
       });
     } catch (error) {
       console.error("获取联系信息失败:", error);
@@ -877,6 +881,17 @@ export default function Manage() {
           onClick={() => setActiveTab("goldDogMonitor")}
         >
           金狗监测管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "logo" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("logo")}
+        >
+          LOGO设置
         </button>
       </div>
       
