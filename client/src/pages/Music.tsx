@@ -150,7 +150,7 @@ export default function MusicPage() {
               {t('music.subtitle')}
             </p>
             
-            <div className="flex flex-wrap gap-4 justify-center mb-8">
+            <div className="flex flex-wrap gap-4 justify-center mb-16">
               <Button
                 onClick={() => setShowUpload(prev => !prev)}
                 className="bg-accent hover:bg-accent/80 text-primary"
@@ -161,12 +161,12 @@ export default function MusicPage() {
               </Button>
             </div>
             
-            {/* 音乐波纹可视化效果 - 放在上传按钮下方 */}
-            <div className="w-full relative h-6 overflow-hidden">
+            {/* 音乐波纹可视化效果 - 放在上传按钮下方，并下移约2厘米 */}
+            <div className="w-[120%] relative h-6 overflow-hidden mx-auto" style={{ marginLeft: '-10%' }}>
               <MusicVisualizer 
                 className="w-full" 
                 height={isMobile ? 24 : 24} 
-                barCount={isMobile ? 120 : 240}
+                barCount={isMobile ? 160 : 320}
                 barWidth={1}
                 gap={1}
                 sensitivity={1.2}
