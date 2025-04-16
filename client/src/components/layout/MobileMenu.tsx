@@ -63,6 +63,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       }
     };
     
+    // 每次菜单打开时获取最新LOGO
     if (isOpen) {
       fetchLogo();
     }
