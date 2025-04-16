@@ -337,6 +337,110 @@ export default function Manage() {
     }
   };
   
+  // 处理删除社区活动中的单个图片
+  const handleDeleteActivityImage = async (activityId: number, imageUrl: string) => {
+    if (window.confirm("确定要删除这张图片吗？此操作无法撤销。")) {
+      try {
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/community/${activityId}/image?t=${timestamp}`, { imageUrl });
+        
+        if (!response.ok) {
+          throw new Error('删除图片失败');
+        }
+        
+        const updatedActivity = await response.json();
+        
+        // 更新编辑中的活动
+        setEditingCommunityActivity(updatedActivity);
+        
+        // 刷新现有图片区域
+        displayExistingImages(updatedActivity);
+        
+        toast({
+          title: "删除成功",
+          description: "图片已成功删除",
+        });
+        
+        // 刷新活动列表
+        fetchCommunityActivities();
+      } catch (error) {
+        console.error("删除图片时出错:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除图片，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+  // 显示现有图片的辅助函数
+  const displayExistingImages = (activity: CommunityActivity) => {
+    // 显示现有图片
+    const existingImagesContainer = document.getElementById("existing-activity-images");
+    
+    if (existingImagesContainer) {
+      // 处理图片数组
+      if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
+        let imagesHtml = `
+          <div class="mb-4">
+            <p class="text-sm text-muted-foreground mb-2">现有图片 (点击删除按钮可删除单张图片):</p>
+            <div class="flex flex-wrap">
+        `;
+        
+        activity.imageUrls.forEach(imgUrl => {
+          imagesHtml += `
+            <div class="relative group inline-block mr-2 mb-2">
+              <img src="${imgUrl}" alt="活动图片" class="h-16 w-auto rounded border border-accent/30" />
+              <button 
+                type="button"
+                class="absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                onclick="window.deleteActivityImage(${activity.id}, '${imgUrl}')"
+              >
+                ×
+              </button>
+            </div>
+          `;
+        });
+        
+        imagesHtml += `
+            </div>
+          </div>
+        `;
+        
+        existingImagesContainer.innerHTML = imagesHtml;
+        
+        // 将删除函数绑定到window对象，以便通过onclick调用
+        (window as any).deleteActivityImage = (id: number, url: string) => {
+          handleDeleteActivityImage(id, url);
+        };
+      }
+      // 如果没有imageUrls数组但有单张imageUrl
+      else if (activity.imageUrl) {
+        existingImagesContainer.innerHTML = `
+          <div class="mb-4">
+            <p class="text-sm text-muted-foreground mb-2">现有图片:</p>
+            <div class="relative group inline-block mr-2 mb-2">
+              <img src="${activity.imageUrl}" alt="活动主图" class="h-16 w-auto rounded border border-accent/30" />
+              <button 
+                type="button"
+                class="absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                onclick="window.deleteActivityImage(${activity.id}, '${activity.imageUrl}')"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        `;
+        
+        // 将删除函数绑定到window对象，以便通过onclick调用
+        (window as any).deleteActivityImage = (id: number, url: string) => {
+          handleDeleteActivityImage(id, url);
+        };
+      }
+    }
+  };
+
   // 处理编辑社区活动
   const handleEditCommunityActivity = (activity: CommunityActivity) => {
     console.log('编辑活动:', activity);
@@ -352,42 +456,11 @@ export default function Manage() {
     const fileInput = document.getElementById("activity-images") as HTMLInputElement;
     if (fileInput) fileInput.value = "";
     
-    // 保留图片文件状态，暂不重置 
-    // setActivityImageFiles([]);
+    // 清空已选择的新图片
+    setActivityImageFiles([]);
     
-    // 添加现有图片的显示逻辑，可以加一个额外的div来显示
-    const existingImagesContainer = document.getElementById("existing-activity-images");
-    if (existingImagesContainer) {
-      // 清空现有内容
-      existingImagesContainer.innerHTML = "";
-      
-      // 如果有多张图片，优先使用imageUrls数组
-      if (activity.imageUrls && activity.imageUrls.length > 0) {
-        const imagesHtml = activity.imageUrls.map((url, index) => 
-          `<div class="inline-block mr-2 mb-2">
-            <img src="${url}" alt="活动图片 ${index + 1}" class="h-16 w-auto rounded border border-accent/30" />
-           </div>`
-        ).join("");
-        
-        existingImagesContainer.innerHTML = `
-          <div class="mb-4">
-            <p class="text-sm text-muted-foreground mb-2">现有图片 (${activity.imageUrls.length}张):</p>
-            <div class="flex flex-wrap">${imagesHtml}</div>
-          </div>
-        `;
-      } 
-      // 如果没有imageUrls但有单张imageUrl
-      else if (activity.imageUrl) {
-        existingImagesContainer.innerHTML = `
-          <div class="mb-4">
-            <p class="text-sm text-muted-foreground mb-2">现有图片:</p>
-            <div class="inline-block mr-2 mb-2">
-              <img src="${activity.imageUrl}" alt="活动主图" class="h-16 w-auto rounded border border-accent/30" />
-            </div>
-          </div>
-        `;
-      }
-    }
+    // 使用辅助函数显示现有图片
+    displayExistingImages(activity);
     
     // 填充表单
     document.getElementById("activity-id")?.setAttribute("value", activity.id.toString());
