@@ -259,9 +259,24 @@ export default function CommunityActivityDetail() {
           <div className="mb-6">
             <div className="text-sm text-muted-foreground mb-4">
               <p className="mb-2">活动ID: {data.id}</p>
-              <p className="mb-2">{formatDate(data.startDate)} - {formatDate(data.endDate)}</p>
-              <p className="mb-2">活动主题: {data.title}</p>
-              <p className="mb-2">{data.location || '济州岛万豪度假酒店'}</p>
+              <p className="mb-2">
+                <span className="inline-flex items-center">
+                  <Calendar className="h-4 w-4 mr-1 text-accent" /> 
+                  {formatDate(data.startDate)} - {formatDate(data.endDate)}
+                </span>
+              </p>
+              <p className="mb-2">
+                <span className="inline-flex items-center">
+                  <Users className="h-4 w-4 mr-1 text-accent" /> 
+                  活动主题: {data.title}
+                </span>
+              </p>
+              <p className="mb-2">
+                <span className="inline-flex items-center">
+                  <MapPin className="h-4 w-4 mr-1 text-accent" /> 
+                  {data.location || '济州岛万豪度假酒店'}
+                </span>
+              </p>
             </div>
             
             <div className="flex justify-end">
