@@ -58,6 +58,7 @@ export default function Header() {
   const { t, toggleLanguage, language } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [logo, setLogo] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -67,6 +68,25 @@ export default function Header() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  
+  // 获取LOGO
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const response = await fetch('/api/contact-info');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.logo) {
+            setLogo(data.logo);
+          }
+        }
+      } catch (error) {
+        console.error('获取LOGO失败:', error);
+      }
+    };
+    
+    fetchLogo();
   }, []);
 
   const toggleMobileMenu = () => {
@@ -92,22 +112,30 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <svg 
-                  width="30" 
-                  height="30" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mr-1 text-accent"
-                >
-                  <path 
-                    d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
-                    stroke="#00FFCC" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
+{logo ? (
+                  <img 
+                    src={logo} 
+                    alt="STONKS DEX SHOP Logo" 
+                    className="h-8 md:h-10 w-auto mr-2" 
                   />
-                </svg>
+                ) : (
+                  <svg 
+                    width="30" 
+                    height="30" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mr-1 text-accent"
+                  >
+                    <path 
+                      d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
+                      stroke="#00FFCC" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
                   <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
