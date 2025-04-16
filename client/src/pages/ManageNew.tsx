@@ -510,7 +510,15 @@ export default function Manage() {
       try {
         // 添加时间戳参数以避免缓存问题
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/cms/community/${activityId}?t=${timestamp}`);
+        
+        // 尝试使用直接路径
+        let response = await apiRequest("DELETE", `/api/community/${activityId}?t=${timestamp}`);
+        
+        // 如果失败，尝试备用路径
+        if (!response.ok && response.status === 404) {
+          console.log("尝试备用删除路径...");
+          response = await apiRequest("DELETE", `/api/admin/community/${activityId}?t=${timestamp}`);
+        }
         
         if (!response.ok) {
           throw new Error('删除社区活动失败');
@@ -1717,10 +1725,24 @@ export default function Manage() {
                   
                   if (activityId) {
                     // 编辑模式
-                    response = await fetch(`/api/cms/community/${activityId}`, fetchOptions);
+                    console.log(`正在更新活动ID: ${activityId}`);
+                    // 尝试使用直接的路径而不是 /api/cms/community
+                    response = await fetch(`/api/community/${activityId}`, fetchOptions);
+                    // 如果请求失败，可能需要尝试备用路径
+                    if (!response.ok && response.status === 404) {
+                      console.log("尝试备用更新路径...");
+                      response = await fetch(`/api/admin/community/${activityId}`, fetchOptions);
+                    }
                   } else {
                     // 新增模式
-                    response = await fetch("/api/cms/community", fetchOptions);
+                    console.log("正在创建新活动");
+                    // 尝试使用直接的路径而不是 /api/cms/community
+                    response = await fetch("/api/community", fetchOptions);
+                    // 如果请求失败，可能需要尝试备用路径
+                    if (!response.ok && response.status === 404) {
+                      console.log("尝试备用创建路径...");
+                      response = await fetch("/api/admin/community", fetchOptions);
+                    }
                   }
                   
                   // 增加响应数据处理
