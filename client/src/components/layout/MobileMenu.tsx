@@ -56,12 +56,17 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Brand */}
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
-              <svg width="32" height="32" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" className="mr-2" style={{ verticalAlign: 'middle' }}>
-                <circle cx="20" cy="20" r="18" fill="#00ff99" opacity="0.8"/>
-                <path d="M18,12 C18,12 22,14 22,20 C22,26 18,28 18,28" stroke="#008866" strokeWidth="3" fill="none" />
-                <path d="M14,16 L26,16" stroke="#008866" strokeWidth="2" />
-                <path d="M14,24 L26,24" stroke="#008866" strokeWidth="2" />
-              </svg>
+              <img 
+                src="/images/original-stonks-logo.png" 
+                alt="STONKS Fuzzy Logo" 
+                className="w-8 h-8 mr-2"
+                style={{ 
+                  verticalAlign: 'middle', 
+                  objectFit: "contain",
+                  borderRadius: "50%",
+                  display: "block"
+                }}
+              />
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
             <span className="text-accent text-xs ml-10">Powered by $STONKS</span>
