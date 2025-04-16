@@ -93,12 +93,11 @@ export default function Header() {
                 onClick={scrollToTop}
               >
                 <img 
-                  src="/images/original-stonks-logo.png" 
-                  alt="STONKS Fuzzy Logo" 
-                  className="w-10 h-10 mr-3"
+                  src="/images/gt-stonks-logo.png" 
+                  alt="GT STONKS Logo" 
+                  className="h-8 mr-3"
                   style={{ 
                     objectFit: "contain",
-                    borderRadius: "50%",
                     display: "block"
                   }}
                 />

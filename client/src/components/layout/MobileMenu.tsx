@@ -57,13 +57,12 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
               <img 
-                src="/images/original-stonks-logo.png" 
-                alt="STONKS Fuzzy Logo" 
-                className="w-8 h-8 mr-2"
+                src="/images/gt-stonks-logo.png" 
+                alt="GT STONKS Logo" 
+                className="h-7 mr-2"
                 style={{ 
                   verticalAlign: 'middle', 
                   objectFit: "contain",
-                  borderRadius: "50%",
                   display: "block"
                 }}
               />
