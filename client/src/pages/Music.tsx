@@ -133,16 +133,22 @@ export default function MusicPage() {
                 frequency={0.03} // 调整频率以获得更紧凑的波纹
                 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full"
               />
-              <h1 className="text-4xl md:text-5xl font-bold text-white font-orbitron py-3 relative z-10">
-                <ReactiveLogo>
-                  {t('music.title')}
-                </ReactiveLogo>
-              </h1>
+              <div className="flex flex-col items-center py-3 relative z-10">
+                <h1 className="text-4xl md:text-5xl font-bold text-white font-orbitron text-center">
+                  <ReactiveLogo>
+                    {t('music.title')}
+                  </ReactiveLogo>
+                </h1>
+                
+                <p className="text-xl text-[#00ffcc] font-bold mt-3">
+                  MUSIC
+                </p>
+                
+                <p className="text-gray-300 mt-3 text-center max-w-2xl">
+                  探索区块链的节奏
+                </p>
+              </div>
             </div>
-            
-            <p className="text-xl text-gray-300 mb-16 max-w-2xl">
-              {t('music.subtitle')}
-            </p>
             
             {/* 音乐波纹可视化效果 - 不显示上传按钮，前端不需要上传功能 */}
             <div className="w-[calc(100%+20px)] relative overflow-hidden mx-auto" 

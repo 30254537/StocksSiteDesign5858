@@ -520,8 +520,8 @@ export const translations: Translations = {
     "cart.itemsInCart": "购物车中的商品",
     
     // Music Page
-    "music.title": "STONKS 音乐藏库",
-    "music.subtitle": "探索区块链的节奏",
+    "music.title": "STONKS",
+    "music.subtitle": "MUSIC\n探索区块链的节奏",
     "music.uploadTitle": "上传你的音乐",
     "music.dragDrop": "拖放音频文件至此",
     "music.browse": "浏览文件",
