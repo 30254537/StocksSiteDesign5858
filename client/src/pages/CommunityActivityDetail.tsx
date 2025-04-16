@@ -54,13 +54,13 @@ export default function CommunityActivityDetail() {
     }
   }, [data]);
   
-  // 格式化日期
+  // 格式化日期 - 只显示日期，不显示时间
   const formatDate = (dateStr: string | null | Date) => {
     if (!dateStr) return '';
     
     try {
       const date = dateStr instanceof Date ? dateStr : new Date(dateStr);
-      return format(date, language === 'zh' ? 'yyyy年MM月dd日 HH:mm' : 'MMM dd, yyyy HH:mm', { locale: dateLocale });
+      return format(date, language === 'zh' ? 'yyyy年MM月dd日' : 'MMM dd, yyyy', { locale: dateLocale });
     } catch (error) {
       console.error('日期格式化错误:', error);
       return typeof dateStr === 'string' ? dateStr : '';
@@ -250,7 +250,8 @@ export default function CommunityActivityDetail() {
       
       <div className="bg-primary/50 border border-accent/20 rounded-lg overflow-hidden mb-8">
         <div className="p-6">
-          <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+          {/* 居中显示标题 */}
+          <div className="flex flex-col items-center justify-center text-center gap-4 mb-6">
             <h1 className="text-2xl md:text-3xl font-bold text-accent">{data.title}</h1>
             <Badge variant={status.variant} className="text-sm py-1 px-3">
               {status.label}
@@ -329,11 +330,10 @@ export default function CommunityActivityDetail() {
                 ? data.content 
                 : <span className="text-amber-400 italic">（未提供活动内容）</span>}
             </div>
+            {/* 基本信息 - 只保留ID和标题，移除内容长度和图片数量 */}
             <div className="mt-4 text-sm text-muted-foreground">
               <p className="mb-2">活动ID: {data.id}</p>
               <p className="mb-2">标题: {data.title}</p>
-              <p className="mb-2">内容长度: {data.content?.length || 0}字符</p>
-              <p className="mb-2">图片数量: {Array.isArray(data.imageUrls) ? data.imageUrls.length : 0}张</p>
             </div>
           </div>
         </div>
