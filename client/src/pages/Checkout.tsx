@@ -144,7 +144,7 @@ const UsdtDirectForm = () => {
         </div>
         
         <p className="mt-6 mb-4 text-sm">
-          {t('checkout.amountToSend')}: <strong className="text-accent font-mono">{formatCurrency(totalPrice)} USDT</strong>
+          {t('checkout.amountToSend')}: <strong className="text-accent font-mono">{formatCurrency(totalPrice)} $USDT</strong>
         </p>
       </div>
       
@@ -485,7 +485,7 @@ export default function Checkout() {
             <Tabs defaultValue="crypto">
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="crypto">$STONKS</TabsTrigger>
-                <TabsTrigger value="card">USDT</TabsTrigger>
+                <TabsTrigger value="card">$USDT</TabsTrigger>
               </TabsList>
               <TabsContent value="crypto">
                 <CryptoForm />
