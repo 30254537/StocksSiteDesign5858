@@ -301,14 +301,3 @@
     box-shadow: 0 0 5px var(--accent), 0 0 10px rgba(0, 255, 204, 0.5);
   }
 }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}

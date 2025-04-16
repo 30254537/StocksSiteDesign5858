@@ -171,25 +171,6 @@ export function StonksPriceIndicator() {
         ))}
       </span>
       
-      {/* 价格方向指示器 */}
-      {priceDirection && (
-        <span 
-          className={`ml-1 text-xs ${priceDirection === 'up' ? 'text-green-500' : 'text-red-500'}`}
-          style={{
-            animation: 'fadeIn 0.5s ease-in-out',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '16px',
-            height: '16px',
-            borderRadius: '50%',
-            backgroundColor: priceDirection === 'up' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'
-          }}
-        >
-          {priceDirection === 'up' ? '↑' : '↓'}
-        </span>
-      )}
-      
       {/* 悬停显示合约地址 */}
       <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-slate-900 p-2 rounded shadow-lg z-50 text-xs border border-accent/30 max-w-[300px] break-all">
         <div className="text-gray-400 mb-1">{t('stonksPrice.contract')}:</div>
