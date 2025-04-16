@@ -310,7 +310,7 @@ const CryptoForm = () => {
     <form onSubmit={handleSubmit}>
       <div className="mb-6">
         <p className="mb-4 text-sm">
-          {t('checkout.sendUsdtTo')}
+          {t('checkout.sendStonksToAddress')}
         </p>
         <div className="bg-slate-800 p-3 rounded-md font-mono text-sm mb-4 break-all user-select-all">
           0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
