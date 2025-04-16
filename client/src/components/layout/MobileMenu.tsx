@@ -80,31 +80,33 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Brand */}
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
-              {logo ? (
+              {/* 始终显示logo（如果存在） */}
+              {logo && (
                 <img 
                   src={logo} 
                   alt="STONKS DEX SHOP Logo" 
                   className="h-8 w-auto mr-2" 
                 />
-              ) : (
-                <svg 
-                  width="30" 
-                  height="30" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mr-1 text-accent"
-                  style={{ verticalAlign: 'middle' }}
-                >
-                  <path 
-                    d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
-                    stroke="#00FFCC" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
               )}
+              
+              {/* 始终显示上升的绿色符号 */}
+              <svg 
+                width="30" 
+                height="30" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+                className="mr-1 text-accent"
+                style={{ verticalAlign: 'middle' }}
+              >
+                <path 
+                  d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
+                  stroke="#00FFCC" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                />
+              </svg>
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
             <span className="text-accent text-xs ml-7">Powered by $STONKS</span>
