@@ -1042,48 +1042,7 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
   }
   
-  // 团队成员管理
-  async getTeamMembers(): Promise<TeamMember[]> {
-    return db.select().from(teamMembers)
-      .orderBy(asc(teamMembers.orderIndex));
-  }
-  
-  async getTeamMember(id: number): Promise<TeamMember | undefined> {
-    const [member] = await db.select().from(teamMembers)
-      .where(eq(teamMembers.id, id));
-      
-    return member;
-  }
-  
-  async createTeamMember(data: InsertTeamMember): Promise<TeamMember> {
-    const [member] = await db.insert(teamMembers)
-      .values(data)
-      .returning();
-      
-    return member;
-  }
-  
-  async updateTeamMember(id: number, data: Partial<TeamMember>): Promise<TeamMember | undefined> {
-    const [updatedMember] = await db.update(teamMembers)
-      .set({
-        ...data,
-        updatedAt: new Date()
-      })
-      .where(eq(teamMembers.id, id))
-      .returning();
-      
-    return updatedMember;
-  }
-  
-  async deleteTeamMember(id: number): Promise<boolean> {
-    try {
-      await db.delete(teamMembers).where(eq(teamMembers.id, id));
-      return true;
-    } catch (error) {
-      console.error('删除团队成员时出错:', error);
-      return false;
-    }
-  }
+  // 团队成员管理（已移除）
   
   // 音乐管理相关方法
   async getMusicTracks(): Promise<MusicTrack[]> {
@@ -1134,54 +1093,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
-  // 社区特点管理
-  async getCommunityFeatures(): Promise<CommunityFeature[]> {
-    return db.select().from(communityFeatures)
-      .where(eq(communityFeatures.isActive, true));
-  }
-  
-  async getCommunityFeature(id: number): Promise<CommunityFeature | undefined> {
-    const [feature] = await db.select().from(communityFeatures)
-      .where(eq(communityFeatures.id, id));
-      
-    return feature;
-  }
-  
-  async createCommunityFeature(data: InsertCommunityFeature): Promise<CommunityFeature> {
-    const [feature] = await db.insert(communityFeatures)
-      .values(data)
-      .returning();
-      
-    return feature;
-  }
-  
-  async updateCommunityFeature(id: number, data: Partial<CommunityFeature>): Promise<CommunityFeature | undefined> {
-    const [updatedFeature] = await db.update(communityFeatures)
-      .set({
-        ...data,
-        updatedAt: new Date()
-      })
-      .where(eq(communityFeatures.id, id))
-      .returning();
-      
-    return updatedFeature;
-  }
-  
-  async deleteCommunityFeature(id: number): Promise<boolean> {
-    try {
-      // 软删除 - 只是将 isActive 设置为 false
-      await db.update(communityFeatures)
-        .set({ 
-          isActive: false,
-          updatedAt: new Date()
-        })
-        .where(eq(communityFeatures.id, id));
-      return true;
-    } catch (error) {
-      console.error('删除社区特点时出错:', error);
-      return false;
-    }
-  }
+  // 社区特点管理（已移除）
 }
 
 // 创建并导出存储实例
