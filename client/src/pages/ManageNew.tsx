@@ -100,7 +100,7 @@ export default function Manage() {
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/about?t=${timestamp}`);
+      const response = await apiRequest("GET", `/api/cms/about?t=${timestamp}`);
       const data = await response.json();
       setAboutContents(data);
     } catch (error) {
@@ -142,7 +142,7 @@ export default function Manage() {
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/team-members?t=${timestamp}`);
+      const response = await apiRequest("GET", `/api/cms/team?t=${timestamp}`);
       const data = await response.json();
       setTeamMembers(data);
     } catch (error) {
@@ -163,7 +163,7 @@ export default function Manage() {
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/community-features?t=${timestamp}`);
+      const response = await apiRequest("GET", `/api/cms/community-features?t=${timestamp}`);
       const data = await response.json();
       setCommunityFeatures(data);
     } catch (error) {
@@ -313,7 +313,7 @@ export default function Manage() {
       try {
         // 添加时间戳参数以避免缓存问题
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/admin/about/${contentId}?t=${timestamp}`);
+        const response = await apiRequest("DELETE", `/api/cms/about/${contentId}?t=${timestamp}`);
         
         if (!response.ok) {
           throw new Error('删除关于我们内容失败');
