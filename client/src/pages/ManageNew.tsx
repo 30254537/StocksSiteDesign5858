@@ -79,6 +79,153 @@ export default function Manage() {
   const [editingMusicTrack, setEditingMusicTrack] = useState<MusicTrack | null>(null);
   const [musicFile, setMusicFile] = useState<File | null>(null);
   
+  // 音乐时长格式化
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+  
+  // 处理音乐文件选择
+  const handleMusicFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      // 检查文件大小 (10MB = 10 * 1024 * 1024 bytes)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "文件过大",
+          description: "请上传小于10MB的音乐文件",
+          variant: "destructive",
+        });
+        e.target.value = ""; // 清空文件选择
+        return;
+      }
+      setMusicFile(file);
+    }
+  };
+  
+  // 处理音乐表单提交
+  const handleMusicFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!musicFile && !editingMusicTrack) {
+      toast({
+        title: "请选择音乐文件",
+        description: "请先选择一个要上传的音乐文件",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const formData = new FormData();
+      const form = e.target as HTMLFormElement;
+      const titleInput = form.querySelector("#music-title") as HTMLInputElement;
+      const artistInput = form.querySelector("#music-artist") as HTMLInputElement;
+      const styleInput = form.querySelector("#music-style") as HTMLInputElement;
+      const idInput = form.querySelector("#music-id") as HTMLInputElement;
+      
+      const trackId = parseInt(idInput.value);
+      
+      formData.append("title", titleInput.value);
+      formData.append("artist", artistInput.value);
+      formData.append("style", styleInput.value || "");
+      
+      if (musicFile) {
+        formData.append("music", musicFile);
+      }
+      
+      let endpoint = "/api/music";
+      let method = "POST";
+      
+      if (trackId > 0) {
+        endpoint = `/api/music/${trackId}`;
+        method = "PUT";
+      }
+      
+      const response = await fetch(endpoint, {
+        method,
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error("上传音乐失败");
+      }
+      
+      // 获取最新的音乐列表
+      fetchMusicTracks();
+      
+      // 重置表单
+      form.reset();
+      idInput.value = "0";
+      setEditingMusicTrack(null);
+      setMusicFile(null);
+      
+      toast({
+        title: trackId > 0 ? "更新成功" : "上传成功",
+        description: trackId > 0 ? "音乐信息已成功更新" : "音乐已成功上传",
+      });
+    } catch (error) {
+      console.error("音乐上传错误:", error);
+      toast({
+        title: "操作失败",
+        description: "无法处理音乐，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // 处理编辑音乐
+  const handleEditMusicTrack = (track: MusicTrack) => {
+    setEditingMusicTrack(track);
+    
+    // 填充表单数据
+    const titleInput = document.querySelector("#music-title") as HTMLInputElement;
+    const artistInput = document.querySelector("#music-artist") as HTMLInputElement;
+    const styleInput = document.querySelector("#music-style") as HTMLInputElement;
+    const idInput = document.querySelector("#music-id") as HTMLInputElement;
+    
+    if (titleInput) titleInput.value = track.title;
+    if (artistInput) artistInput.value = track.artist;
+    if (styleInput) styleInput.value = track.style || "";
+    if (idInput) idInput.value = track.id.toString();
+    
+    // 滚动到表单位置
+    document.querySelector("#music-form")?.scrollIntoView({ behavior: "smooth" });
+  };
+  
+  // 处理删除音乐
+  const handleDeleteMusicTrack = async (id: number) => {
+    if (!confirm("确定要删除这首音乐吗？此操作无法撤销。")) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/music/${id}`, {
+        method: "DELETE",
+      });
+      
+      if (!response.ok) {
+        throw new Error("删除音乐失败");
+      }
+      
+      // 从列表中移除
+      setMusicTracks(musicTracks.filter(track => track.id !== id));
+      
+      toast({
+        title: "删除成功",
+        description: "音乐已成功删除",
+      });
+    } catch (error) {
+      console.error("删除音乐错误:", error);
+      toast({
+        title: "删除失败",
+        description: "无法删除音乐，请稍后再试",
+        variant: "destructive",
+      });
+    }
+  };
+  
   // 获取商品列表
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -2811,6 +2958,159 @@ export default function Manage() {
       
       {/* 订单管理 */}
       {activeTab === "orders" && <OrderManagement />}
+      
+      {/* 音乐管理 */}
+      {activeTab === "music" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>音乐管理</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* 音乐上传表单 */}
+            <form
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={handleMusicFormSubmit}
+              id="music-form"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <input type="hidden" id="music-id" value="0" />
+                
+                <div className="space-y-2">
+                  <label htmlFor="music-title" className="block text-sm font-medium">
+                    音乐标题
+                  </label>
+                  <Input
+                    id="music-title"
+                    name="title"
+                    placeholder="输入音乐标题"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="music-artist" className="block text-sm font-medium">
+                    艺术家
+                  </label>
+                  <Input
+                    id="music-artist"
+                    name="artist"
+                    placeholder="输入艺术家名称"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="music-style" className="block text-sm font-medium">
+                    音乐风格
+                  </label>
+                  <Input
+                    id="music-style"
+                    name="style"
+                    placeholder="输入音乐风格，例如：电子, 流行, 嘻哈"
+                    className="bg-primary/50 border-accent"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="music-file" className="block text-sm font-medium">
+                    音乐文件
+                  </label>
+                  <Input
+                    id="music-file"
+                    type="file"
+                    accept="audio/*"
+                    className="bg-primary/50 border-accent"
+                    onChange={handleMusicFileChange}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    支持的格式: MP3, WAV (最大文件大小: 10MB)
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-accent text-accent"
+                  onClick={() => {
+                    // 重置表单
+                    (document.getElementById("music-form") as HTMLFormElement).reset();
+                    document.getElementById("music-id")?.setAttribute("value", "0");
+                    setEditingMusicTrack(null);
+                    setMusicFile(null);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button type="submit" className="bg-accent text-black hover:bg-accent/80">
+                  {editingMusicTrack ? "更新音乐" : "上传音乐"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 音乐列表 */}
+            <div>
+              <h3 className="text-xl font-medium mb-4">已上传音乐</h3>
+              
+              {loadingMusicTracks ? (
+                <div className="flex justify-center p-4">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : musicTracks.length === 0 ? (
+                <div className="text-center text-gray-400 p-6">
+                  <p>暂无音乐，请上传音乐</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>标题</TableHead>
+                        <TableHead>艺术家</TableHead>
+                        <TableHead>风格</TableHead>
+                        <TableHead>时长</TableHead>
+                        <TableHead>上传时间</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {musicTracks.map((track) => (
+                        <TableRow key={track.id}>
+                          <TableCell className="font-medium">{track.title}</TableCell>
+                          <TableCell>{track.artist}</TableCell>
+                          <TableCell>{track.style || "-"}</TableCell>
+                          <TableCell>{formatDuration(track.duration)}</TableCell>
+                          <TableCell>{new Date(track.createdAt).toLocaleDateString()}</TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-accent text-accent"
+                              onClick={() => handleEditMusicTrack(track)}
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteMusicTrack(track.id)}
+                            >
+                              删除
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* 金狗监测管理 */}
       {activeTab === "goldDogMonitor" && (
