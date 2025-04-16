@@ -140,11 +140,11 @@ export default function MusicPage() {
                   </ReactiveLogo>
                 </h1>
                 
-                <p className="text-4xl md:text-5xl text-[#00ffcc] font-bold mt-3 font-orbitron">
+                <p className="text-4xl md:text-5xl text-[#00ffcc] font-bold mt-8 font-orbitron">
                   MUSIC
                 </p>
                 
-                <p className="text-gray-300 mt-3 text-center max-w-2xl">
+                <p className="text-gray-300 mt-8 text-center max-w-2xl">
                   探索区块链的节奏
                 </p>
               </div>
