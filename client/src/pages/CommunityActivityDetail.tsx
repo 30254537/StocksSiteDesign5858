@@ -266,6 +266,11 @@ export default function CommunityActivityDetail() {
             </div>
           </div>
           
+          {/* 居中显示标题 */}
+          <div className="flex flex-col items-center justify-center text-center gap-4 mb-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-accent">{data.title}</h1>
+          </div>
+          
           {/* 图片显示区 - 支持多图片轮播 */}
           {data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0 ? (
             <div className="mb-6 space-y-4">
