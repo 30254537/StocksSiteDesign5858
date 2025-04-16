@@ -9,7 +9,7 @@ import { PageHeader, PageHeaderHeading } from "@/components/ui/page-header";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, MapPin, Users, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Users, Share2, X, Maximize2, ZoomIn } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
@@ -29,6 +29,8 @@ export default function CommunityActivityDetail() {
   const dateLocale = language === 'zh' ? zhCN : enUS;
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [enlargedImageUrl, setEnlargedImageUrl] = useState<string | null>(null);
   
   // 获取社区活动数据
   const { data, isLoading, error } = useQuery<CommunityActivity>({
@@ -324,12 +326,31 @@ export default function CommunityActivityDetail() {
                   <span className="text-xl font-bold px-2">&lt;</span>
                 </button>
 
-                {/* 主图 */}
-                <img 
-                  src={data.imageUrls[currentImageIndex]} 
-                  alt={`${data.title} - 主图 ${currentImageIndex + 1}`} 
-                  className="w-full object-contain h-[400px]"
-                />
+                {/* 主图 - 带放大功能 */}
+                <div className="relative cursor-pointer">
+                  <img 
+                    src={data.imageUrls?.[currentImageIndex] || ''} 
+                    alt={`${data.title} - 主图 ${currentImageIndex + 1}`} 
+                    className="w-full object-contain h-[400px]"
+                    onClick={() => {
+                      if (data.imageUrls?.[currentImageIndex]) {
+                        setEnlargedImageUrl(data.imageUrls[currentImageIndex]);
+                        setIsImageModalOpen(true);
+                      }
+                    }}
+                  />
+                  <button 
+                    className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1 z-10 hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100"
+                    onClick={() => {
+                      if (data.imageUrls?.[currentImageIndex]) {
+                        setEnlargedImageUrl(data.imageUrls[currentImageIndex]);
+                        setIsImageModalOpen(true);
+                      }
+                    }}
+                  >
+                    <ZoomIn className="h-5 w-5" />
+                  </button>
+                </div>
 
                 {/* 右侧切换按钮 */}
                 <button 
@@ -369,12 +390,25 @@ export default function CommunityActivityDetail() {
               )}
             </div>
           ) : data.imageUrl ? (
-            <div className="mb-6">
+            <div className="mb-6 relative cursor-pointer">
               <img 
                 src={data.imageUrl} 
                 alt={data.title} 
                 className="w-full rounded-lg object-contain h-[400px]"
+                onClick={() => {
+                  setEnlargedImageUrl(data.imageUrl);
+                  setIsImageModalOpen(true);
+                }}
               />
+              <button 
+                className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1 z-10 hover:bg-black/70 transition-opacity opacity-0 hover:opacity-100"
+                onClick={() => {
+                  setEnlargedImageUrl(data.imageUrl);
+                  setIsImageModalOpen(true);
+                }}
+              >
+                <ZoomIn className="h-5 w-5" />
+              </button>
             </div>
           ) : null}
           
@@ -434,6 +468,30 @@ export default function CommunityActivityDetail() {
             >
               {language === 'zh' ? '复制' : 'Copy'}
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 图片放大模态框 */}
+      <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen} modal>
+        <DialogContent className="sm:max-w-[90vw] max-h-[90vh] p-0 bg-black/90 border-accent">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* 关闭按钮 */}
+            <button 
+              className="absolute top-2 right-2 z-50 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+              onClick={() => setIsImageModalOpen(false)}
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            {/* 放大的图片 */}
+            {enlargedImageUrl && (
+              <img 
+                src={enlargedImageUrl} 
+                alt="Enlarged view" 
+                className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>
