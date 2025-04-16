@@ -250,46 +250,27 @@ export default function CommunityActivityDetail() {
       
       <div className="bg-primary/50 border border-accent/20 rounded-lg overflow-hidden mb-8">
         <div className="p-6">
-          {/* 居中显示标题 */}
-          <div className="flex flex-col items-center justify-center text-center gap-4 mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-accent">{data.title}</h1>
-            <Badge variant={status.variant} className="text-sm py-1 px-3">
-              {status.label}
-            </Badge>
-          </div>
-          
-          <div className="flex flex-col md:flex-row md:items-center gap-3 mb-6 text-muted-foreground">
-            {data.startDate && (
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-2" />
-                <span>
-                  {data.startDate && formatDate(data.startDate)}
-                  {data.endDate && (
-                    <span> - {formatDate(data.endDate)}</span>
-                  )}
-                </span>
-              </div>
-            )}
+          {/* 活动基本信息（以指定顺序排列）*/}
+          <div className="mb-6">
+            <div className="text-sm text-muted-foreground mb-4">
+              <p className="mb-2 text-accent">活动ID: {data.id}</p>
+              <p className="mb-2">{formatDate(data.startDate)} - {formatDate(data.endDate)}</p>
+              <p className="mb-2">活动主题: {data.title}</p>
+              <p className="mb-2">{data.location || '济州岛万豪度假酒店'}</p>
+            </div>
             
-            {data.location && (
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2" />
-                <span>{data.location}</span>
-              </div>
-            )}
+            <div className="flex justify-end">
+              <Badge variant={status.variant} className="text-sm py-1 px-3">
+                {status.label}
+              </Badge>
+            </div>
           </div>
           
           {/* 图片显示区 - 支持多图片轮播 */}
           {data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0 ? (
             <div className="mb-6 space-y-4">
               {/* 主图 - 使用第一张图片 */}
-              <div className="overflow-hidden rounded-lg relative">
-                <div className="absolute top-0 left-0 bg-primary/80 p-3 rounded-br-md text-sm z-10">
-                  <p className="text-accent mb-1 font-medium">活动ID: {data.id}</p>
-                  <p className="text-white mb-1">{formatDate(data.startDate)} - {formatDate(data.endDate)}</p>
-                  <p className="text-white mb-1">活动主题: {data.title}</p>
-                  <p className="text-white">{data.location || '济州岛万豪度假酒店'}</p>
-                </div>
+              <div className="overflow-hidden rounded-lg">
                 <img 
                   src={data.imageUrls[0]} 
                   alt={`${data.title} - 主图`} 
@@ -317,13 +298,7 @@ export default function CommunityActivityDetail() {
               )}
             </div>
           ) : data.imageUrl ? (
-            <div className="mb-6 relative">
-              <div className="absolute top-0 left-0 bg-primary/80 p-3 rounded-br-md text-sm z-10">
-                <p className="text-accent mb-1 font-medium">活动ID: {data.id}</p>
-                <p className="text-white mb-1">{formatDate(data.startDate)} - {formatDate(data.endDate)}</p>
-                <p className="text-white mb-1">活动主题: {data.title}</p>
-                <p className="text-white">{data.location || '济州岛万豪度假酒店'}</p>
-              </div>
+            <div className="mb-6">
               <img 
                 src={data.imageUrl} 
                 alt={data.title} 
@@ -341,11 +316,6 @@ export default function CommunityActivityDetail() {
               {data.content 
                 ? data.content 
                 : <span className="text-amber-400 italic">（未提供活动内容）</span>}
-            </div>
-            {/* 基本信息 - 只保留ID和标题，移除内容长度和图片数量 */}
-            <div className="mt-4 text-sm text-muted-foreground">
-              <p className="mb-2">活动ID: {data.id}</p>
-              <p className="mb-2">标题: {data.title}</p>
             </div>
           </div>
         </div>
