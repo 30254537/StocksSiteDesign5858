@@ -906,6 +906,17 @@ export default function Manage() {
         
         <button
           className={`px-4 py-2 font-medium transition-colors duration-200 ${
+            activeTab === "music" 
+              ? "text-accent border-b-2 border-accent" 
+              : "text-gray-400 hover:text-accent"
+          }`}
+          onClick={() => setActiveTab("music")}
+        >
+          音乐管理
+        </button>
+        
+        <button
+          className={`px-4 py-2 font-medium transition-colors duration-200 ${
             activeTab === "about" 
               ? "text-accent border-b-2 border-accent" 
               : "text-gray-400 hover:text-accent"
@@ -957,17 +968,6 @@ export default function Manage() {
           onClick={() => setActiveTab("contact")}
         >
           联系信息管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "music" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("music")}
-        >
-          音乐管理
         </button>
         
         <button
