@@ -738,7 +738,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // 联系信息相关方法
-  async getAllContactInfo(): Promise<{email: string, address: string}> {
+  async getAllContactInfo(): Promise<{email: string, address: string, logo: string}> {
     try {
       // 查找email联系方式
       const [emailInfo] = await db.select().from(contactInfo)
@@ -748,16 +748,22 @@ export class DatabaseStorage implements IStorage {
       const [addressInfo] = await db.select().from(contactInfo)
         .where(eq(contactInfo.key, "address"));
       
+      // 查找logo联系方式
+      const [logoInfo] = await db.select().from(contactInfo)
+        .where(eq(contactInfo.key, "logo"));
+      
       return {
         email: emailInfo?.value || '',
-        address: addressInfo?.value || ''
+        address: addressInfo?.value || '',
+        logo: logoInfo?.value || ''
       };
     } catch (error) {
       console.error("获取联系信息失败:", error);
       // 返回默认空值
       return {
         email: '',
-        address: ''
+        address: '',
+        logo: ''
       };
     }
   }
