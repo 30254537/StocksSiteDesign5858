@@ -1686,8 +1686,21 @@ export default function Manage() {
                       formData.append("images", file);
                     });
                     console.log(`准备上传 ${activityImageFiles.length} 张图片文件`, activityImageFiles);
+                    
+                    // 如果正在编辑且有新图片，添加一个标志参数（默认不替换，只是添加新图片）
+                    if (activityId) {
+                      formData.append("replaceAllImages", "false");
+                    }
                   } else {
                     console.log("没有图片文件需要上传");
+                  }
+                  
+                  // 如果有现有活动且存在图片URL，传递它们以保持兼容性
+                  if (activityId && editingCommunityActivity) {
+                    // 传递主图片URL（如果有）
+                    if (editingCommunityActivity.imageUrl) {
+                      formData.append("imageUrl", editingCommunityActivity.imageUrl);
+                    }
                   }
                   
                   console.log("准备发送活动数据");
