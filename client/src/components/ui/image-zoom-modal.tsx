@@ -74,15 +74,16 @@ export function ImageZoomModal({
           </button>
           
           <div className="relative w-[95vw] h-[90vh] max-h-[90vh] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-            <div className="relative border border-accent/50 bg-black/50 inline-flex items-center justify-center overflow-hidden">
+            <div className="relative inline-flex items-center justify-center overflow-hidden p-0">
               <img
                 src={images[localIndex]}
                 alt={`${altText} - zoomed view`}
-                className="max-w-full max-h-[85vh] object-contain"
+                className="max-w-full max-h-[85vh] object-contain border border-accent/70 bg-black/50"
                 style={{
                   imageRendering: 'auto',
                   filter: 'drop-shadow(0 0 10px rgba(0, 255, 204, 0.2))',
-                  transition: 'transform 0.3s ease-out'
+                  transition: 'transform 0.3s ease-out',
+                  padding: '0'
                 }}
                 loading="eager"
               />
