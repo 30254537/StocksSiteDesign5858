@@ -283,7 +283,13 @@ export default function CommunityActivityDetail() {
           {data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0 ? (
             <div className="mb-6 space-y-4">
               {/* 主图 - 使用第一张图片 */}
-              <div className="overflow-hidden rounded-lg">
+              <div className="overflow-hidden rounded-lg relative">
+                <div className="absolute top-0 left-0 bg-primary/80 p-3 rounded-br-md text-sm z-10">
+                  <p className="text-accent mb-1 font-medium">活动ID: {data.id}</p>
+                  <p className="text-white mb-1">{formatDate(data.startDate)} - {formatDate(data.endDate)}</p>
+                  <p className="text-white mb-1">活动主题: {data.title}</p>
+                  <p className="text-white">{data.location || '济州岛万豪度假酒店'}</p>
+                </div>
                 <img 
                   src={data.imageUrls[0]} 
                   alt={`${data.title} - 主图`} 
@@ -311,7 +317,13 @@ export default function CommunityActivityDetail() {
               )}
             </div>
           ) : data.imageUrl ? (
-            <div className="mb-6">
+            <div className="mb-6 relative">
+              <div className="absolute top-0 left-0 bg-primary/80 p-3 rounded-br-md text-sm z-10">
+                <p className="text-accent mb-1 font-medium">活动ID: {data.id}</p>
+                <p className="text-white mb-1">{formatDate(data.startDate)} - {formatDate(data.endDate)}</p>
+                <p className="text-white mb-1">活动主题: {data.title}</p>
+                <p className="text-white">{data.location || '济州岛万豪度假酒店'}</p>
+              </div>
               <img 
                 src={data.imageUrl} 
                 alt={data.title} 
