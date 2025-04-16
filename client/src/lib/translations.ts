@@ -94,7 +94,7 @@ export const translations: Translations = {
     
     // About Us
     "about.title": "About Us",
-    "about.content": "Welcome to the STONKS DEX merchandise universe—the ultimate decentralized gear station! STONKS DEX is a community-driven decentralized exchange platform that enables everyone to freely trade, hold $STONKS, and participate in the DeFi revolution. We launched this independent merchandise store to bring the STONKS spirit into the real world—from T-shirts to NFTs, every product is inspired and supported by the $STONKS community. There is no fiat currency here, only $STONKS—unlock exclusive merchandise with our native token and truly embrace the power of decentralization. Join our <a href='https://t.me/STONKSOPEN' target='_blank'>Telegram community</a>, get $STONKS, and wear gear that belongs to the future. STONKS TO THE MOON!",
+    "about.content": "Welcome to the STONKS DEX SHOP—your blockchain community hub and ultimate merchandise destination! STONKS DEX SHOP is a community-driven platform connecting cryptocurrency enthusiasts worldwide through exclusive products and blockchain interactions. We created this space to bring the STONKS spirit into the real world—from T-shirts to NFTs, every product strengthens our blockchain community connections. Using our native $STONKS token, you can unlock exclusive merchandise and truly embrace the power of our decentralized ecosystem. Join our <a href='https://t.me/STONKSOPEN' target='_blank'>Telegram community</a>, get $STONKS, and become part of a global blockchain movement. STONKS TO THE MOON!",
     
     // Cart
     "cart.title": "Shopping Cart",
@@ -161,7 +161,7 @@ export const translations: Translations = {
     "checkoutSuccess.viewOrders": "View My Orders",
     
     // Footer
-    "footer.about": "A blockchain-based decentralized trading platform offering exclusive limited merchandise for cryptocurrency enthusiasts.",
+    "footer.about": "A blockchain community hub and merchandise store connecting cryptocurrency enthusiasts worldwide through exclusive products and blockchain interactions.",
     "footer.quickLinks": "Quick Links",
     "footer.tradingPlatform": "STONKS DEX",
     "footer.nftMarketplace": "MY STONKS",
@@ -259,11 +259,11 @@ export const translations: Translations = {
     "about.artist108Role": "Creative Director",
     "about.artist108Description": "Responsible for all STONKS DEX merchandise design concepts, creating a unique decentralized brand image.",
     "about.communityTitle": "Community",
-    "about.communityDescription": "STONKS DEX is community-driven, with members playing a crucial role in platform development.",
+    "about.communityDescription": "STONKS DEX SHOP is community-driven, with members playing a crucial role in developing our blockchain community ecosystem.",
     "about.communityPoint1": "Participate in platform governance by holding $STONKS tokens",
     "about.communityPoint2": "Get discounts and early access to exclusive merchandise",
     "about.communityPoint3": "Join community events including airdrops, mining challenges, and merchandise design contests",
-    "about.communityPoint4": "Provide feedback and suggestions for improving the decentralized STONKS DEX",
+    "about.communityPoint4": "Provide feedback and suggestions for improving the STONKS DEX SHOP blockchain community ecosystem",
     "about.joinTelegram": "Join our Telegram Community",
     
     // Contact Info
@@ -488,7 +488,7 @@ export const translations: Translations = {
     "checkoutSuccess.viewOrders": "查看我的订单",
     
     // Footer
-    "footer.about": "基于区块链技术的去中心化交易平台，为加密货币爱好者提供独家限量周边产品。",
+    "footer.about": "基于区块链的社区中心和周边商店，通过独家产品和区块链互动连接全球加密货币爱好者。",
     "footer.quickLinks": "快速链接",
     "footer.tradingPlatform": "",
     "footer.nftMarketplace": "",
@@ -587,11 +587,11 @@ export const translations: Translations = {
     "about.artist108Role": "创意总监",
     "about.artist108Description": "负责所有STONKS DEX周边的设计创意，打造独特的去中心化品牌形象。",
     "about.communityTitle": "社区",
-    "about.communityDescription": "STONKS DEX由社区驱动，社区成员在平台发展中扮演着重要角色。",
+    "about.communityDescription": "STONKS DEX SHOP由社区驱动，社区成员在我们的区块链社区生态系统发展中扮演着重要角色。",
     "about.communityPoint1": "通过持有$STONKS代币参与平台治理",
     "about.communityPoint2": "获取独家周边商品的折扣和早期访问权限",
     "about.communityPoint3": "参与社区活动，包括空投、挖矿挑战和周边设计比赛",
-    "about.communityPoint4": "为去中心化 STONKS DEX 的改进提供反馈和建议",
+    "about.communityPoint4": "为 STONKS DEX SHOP 区块链社区生态系统的改进提供反馈和建议",
     "about.joinTelegram": "加入我们的Telegram社区",
     
     // Contact Info
