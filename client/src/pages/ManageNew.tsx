@@ -342,7 +342,7 @@ export default function Manage() {
     if (window.confirm("确定要删除这张图片吗？此操作无法撤销。")) {
       try {
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/community/${activityId}/image?t=${timestamp}`, { imageUrl });
+        const response = await apiRequest("DELETE", `/api/cms/community/${activityId}/image?t=${timestamp}`, { imageUrl });
         
         if (!response.ok) {
           throw new Error('删除图片失败');
@@ -510,7 +510,7 @@ export default function Manage() {
       try {
         // 添加时间戳参数以避免缓存问题
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/community/${activityId}?t=${timestamp}`);
+        const response = await apiRequest("DELETE", `/api/cms/community/${activityId}?t=${timestamp}`);
         
         if (!response.ok) {
           throw new Error('删除社区活动失败');
@@ -1717,7 +1717,7 @@ export default function Manage() {
                   
                   if (activityId) {
                     // 编辑模式
-                    response = await fetch(`/api/community/${activityId}`, fetchOptions);
+                    response = await fetch(`/api/cms/community/${activityId}`, fetchOptions);
                   } else {
                     // 新增模式
                     response = await fetch("/api/community", fetchOptions);
