@@ -244,6 +244,39 @@ export function setupCmsRoutes(app: Express) {
     }
   });
   
+  // ===== 社区活动管理 =====
+  
+  // 获取所有社区活动
+  app.get('/api/cms/community', async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const activities = await storage.getCommunityActivities(limit);
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.json(activities);
+    } catch (error) {
+      console.error('获取社区活动时出错:', error);
+      res.status(500).json({ message: '服务器错误' });
+    }
+  });
+
+  // 获取特定ID的社区活动
+  app.get('/api/cms/community/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const activity = await storage.getCommunityActivity(parseInt(id));
+      
+      if (!activity) {
+        res.status(404).json({ message: '未找到指定的社区活动' });
+        return;
+      }
+      
+      res.json(activity);
+    } catch (error) {
+      console.error('获取社区活动详情时出错:', error);
+      res.status(500).json({ message: '服务器错误' });
+    }
+  });
+  
   // ===== 社区特点管理 =====
   
   // 获取所有社区特点
