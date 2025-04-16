@@ -1379,6 +1379,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // 上传音乐
+  // 添加通用上传端点，与前端代码匹配
+  app.post('/api/music', uploadMusic.single('music'), async (req, res) => {
+    try {
+      const file = req.file;
+      
+      if (!file) {
+        return res.status(400).json({ message: "没有上传文件或文件类型不被支持" });
+      }
+
+      const title = req.body.title || '未命名曲目';
+      const artist = req.body.artist || '未知艺术家';
+      const style = req.body.style || 'General';
+      const userId = req.body.userId ? parseInt(req.body.userId) : null;
+
+      // 获取音频时长
+      const filePath = path.join(musicUploadsDir, file.filename);
+      let duration = 0;
+      try {
+        duration = await getAudioDurationInSeconds(filePath);
+      } catch (err) {
+        console.error('获取音频时长失败:', err);
+        // 如果获取时长失败，不阻止上传，但记录为0
+      }
+
+      // 创建音乐记录
+      const trackData = {
+        title,
+        artist,
+        style,
+        filename: file.filename,
+        url: `/music/${file.filename}`,
+        duration,
+        isPublic: 1,
+        createdBy: userId
+      };
+
+      const track = await storage.createMusicTrack(trackData);
+      
+      res.status(201).json(track);
+    } catch (error) {
+      console.error('上传音乐失败:', error);
+      res.status(500).json({
+        message: "上传音乐失败",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+  
+  // 批量上传音乐API（旧）
   app.post('/api/music/upload', uploadMusic.array('music', 10), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
@@ -1389,6 +1438,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const title = req.body.title || '未命名曲目';
       const artist = req.body.artist || '未知艺术家';
+      const style = req.body.style || 'General';
       const userId = req.body.userId ? parseInt(req.body.userId) : null;
 
       const uploadedTracks = [];
@@ -1409,6 +1459,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const trackData = {
           title: files.length === 1 ? title : `${title} ${uploadedTracks.length + 1}`,
           artist,
+          style,
           filename: file.filename,
           url: `/music/${file.filename}`,
           duration,
