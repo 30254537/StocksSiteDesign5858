@@ -31,7 +31,7 @@ export default function CommunityActivityDetail() {
   
   // 获取社区活动数据
   const { data, isLoading, error } = useQuery<CommunityActivity>({
-    queryKey: ['/api/community', parseInt(id || '0')],
+    queryKey: [`/api/community/${id}`],
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     staleTime: 0, // 不缓存数据，每次都重新获取
@@ -55,15 +55,15 @@ export default function CommunityActivityDetail() {
   }, [data]);
   
   // 格式化日期
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return null;
+  const formatDate = (dateStr: string | null | Date) => {
+    if (!dateStr) return '';
     
     try {
-      const date = new Date(dateStr);
+      const date = dateStr instanceof Date ? dateStr : new Date(dateStr);
       return format(date, language === 'zh' ? 'yyyy年MM月dd日 HH:mm' : 'MMM dd, yyyy HH:mm', { locale: dateLocale });
     } catch (error) {
       console.error('日期格式化错误:', error);
-      return dateStr;
+      return typeof dateStr === 'string' ? dateStr : '';
     }
   };
   
@@ -262,7 +262,7 @@ export default function CommunityActivityDetail() {
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-2" />
                 <span>
-                  {formatDate(data.startDate)}
+                  {data.startDate && formatDate(data.startDate)}
                   {data.endDate && (
                     <span> - {formatDate(data.endDate)}</span>
                   )}
