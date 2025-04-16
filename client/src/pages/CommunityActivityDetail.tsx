@@ -382,7 +382,7 @@ export default function CommunityActivityDetail() {
                       <img 
                         src={imgUrl} 
                         alt={`${data.title} - 图片 ${index + 1}`} 
-                        className="h-20 w-20 object-cover rounded-md border border-accent/20 hover:border-accent"
+                        className="h-16 w-16 object-cover rounded-md border border-accent/20 hover:border-accent"
                       />
                     </div>
                   ))}
