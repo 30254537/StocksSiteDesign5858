@@ -2699,6 +2699,140 @@ export default function Manage() {
           </CardContent>
         </Card>
       )}
+      
+      {/* LOGO设置 */}
+      {activeTab === "logo" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>LOGO设置</CardTitle>
+            <CardDescription>
+              设置网站LOGO，建议使用透明背景的PNG图片，推荐尺寸120x40像素
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form 
+              className="mb-8" 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                if (!logoFile) {
+                  toast({
+                    title: "请选择LOGO图片",
+                    description: "请先选择一个要上传的LOGO图片",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                
+                try {
+                  const formData = new FormData();
+                  formData.append("images", logoFile);
+                  
+                  // 上传图片
+                  const uploadResponse = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                  });
+                  
+                  if (!uploadResponse.ok) {
+                    throw new Error("上传图片失败");
+                  }
+                  
+                  const uploadData = await uploadResponse.json();
+                  const logoUrl = uploadData.imageUrl; // 获取上传后的图片URL
+                  
+                  // 更新LOGO信息
+                  const updateResponse = await apiRequest("PUT", "/api/contact-info/logo", {
+                    value: logoUrl
+                  });
+                  
+                  if (!updateResponse.ok) {
+                    throw new Error("更新LOGO信息失败");
+                  }
+                  
+                  // 更新本地状态
+                  setContactInfo({
+                    ...contactInfo,
+                    logo: logoUrl
+                  });
+                  
+                  // 清空文件选择
+                  setLogoFile(null);
+                  const fileInput = document.getElementById("logo-file") as HTMLInputElement;
+                  if (fileInput) fileInput.value = "";
+                  
+                  toast({
+                    title: "上传成功",
+                    description: "LOGO已成功更新",
+                  });
+                } catch (error) {
+                  console.error("上传LOGO错误:", error);
+                  toast({
+                    title: "上传失败",
+                    description: "无法上传LOGO，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="space-y-4">
+                  <label htmlFor="logo-file" className="block text-sm font-medium">
+                    选择LOGO图片
+                  </label>
+                  <Input
+                    id="logo-file"
+                    type="file"
+                    accept="image/*"
+                    className="bg-primary/50 border-accent"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        setLogoFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  <div className="mt-4">
+                    <Button 
+                      type="submit"
+                      className="bg-accent text-black hover:bg-accent/80"
+                    >
+                      上传LOGO
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="text-sm font-medium mb-2">当前LOGO预览</div>
+                  <div className="bg-black/50 p-4 rounded-lg flex items-center justify-center h-20">
+                    {contactInfo.logo ? (
+                      <img 
+                        src={contactInfo.logo} 
+                        alt="网站LOGO" 
+                        className="max-h-full"
+                      />
+                    ) : (
+                      <div className="text-gray-400">暂无LOGO</div>
+                    )}
+                  </div>
+                  
+                  {logoFile && (
+                    <>
+                      <div className="text-sm font-medium mb-2 mt-4">新LOGO预览</div>
+                      <div className="bg-black/50 p-4 rounded-lg flex items-center justify-center h-20">
+                        <img 
+                          src={URL.createObjectURL(logoFile)} 
+                          alt="新LOGO预览" 
+                          className="max-h-full"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
