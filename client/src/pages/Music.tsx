@@ -123,19 +123,10 @@ export default function MusicPage() {
       className="min-h-screen bg-gradient-to-b from-background to-background/95 pt-32 pb-20 px-4 sm:px-6"
     >
       <div className="max-w-6xl mx-auto">
-        {/* Header with Visualizer */}
+        {/* Header without Visualizer */}
         <div className="relative mb-12">
           <div className="absolute inset-0 z-0 overflow-hidden rounded-xl">
             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10"></div>
-            <MusicVisualizer 
-              className="w-full h-full" 
-              height={isMobile ? 100 : 120} // 更小的高度，类似图片中的效果
-              barCount={isMobile ? 120 : 240} // 进一步增加条数，使竖条更密集
-              barWidth={1} // 极细的条
-              gap={1} // 减小间隙使竖条更密集，更接近图片中的效果
-              sensitivity={1.8} // 增加灵敏度，使条的高度变化更明显
-              position="bottom" // 将波纹放在底部黑色背景上
-            />
           </div>
           
           <div className="relative z-20 p-8 sm:p-12 flex flex-col items-center justify-center text-center">
@@ -216,6 +207,19 @@ export default function MusicPage() {
               {renderTrackList(filteredTracks())}
             </TabsContent>
           </Tabs>
+        </div>
+        
+        {/* 音乐波纹可视化效果 - 放在页面底部 */}
+        <div className="mt-12 relative h-20 overflow-hidden rounded-xl">
+          <MusicVisualizer 
+            className="w-full" 
+            height={isMobile ? 80 : 100} 
+            barCount={isMobile ? 120 : 240}
+            barWidth={1}
+            gap={1}
+            sensitivity={1.8}
+            position="bottom"
+          />
         </div>
       </div>
     </div>
