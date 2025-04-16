@@ -279,7 +279,7 @@ export default function CommunityActivityDetail() {
                 <img 
                   src={data.imageUrls[0]} 
                   alt={`${data.title} - 主图`} 
-                  className="w-full max-h-[500px] object-cover"
+                  className="w-full object-contain"
                 />
               </div>
               
@@ -307,7 +307,7 @@ export default function CommunityActivityDetail() {
               <img 
                 src={data.imageUrl} 
                 alt={data.title} 
-                className="w-full rounded-lg max-h-[500px] object-cover"
+                className="w-full rounded-lg object-contain"
               />
             </div>
           ) : null}
