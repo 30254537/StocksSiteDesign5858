@@ -28,6 +28,7 @@ export default function CommunityActivityDetail() {
   const t = (key: string) => getTranslation(key, language);
   const dateLocale = language === 'zh' ? zhCN : enUS;
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
   // 获取社区活动数据
   const { data, isLoading, error } = useQuery<CommunityActivity>({
@@ -53,6 +54,26 @@ export default function CommunityActivityDetail() {
       });
     }
   }, [data]);
+  
+  // 添加键盘导航功能
+  React.useEffect(() => {
+    if (!data?.imageUrls || data.imageUrls.length <= 1) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        setCurrentImageIndex((prev: number) => 
+          prev <= 0 ? (data.imageUrls?.length || 1) - 1 : prev - 1
+        );
+      } else if (e.key === 'ArrowRight') {
+        setCurrentImageIndex((prev: number) => 
+          prev >= (data.imageUrls?.length || 1) - 1 ? 0 : prev + 1
+        );
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [data?.imageUrls]);
   
   // 格式化日期 - 只显示日期，不显示时间
   const formatDate = (dateStr: string | null | Date) => {
@@ -289,28 +310,58 @@ export default function CommunityActivityDetail() {
           {/* 图片显示区 - 支持多图片轮播 */}
           {data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0 ? (
             <div className="mb-6 space-y-4">
-              {/* 主图 - 使用第一张图片 */}
-              <div className="overflow-hidden rounded-lg">
+              {/* 主图轮播 - 带左右切换箭头 */}
+              <div className="relative overflow-hidden rounded-lg group">
+                {/* 左侧切换按钮 */}
+                <button 
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1 z-10 hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100"
+                  onClick={() => {
+                    setCurrentImageIndex((prev: number) => 
+                      prev <= 0 ? (data.imageUrls?.length || 1) - 1 : prev - 1
+                    );
+                  }}
+                >
+                  <span className="text-xl font-bold px-2">&lt;</span>
+                </button>
+
+                {/* 主图 */}
                 <img 
-                  src={data.imageUrls[0]} 
-                  alt={`${data.title} - 主图`} 
-                  className="w-full object-contain"
+                  src={data.imageUrls[currentImageIndex]} 
+                  alt={`${data.title} - 主图 ${currentImageIndex + 1}`} 
+                  className="w-full object-contain h-[400px]"
                 />
+
+                {/* 右侧切换按钮 */}
+                <button 
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1 z-10 hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100"
+                  onClick={() => {
+                    setCurrentImageIndex((prev: number) => 
+                      prev >= (data.imageUrls?.length || 1) - 1 ? 0 : prev + 1
+                    );
+                  }}
+                >
+                  <span className="text-xl font-bold px-2">&gt;</span>
+                </button>
+
+                {/* 图片计数指示器 */}
+                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                  {currentImageIndex + 1} / {data.imageUrls?.length || 1}
+                </div>
               </div>
               
-              {/* 额外图片 - 使用水平滚动容器 */}
-              {data.imageUrls.length > 1 && (
+              {/* 缩略图导航 */}
+              {data.imageUrls && data.imageUrls.length > 1 && (
                 <div className="flex overflow-x-auto space-x-2 pb-2">
                   {data.imageUrls.map((imgUrl, index) => (
                     <div 
                       key={index} 
-                      className="flex-shrink-0"
+                      className={`flex-shrink-0 cursor-pointer ${index === currentImageIndex ? 'ring-2 ring-accent' : ''}`}
+                      onClick={() => setCurrentImageIndex(index)}
                     >
                       <img 
                         src={imgUrl} 
                         alt={`${data.title} - 图片 ${index + 1}`} 
-                        className="h-24 w-auto rounded-md border border-accent/20 hover:border-accent cursor-pointer"
-                        onClick={() => window.open(imgUrl, '_blank')}
+                        className="h-24 w-auto rounded-md border border-accent/20 hover:border-accent"
                       />
                     </div>
                   ))}
@@ -322,7 +373,7 @@ export default function CommunityActivityDetail() {
               <img 
                 src={data.imageUrl} 
                 alt={data.title} 
-                className="w-full rounded-lg object-contain"
+                className="w-full rounded-lg object-contain h-[400px]"
               />
             </div>
           ) : null}
