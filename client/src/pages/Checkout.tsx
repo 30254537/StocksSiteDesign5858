@@ -138,7 +138,7 @@ const UsdtDirectForm = () => {
           </div>
           
           <div className="mt-4 p-3 bg-slate-800 rounded-md font-mono text-sm break-all user-select-all">
-            <p className="text-xs text-gray-400 mb-1">USDT {t('checkout.receiveAddress')} ({usdtChains.find(c => c.id === selectedUsdtChain)?.name}):</p>
+            <p className="text-xs text-gray-400 mb-1">$USDT {t('checkout.receiveAddress')} ({usdtChains.find(c => c.id === selectedUsdtChain)?.name}):</p>
             {currentChainAddress}
           </div>
         </div>
