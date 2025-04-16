@@ -64,7 +64,7 @@ export default function GoldDogMonitor() {
   
   return (
     <div className="container mx-auto py-24 px-4 sm:px-6">
-      <h1 className="text-3xl font-bold mb-6 text-[#00ffcc]">{pageTitle}</h1>
+      <h1 className="text-3xl font-bold mb-10 text-[#00ffcc]">{pageTitle}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* 主要内容区域 - 占据2/3宽度 */}

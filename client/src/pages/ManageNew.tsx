@@ -1073,27 +1073,7 @@ export default function Manage() {
           关于我们管理
         </button>
         
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "team" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("team")}
-        >
-          团队成员管理
-        </button>
-        
-        <button
-          className={`px-4 py-2 font-medium transition-colors duration-200 ${
-            activeTab === "features" 
-              ? "text-accent border-b-2 border-accent" 
-              : "text-gray-400 hover:text-accent"
-          }`}
-          onClick={() => setActiveTab("features")}
-        >
-          社区特点管理
-        </button>
+
         
         <button
           className={`px-4 py-2 font-medium transition-colors duration-200 ${
