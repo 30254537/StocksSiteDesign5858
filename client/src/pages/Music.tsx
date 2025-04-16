@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAudio } from '@/contexts/AudioContext';
 import { useToast } from '@/hooks/use-toast';
-import MusicUpload from '@/components/ui/music-upload';
 import MusicTrackCard, { MusicTrack } from '@/components/ui/music-track-card';
 import MusicVisualizer from '@/components/ui/music-visualizer';
 import { ReactiveLogo, ReactiveWaveform } from '@/components/ui/reactive-logo';
@@ -11,7 +10,7 @@ import { queryClient } from '@/lib/queryClient';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-import { PlayCircle, StopCircle, Plus, RotateCcw } from 'lucide-react';
+import { PlayCircle, StopCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -20,7 +19,6 @@ export default function MusicPage() {
   const { toast } = useToast();
   const { isPlaying, togglePlay, audioRef } = useAudio();
   const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
-  const [showUpload, setShowUpload] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const isMobile = useIsMobile();
   const pageRef = useRef<HTMLDivElement>(null);
@@ -106,10 +104,6 @@ export default function MusicPage() {
     }
   };
   
-  const refreshTracks = () => {
-    queryClient.invalidateQueries({ queryKey: ['/api/music'] });
-  };
-  
   // Scroll to top when changing tabs
   useEffect(() => {
     if (pageRef.current) {
@@ -146,22 +140,11 @@ export default function MusicPage() {
               </h1>
             </div>
             
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl">
+            <p className="text-xl text-gray-300 mb-16 max-w-2xl">
               {t('music.subtitle')}
             </p>
             
-            <div className="flex flex-wrap gap-4 justify-center mb-16">
-              <Button
-                onClick={() => setShowUpload(prev => !prev)}
-                className="bg-accent hover:bg-accent/80 text-primary"
-                size="lg"
-              >
-                {showUpload ? <RotateCcw className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
-                {showUpload ? t('music.cancel') : t('music.uploadTitle')}
-              </Button>
-            </div>
-            
-            {/* 音乐波纹可视化效果 - 放在上传按钮下方，并下移约2厘米 */}
+            {/* 音乐波纹可视化效果 - 不显示上传按钮，前端不需要上传功能 */}
             <div className="w-[120%] relative h-6 overflow-hidden mx-auto" style={{ marginLeft: '-10%' }}>
               <MusicVisualizer 
                 className="w-full" 
@@ -175,19 +158,6 @@ export default function MusicPage() {
             </div>
           </div>
         </div>
-        
-        {/* Upload Section */}
-        {showUpload && (
-          <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-300">
-            <MusicUpload 
-              onSuccess={() => {
-                setShowUpload(false);
-                refreshTracks();
-              }}
-              className="max-w-3xl mx-auto"
-            />
-          </div>
-        )}
         
         {/* Music Tabs and Track List */}
         <div className="bg-background/30 backdrop-blur-sm rounded-xl border border-accent/10 p-6">
