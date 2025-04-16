@@ -93,9 +93,10 @@ export default function Header() {
                 onClick={scrollToTop}
               >
                 <img 
-                  src="/images/fuzzy-logo.png" 
+                  src="/images/stonks-logo.png" 
                   alt="STONKS Fuzzy Logo" 
                   className="w-10 h-10 mr-3"
+                  style={{ objectFit: "contain" }}
                 />
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>

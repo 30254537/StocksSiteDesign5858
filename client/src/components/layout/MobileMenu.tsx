@@ -57,10 +57,10 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
               <img 
-                src="/images/fuzzy-logo.png" 
+                src="/images/stonks-logo.png" 
                 alt="STONKS Fuzzy Logo" 
                 className="w-8 h-8 mr-2"
-                style={{ verticalAlign: 'middle' }}
+                style={{ verticalAlign: 'middle', objectFit: "contain" }}
               />
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
