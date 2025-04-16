@@ -32,6 +32,7 @@ interface CommunityActivity {
   endDate: string | null;
   imageUrl: string | null;
   imageUrls: string[] | null;
+  isOnline?: boolean;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -48,6 +49,14 @@ const CommunityActivityDetail: React.FC = () => {
   const { data: activity, isLoading, error } = useQuery<CommunityActivity>({
     queryKey: ['/api/community', parseInt(id)],
     refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    staleTime: 0, // 不缓存数据，每次都重新获取
+    onSuccess: (data) => {
+      console.log("活动数据获取成功:", data);
+    },
+    onError: (err) => {
+      console.error("活动数据获取失败:", err);
+    }
   });
   
   // 格式化日期
