@@ -51,12 +51,7 @@ const CommunityActivityDetail: React.FC = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     staleTime: 0, // 不缓存数据，每次都重新获取
-    onSuccess: (data) => {
-      console.log("活动数据获取成功:", data);
-    },
-    onError: (err) => {
-      console.error("活动数据获取失败:", err);
-    }
+    retry: 3 // 出错时重试3次
   });
   
   // 格式化日期
@@ -240,6 +235,16 @@ const CommunityActivityDetail: React.FC = () => {
     );
   }
   
+  // 确保活动数据已经加载并适当处理
+  console.log("渲染活动详情:", {
+    id: activity.id,
+    title: activity.title,
+    content: activity.content,
+    imageUrls: activity.imageUrls,
+    hasContent: !!activity.content,
+    contentLength: activity.content ? activity.content.length : 0
+  });
+  
   const status = getActivityStatus(activity);
   
   return (
@@ -333,11 +338,17 @@ const CommunityActivityDetail: React.FC = () => {
             </div>
           ) : null}
           
-          <div className="prose prose-invert max-w-none">
-            <div className="whitespace-pre-wrap text-foreground/90">
-              {activity.content}
+          {/* 活动内容展示区 */}
+          {activity.content && (
+            <div className="prose prose-invert max-w-none">
+              <h2 className="text-xl font-semibold text-accent mb-3">
+                {language === 'zh' ? '活动详情' : 'Event Details'}
+              </h2>
+              <div className="whitespace-pre-wrap text-foreground/90 mt-2">
+                {activity.content}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       
