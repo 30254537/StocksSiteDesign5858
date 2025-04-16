@@ -474,7 +474,7 @@ export default function CommunityActivityDetail() {
 
       {/* 图片放大模态框 */}
       <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen} modal>
-        <DialogContent className="sm:max-w-[90vw] max-h-[90vh] p-0 bg-black/90 border-accent">
+        <DialogContent className="sm:max-w-[80vw] max-h-[90vh] p-0 bg-black/90 border-accent">
           <div className="relative w-full h-full flex items-center justify-center">
             {/* 关闭按钮 */}
             <button 
@@ -489,7 +489,7 @@ export default function CommunityActivityDetail() {
               <img 
                 src={enlargedImageUrl} 
                 alt="Enlarged view" 
-                className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                className="max-w-[70%] max-h-[85vh] object-contain rounded-lg"
               />
             )}
           </div>
