@@ -15,11 +15,11 @@ interface MusicVisualizerProps {
 export default function MusicVisualizer({
   className = '',
   color = '#00ffcc',
-  height = 120,
-  barWidth = 1, // 默认使用1像素宽度的极细条
-  gap = 2, // 默认更大的间隙
-  barCount = 150, // 默认更多的条数
-  sensitivity = 1.2, // 调整灵敏度
+  height = 240,
+  barWidth = 2, // 增加条宽为2像素
+  gap = 2, // 保持2像素的间隙
+  barCount = 180, // 增加条数
+  sensitivity = 1.5, // 稍微增加灵敏度
   position = 'bottom' // 默认将波纹放在底部
 }: MusicVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -109,11 +109,11 @@ export default function MusicVisualizer({
       // 先清除画布
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // 绘制黑色背景但只在底部
-      // 如果position为bottom，波纹在黑色背景的底部
-      // 如果position为top，波纹在黑色背景的顶部
+      // 绘制深蓝色背景（更符合STONKS的主题颜色）
+      // 如果position为bottom，波纹在深蓝色背景的底部
+      // 如果position为top，波纹在深蓝色背景的顶部
       if (position === 'bottom') {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillStyle = 'rgba(13, 20, 37, 0.8)'; // 深蓝色背景，更符合STONKS整体设计
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
       
@@ -174,14 +174,16 @@ export default function MusicVisualizer({
       }
       
       // 绘制全局脉动效果 - 在强节拍时添加一个淡淡的背景光晕
-      if (isPlaying && beatIntensity > 0.6) {
-        const pulseRadius = Math.min(canvas.width, canvas.height) * 0.5 * beatIntensity;
+      if (isPlaying && beatIntensity > 0.3) { // 降低触发阈值，让波纹更活跃
+        const pulseRadius = Math.min(canvas.width, canvas.height) * 0.8 * beatIntensity; // 增大脉冲半径
         const pulseGradient = ctx.createRadialGradient(
           canvas.width/2, canvas.height/2, 0,
           canvas.width/2, canvas.height/2, pulseRadius
         );
         
-        pulseGradient.addColorStop(0, `${color}40`); // 中心淡色
+        // 增强中心颜色的亮度，使波纹更明显
+        pulseGradient.addColorStop(0, `${color}60`); // 中心颜色更明亮
+        pulseGradient.addColorStop(0.5, `${color}30`); // 添加中间过渡
         pulseGradient.addColorStop(1, 'transparent'); // 边缘透明
         
         ctx.fillStyle = pulseGradient;

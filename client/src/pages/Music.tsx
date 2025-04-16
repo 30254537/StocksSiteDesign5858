@@ -145,14 +145,14 @@ export default function MusicPage() {
             </p>
             
             {/* 音乐波纹可视化效果 - 不显示上传按钮，前端不需要上传功能 */}
-            <div className="w-[120%] relative h-6 overflow-hidden mx-auto" style={{ marginLeft: '-10%' }}>
+            <div className="w-full relative overflow-hidden mx-auto" style={{ height: "240px" }}>
               <MusicVisualizer 
                 className="w-full" 
-                height={isMobile ? 24 : 24} 
-                barCount={isMobile ? 160 : 320}
-                barWidth={1}
-                gap={1}
-                sensitivity={1.2}
+                height={240} 
+                barCount={isMobile ? 100 : 180}
+                barWidth={2}
+                gap={2}
+                sensitivity={1.5}
                 position="bottom"
               />
             </div>
