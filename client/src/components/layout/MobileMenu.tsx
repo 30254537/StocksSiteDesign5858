@@ -149,18 +149,6 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </Link>
             </li>
             <li>
-              <Link 
-                href="/crypto-pulse" 
-                className="text-xl hover:text-accent transition-colors duration-300 block py-3" 
-                onClick={() => {
-                  scrollToTop();
-                  onClose();
-                }}
-              >
-                {language === 'zh' ? '加密脉搏' : 'Crypto Pulse'}
-              </Link>
-            </li>
-            <li>
               <a 
                 href="https://mystonks.org" 
                 target="_blank"

@@ -24,8 +24,6 @@ const AdminLogin = lazy(() => import("@/pages/AdminLogin"));
 const About = lazy(() => import("@/pages/About"));
 const Music = lazy(() => import("@/pages/Music"));
 const CryptoNews = lazy(() => import("@/pages/CryptoNews"));
-// 加密脉搏页面
-const CryptoPulse = lazy(() => import("@/pages/CryptoPulse"));
 // 社区活动相关页面
 const CommunityActivities = lazy(() => import("@/pages/CommunityActivities"));
 const CommunityActivityDetail = lazy(() => import("@/pages/CommunityActivityDetail"));
@@ -176,13 +174,6 @@ function Router() {
             {() => (
               <PageWrapper>
                 <CryptoNews />
-              </PageWrapper>
-            )}
-          </Route>
-          <Route path="/crypto-pulse">
-            {() => (
-              <PageWrapper>
-                <CryptoPulse />
               </PageWrapper>
             )}
           </Route>
