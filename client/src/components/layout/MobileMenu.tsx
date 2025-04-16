@@ -51,15 +51,24 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   useEffect(() => {
     const fetchLogo = async () => {
       try {
+        console.log('MobileMenu: 开始获取LOGO...');
         const response = await fetch('/api/contact-info');
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('MobileMenu: 获取到的联系信息数据:', data);
+          
           if (data.logo) {
+            console.log('MobileMenu: 找到LOGO数据:', data.logo);
             setLogo(data.logo);
+          } else {
+            console.log('MobileMenu: 联系信息中没有LOGO数据');
           }
+        } else {
+          console.error('MobileMenu: 获取联系信息响应不成功:', response.statusText);
         }
       } catch (error) {
-        console.error('获取LOGO失败:', error);
+        console.error('MobileMenu: 获取LOGO失败:', error);
       }
     };
     
