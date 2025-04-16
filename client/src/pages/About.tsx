@@ -8,7 +8,7 @@ export default function About() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold mb-8 text-[#00ffcc]">{t("about.title")}</h1>
         
-        <div className="prose prose-sm md:prose-base lg:prose-lg prose-invert prose-headings:text-[#00ffcc] prose-a:text-[#00ffcc] hover:prose-a:text-[#00ffcc]/70 p-6 border-2 border-[#00ffcc] rounded-lg mb-8">
+        <div className="prose prose-sm md:prose-base lg:prose-lg prose-invert prose-headings:text-[#00ffcc] prose-a:text-[#00ffcc] hover:prose-a:text-[#00ffcc]/70 p-6 border border-accent/20 rounded-lg mb-8">
           <div dangerouslySetInnerHTML={{ __html: t("about.content") }} />
         </div>
         

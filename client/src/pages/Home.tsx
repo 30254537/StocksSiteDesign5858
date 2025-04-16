@@ -167,7 +167,7 @@ export default function Home() {
               {t("about.title")}
             </h2>
             <div 
-              className="text-lg leading-relaxed space-y-4 text-gray-200"
+              className="text-lg leading-relaxed space-y-4 text-gray-200 p-6 border border-accent/20 rounded-lg"
               dangerouslySetInnerHTML={{ __html: t("about.content") }}
             />
           </div>
