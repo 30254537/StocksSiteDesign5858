@@ -9,6 +9,7 @@ export interface MusicTrack {
   id: number;
   title: string;
   artist: string;
+  style: string; // 添加音乐风格字段
   filename: string;
   duration: number;
   url: string;

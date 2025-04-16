@@ -1100,11 +1100,59 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  // 音乐管理相关方法
+  async getMusicTracks(): Promise<MusicTrack[]> {
+    // 简化查询，避免使用orderBy
+    return db.select().from(musicTracks)
+      .where(eq(musicTracks.isPublic, 1)); // 只返回公开的音乐
+  }
+  
+  async getMusicTrackById(id: number): Promise<MusicTrack | undefined> {
+    const [track] = await db.select().from(musicTracks)
+      .where(eq(musicTracks.id, id));
+    return track;
+  }
+  
+  async getMusicTracksByStyle(style: string): Promise<MusicTrack[]> {
+    return db.select().from(musicTracks)
+      .where(
+        and(
+          eq(musicTracks.isPublic, 1),
+          eq(musicTracks.style, style)
+        )
+      );
+  }
+  
+  async createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack> {
+    const [newTrack] = await db.insert(musicTracks)
+      .values(track)
+      .returning();
+    return newTrack;
+  }
+  
+  async updateMusicTrack(id: number, data: Partial<MusicTrack>): Promise<MusicTrack | undefined> {
+    const [updatedTrack] = await db.update(musicTracks)
+      .set(data)
+      .where(eq(musicTracks.id, id))
+      .returning();
+    return updatedTrack;
+  }
+  
+  async deleteMusicTrack(id: number): Promise<boolean> {
+    try {
+      await db.delete(musicTracks)
+        .where(eq(musicTracks.id, id));
+      return true;
+    } catch (error) {
+      console.error('删除音乐时出错:', error);
+      return false;
+    }
+  }
+  
   // 社区特点管理
   async getCommunityFeatures(): Promise<CommunityFeature[]> {
     return db.select().from(communityFeatures)
-      .where(eq(communityFeatures.isActive, true))
-      .orderBy(asc(communityFeatures.orderIndex));
+      .where(eq(communityFeatures.isActive, true));
   }
   
   async getCommunityFeature(id: number): Promise<CommunityFeature | undefined> {
