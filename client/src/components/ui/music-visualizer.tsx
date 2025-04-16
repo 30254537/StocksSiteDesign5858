@@ -96,15 +96,9 @@ export default function MusicVisualizer({
       // 获取音频响应数据
       const audioData = isPlaying ? generateAudioData() : null;
       
-      // 设置全局投影，创建整体发光效果
-      if (isPlaying && beatIntensity > 0.5) {
-        // 随着节拍强度增加发光
-        ctx.shadowBlur = 15 + (beatIntensity * 10);
-        ctx.shadowColor = color;
-      } else {
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = color;
-      }
+      // 移除全局投影发光效果（去除绿色阴影）
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = 'transparent';
       
       // 先清除画布
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -173,22 +167,8 @@ export default function MusicVisualizer({
         ctx.fillRect(x, height - barHeight, barWidth, barHeight);
       }
       
-      // 绘制全局脉动效果 - 在强节拍时添加一个淡淡的背景光晕
-      if (isPlaying && beatIntensity > 0.3) { // 降低触发阈值，让波纹更活跃
-        const pulseRadius = Math.min(canvas.width, canvas.height) * 0.8 * beatIntensity; // 增大脉冲半径
-        const pulseGradient = ctx.createRadialGradient(
-          canvas.width/2, canvas.height/2, 0,
-          canvas.width/2, canvas.height/2, pulseRadius
-        );
-        
-        // 增强中心颜色的亮度，使波纹更明显
-        pulseGradient.addColorStop(0, `${color}60`); // 中心颜色更明亮
-        pulseGradient.addColorStop(0.5, `${color}30`); // 添加中间过渡
-        pulseGradient.addColorStop(1, 'transparent'); // 边缘透明
-        
-        ctx.fillStyle = pulseGradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
+      // 完全移除脉动效果，避免绿色阴影
+      // 我们保留这个注释以便于将来需要时可以恢复功能
       
       // 重置阴影效果
       ctx.shadowBlur = 0;
