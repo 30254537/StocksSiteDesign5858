@@ -150,6 +150,19 @@ export default function MusicPage() {
               {t('music.subtitle')}
             </p>
             
+            {/* 音乐波纹可视化效果 - 放在上传按钮附近 */}
+            <div className="w-full relative h-16 mb-8 overflow-hidden rounded-xl">
+              <MusicVisualizer 
+                className="w-full" 
+                height={isMobile ? 64 : 64} 
+                barCount={isMobile ? 120 : 240}
+                barWidth={1}
+                gap={1}
+                sensitivity={1.8}
+                position="bottom"
+              />
+            </div>
+            
             <div className="flex flex-wrap gap-4 justify-center">
               <Button
                 onClick={() => setShowUpload(prev => !prev)}
@@ -207,19 +220,6 @@ export default function MusicPage() {
               {renderTrackList(filteredTracks())}
             </TabsContent>
           </Tabs>
-        </div>
-        
-        {/* 音乐波纹可视化效果 - 放在页面底部 */}
-        <div className="mt-12 relative h-20 overflow-hidden rounded-xl">
-          <MusicVisualizer 
-            className="w-full" 
-            height={isMobile ? 80 : 100} 
-            barCount={isMobile ? 120 : 240}
-            barWidth={1}
-            gap={1}
-            sensitivity={1.8}
-            position="bottom"
-          />
         </div>
       </div>
     </div>
