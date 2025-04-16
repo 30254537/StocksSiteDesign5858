@@ -33,6 +33,72 @@ const upload = multer({
 
 // 设置社区活动路由
 export function setupCommunityRoutes(app: Express) {
+  // 删除社区活动中的单个图片（需要管理员权限）
+  app.delete('/api/community/:id/image', async (req, res) => {
+    try {
+      if (!global.adminLoggedIn) {
+        return res.status(401).json({ message: '需要管理员权限' });
+      }
+
+      const { id } = req.params;
+      const { imageUrl } = req.body;
+      const activityId = parseInt(id);
+      
+      if (!imageUrl || typeof imageUrl !== 'string') {
+        return res.status(400).json({ message: '缺少必要的图片URL参数' });
+      }
+      
+      // 获取活动信息
+      const activity = await storage.getCommunityActivity(activityId);
+      if (!activity) {
+        return res.status(404).json({ message: '未找到指定的社区活动' });
+      }
+      
+      // 检查图片是否存在于imageUrls数组中
+      if (!activity.imageUrls || !Array.isArray(activity.imageUrls) || !activity.imageUrls.includes(imageUrl)) {
+        return res.status(404).json({ message: '指定的图片不存在于该活动中' });
+      }
+      
+      // 物理删除文件
+      if (imageUrl && imageUrl.startsWith('/uploads/community/')) {
+        const imagePath = path.resolve(`public${imageUrl}`);
+        if (fs.existsSync(imagePath)) {
+          try {
+            fs.unlinkSync(imagePath);
+            console.log(`已删除社区活动图片: ${imagePath}`);
+          } catch (err) {
+            console.error(`删除社区活动图片时出错:`, err);
+            // 继续执行数据库更新，即使物理文件删除失败
+          }
+        }
+      }
+      
+      // 更新数据库中的图片数组
+      const updatedImageUrls = activity.imageUrls.filter(img => img !== imageUrl);
+      
+      // 如果删除的是主图片，需要更新主图片字段
+      let updatedImageUrl = activity.imageUrl;
+      if (activity.imageUrl === imageUrl) {
+        updatedImageUrl = updatedImageUrls.length > 0 ? updatedImageUrls[0] : '';
+      }
+      
+      // 更新活动记录
+      const updatedActivity = await storage.updateCommunityActivity(activityId, {
+        ...activity,
+        imageUrl: updatedImageUrl,
+        imageUrls: updatedImageUrls
+      });
+      
+      if (!updatedActivity) {
+        return res.status(500).json({ message: '更新社区活动失败' });
+      }
+      
+      res.json(updatedActivity);
+    } catch (error) {
+      console.error('删除社区活动图片时出错:', error);
+      res.status(500).json({ message: '服务器错误' });
+    }
+  });
   // 获取所有社区活动（有限制参数）
   app.get('/api/community', async (req, res) => {
     try {
