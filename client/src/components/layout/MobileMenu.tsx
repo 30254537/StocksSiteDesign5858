@@ -56,18 +56,18 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Brand */}
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
-              <div className="relative w-16 h-16 mr-2">
-                <img 
-                  src="/images/stonks-fuzzy-original.png" 
-                  alt="STONKS DEX Logo" 
-                  className="absolute top-0 left-0 w-full h-full"
-                  style={{ 
-                    objectFit: "contain",
-                    maxWidth: "100%",
-                    maxHeight: "100%"
-                  }}
-                />
-              </div>
+              <div 
+                className="mr-2"
+                style={{ 
+                  width: "80px",
+                  height: "80px",
+                  backgroundImage: `url('/images/fuzzy-logo.png')`,
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  flexShrink: 0
+                }}
+              ></div>
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
             </span>
             <span className="text-accent text-xs ml-10">Powered by $STONKS</span>

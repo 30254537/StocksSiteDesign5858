@@ -92,18 +92,18 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <div className="relative w-20 h-20 mr-3">
-                  <img 
-                    src="/images/stonks-fuzzy-original.png" 
-                    alt="STONKS DEX Logo" 
-                    className="absolute top-0 left-0 w-full h-full"
-                    style={{ 
-                      objectFit: "contain",
-                      maxWidth: "100%",
-                      maxHeight: "100%"
-                    }}
-                  />
-                </div>
+                <div 
+                  className="mr-3"
+                  style={{ 
+                    width: "100px",
+                    height: "100px",
+                    backgroundImage: `url('/images/fuzzy-logo.png')`,
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    flexShrink: 0
+                  }}
+                ></div>
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
                   <span className="powered text-xs text-accent md:ml-2">Powered by $STONKS</span>
