@@ -93,13 +93,13 @@ export default function Header() {
                 onClick={scrollToTop}
               >
                 <img 
-                  src="/images/stonks-fuzzy-logo.png" 
-                  alt="" 
+                  src="/images/stonks-logo.png" 
+                  alt="STONKS DEX Logo" 
                   className="h-14 w-14 mr-3"
                   style={{ 
                     objectFit: "contain",
                     display: "block",
-                    filter: "drop-shadow(0 0 8px rgba(0, 255, 204, 0.6))"
+                    filter: "drop-shadow(0 0 10px rgba(0, 255, 204, 0.7))"
                   }}
                 />
                 <div className="flex flex-col md:flex-row items-center">
