@@ -12,17 +12,16 @@ import {
   ContractAddress, InsertContractAddress,
   AboutContent, InsertAboutContent,
   CommunityActivity, InsertCommunityActivity,
-  GoldDogMonitor, InsertGoldDogMonitor,
-  TeamMember, InsertTeamMember,
-  CommunityFeature, InsertCommunityFeature
+  GoldDogMonitor, InsertGoldDogMonitor
+  // TeamMember, InsertTeamMember, CommunityFeature, InsertCommunityFeature models have been removed
 } from "@shared/schema";
 import {
   users, products, cartItems, 
   orders, orderItems, musicTracks, 
   cryptoTweets, telegramMessages, 
   cryptoNews, contractAddresses, tweets,
-  contactInfo, aboutContent, communityActivities, goldDogMonitor,
-  teamMembers, communityFeatures
+  contactInfo, aboutContent, communityActivities, goldDogMonitor
+  // teamMembers, communityFeatures have been removed
 } from "@shared/schema";
 import { eq, and, or, like, desc, count, isNull, asc } from "drizzle-orm";
 import * as bcrypt from "bcryptjs";
@@ -149,20 +148,6 @@ export interface IStorage {
   deleteGoldDogMonitor(id: number): Promise<boolean>;
   incrementGoldDogMonitorViews(id: number): Promise<boolean>;
   getTopGoldDogMonitors(limit: number): Promise<GoldDogMonitor[]>;
-  
-  // 团队成员管理
-  getTeamMembers(): Promise<TeamMember[]>;
-  getTeamMember(id: number): Promise<TeamMember | undefined>;
-  createTeamMember(data: InsertTeamMember): Promise<TeamMember>;
-  updateTeamMember(id: number, data: Partial<TeamMember>): Promise<TeamMember | undefined>;
-  deleteTeamMember(id: number): Promise<boolean>;
-  
-  // 社区特点管理
-  getCommunityFeatures(): Promise<CommunityFeature[]>;
-  getCommunityFeature(id: number): Promise<CommunityFeature | undefined>;
-  createCommunityFeature(data: InsertCommunityFeature): Promise<CommunityFeature>;
-  updateCommunityFeature(id: number, data: Partial<CommunityFeature>): Promise<CommunityFeature | undefined>;
-  deleteCommunityFeature(id: number): Promise<boolean>;
 }
 
 // 内存存储实现
