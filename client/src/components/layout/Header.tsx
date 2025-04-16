@@ -80,18 +80,16 @@ export default function Header() {
         
         if (response.ok) {
           const data = await response.json();
-          console.log('获取到的联系信息数据:', data);
+          console.log('获取到的LOGO数据:', data);
           
           if (data.logo) {
-            console.log('找到LOGO数据:', data.logo);
+            console.log('设置LOGO:', data.logo);
             setLogo(data.logo);
           } else {
-            console.log('联系信息中没有LOGO数据');
-            // 显示一个默认的占位LOGO
-            // setLogo('/default-logo.png'); // 如果需要默认LOGO，可以取消注释此行
+            console.log('LOGO数据不存在');
           }
         } else {
-          console.error('获取联系信息响应不成功:', response.statusText);
+          console.error('获取LOGO响应不成功:', response.statusText);
         }
       } catch (error) {
         console.error('获取LOGO失败:', error);
