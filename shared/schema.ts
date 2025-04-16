@@ -157,6 +157,7 @@ export const musicTracks = pgTable("music_tracks", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   artist: text("artist").default("Unknown Artist"),
+  style: text("style").default("General"), // 音乐风格字段：如 "Rock", "Electronic", "Classical" 等
   filename: text("filename").notNull(),
   url: text("url").notNull(),
   duration: doublePrecision("duration").notNull().default(0),
