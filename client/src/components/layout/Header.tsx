@@ -108,15 +108,25 @@ export default function Header() {
       <header className={`fixed top-0 w-full z-40 transition-all duration-300 ${
         isScrolled ? 'bg-primary/90' : 'glass-effect'
       } border-b border-accent/30`}>
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 relative">
+          {/* 绿色背景阴影 - 不会影响顶部图标 */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 blur-xl opacity-30 rounded-full pointer-events-none"
+            style={{ 
+              clipPath: 'polygon(0% 50%, 100% 50%, 100% 100%, 0% 100%)',
+              top: '40px', // 向下移动背景阴影，避开图标区域
+              zIndex: 1
+            }}
+          ></div>
+          
           {/* STONKS 价格顶部条 */}
-          <div className="hidden md:flex justify-start py-1 border-b border-accent/10">
+          <div className="hidden md:flex justify-start py-1 border-b border-accent/10 relative z-10">
             <StonksPriceIndicator />
           </div>
           
           <div className="flex items-center justify-between h-16 md:h-24">
             {/* LOGO区域 - 左侧 */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 relative z-20">
               <Link 
                 href="/" 
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
@@ -127,7 +137,8 @@ export default function Header() {
                   <img 
                     src={logo} 
                     alt="STONKS DEX SHOP Logo" 
-                    className="h-8 md:h-10 w-auto mr-2" 
+                    className="h-8 md:h-10 w-auto mr-2 z-10 relative isolate" 
+                    style={{ filter: 'none' }}
                   />
                 )}
                 
@@ -138,7 +149,8 @@ export default function Header() {
                   viewBox="0 0 24 24" 
                   fill="none" 
                   xmlns="http://www.w3.org/2000/svg"
-                  className="mr-1 text-accent"
+                  className="mr-1 text-accent z-10 relative isolate"
+                  style={{ filter: 'none' }}
                 >
                   <path 
                     d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 

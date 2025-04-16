@@ -78,14 +78,15 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center p-4 border-b border-accent/30">
           {/* Brand */}
-          <div className="flex flex-col">
+          <div className="flex flex-col relative z-20">
             <span className="font-bold flex items-center justify-start">
               {/* 始终显示logo（如果存在） */}
               {logo && (
                 <img 
                   src={logo} 
                   alt="STONKS DEX SHOP Logo" 
-                  className="h-8 w-auto mr-2" 
+                  className="h-8 w-auto mr-2 z-10 relative isolate" 
+                  style={{ filter: 'none' }}
                 />
               )}
               
@@ -96,8 +97,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 viewBox="0 0 24 24" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
-                className="mr-1 text-accent"
-                style={{ verticalAlign: 'middle' }}
+                className="mr-1 text-accent z-10 relative isolate"
+                style={{ verticalAlign: 'middle', filter: 'none' }}
               >
                 <path 
                   d="M4 17L10 11L13 14L20 6M20 6H15M20 6V11" 
