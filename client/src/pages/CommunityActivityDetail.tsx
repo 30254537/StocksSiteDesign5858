@@ -9,7 +9,7 @@ import { PageHeader, PageHeaderHeading } from "@/components/ui/page-header";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, MapPin, Users, ExternalLink, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Users, Share2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
@@ -19,53 +19,40 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { CommunityActivity } from '@shared/schema';
 
-// 定义社区活动类型
-interface CommunityActivity {
-  id: number;
-  title: string;
-  content: string;
-  location: string | null;
-  startDate: string | null;
-  endDate: string | null;
-  imageUrl: string | null;
-  imageUrls: string[] | null;
-  isOnline?: boolean;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-const CommunityActivityDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+export default function CommunityActivityDetail() {
+  const { id } = useParams();
   const { language } = useLanguage();
   const t = (key: string) => getTranslation(key, language);
   const dateLocale = language === 'zh' ? zhCN : enUS;
   const [isShareOpen, setIsShareOpen] = useState(false);
   
   // 获取社区活动数据
-  const { data: activity, isLoading, error } = useQuery<CommunityActivity, Error, CommunityActivity>({
-    queryKey: ['/api/community', parseInt(id)],
+  const { data, isLoading, error } = useQuery<CommunityActivity>({
+    queryKey: ['/api/community', parseInt(id || '0')],
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     staleTime: 0, // 不缓存数据，每次都重新获取
     retry: 3 // 出错时重试3次
   });
   
-  // 使用副作用来监控和记录数据变化
+  // 在数据加载成功后进行日志输出
   React.useEffect(() => {
-    if (activity) {
-      console.log("活动数据获取成功:", activity);
+    if (data) {
+      console.log("活动数据获取成功:", {
+        id: data.id,
+        title: data.title,
+        content: data.content,
+        contentLength: data.content?.length,
+        imageUrls: data.imageUrls,
+        imageCount: data.imageUrls?.length,
+        startDate: data.startDate,
+        endDate: data.endDate
+      });
     }
-  }, [activity]);
-  
-  React.useEffect(() => {
-    if (error) {
-      console.error("获取活动数据失败:", error);
-    }
-  }, [error]);
+  }, [data]);
   
   // 格式化日期
   const formatDate = (dateStr: string | null) => {
@@ -83,19 +70,10 @@ const CommunityActivityDetail: React.FC = () => {
   // 计算活动状态
   const getActivityStatus = (activity: CommunityActivity) => {
     const now = new Date();
-    console.log('活动状态计算:', {
-      now: now.toISOString(),
-      startDate: activity.startDate,
-      endDate: activity.endDate
-    });
     
     // 确保日期字符串正确解析为日期对象
     const start = activity.startDate ? new Date(activity.startDate) : null;
     const end = activity.endDate ? new Date(activity.endDate) : null;
-    
-    // 调试时间比较逻辑
-    if (start) console.log('开始日期比较:', { start: start.toISOString(), isBeforeNow: start.getTime() > now.getTime() });
-    if (end) console.log('结束日期比较:', { end: end.toISOString(), isPastNow: end.getTime() < now.getTime() });
     
     // 已结束状态: 结束日期存在且在过去
     if (end && now.getTime() > end.getTime()) {
@@ -124,8 +102,8 @@ const CommunityActivityDetail: React.FC = () => {
   const shareActivity = () => {
     if (navigator.share) {
       navigator.share({
-        title: activity?.title || 'STONKS DEX 社区活动',
-        text: activity?.content?.substring(0, 100) + '...',
+        title: data?.title || 'STONKS DEX 社区活动',
+        text: data?.content ? data.content.substring(0, 100) + '...' : '',
         url: window.location.href,
       })
       .then(() => console.log('活动分享成功'))
@@ -214,7 +192,7 @@ const CommunityActivityDetail: React.FC = () => {
     );
   }
   
-  if (!activity) {
+  if (!data) {
     return (
       <Container className="py-8">
         <PageHeader className="pb-6">
@@ -248,17 +226,7 @@ const CommunityActivityDetail: React.FC = () => {
     );
   }
   
-  // 确保活动数据已经加载并适当处理
-  console.log("渲染活动详情:", {
-    id: activity.id,
-    title: activity.title,
-    content: activity.content,
-    imageUrls: activity.imageUrls,
-    hasContent: !!activity.content,
-    contentLength: activity.content ? activity.content.length : 0
-  });
-  
-  const status = getActivityStatus(activity);
+  const status = getActivityStatus(data);
   
   return (
     <Container className="py-8">
@@ -283,56 +251,56 @@ const CommunityActivityDetail: React.FC = () => {
       <div className="bg-primary/50 border border-accent/20 rounded-lg overflow-hidden mb-8">
         <div className="p-6">
           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-accent">{activity.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-accent">{data.title}</h1>
             <Badge variant={status.variant} className="text-sm py-1 px-3">
               {status.label}
             </Badge>
           </div>
           
           <div className="flex flex-col md:flex-row md:items-center gap-3 mb-6 text-muted-foreground">
-            {activity.startDate && (
+            {data.startDate && (
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-2" />
                 <span>
-                  {formatDate(activity.startDate)}
-                  {activity.endDate && (
-                    <span> - {formatDate(activity.endDate)}</span>
+                  {formatDate(data.startDate)}
+                  {data.endDate && (
+                    <span> - {formatDate(data.endDate)}</span>
                   )}
                 </span>
               </div>
             )}
             
-            {activity.location && (
+            {data.location && (
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2" />
-                <span>{activity.location}</span>
+                <span>{data.location}</span>
               </div>
             )}
           </div>
           
           {/* 图片显示区 - 支持多图片轮播 */}
-          {(activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) ? (
+          {data.imageUrls && Array.isArray(data.imageUrls) && data.imageUrls.length > 0 ? (
             <div className="mb-6 space-y-4">
               {/* 主图 - 使用第一张图片 */}
               <div className="overflow-hidden rounded-lg">
                 <img 
-                  src={activity.imageUrls[0]} 
-                  alt={`${activity.title} - 主图`} 
+                  src={data.imageUrls[0]} 
+                  alt={`${data.title} - 主图`} 
                   className="w-full max-h-[500px] object-cover"
                 />
               </div>
               
               {/* 额外图片 - 使用水平滚动容器 */}
-              {activity.imageUrls.length > 1 && (
+              {data.imageUrls.length > 1 && (
                 <div className="flex overflow-x-auto space-x-2 pb-2">
-                  {activity.imageUrls.map((imgUrl: string, index: number) => (
+                  {data.imageUrls.map((imgUrl, index) => (
                     <div 
                       key={index} 
                       className="flex-shrink-0"
                     >
                       <img 
                         src={imgUrl} 
-                        alt={`${activity.title} - 图片 ${index + 1}`} 
+                        alt={`${data.title} - 图片 ${index + 1}`} 
                         className="h-24 w-auto rounded-md border border-accent/20 hover:border-accent cursor-pointer"
                         onClick={() => window.open(imgUrl, '_blank')}
                       />
@@ -341,31 +309,31 @@ const CommunityActivityDetail: React.FC = () => {
                 </div>
               )}
             </div>
-          ) : activity.imageUrl ? (
+          ) : data.imageUrl ? (
             <div className="mb-6">
               <img 
-                src={activity.imageUrl} 
-                alt={activity.title} 
+                src={data.imageUrl} 
+                alt={data.title} 
                 className="w-full rounded-lg max-h-[500px] object-cover"
               />
             </div>
           ) : null}
           
-          {/* 活动内容展示区 - 强制显示内容区域用于调试 */}
+          {/* 活动内容展示区 */}
           <div className="prose prose-invert max-w-none">
             <h2 className="text-xl font-semibold text-accent mb-3">
               {language === 'zh' ? '活动详情' : 'Event Details'}
             </h2>
             <div className="whitespace-pre-wrap text-foreground/90 mt-2 border border-accent/20 p-4 rounded-md">
-              {activity.content 
-                ? activity.content 
+              {data.content 
+                ? data.content 
                 : <span className="text-amber-400 italic">（未提供活动内容）</span>}
             </div>
             <div className="mt-4 text-sm text-muted-foreground">
-              <p className="mb-2">活动ID: {activity.id}</p>
-              <p className="mb-2">标题: {activity.title}</p>
-              <p className="mb-2">内容长度: {activity.content?.length || 0}字符</p>
-              <p className="mb-2">图片数量: {activity.imageUrls?.length || 0}张</p>
+              <p className="mb-2">活动ID: {data.id}</p>
+              <p className="mb-2">标题: {data.title}</p>
+              <p className="mb-2">内容长度: {data.content?.length || 0}字符</p>
+              <p className="mb-2">图片数量: {Array.isArray(data.imageUrls) ? data.imageUrls.length : 0}张</p>
             </div>
           </div>
         </div>
@@ -418,6 +386,4 @@ const CommunityActivityDetail: React.FC = () => {
       </Dialog>
     </Container>
   );
-};
-
-export default CommunityActivityDetail;
+}
