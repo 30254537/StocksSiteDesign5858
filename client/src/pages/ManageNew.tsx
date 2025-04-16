@@ -604,7 +604,7 @@ export default function Manage() {
       try {
         // 添加时间戳参数以避免缓存问题
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/team-members/${memberId}?t=${timestamp}`);
+        const response = await apiRequest("DELETE", `/api/cms/team/${memberId}?t=${timestamp}`);
         
         if (!response.ok) {
           throw new Error('删除团队成员失败');
@@ -665,7 +665,7 @@ export default function Manage() {
       try {
         // 添加时间戳参数以避免缓存问题
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/community-features/${featureId}?t=${timestamp}`);
+        const response = await apiRequest("DELETE", `/api/cms/community-features/${featureId}?t=${timestamp}`);
         
         if (!response.ok) {
           throw new Error('删除社区特点失败');
@@ -1010,10 +1010,10 @@ export default function Manage() {
                   
                   if (aboutId) {
                     // 编辑模式
-                    response = await apiRequest("PUT", `/api/admin/about/${aboutId}`, aboutData);
+                    response = await apiRequest("PUT", `/api/cms/about/${aboutId}`, aboutData);
                   } else {
                     // 新增模式
-                    response = await apiRequest("POST", "/api/admin/about", aboutData);
+                    response = await apiRequest("POST", "/api/cms/about", aboutData);
                   }
                   
                   if (response.ok) {
@@ -1208,10 +1208,10 @@ export default function Manage() {
                   
                   if (memberId) {
                     // 编辑模式
-                    response = await apiRequest("PUT", `/api/team-members/${memberId}`, memberData);
+                    response = await apiRequest("PUT", `/api/cms/team/${memberId}`, memberData);
                   } else {
                     // 新增模式
-                    response = await apiRequest("POST", "/api/team-members", memberData);
+                    response = await apiRequest("POST", "/api/cms/team", memberData);
                   }
                   
                   if (response.ok) {
@@ -1453,10 +1453,10 @@ export default function Manage() {
                   
                   if (featureId) {
                     // 编辑模式
-                    response = await apiRequest("PUT", `/api/community-features/${featureId}`, featureData);
+                    response = await apiRequest("PUT", `/api/cms/community-features/${featureId}`, featureData);
                   } else {
                     // 新增模式
-                    response = await apiRequest("POST", "/api/community-features", featureData);
+                    response = await apiRequest("POST", "/api/cms/community-features", featureData);
                   }
                   
                   if (response.ok) {
