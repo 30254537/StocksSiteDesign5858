@@ -331,7 +331,7 @@ export default function CommunityActivityDetail() {
                   <img 
                     src={data.imageUrls?.[currentImageIndex] || ''} 
                     alt={`${data.title} - 主图 ${currentImageIndex + 1}`} 
-                    className="w-full object-contain h-[400px]"
+                    className="w-full object-cover h-[400px] rounded-md"
                     onClick={() => {
                       if (data.imageUrls?.[currentImageIndex]) {
                         setEnlargedImageUrl(data.imageUrls[currentImageIndex]);
@@ -382,7 +382,7 @@ export default function CommunityActivityDetail() {
                       <img 
                         src={imgUrl} 
                         alt={`${data.title} - 图片 ${index + 1}`} 
-                        className="h-24 w-auto rounded-md border border-accent/20 hover:border-accent"
+                        className="h-24 w-36 object-cover rounded-md border border-accent/20 hover:border-accent"
                       />
                     </div>
                   ))}
@@ -394,7 +394,7 @@ export default function CommunityActivityDetail() {
               <img 
                 src={data.imageUrl} 
                 alt={data.title} 
-                className="w-full rounded-lg object-contain h-[400px]"
+                className="w-full rounded-lg object-cover h-[400px]"
                 onClick={() => {
                   setEnlargedImageUrl(data.imageUrl);
                   setIsImageModalOpen(true);
