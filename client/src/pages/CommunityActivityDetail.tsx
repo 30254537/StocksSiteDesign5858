@@ -250,10 +250,15 @@ export default function CommunityActivityDetail() {
       
       <div className="bg-primary/50 border border-accent/20 rounded-lg overflow-hidden mb-8">
         <div className="p-6">
+          {/* 居中显示绿色标题 */}
+          <div className="flex flex-col items-center justify-center text-center gap-4 mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-accent">{data.title}</h1>
+          </div>
+          
           {/* 活动基本信息（以指定顺序排列）*/}
           <div className="mb-6">
             <div className="text-sm text-muted-foreground mb-4">
-              <p className="mb-2 text-accent">活动ID: {data.id}</p>
+              <p className="mb-2">活动ID: {data.id}</p>
               <p className="mb-2">{formatDate(data.startDate)} - {formatDate(data.endDate)}</p>
               <p className="mb-2">活动主题: {data.title}</p>
               <p className="mb-2">{data.location || '济州岛万豪度假酒店'}</p>
@@ -264,11 +269,6 @@ export default function CommunityActivityDetail() {
                 {status.label}
               </Badge>
             </div>
-          </div>
-          
-          {/* 居中显示标题 */}
-          <div className="flex flex-col items-center justify-center text-center gap-4 mb-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-accent">{data.title}</h1>
           </div>
           
           {/* 图片显示区 - 支持多图片轮播 */}
