@@ -11,6 +11,7 @@ import { NeonText } from "@/components/ui/neon-text";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { StonksPriceIndicator } from "@/components/ui/stonks-price-display";
 import { formatCurrency } from "@/lib/utils";
+import FuzzyLogo from "@/components/ui/FuzzyLogo";
 
 // 简单的滚动到顶部函数
 const scrollToTop = () => {
@@ -92,17 +93,10 @@ export default function Header() {
                 className="font-orbitron text-xl md:text-2xl font-bold text-white flex items-center"
                 onClick={scrollToTop}
               >
-                <img
-                  src="/images/fuzzy-logo-full.png"
-                  alt="STONKS DEX Logo"
+                <FuzzyLogo 
+                  width={110} 
+                  height={110} 
                   className="mr-3"
-                  style={{
-                    width: "110px",
-                    height: "110px",
-                    border: "none",
-                    objectFit: "contain",
-                    flexShrink: 0
-                  }}
                 />
                 <div className="flex flex-col md:flex-row items-center">
                   <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
