@@ -57,14 +57,14 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <div className="flex flex-col">
             <span className="font-bold flex items-center justify-start">
               <img 
-                src="/images/stonks-logo.png" 
+                src="/images/stonks-logo-new.png" 
                 alt="STONKS DEX Logo" 
-                className="h-12 w-12 mr-2"
+                className="h-12 w-auto mr-2"
                 style={{ 
                   verticalAlign: 'middle', 
                   objectFit: "contain",
                   display: "block",
-                  filter: "drop-shadow(0 0 10px rgba(0, 255, 204, 0.7))"
+                  maxWidth: "120px"
                 }}
               />
               <NeonText className="font-bold">STONKS DEX SHOP</NeonText>
