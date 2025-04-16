@@ -74,12 +74,22 @@ export default function Header() {
   useEffect(() => {
     const fetchLogo = async () => {
       try {
+        console.log('开始获取LOGO...');
         const response = await fetch('/api/contact-info');
+        console.log('获取LOGO响应状态:', response.status);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('获取到的LOGO数据:', data);
+          
           if (data.logo) {
+            console.log('设置LOGO:', data.logo);
             setLogo(data.logo);
+          } else {
+            console.log('LOGO数据不存在');
           }
+        } else {
+          console.error('获取LOGO响应不成功:', response.statusText);
         }
       } catch (error) {
         console.error('获取LOGO失败:', error);
