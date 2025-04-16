@@ -34,7 +34,7 @@ const CommunityActivities: React.FC = () => {
   
   // 获取社区活动数据
   const { data: activities, isLoading, error } = useQuery<CommunityActivity[]>({
-    queryKey: ['/api/community'],
+    queryKey: ['/api/cms/community'],
   });
   
   // 格式化日期函数

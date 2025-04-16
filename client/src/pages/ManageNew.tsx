@@ -121,7 +121,7 @@ export default function Manage() {
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/community?t=${timestamp}`);
+      const response = await apiRequest("GET", `/api/cms/community?t=${timestamp}`);
       const data = await response.json();
       setCommunityActivities(data);
     } catch (error) {
@@ -1720,7 +1720,7 @@ export default function Manage() {
                     response = await fetch(`/api/cms/community/${activityId}`, fetchOptions);
                   } else {
                     // 新增模式
-                    response = await fetch("/api/community", fetchOptions);
+                    response = await fetch("/api/cms/community", fetchOptions);
                   }
                   
                   // 增加响应数据处理

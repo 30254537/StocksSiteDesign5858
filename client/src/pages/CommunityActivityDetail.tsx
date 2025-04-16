@@ -34,7 +34,7 @@ export default function CommunityActivityDetail() {
   
   // 获取社区活动数据
   const { data, isLoading, error } = useQuery<CommunityActivity>({
-    queryKey: [`/api/community/${id}`],
+    queryKey: [`/api/cms/community/${id}`],
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     staleTime: 0, // 不缓存数据，每次都重新获取
