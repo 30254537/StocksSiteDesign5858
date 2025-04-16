@@ -150,20 +150,7 @@ export default function MusicPage() {
               {t('music.subtitle')}
             </p>
             
-            {/* 音乐波纹可视化效果 - 放在上传按钮附近 */}
-            <div className="w-full relative h-16 mb-8 overflow-hidden rounded-xl">
-              <MusicVisualizer 
-                className="w-full" 
-                height={isMobile ? 64 : 64} 
-                barCount={isMobile ? 120 : 240}
-                barWidth={1}
-                gap={1}
-                sensitivity={1.8}
-                position="bottom"
-              />
-            </div>
-            
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center mb-8">
               <Button
                 onClick={() => setShowUpload(prev => !prev)}
                 className="bg-accent hover:bg-accent/80 text-primary"
@@ -172,6 +159,19 @@ export default function MusicPage() {
                 {showUpload ? <RotateCcw className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
                 {showUpload ? t('music.cancel') : t('music.uploadTitle')}
               </Button>
+            </div>
+            
+            {/* 音乐波纹可视化效果 - 放在上传按钮下方 */}
+            <div className="w-full relative h-6 overflow-hidden">
+              <MusicVisualizer 
+                className="w-full" 
+                height={isMobile ? 24 : 24} 
+                barCount={isMobile ? 120 : 240}
+                barWidth={1}
+                gap={1}
+                sensitivity={1.2}
+                position="bottom"
+              />
             </div>
           </div>
         </div>
