@@ -52,15 +52,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     const fetchLogo = async () => {
       try {
         console.log('MobileMenu: 开始获取LOGO...');
-        // 添加时间戳参数来防止缓存
-        const cacheBuster = new Date().getTime();
-        const response = await fetch(`/api/contact-info?t=${cacheBuster}`, {
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
-        });
+        const response = await fetch('/api/contact-info');
         
         if (response.ok) {
           const data = await response.json();

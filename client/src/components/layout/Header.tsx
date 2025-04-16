@@ -75,15 +75,7 @@ export default function Header() {
     const fetchLogo = async () => {
       try {
         console.log('开始获取LOGO...');
-        // 添加时间戳参数来防止缓存
-        const cacheBuster = new Date().getTime();
-        const response = await fetch(`/api/contact-info?t=${cacheBuster}`, {
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
-        });
+        const response = await fetch('/api/contact-info');
         console.log('获取LOGO响应状态:', response.status);
         
         if (response.ok) {
@@ -95,6 +87,8 @@ export default function Header() {
             setLogo(data.logo);
           } else {
             console.log('联系信息中没有LOGO数据');
+            // 显示一个默认的占位LOGO
+            // setLogo('/default-logo.png'); // 如果需要默认LOGO，可以取消注释此行
           }
         } else {
           console.error('获取联系信息响应不成功:', response.statusText);
