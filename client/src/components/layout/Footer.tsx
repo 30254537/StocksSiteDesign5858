@@ -68,7 +68,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1: About */}
           <div>
-            <h3 className="text-xl font-orbitron font-medium mb-4 text-white">STONKS DEX</h3>
+            <h3 className="text-xl font-orbitron font-medium mb-4 text-white">STONKS DEX SHOP</h3>
             <p className="mb-4 text-sm leading-relaxed">{t("footer.about")}</p>
             <div className="flex space-x-4 text-accent">
               <a href="https://x.com/MyStonks_Org" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">
