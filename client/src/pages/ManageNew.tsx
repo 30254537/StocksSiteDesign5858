@@ -497,70 +497,79 @@ export default function Manage() {
     }
   };
   
-  // 显示现有图片的辅助函数
+  // 显示现有图片的辅助函数 - 使用DOM API而不是innerHTML，避免JS注入风险
   const displayExistingImages = (activity: CommunityActivity) => {
-    // 显示现有图片
     const existingImagesContainer = document.getElementById("existing-activity-images");
     
-    if (existingImagesContainer) {
-      // 处理图片数组
-      if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
-        let imagesHtml = `
-          <div class="mb-4">
-            <p class="text-sm text-muted-foreground mb-2">现有图片 (点击删除按钮可删除单张图片):</p>
-            <div class="flex flex-wrap">
-        `;
+    if (!existingImagesContainer) return;
+    
+    // 清空容器
+    existingImagesContainer.innerHTML = "";
+    
+    // 处理多图片情况
+    if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "mb-4";
+      
+      const title = document.createElement("p");
+      title.className = "text-sm text-muted-foreground mb-2";
+      title.textContent = "现有图片 (点击删除按钮可删除单张图片):";
+      wrapper.appendChild(title);
+      
+      const imagesContainer = document.createElement("div");
+      imagesContainer.className = "flex flex-wrap gap-2";
+      
+      activity.imageUrls.forEach(imgUrl => {
+        const imageWrapper = document.createElement("div");
+        imageWrapper.className = "relative group inline-block mr-2 mb-2";
         
-        activity.imageUrls.forEach(imgUrl => {
-          imagesHtml += `
-            <div class="relative group inline-block mr-2 mb-2">
-              <img src="${imgUrl}" alt="活动图片" class="h-16 w-auto rounded border border-accent/30" />
-              <button 
-                type="button"
-                class="absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                onclick="window.deleteActivityImage(${activity.id}, '${imgUrl}')"
-              >
-                ×
-              </button>
-            </div>
-          `;
-        });
+        const img = document.createElement("img");
+        img.src = imgUrl;
+        img.alt = "活动图片";
+        img.className = "h-16 w-auto rounded border border-accent/30";
+        imageWrapper.appendChild(img);
         
-        imagesHtml += `
-            </div>
-          </div>
-        `;
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity";
+        deleteBtn.textContent = "×";
+        deleteBtn.onclick = () => handleDeleteActivityImage(activity.id, imgUrl);
+        imageWrapper.appendChild(deleteBtn);
         
-        existingImagesContainer.innerHTML = imagesHtml;
-        
-        // 将删除函数绑定到window对象，以便通过onclick调用
-        (window as any).deleteActivityImage = (id: number, url: string) => {
-          handleDeleteActivityImage(id, url);
-        };
-      }
-      // 如果没有imageUrls数组但有单张imageUrl
-      else if (activity.imageUrl) {
-        existingImagesContainer.innerHTML = `
-          <div class="mb-4">
-            <p class="text-sm text-muted-foreground mb-2">现有图片:</p>
-            <div class="relative group inline-block mr-2 mb-2">
-              <img src="${activity.imageUrl}" alt="活动主图" class="h-16 w-auto rounded border border-accent/30" />
-              <button 
-                type="button"
-                class="absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                onclick="window.deleteActivityImage(${activity.id}, '${activity.imageUrl}')"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        `;
-        
-        // 将删除函数绑定到window对象，以便通过onclick调用
-        (window as any).deleteActivityImage = (id: number, url: string) => {
-          handleDeleteActivityImage(id, url);
-        };
-      }
+        imagesContainer.appendChild(imageWrapper);
+      });
+      
+      wrapper.appendChild(imagesContainer);
+      existingImagesContainer.appendChild(wrapper);
+    } 
+    // 处理单图片情况
+    else if (activity.imageUrl) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "mb-4";
+      
+      const title = document.createElement("p");
+      title.className = "text-sm text-muted-foreground mb-2";
+      title.textContent = "现有图片:";
+      wrapper.appendChild(title);
+      
+      const imageWrapper = document.createElement("div");
+      imageWrapper.className = "relative group inline-block mr-2 mb-2";
+      
+      const img = document.createElement("img");
+      img.src = activity.imageUrl;
+      img.alt = "活动主图";
+      img.className = "h-16 w-auto rounded border border-accent/30";
+      imageWrapper.appendChild(img);
+      
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity";
+      deleteBtn.textContent = "×";
+      deleteBtn.onclick = () => handleDeleteActivityImage(activity.id, activity.imageUrl);
+      imageWrapper.appendChild(deleteBtn);
+      
+      wrapper.appendChild(imageWrapper);
+      existingImagesContainer.appendChild(wrapper);
     }
   };
 
