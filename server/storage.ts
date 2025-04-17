@@ -1,4 +1,5 @@
 import { db } from "./db";
+import fetch from 'node-fetch';
 import {
   User, InsertUser,
   Product, InsertProduct,
@@ -162,18 +163,24 @@ export class DatabaseStorage implements IStorage {
   // 获取当前STONKS代币价格
   async getCurrentStonksPrice(): Promise<number> {
     try {
-      // 从API获取最新STONKS价格
-      const response = await axios.get('/api/stonks-price');
-      if (response.data && response.data.price) {
-        return response.data.price;
+      // 尝试从Gmgn服务获取价格
+      const response = await fetch('https://api.stonksdex.io/api/v1/price', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.price || 0.037; // 如果数据格式正确则返回价格，否则使用默认值
       }
       
-      // 如果无法获取实时价格，返回默认值
-      return 0.037;
+      // 如果从API获取失败，返回默认价格
+      console.warn('无法获取STONKS实时价格，使用默认价格');
+      return 0.037; // 默认价格
     } catch (error) {
-      console.error('获取STONKS价格失败:', error);
-      // 返回默认价格
-      return 0.037;
+      console.error('获取STONKS价格时出错:', error);
+      return 0.037; // 出错时使用默认价格
     }
   }
   
