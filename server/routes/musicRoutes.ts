@@ -346,6 +346,9 @@ musicRouter.get('/style/:style', async (req: Request, res: Response) => {
 // 音乐文件上传端点
 musicRouter.post('/upload', musicUpload.single('musicFile'), async (req: Request, res: Response) => {
   try {
+    // 确保设置正确的内容类型头
+    res.setHeader('Content-Type', 'application/json');
+    
     if (!req.file) {
       console.error('上传失败：没有接收到文件');
       return res.status(400).json({ message: '没有提供音乐文件' });
@@ -358,13 +361,30 @@ musicRouter.post('/upload', musicUpload.single('musicFile'), async (req: Request
       mimetype: req.file.mimetype
     });
 
-    // 文件上传成功，生成URL
+    // 检查文件是否已成功保存
     const fileUrl = `/uploads/music/${req.file.filename}`;
+    const filePath = path.join(process.cwd(), 'public', fileUrl);
+    
+    try {
+      const stats = fs.statSync(filePath);
+      console.log(`文件已保存，大小: ${stats.size} 字节，位置: ${filePath}`);
+      if (stats.size === 0) {
+        console.error('文件大小为0，可能未正确保存');
+        return res.status(500).json({ 
+          message: '文件上传出错：文件大小为0，请重试' 
+        });
+      }
+    } catch (statError) {
+      console.error(`文件未正确保存到 ${filePath}:`, statError);
+      return res.status(500).json({ 
+        message: '文件未能正确保存，请重试', 
+        error: String(statError) 
+      });
+    }
     
     // 获取音频时长
     let duration = 0;
     try {
-      const filePath = path.join(process.cwd(), 'public', fileUrl);
       if (fs.existsSync(filePath)) {
         console.log('音频文件路径存在:', filePath);
         duration = await getAudioDurationInSeconds(filePath);
@@ -394,6 +414,9 @@ musicRouter.post('/upload', musicUpload.single('musicFile'), async (req: Request
     res.status(200).json(musicData);
   } catch (error) {
     console.error('音乐文件上传错误:', error);
+    
+    // 确保错误响应也是JSON格式
+    res.setHeader('Content-Type', 'application/json');
     
     // 检查是否是目录创建错误
     if (String(error).includes('ENOENT') || String(error).includes('permission')) {
@@ -466,12 +489,29 @@ musicRouter.post('/simple-upload', musicUpload.single('musicFile'), (req: Reques
       return res.status(400).json({ message: '无文件上传' });
     }
     
+    // 确保设置正确的内容类型
+    res.setHeader('Content-Type', 'application/json');
+    
+    // 转换文件对象为可序列化的格式
+    const fileInfo = req.file ? {
+      fieldname: req.file.fieldname,
+      originalname: req.file.originalname,
+      encoding: req.file.encoding,
+      mimetype: req.file.mimetype,
+      destination: req.file.destination,
+      filename: req.file.filename,
+      path: req.file.path,
+      size: req.file.size
+    } : null;
+    
     res.status(200).json({
       message: '文件上传成功',
-      file: req.file,
+      file: fileInfo,
     });
   } catch (error) {
     console.error('简单上传错误:', error);
+    // 确保错误响应也是JSON格式
+    res.setHeader('Content-Type', 'application/json');
     res.status(500).json({
       message: '上传错误',
       error: String(error)
