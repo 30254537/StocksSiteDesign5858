@@ -37,7 +37,24 @@ const musicStorage = multer.diskStorage({
   }
 });
 
-const musicUpload = multer({ storage: musicStorage });
+// 设置更严格的文件限制和过滤器
+const musicUpload = multer({
+  storage: musicStorage,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB
+    files: 1  // 最多1个文件
+  },
+  fileFilter: (req, file, cb) => {
+    // 允许的音频文件类型
+    if (file.mimetype.startsWith('audio/')) {
+      console.log('接受文件上传，MIME类型:', file.mimetype);
+      cb(null, true);
+    } else {
+      console.log('拒绝文件上传，不支持的MIME类型:', file.mimetype);
+      cb(new Error(`不支持的文件类型：${file.mimetype}，只接受音频文件`));
+    }
+  }
+});
 
 // 获取所有音乐
 musicRouter.get('/', async (req: Request, res: Response) => {
@@ -409,6 +426,55 @@ musicRouter.post('/upload', musicUpload.single('musicFile'), async (req: Request
       error: String(error),
       errorType: typeof error,
       stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
+  }
+});
+
+// 添加测试端点
+musicRouter.post('/test', (req: Request, res: Response) => {
+  try {
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'music');
+    const canWrite = fs.accessSync(uploadDir, fs.constants.W_OK);
+    
+    res.status(200).json({
+      message: '音乐API测试成功',
+      body: req.body,
+      dirExists: fs.existsSync(uploadDir),
+      uploadDir,
+      dirStat: fs.statSync(uploadDir),
+      canWrite: canWrite === undefined,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: '音乐API测试失败',
+      error: String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+  }
+});
+
+// 在单独上传端点添加详细日志
+musicRouter.post('/simple-upload', musicUpload.single('musicFile'), (req: Request, res: Response) => {
+  try {
+    console.log('简单上传接收到请求:', {
+      headers: req.headers,
+      file: req.file,
+      body: req.body
+    });
+    
+    if (!req.file) {
+      return res.status(400).json({ message: '无文件上传' });
+    }
+    
+    res.status(200).json({
+      message: '文件上传成功',
+      file: req.file,
+    });
+  } catch (error) {
+    console.error('简单上传错误:', error);
+    res.status(500).json({
+      message: '上传错误',
+      error: String(error)
     });
   }
 });

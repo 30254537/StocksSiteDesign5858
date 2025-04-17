@@ -157,7 +157,37 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
           if (onSuccess) onSuccess();
         } else {
           console.error('Upload failed:', xhr.status, xhr.responseText);
-          throw new Error(xhr.responseText || 'Upload failed');
+          
+          try {
+            // 尝试解析响应JSON
+            const responseData = JSON.parse(xhr.responseText);
+            
+            // 检查是否是目录创建错误
+            if (responseData.directoryCreated) {
+              toast({
+                title: language === 'en' ? "Almost there!" : "即将完成！",
+                description: language === 'en' 
+                  ? "Upload directory was just created. Please try again." 
+                  : "上传目录刚刚创建完成，请重新上传一次。",
+                variant: "default"
+              });
+              // 不算作真正的错误，不需要重置
+              setIsUploading(false);
+              return;
+            }
+            
+            toast({
+              title: language === 'en' ? "Upload failed" : "上传失败",
+              description: responseData.message || (language === 'en' ? "Server error" : "服务器错误"),
+              variant: "destructive"
+            });
+          } catch (parseError) {
+            toast({
+              title: language === 'en' ? "Upload failed" : "上传失败",
+              description: language === 'en' ? "Server error" : "服务器错误",
+              variant: "destructive"
+            });
+          }
         }
         setIsUploading(false);
       };
