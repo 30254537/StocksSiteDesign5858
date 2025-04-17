@@ -53,6 +53,7 @@ export interface IStorage {
   getFeaturedProducts(): Promise<Product[]>;
   getProductsByCategory(category: string): Promise<Product[]>;
   searchProducts(query: string): Promise<Product[]>;
+  getCurrentStonksPrice(): Promise<number>;
 
   // 购物车相关方法
   getCart(sessionId: string): Promise<CartItem[]>;
