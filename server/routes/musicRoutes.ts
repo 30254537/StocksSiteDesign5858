@@ -101,6 +101,14 @@ musicRouter.post('/', async (req: Request, res: Response) => {
     
     const musicData = validationResult.data;
     
+    // 额外检查：确保URL和filename字段都已提供
+    if (!musicData.url || !musicData.filename) {
+      return res.status(400).json({
+        message: '没有上传文件或文件类型不被支持',
+        details: '请确保通过音乐上传组件上传音乐文件，并在表单中提供完整的音乐信息'
+      });
+    }
+    
     // 如果提供了URL，可以尝试获取音频时长
     try {
       if (musicData.url) {
@@ -188,6 +196,14 @@ musicRouter.put('/:id', async (req: Request, res: Response) => {
     }
     
     const musicData = validationResult.data;
+    
+    // 确保更新操作时，如果提供了URL但没有提供filename，则验证不通过
+    if (musicData.url && !musicData.filename && musicData.url !== existingMusic.url) {
+      return res.status(400).json({
+        message: '无法保存音频文件',
+        details: '更新音乐曲目时必须提供filename字段'
+      });
+    }
     
     // 如果提供了新的URL，尝试获取音频时长
     if (musicData.url && musicData.url !== existingMusic.url) {
