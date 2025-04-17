@@ -1045,27 +1045,9 @@ export class DatabaseStorage implements IStorage {
   // 团队成员管理（已移除）
   
   // 音乐管理相关方法
-  async getMusicTracks(): Promise<MusicTrack[]> {
-    // 简化查询，避免使用orderBy
-    return db.select().from(musicTracks)
-      .where(eq(musicTracks.isPublic, 1)); // 只返回公开的音乐
-  }
-  
-  async getMusicTrackById(id: number): Promise<MusicTrack | undefined> {
-    const [track] = await db.select().from(musicTracks)
-      .where(eq(musicTracks.id, id));
-    return track;
-  }
-  
-  async getMusicTracksByStyle(style: string): Promise<MusicTrack[]> {
-    return db.select().from(musicTracks)
-      .where(
-        and(
-          eq(musicTracks.isPublic, 1),
-          eq(musicTracks.style, style)
-        )
-      );
-  }
+  // 这里曾经存在重复的getMusicTracks、getMusicTrackById和getMusicTracksByStyle方法
+  // 已删除以避免重复，使用上面516行的实现
+  // 不使用style列，因为它在当前数据库表中不存在
   
   async createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack> {
     const [newTrack] = await db.insert(musicTracks)
