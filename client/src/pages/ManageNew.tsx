@@ -182,7 +182,7 @@ export default function ManageNew() {
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/cms/community?t=${timestamp}`);
+      const response = await apiRequest("GET", `/api/community?t=${timestamp}`);
       const data = await response.json();
       setCommunityActivities(data);
     } catch (error) {
@@ -619,7 +619,7 @@ export default function ManageNew() {
     if (window.confirm("确定要删除这张图片吗？此操作无法撤销。")) {
       try {
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/cms/community/${activityId}/image?t=${timestamp}`, { imageUrl });
+        const response = await apiRequest("DELETE", `/api/community/${activityId}/image?t=${timestamp}`, { imageUrl });
         
         if (!response.ok) {
           throw new Error('删除图片失败');
