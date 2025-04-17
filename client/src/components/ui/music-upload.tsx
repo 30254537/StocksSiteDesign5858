@@ -124,7 +124,7 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
       });
       
       xhr.onload = async () => {
-        if (xhr.status === 200) {
+        if (xhr.status >= 200 && xhr.status < 300) {
           toast({
             title: t('music.uploadSuccess'),
             variant: "default"
