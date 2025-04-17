@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export default function MusicPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const { isPlaying, togglePlay, audioRef } = useAudio();
   const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
