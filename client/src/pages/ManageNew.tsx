@@ -1151,353 +1151,46 @@ export default function Manage() {
         </Card>
       )}
       
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                
-                try {
-                  // 创建 FormData 对象以支持文件上传
-                  const formData = new FormData();
-                  formData.append("title", title);
-                  formData.append("content", content);
-                  formData.append("location", location);
+      {/* 社区活动管理 */}
+      {activeTab === "community" && (
+        <Card className="border-accent/20 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl text-accent">社区活动管理</CardTitle>
+            <CardDescription>
+              在这里您可以管理显示在社区活动页面的各类活动信息
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-8">
+              {/* 社区活动表单部分暂时注释，修复完毕后再恢复
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  // 社区活动提交逻辑
+                }}
+                id="activity-form"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <input type="hidden" id="activity-id" />
                   
-                  if (startDate) {
-                    formData.append("startDate", new Date(startDate).toISOString());
-                  }
-                  
-                  if (endDate) {
-                    formData.append("endDate", new Date(endDate).toISOString());
-                  }
-                  
-                  formData.append("isActive", isActive.toString());
-                  
-                  // 添加多个图片文件 (如果有)
-                  if (activityImageFiles.length > 0) {
-                    // 遍历所有图片并添加到formData
-                    activityImageFiles.forEach(file => {
-                      formData.append("images", file);
-                    });
-                    console.log(`准备上传 ${activityImageFiles.length} 张图片文件`, activityImageFiles);
-                    
-                    // 如果正在编辑且有新图片，添加一个标志参数（默认不替换，只是添加新图片）
-                    if (activityId) {
-                      formData.append("replaceAllImages", "false");
-                    }
-                  } else {
-                    console.log("没有图片文件需要上传");
-                  }
-                  
-                  // 如果有现有活动且存在图片URL，传递它们以保持兼容性
-                  if (activityId && editingCommunityActivity) {
-                    // 传递主图片URL（如果有）
-                    if (editingCommunityActivity.imageUrl) {
-                      formData.append("imageUrl", editingCommunityActivity.imageUrl);
-                    }
-                  }
-                  
-                  console.log("准备发送活动数据");
-                  
-                  // 发送请求
-                  let response;
-                  
-                  // 自定义请求配置（不使用apiRequest以支持FormData）
-                  const fetchOptions: RequestInit = {
-                    method: activityId ? "PUT" : "POST",
-                    body: formData,
-                    credentials: "include",
-                  };
-                  
-                  if (activityId) {
-                    // 编辑模式
-                    console.log(`正在更新活动ID: ${activityId}`);
-                    // 尝试使用直接的路径而不是 /api/cms/community
-                    response = await fetch(`/api/community/${activityId}`, fetchOptions);
-                    // 如果请求失败，可能需要尝试备用路径
-                    if (!response.ok && response.status === 404) {
-                      console.log("尝试备用更新路径...");
-                      response = await fetch(`/api/admin/community/${activityId}`, fetchOptions);
-                    }
-                  } else {
-                    // 新增模式
-                    console.log("正在创建新活动");
-                    // 尝试使用直接的路径而不是 /api/cms/community
-                    response = await fetch("/api/community", fetchOptions);
-                    // 如果请求失败，可能需要尝试备用路径
-                    if (!response.ok && response.status === 404) {
-                      console.log("尝试备用创建路径...");
-                      response = await fetch("/api/admin/community", fetchOptions);
-                    }
-                  }
-                  
-                  // 增加响应数据处理
-                  const responseData = await response.json().catch(() => null);
-                  
-                  if (response.ok) {
-                    console.log("活动提交成功，响应:", responseData);
-                    // 重置表单
-                    (document.getElementById("activity-form") as HTMLFormElement).reset();
-                    document.getElementById("activity-id")?.removeAttribute("value");
-                    setEditingCommunityActivity(null);
-                    setActivityImageFiles([]); // 清空图片文件列表
-                    
-                    // 提示成功
-                    toast({
-                      title: activityId ? "更新成功" : "添加成功",
-                      description: activityId ? "社区活动已成功更新" : "社区活动已成功添加",
-                    });
-                    
-                    // 重新获取活动列表
-                    await fetchCommunityActivities();
-                  } else {
-                    console.error("活动提交失败，状态码:", response.status, "响应:", responseData);
-                    throw new Error(responseData?.message || "请求失败");
-                  }
-                } catch (error) {
-                  console.error("提交社区活动表单错误:", error);
-                  toast({
-                    title: "提交失败",
-                    description: "无法保存社区活动，请稍后再试",
-                    variant: "destructive",
-                  });
-                }
-              }}
-              id="activity-form"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <input type="hidden" id="activity-id" />
-                
-                <div className="space-y-2">
-                  <label htmlFor="activity-title" className="block text-sm font-medium">
-                    活动标题
-                  </label>
-                  <Input
-                    id="activity-title"
-                    placeholder="输入活动标题"
-                    className="bg-primary/50 border-accent"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="activity-location" className="block text-sm font-medium">
-                    活动地点
-                  </label>
-                  <Input
-                    id="activity-location"
-                    placeholder="输入活动地点"
-                    className="bg-primary/50 border-accent"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="activity-startDate" className="block text-sm font-medium">
-                    开始日期
-                  </label>
-                  <Input
-                    id="activity-startDate"
-                    type="date"
-                    className="bg-primary/50 border-accent"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="activity-endDate" className="block text-sm font-medium">
-                    结束日期
-                  </label>
-                  <Input
-                    id="activity-endDate"
-                    type="date"
-                    className="bg-primary/50 border-accent"
-                  />
-                </div>
-                
-                <div className="space-y-2 md:col-span-2">
-                  <label htmlFor="activity-content" className="block text-sm font-medium">
-                    活动内容
-                  </label>
-                  <Textarea
-                    id="activity-content"
-                    placeholder="输入活动详细内容"
-                    className="bg-primary/50 border-accent min-h-[150px]"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2 md:col-span-2">
-                  <label htmlFor="activity-images" className="block text-sm font-medium">
-                    上传图片
-                  </label>
-                  
-                  {/* 现有图片显示区域 */}
-                  <div id="existing-activity-images" className="mb-3">
-                    {/* handleEditCommunityActivity中会填充现有图片的显示 */}
-                  </div>
-                  
-                  <div className="flex flex-col space-y-2">
+                  <div className="space-y-2">
+                    <label htmlFor="activity-title" className="block text-sm font-medium">
+                      活动标题
+                    </label>
                     <Input
-                      id="activity-images"
-                      type="file"
-                      accept="image/*"
+                      id="activity-title"
+                      placeholder="输入活动标题"
                       className="bg-primary/50 border-accent"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          // 将FileList转换为数组
-                          const newFiles = Array.from(e.target.files);
-                          // 添加到现有集合，而不是替换
-                          setActivityImageFiles(prevFiles => [...prevFiles, ...newFiles]);
-                          
-                          // 更新UI提示
-                          toast({
-                            title: "已添加图片",
-                            description: `已添加${newFiles.length}张图片`,
-                          });
-                          
-                          // 重置文件输入框，以便用户可以再次选择同一文件
-                          e.target.value = '';
-                        }
-                      }}
-                      multiple
+                      required
                     />
-                    <p className="text-xs text-gray-400">支持JPG, PNG, GIF等图片格式，最大10MB</p>
-                    
-                    {/* 显示已选择的图片文件 */}
-                    {activityImageFiles.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-sm text-muted-foreground mb-2">
-                          已选择上传 {activityImageFiles.length} 张新图片:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {activityImageFiles.map((file, index) => (
-                            <div key={index} className="relative group">
-                              <div className="h-16 w-auto border border-accent/30 rounded flex items-center justify-center p-1">
-                                <img
-                                  src={URL.createObjectURL(file)}
-                                  alt={`预览 ${index + 1}`}
-                                  className="h-full w-auto object-cover"
-                                />
-                              </div>
-                              <button
-                                type="button"
-                                className="absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => {
-                                  setActivityImageFiles(prev => 
-                                    prev.filter((_, i) => i !== index)
-                                  );
-                                }}
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
-                
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="activity-active"
-                    className="w-4 h-4 mr-2 accent-accent"
-                    defaultChecked={true}
-                  />
-                  <label htmlFor="activity-active" className="text-sm font-medium">
-                    显示活动（设为激活状态）
-                  </label>
-                </div>
-              </div>
+              </form>
+              */}
               
-              <div className="flex justify-end space-x-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="border-accent text-accent"
-                  onClick={() => {
-                    // 重置表单
-                    (document.getElementById("activity-form") as HTMLFormElement).reset();
-                    document.getElementById("activity-id")?.removeAttribute("value");
-                    setEditingCommunityActivity(null);
-                    setActivityImageFiles([]); // 清空文件列表
-                  }}
-                >
-                  取消
-                </Button>
-                <Button type="submit" className="bg-accent text-black hover:bg-accent/80">
-                  {editingCommunityActivity ? "更新活动" : "添加活动"}
-                </Button>
+              <div className="text-center p-8">
+                <p>社区活动管理功能正在维护中，请稍后再试</p>
               </div>
-            </form>
-            
-            {/* 社区活动列表 */}
-            <div>
-              <h3 className="text-xl font-medium mb-4">现有社区活动</h3>
-              
-              {loadingCommunityActivities ? (
-                <div className="flex justify-center p-4">
-                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
-                </div>
-              ) : communityActivities.length === 0 ? (
-                <div className="text-center text-gray-400 p-6">
-                  <p>暂无活动，请添加活动</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>活动标题</TableHead>
-                        <TableHead>开始日期</TableHead>
-                        <TableHead>结束日期</TableHead>
-                        <TableHead>地点</TableHead>
-                        <TableHead>状态</TableHead>
-                        <TableHead className="text-right">操作</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {communityActivities.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell className="font-medium">{item.title}</TableCell>
-                          <TableCell>
-                            {item.startDate ? new Date(item.startDate).toLocaleDateString() : "-"}
-                          </TableCell>
-                          <TableCell>
-                            {item.endDate ? new Date(item.endDate).toLocaleDateString() : "-"}
-                          </TableCell>
-                          <TableCell>{item.location || "-"}</TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={item.isActive ? "default" : "outline"}
-                              className={item.isActive ? "bg-green-600" : ""}
-                            >
-                              {item.isActive ? "激活" : "未激活"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-accent text-accent"
-                              onClick={() => handleEditCommunityActivity(item)}
-                            >
-                              编辑
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleDeleteCommunityActivity(item.id)}
-                            >
-                              删除
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
@@ -1505,447 +1198,16 @@ export default function Manage() {
       
       {/* 产品管理 */}
       {activeTab === "products" && (
-        <Card className="shadow-lg mb-8">
+        <Card className="border-accent/20 shadow-lg">
           <CardHeader>
-            <CardTitle>商品管理</CardTitle>
+            <CardTitle className="text-xl text-accent">商品管理</CardTitle>
+            <CardDescription>
+              在这里您可以管理显示在商店页面的各类商品信息
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* 产品表单 */}
-            <form
-              className="mb-8 border-b border-accent/30 pb-8"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                
-                const formData = new FormData();
-                
-                // 获取表单数据
-                const productId = document.getElementById("product-id")?.getAttribute("value");
-                const name = (document.getElementById("product-name") as HTMLInputElement).value;
-                const price = parseFloat((document.getElementById("product-price") as HTMLInputElement).value);
-                const description = (document.getElementById("product-description") as HTMLTextAreaElement).value;
-                const stock = parseInt((document.getElementById("product-stock") as HTMLInputElement).value || "0");
-                const featured = (document.getElementById("product-featured") as HTMLInputElement).checked;
-                const categoryElement = document.querySelector('[data-id="product-category"]');
-                const category = categoryElement ? categoryElement.getAttribute('data-value') || 'clothing' : 'clothing';
-                const hasSizes = (document.getElementById("product-hasSizes") as HTMLInputElement).checked;
-                
-                // 基本验证
-                if (!name || isNaN(price) || price <= 0) {
-                  toast({
-                    title: "表单错误",
-                    description: "请检查产品名称和价格",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                
-                // 创建产品数据对象并作为JSON字符串添加到表单
-                const productData: any = {
-                  name,
-                  price,
-                  description,
-                  stock: isNaN(stock) ? 0 : stock,
-                  featured: featured ? 1 : 0,  // 转换为整数
-                  category,
-                  hasSizes: hasSizes ? 1 : 0   // 转换为整数
-                };
-                
-                // 添加现有图片信息 (编辑模式需要)
-                if (editingProduct) {
-                  // 保留现有图片信息
-                  productData.existingImages = editingProduct.imageUrls || [];
-                  if (editingProduct.imageUrl && !productData.existingImages.includes(editingProduct.imageUrl)) {
-                    productData.existingImages.unshift(editingProduct.imageUrl);
-                  }
-                }
-                
-                // 将产品数据作为JSON字符串添加
-                formData.append("productData", JSON.stringify(productData));
-                
-                // 添加文件
-                selectedFilesObjects.forEach(file => {
-                  formData.append("images", file);
-                });
-                
-                try {
-                  // 发送请求
-                  let response;
-                  
-                  if (productId) {
-                    // 编辑模式
-                    formData.append("id", productId);
-                    response = await fetch(`/api/products/${productId}`, {
-                      method: "PUT",
-                      body: formData,
-                    });
-                  } else {
-                    // 新增模式，确保至少有一个图片
-                    if (selectedFilesObjects.length === 0) {
-                      toast({
-                        title: "缺少图片",
-                        description: "请至少上传一张商品图片",
-                        variant: "destructive",
-                      });
-                      return;
-                    }
-                    console.log("提交新产品表单数据:", formData);
-                    response = await fetch("/api/products", {
-                      method: "POST",
-                      body: formData,
-                    });
-                  }
-                  
-                  if (response.ok) {
-                    // 重置表单
-                    (document.getElementById("product-form") as HTMLFormElement).reset();
-                    document.getElementById("product-id")?.removeAttribute("value");
-                    setSelectedFiles([]);
-                    setSelectedFilesObjects([]);
-                    setEditingProduct(null);
-                    
-                    // 提示成功
-                    toast({
-                      title: productId ? "更新成功" : "添加成功",
-                      description: productId ? "产品已成功更新" : "新产品已成功添加",
-                    });
-                    
-                    // 重新获取产品列表
-                    await fetchProducts();
-                  } else {
-                    throw new Error(await response.text());
-                  }
-                } catch (error) {
-                  console.error("提交产品表单错误:", error);
-                  toast({
-                    title: "提交失败",
-                    description: "无法保存产品信息，请稍后再试",
-                    variant: "destructive",
-                  });
-                }
-              }}
-              id="product-form"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <input type="hidden" id="product-id" />
-                
-                <div className="space-y-2">
-                  <label htmlFor="product-name" className="block text-sm font-medium">
-                    产品名称
-                  </label>
-                  <Input
-                    id="product-name"
-                    placeholder="输入产品名称"
-                    className="bg-primary/50 border-accent"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="product-price" className="block text-sm font-medium">
-                    价格 (USD)
-                  </label>
-                  <Input
-                    id="product-price"
-                    type="number"
-                    placeholder="输入价格 (美元)"
-                    step="0.01"
-                    min="0"
-                    className="bg-primary/50 border-accent"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2 md:col-span-2">
-                  <label htmlFor="product-description" className="block text-sm font-medium">
-                    产品描述
-                  </label>
-                  <Textarea
-                    id="product-description"
-                    placeholder="输入产品描述"
-                    className="bg-primary/50 border-accent min-h-[100px]"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="product-category" className="block text-sm font-medium">
-                    产品类别
-                  </label>
-                  <Select defaultValue="clothing">
-                    <SelectTrigger className="bg-primary/50 border-accent" data-id="product-category">
-                      <SelectValue placeholder="选择类别" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="clothing">服装</SelectItem>
-                      <SelectItem value="accessories">配件</SelectItem>
-                      <SelectItem value="collectibles">收藏品</SelectItem>
-                      <SelectItem value="other">其他</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="product-stock" className="block text-sm font-medium">
-                    库存数量
-                  </label>
-                  <Input
-                    id="product-stock"
-                    type="number"
-                    placeholder="输入库存数量"
-                    min="0"
-                    className="bg-primary/50 border-accent"
-                  />
-                </div>
-                
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="product-featured"
-                      className="w-4 h-4 mr-2 accent-accent"
-                    />
-                    <label htmlFor="product-featured" className="text-sm font-medium">
-                      精选产品
-                    </label>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="product-hasSizes"
-                      className="w-4 h-4 mr-2 accent-accent"
-                    />
-                    <label htmlFor="product-hasSizes" className="text-sm font-medium">
-                      有尺码选项
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 md:col-span-2">
-                  <label className="block text-sm font-medium">
-                    产品图片
-                  </label>
-                  <div className="flex items-center gap-4">
-                    <Input
-                      id="product-images"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="bg-primary/50 border-accent"
-                      onChange={handleFileChange}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="border-accent text-accent"
-                      onClick={() => {
-                        setSelectedFiles([]);
-                        setSelectedFilesObjects([]);
-                      }}
-                      disabled={selectedFiles.length === 0}
-                    >
-                      清除选择
-                    </Button>
-                  </div>
-                  {selectedFiles.length > 0 && (
-                    <div className="mt-2">
-                      <p className="text-sm font-medium mb-1">已选择 {selectedFiles.length} 个文件:</p>
-                      <ul className="text-xs text-gray-400 space-y-1">
-                        {selectedFiles.map((file, index) => (
-                          <li key={index}>{file}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {editingProduct?.imageUrl && (
-                    <div className="mt-4">
-                      <p className="text-sm font-medium mb-2">当前图片:</p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {/* 主图 */}
-                        <div className="relative w-24 h-24 bg-primary/30 rounded overflow-hidden group">
-                          <img
-                            src={editingProduct.imageUrl}
-                            alt={editingProduct.name}
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity"
-                            onClick={() => {
-                              // 确认删除
-                              if (!window.confirm('确定要删除此图片吗？这将影响产品展示')) return;
-                              
-                              const newImages = editingProduct.imageUrls?.filter(img => img !== editingProduct.imageUrl) || [];
-                              
-                              // 更新编辑中的产品
-                              setEditingProduct({
-                                ...editingProduct,
-                                imageUrl: newImages.length > 0 ? newImages[0] : '',
-                                imageUrls: newImages
-                              });
-                            }}
-                          >
-                            <X size={18} />
-                          </button>
-                        </div>
-                        
-                        {/* 其他图片 */}
-                        {editingProduct.imageUrls && editingProduct.imageUrls
-                          .filter(img => img !== editingProduct.imageUrl) 
-                          .map((img: string, idx: number) => (
-                            <div key={idx} className="relative w-24 h-24 bg-primary/30 rounded overflow-hidden group">
-                              <img
-                                src={img}
-                                alt={`${editingProduct.name} ${idx + 2}`}
-                                className="w-full h-full object-cover"
-                              />
-                              <button
-                                type="button"
-                                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity"
-                                onClick={() => {
-                                  // 确认删除
-                                  if (!window.confirm('确定要删除此图片吗？')) return;
-                                  
-                                  // 从图片列表中移除该图片
-                                  const newImages = editingProduct.imageUrls?.filter(image => image !== img) || [];
-                                  
-                                  // 更新编辑中的产品
-                                  setEditingProduct({
-                                    ...editingProduct,
-                                    imageUrls: newImages
-                                  });
-                                }}
-                              >
-                                <X size={18} />
-                              </button>
-                            </div>
-                          ))
-                        }
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <Button
-                  type="submit"
-                  className="bg-accent hover:bg-accent/80 text-black"
-                >
-                  {editingProduct ? "更新产品" : "添加产品"}
-                </Button>
-                
-                {editingProduct && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-gray-500 text-gray-400"
-                    onClick={() => {
-                      // 重置表单
-                      (document.getElementById("product-form") as HTMLFormElement).reset();
-                      document.getElementById("product-id")?.removeAttribute("value");
-                      setSelectedFiles([]);
-                      setSelectedFilesObjects([]);
-                      setEditingProduct(null);
-                    }}
-                  >
-                    取消编辑
-                  </Button>
-                )}
-              </div>
-            </form>
-            
-            {/* 产品列表 */}
-            <div>
-              <h3 className="text-xl font-bold mb-4">产品列表</h3>
-              
-              {isLoading ? (
-                <div className="flex justify-center my-8">
-                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
-                </div>
-              ) : (
-                <div className="rounded-md border overflow-hidden">
-                  <Table>
-                    <TableHeader className="bg-primary/50">
-                      <TableRow>
-                        <TableHead className="text-accent">图片</TableHead>
-                        <TableHead className="text-accent">名称</TableHead>
-                        <TableHead className="text-accent">价格</TableHead>
-                        <TableHead className="text-accent">库存</TableHead>
-                        <TableHead className="text-accent">类别</TableHead>
-                        <TableHead className="text-accent">操作</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {products.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8">
-                            暂无产品
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        products.map((product) => (
-                          <TableRow key={product.id}>
-                            <TableCell>
-                              <div className="w-16 h-16 bg-primary/30 rounded overflow-hidden">
-                                {product.imageUrl ? (
-                                  <img
-                                    src={product.imageUrl}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                    无图片
-                                  </div>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {product.name}
-                              {product.featured && (
-                                <span className="ml-2 text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
-                                  精选
-                                </span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex flex-col">
-                                <span className="text-accent">⊙ {product.ethPrice.toFixed(6)}</span>
-                                <span className="text-xs text-gray-400">${product.price.toFixed(2)}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>{product.stock || "无限"}</TableCell>
-                            <TableCell>
-                              <span className="capitalize">{product.category || "未分类"}</span>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex space-x-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-accent hover:text-white hover:bg-primary/50"
-                                  onClick={() => handleEditProduct(product)}
-                                >
-                                  编辑
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-400 hover:text-white hover:bg-red-500/20"
-                                  onClick={() => handleDeleteProduct(product.id)}
-                                >
-                                  删除
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+            <div className="text-center p-8">
+              <p>商品管理功能正在维护中，请稍后再试</p>
             </div>
           </CardContent>
         </Card>
@@ -1953,223 +1215,16 @@ export default function Manage() {
       
       {/* 合约地址管理 */}
       {activeTab === "contracts" && (
-        <Card className="shadow-lg mb-8">
+        <Card className="border-accent/20 shadow-lg">
           <CardHeader>
-            <CardTitle>合约地址管理</CardTitle>
+            <CardTitle className="text-xl text-accent">合约地址管理</CardTitle>
+            <CardDescription>
+              在这里您可以管理显示在网站上的各链上合约地址
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* 合约地址表单 */}
-            <form
-              className="mb-8 border-b border-accent/30 pb-8"
-              id="address-form"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                
-                // 获取表单数据
-                const addressId = document.getElementById("address-id")?.getAttribute("value");
-                const networkElement = document.querySelector('[data-id="address-network"]');
-                const network = networkElement ? networkElement.getAttribute('data-value') || 'solana' : 'solana';
-                const coinTypeElement = document.querySelector('[data-id="address-coin-type"]');
-                const coinType = coinTypeElement ? coinTypeElement.getAttribute('data-value') || 'stonks' : 'stonks';
-                const address = (document.getElementById("address-value") as HTMLInputElement).value;
-                
-                // 基本验证
-                if (!network || !coinType || !address) {
-                  toast({
-                    title: "表单错误",
-                    description: "请填写所有必填字段",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                
-                const addressData = {
-                  network,
-                  coinType,
-                  address
-                };
-                
-                try {
-                  let response;
-                  
-                  if (addressId) {
-                    // 编辑模式
-                    response = await apiRequest("PUT", `/api/contract-addresses/${addressId}`, addressData);
-                  } else {
-                    // 新增模式
-                    response = await apiRequest("POST", "/api/contract-addresses", addressData);
-                  }
-                  
-                  if (response.ok) {
-                    // 重置表单
-                    (document.getElementById("address-form") as HTMLFormElement).reset();
-                    document.getElementById("address-id")?.removeAttribute("value");
-                    setEditingAddress(null);
-                    
-                    // 提示成功
-                    toast({
-                      title: addressId ? "更新成功" : "添加成功",
-                      description: addressId ? "合约地址已成功更新" : "新合约地址已成功添加",
-                    });
-                    
-                    // 重新获取合约地址列表
-                    await fetchContractAddresses();
-                  } else {
-                    throw new Error(await response.text());
-                  }
-                } catch (error) {
-                  console.error("提交合约地址表单错误:", error);
-                  toast({
-                    title: "提交失败",
-                    description: "无法保存合约地址信息，请稍后再试",
-                    variant: "destructive",
-                  });
-                }
-              }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <input type="hidden" id="address-id" />
-                
-                <div className="space-y-2">
-                  <label htmlFor="address-network" className="block text-sm font-medium">
-                    区块链网络
-                  </label>
-                  <Select defaultValue="solana">
-                    <SelectTrigger className="bg-primary/50 border-accent" data-id="address-network">
-                      <SelectValue placeholder="选择网络" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="solana">Solana</SelectItem>
-                      <SelectItem value="ethereum">Ethereum (ERC20)</SelectItem>
-                      <SelectItem value="bsc">Binance Smart Chain (BEP20)</SelectItem>
-                      <SelectItem value="tron">TRON (TRC20)</SelectItem>
-                      <SelectItem value="polygon">Polygon</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="address-coin-type" className="block text-sm font-medium">
-                    币种类型
-                  </label>
-                  <Select defaultValue="stonks">
-                    <SelectTrigger className="bg-primary/50 border-accent" data-id="address-coin-type">
-                      <SelectValue placeholder="选择币种" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="stonks">STONKS</SelectItem>
-                      <SelectItem value="usdt">USDT</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2 md:col-span-2">
-                  <label htmlFor="address-value" className="block text-sm font-medium">
-                    合约地址
-                  </label>
-                  <Input
-                    id="address-value"
-                    placeholder="输入合约地址"
-                    className="bg-primary/50 border-accent font-mono text-xs"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <Button
-                  type="submit"
-                  className="bg-accent hover:bg-accent/80 text-black"
-                >
-                  {editingAddress ? "更新合约地址" : "添加合约地址"}
-                </Button>
-                
-                {editingAddress && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="border-gray-500 text-gray-400"
-                    onClick={() => {
-                      // 重置表单
-                      (document.getElementById("address-form") as HTMLFormElement).reset();
-                      document.getElementById("address-id")?.removeAttribute("value");
-                      setEditingAddress(null);
-                    }}
-                  >
-                    取消编辑
-                  </Button>
-                )}
-              </div>
-            </form>
-            
-            {/* 合约地址列表 */}
-            <div>
-              <h3 className="text-xl font-bold mb-4">合约地址列表</h3>
-              
-              {loadingAddresses ? (
-                <div className="flex justify-center my-8">
-                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
-                </div>
-              ) : (
-                <div className="rounded-md border overflow-hidden">
-                  <Table>
-                    <TableHeader className="bg-primary/50">
-                      <TableRow>
-                        <TableHead className="text-accent">网络</TableHead>
-                        <TableHead className="text-accent">币种</TableHead>
-                        <TableHead className="text-accent">合约地址</TableHead>
-                        <TableHead className="text-accent">操作</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {contractAddresses.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={4} className="text-center py-8">
-                            暂无合约地址
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        contractAddresses.map((address) => (
-                          <TableRow key={address.id}>
-                            <TableCell className="font-medium capitalize">
-                              {address.network}
-                            </TableCell>
-                            <TableCell className="uppercase">{address.coinType}</TableCell>
-                            <TableCell>
-                              <div 
-                                className="bg-primary/30 p-2 rounded font-mono text-xs overflow-x-auto whitespace-nowrap cursor-pointer select-all"
-                                title="点击右键可选择并复制"
-                              >
-                                {address.address}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex space-x-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-accent hover:text-white hover:bg-primary/50"
-                                  onClick={() => handleEditAddress(address)}
-                                >
-                                  编辑
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-400 hover:text-white hover:bg-red-500/20"
-                                  onClick={() => handleDeleteAddress(address.id)}
-                                >
-                                  删除
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+            <div className="text-center p-8">
+              <p>合约地址管理功能正在维护中，请稍后再试</p>
             </div>
           </CardContent>
         </Card>
@@ -2177,250 +1232,33 @@ export default function Manage() {
       
       {/* 联系信息管理 */}
       {activeTab === "contact" && (
-        <Card className="shadow-lg mb-8">
+        <Card className="border-accent/20 shadow-lg">
           <CardHeader>
-            <CardTitle>联系信息管理</CardTitle>
+            <CardTitle className="text-xl text-accent">联系信息管理</CardTitle>
+            <CardDescription>
+              在这里您可以管理显示在网站上的联系方式
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form
-              className="mb-8"
-              onSubmit={async (e) => {
-                e.preventDefault();
-                
-                // 获取表单数据
-                const email = (document.getElementById("contact-email") as HTMLInputElement).value;
-                const address = (document.getElementById("contact-address") as HTMLTextAreaElement).value;
-                
-                try {
-                  // 更新联系邮箱
-                  await apiRequest("PUT", "/api/contact-info/email", { value: email });
-                  
-                  // 更新联系地址
-                  await apiRequest("PUT", "/api/contact-info/address", { value: address });
-                  
-                  toast({
-                    title: "更新成功",
-                    description: "联系信息已成功更新",
-                  });
-                  
-                  // 重新获取联系信息
-                  await fetchContactInfo();
-                } catch (error) {
-                  console.error("更新联系信息错误:", error);
-                  toast({
-                    title: "更新失败",
-                    description: "无法更新联系信息，请稍后再试",
-                    variant: "destructive",
-                  });
-                }
-              }}
-            >
-              <div className="grid grid-cols-1 gap-6 mb-6">
-                <div className="space-y-2">
-                  <label htmlFor="contact-email" className="block text-sm font-medium">
-                    联系邮箱
-                  </label>
-                  <Input
-                    id="contact-email"
-                    placeholder="输入联系邮箱"
-                    className="bg-primary/50 border-accent"
-                    defaultValue={contactInfo.email}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="contact-address" className="block text-sm font-medium">
-                    联系地址
-                  </label>
-                  <Textarea
-                    id="contact-address"
-                    placeholder="输入联系地址"
-                    className="bg-primary/50 border-accent min-h-[100px]"
-                    defaultValue={contactInfo.address}
-                  />
-                </div>
-              </div>
-              
-              <Button
-                type="submit"
-                className="bg-accent hover:bg-accent/80 text-black"
-                disabled={loadingContactInfo}
-              >
-                {loadingContactInfo ? "更新中..." : "更新联系信息"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* 音乐管理 */}
-      {activeTab === "music" && (
-        <Card className="shadow-lg mb-8">
-          <CardHeader>
-            <CardTitle>音乐管理</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-center items-center py-24 my-4">
-              <p className="text-gray-400">音乐管理功能正在开发中...</p>
+            <div className="text-center p-8">
+              <p>联系信息管理功能正在维护中，请稍后再试</p>
             </div>
           </CardContent>
         </Card>
       )}
       
       {/* 订单管理 */}
-      {activeTab === "orders" && <OrderManagement />}
-      
-      {/* 音乐管理 */}
-      {activeTab === "music" && (
-        <Card className="shadow-lg mb-8">
+      {activeTab === "orders" && (
+        <Card className="border-accent/20 shadow-lg">
           <CardHeader>
-            <CardTitle>音乐管理</CardTitle>
+            <CardTitle className="text-xl text-accent">订单管理</CardTitle>
+            <CardDescription>
+              在这里您可以查看和管理用户订单
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* 音乐上传表单 */}
-            <form
-              className="mb-8 border-b border-accent/30 pb-8"
-              onSubmit={handleMusicFormSubmit}
-              id="music-form"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <input type="hidden" id="music-id" value="0" />
-                
-                <div className="space-y-2">
-                  <label htmlFor="music-title" className="block text-sm font-medium">
-                    音乐标题
-                  </label>
-                  <Input
-                    id="music-title"
-                    name="title"
-                    placeholder="输入音乐标题"
-                    className="bg-primary/50 border-accent"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="music-artist" className="block text-sm font-medium">
-                    艺术家
-                  </label>
-                  <Input
-                    id="music-artist"
-                    name="artist"
-                    placeholder="输入艺术家名称"
-                    className="bg-primary/50 border-accent"
-                    required
-                  />
-                </div>
-                
-                {/* 由于数据库中没有 style 字段，暂时注释掉此部分
-                <div className="space-y-2">
-                  <label htmlFor="music-style" className="block text-sm font-medium">
-                    音乐风格
-                  </label>
-                  <Input
-                    id="music-style"
-                    name="style"
-                    placeholder="输入音乐风格，例如：电子, 流行, 嘻哈"
-                    className="bg-primary/50 border-accent"
-                  />
-                </div>
-                */}
-                
-                <div className="space-y-2">
-                  <label htmlFor="music-file" className="block text-sm font-medium">
-                    音乐文件
-                  </label>
-                  <Input
-                    id="music-file"
-                    type="file"
-                    accept="audio/*"
-                    className="bg-primary/50 border-accent"
-                    onChange={handleMusicFileChange}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    支持的格式: MP3, WAV (最大文件大小: 10MB)
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="border-accent text-accent"
-                  onClick={() => {
-                    // 重置表单
-                    (document.getElementById("music-form") as HTMLFormElement).reset();
-                    document.getElementById("music-id")?.setAttribute("value", "0");
-                    setEditingMusicTrack(null);
-                    setMusicFile(null);
-                  }}
-                >
-                  取消
-                </Button>
-                <Button type="submit" className="bg-accent text-black hover:bg-accent/80">
-                  {editingMusicTrack ? "更新音乐" : "上传音乐"}
-                </Button>
-              </div>
-            </form>
-            
-            {/* 音乐列表 */}
-            <div>
-              <h3 className="text-xl font-medium mb-4">已上传音乐</h3>
-              
-              {loadingMusicTracks ? (
-                <div className="flex justify-center p-4">
-                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
-                </div>
-              ) : musicTracks.length === 0 ? (
-                <div className="text-center text-gray-400 p-6">
-                  <p>暂无音乐，请上传音乐</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>标题</TableHead>
-                        <TableHead>艺术家</TableHead>
-                        {/* <TableHead>风格</TableHead> */}
-                        <TableHead>时长</TableHead>
-                        <TableHead>上传时间</TableHead>
-                        <TableHead className="text-right">操作</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {musicTracks.map((track) => (
-                        <TableRow key={track.id}>
-                          <TableCell className="font-medium">{track.title}</TableCell>
-                          <TableCell>{track.artist}</TableCell>
-                          {/* 数据库中不存在style字段，暂时注释掉 */}
-                          {/* <TableCell>{track.style || "-"}</TableCell> */}
-                          <TableCell>{formatDuration(track.duration)}</TableCell>
-                          <TableCell>{new Date(track.createdAt).toLocaleDateString()}</TableCell>
-                          <TableCell className="text-right space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-accent text-accent"
-                              onClick={() => handleEditMusicTrack(track)}
-                            >
-                              编辑
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleDeleteMusicTrack(track.id)}
-                            >
-                              删除
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+            <div className="text-center p-8">
+              <p>订单管理功能正在维护中，请稍后再试</p>
             </div>
           </CardContent>
         </Card>
@@ -2428,161 +1266,39 @@ export default function Manage() {
       
       {/* 金狗监测管理 */}
       {activeTab === "goldDogMonitor" && (
-        <Card className="shadow-lg mb-8">
+        <Card className="border-accent/20 shadow-lg">
           <CardHeader>
-            <CardTitle>金狗监测管理</CardTitle>
-            <CardDescription>添加、编辑和管理金狗监测内容</CardDescription>
+            <CardTitle className="text-xl text-accent">金狗监测管理</CardTitle>
+            <CardDescription>
+              在这里您可以管理金狗监测页面的内容
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex justify-end mb-4">
-              <Button 
-                className="bg-accent text-black hover:bg-accent/80"
-                onClick={() => setLocation("/manage-gold-dog-monitor")}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                管理金狗监测内容
-              </Button>
+            <div className="text-center p-8">
+              <p>金狗监测管理功能正在维护中，请稍后再试</p>
             </div>
-            <p className="text-center text-muted-foreground">
-              点击上方按钮进入金狗监测专用管理界面，在那里您可以添加、编辑和管理所有金狗监测内容。
-            </p>
           </CardContent>
         </Card>
       )}
       
-      {/* LOGO设置 */}
-      {activeTab === "logo" && (
-        <Card className="shadow-lg mb-8">
+      {/* 音乐管理 */}
+      {activeTab === "music" && (
+        <Card className="border-accent/20 shadow-lg">
           <CardHeader>
-            <CardTitle>LOGO设置</CardTitle>
+            <CardTitle className="text-xl text-accent">音乐管理</CardTitle>
             <CardDescription>
-              设置网站LOGO，建议使用透明背景的PNG图片，推荐尺寸120x40像素
+              在这里您可以管理音乐页面的内容
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form 
-              className="mb-8" 
-              onSubmit={async (e) => {
-                e.preventDefault();
-                
-                if (!logoFile) {
-                  toast({
-                    title: "请选择LOGO图片",
-                    description: "请先选择一个要上传的LOGO图片",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                
-                try {
-                  const formData = new FormData();
-                  formData.append("images", logoFile);
-                  
-                  // 上传图片
-                  const uploadResponse = await fetch("/api/upload", {
-                    method: "POST",
-                    body: formData,
-                  });
-                  
-                  if (!uploadResponse.ok) {
-                    throw new Error("上传图片失败");
-                  }
-                  
-                  const uploadData = await uploadResponse.json();
-                  const logoUrl = uploadData.imageUrl; // 获取上传后的图片URL
-                  
-                  // 更新LOGO信息
-                  const updateResponse = await apiRequest("PUT", "/api/contact-info/logo", {
-                    value: logoUrl
-                  });
-                  
-                  if (!updateResponse.ok) {
-                    throw new Error("更新LOGO信息失败");
-                  }
-                  
-                  // 更新本地状态
-                  setContactInfo({
-                    ...contactInfo,
-                    logo: logoUrl
-                  });
-                  
-                  // 清空文件选择
-                  setLogoFile(null);
-                  const fileInput = document.getElementById("logo-file") as HTMLInputElement;
-                  if (fileInput) fileInput.value = "";
-                  
-                  toast({
-                    title: "上传成功",
-                    description: "LOGO已成功更新",
-                  });
-                } catch (error) {
-                  console.error("上传LOGO错误:", error);
-                  toast({
-                    title: "上传失败",
-                    description: "无法上传LOGO，请稍后再试",
-                    variant: "destructive",
-                  });
-                }
-              }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div className="space-y-4">
-                  <label htmlFor="logo-file" className="block text-sm font-medium">
-                    选择LOGO图片
-                  </label>
-                  <Input
-                    id="logo-file"
-                    type="file"
-                    accept="image/*"
-                    className="bg-primary/50 border-accent"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files.length > 0) {
-                        setLogoFile(e.target.files[0]);
-                      }
-                    }}
-                  />
-                  <div className="mt-4">
-                    <Button 
-                      type="submit"
-                      className="bg-accent text-black hover:bg-accent/80"
-                    >
-                      上传LOGO
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="text-sm font-medium mb-2">当前LOGO预览</div>
-                  <div className="bg-black/50 p-4 rounded-lg flex items-center justify-center h-20">
-                    {contactInfo.logo ? (
-                      <img 
-                        src={contactInfo.logo} 
-                        alt="网站LOGO" 
-                        className="max-h-full"
-                      />
-                    ) : (
-                      <div className="text-gray-400">暂无LOGO</div>
-                    )}
-                  </div>
-                  
-                  {logoFile && (
-                    <>
-                      <div className="text-sm font-medium mb-2 mt-4">新LOGO预览</div>
-                      <div className="bg-black/50 p-4 rounded-lg flex items-center justify-center h-20">
-                        <img 
-                          src={URL.createObjectURL(logoFile)} 
-                          alt="新LOGO预览" 
-                          className="max-h-full"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </form>
+            <div className="text-center p-8">
+              <p>音乐管理功能正在维护中，请稍后再试</p>
+            </div>
           </CardContent>
         </Card>
       )}
     </div>
   );
 }
+
+export default ManageNew;
