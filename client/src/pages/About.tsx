@@ -52,28 +52,22 @@ export default function About() {
           </div>
         </div>
         
-        {/* Community Section */}
+        {/* Community Section - 更改为革新运动 */}
         <div className="mt-16 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[#00ffcc] text-center">{t("about.communityTitle")}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[#00ffcc] text-center">加入这场革新运动</h2>
           
           <div className="bg-primary/30 border border-accent/20 p-8 rounded-lg flex flex-col items-center">
-            <p className="mb-6 max-w-3xl text-center">{t("about.communityDescription")}</p>
+            <p className="max-w-3xl text-center">STONKS DEX SHOP不属于某个团队，而是属于所有相信去中心化未来的人。无论你是开发者、设计师，还是区块链文化的传播者，这里都有属于你的角色：</p>
             
-            <ul className="list-disc pl-5 text-left space-y-2 mb-6 max-w-3xl">
-              <li>{t("about.communityPoint1")}</li>
-              <li>{t("about.communityPoint2")}</li>
-              <li>{t("about.communityPoint3")}</li>
-              <li>{t("about.communityPoint4")}</li>
-            </ul>
-            
-            <div className="mt-8 text-center">
-              <a 
-                href="https://t.me/STONKSOPEN" 
-                target="_blank"
-                className="bg-accent text-primary px-6 py-3 rounded-md font-medium hover:bg-white transition-colors"
-              >
-                {t("about.joinTelegram")}
-              </a>
+            <div className="flex flex-col items-center mt-4 max-w-3xl">
+              <p className="text-center">加入Telegram社区，获取MY STONKS代币，成为生态共建股东。</p>
+              <p className="text-center">参与周边共创计划，让你的设计成为社区文化符号。</p>
+              <p className="text-center">出席全球线下活动，与志同道合者探索区块链的更多可能。</p>
+              
+              <p className="mt-6 text-center">我们正在书写一个新时代的故事——技术属于大众，价值回归社区，创新没有边界。</p>
+              <p className="mt-4 font-bold text-[#00ffcc] text-center">STONKS TO THE MOON，未来由你定义！</p>
+              <p className="mt-2 text-center">→ <a href="https://t.me/STONKSOPEN" target="_blank" className="text-[#00ffcc]">立即加入社区</a> | <a href="/products" className="text-[#00ffcc]">探索周边系列</a></p>
+              <p className="mt-4 italic text-center">MY STONKS生态：因为相信，所以看见！</p>
             </div>
           </div>
         </div>
