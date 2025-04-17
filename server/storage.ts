@@ -514,7 +514,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getMusicTracks(): Promise<MusicTrack[]> {
-    return db.select().from(musicTracks).orderBy(asc(musicTracks.order));
+    return db.select().from(musicTracks).orderBy(desc(musicTracks.id)); // 使用id排序替代不存在的order字段
   }
   
   async getMusicTrack(id: number): Promise<MusicTrack | undefined> {
