@@ -218,6 +218,39 @@ musicRouter.get('/style/:style', async (req: Request, res: Response) => {
 });
 */
 
+// 音乐文件上传端点
+musicRouter.post('/upload', musicUpload.single('musicFile'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: '没有提供音乐文件' });
+    }
+
+    // 文件上传成功，生成URL
+    const fileUrl = `/uploads/music/${req.file.filename}`;
+    
+    // 获取音频时长
+    let duration = 0;
+    try {
+      const filePath = path.join(process.cwd(), 'public', fileUrl);
+      duration = await getAudioDurationInSeconds(filePath);
+    } catch (error) {
+      console.warn('无法获取音频时长:', error);
+    }
+    
+    res.status(200).json({
+      url: fileUrl,
+      duration,
+      filename: req.file.filename,
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
+  } catch (error) {
+    console.error('音乐文件上传错误:', error);
+    res.status(500).json({ message: '上传音乐文件时出错', error: String(error) });
+  }
+});
+
 export const setupMusicRoutes = (app: Router) => {
   app.use('/music', musicRouter);
 };

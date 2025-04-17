@@ -2338,13 +2338,75 @@ export default function ManageNew() {
                 </div>
                 
                 <div>
+                  <label htmlFor="music-file" className="block text-sm font-medium mb-2">
+                    上传音乐文件
+                  </label>
+                  <div className="flex flex-col space-y-2">
+                    <Input
+                      id="music-file"
+                      name="musicFile"
+                      type="file"
+                      accept="audio/*"
+                      className="bg-primary/50 border-accent"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            // 创建FormData对象
+                            const formData = new FormData();
+                            formData.append('musicFile', file);
+                            
+                            // 显示上传中的提示
+                            toast({
+                              title: "正在上传",
+                              description: "音乐文件上传中，请稍候...",
+                            });
+                            
+                            // 上传文件
+                            const response = await fetch('/api/music/upload', {
+                              method: 'POST',
+                              body: formData,
+                            });
+                            
+                            if (!response.ok) {
+                              throw new Error(`上传失败: ${response.statusText}`);
+                            }
+                            
+                            const data = await response.json();
+                            
+                            // 更新URL输入框的值
+                            const urlInput = document.getElementById('music-url') as HTMLInputElement;
+                            if (urlInput) {
+                              urlInput.value = data.url;
+                            }
+                            
+                            toast({
+                              title: "上传成功",
+                              description: `音乐文件已上传: ${file.name}`,
+                            });
+                          } catch (error) {
+                            console.error('上传音乐文件错误:', error);
+                            toast({
+                              title: "上传失败",
+                              description: String(error),
+                              variant: "destructive",
+                            });
+                          }
+                        }
+                      }}
+                    />
+                    <p className="text-xs text-gray-400">支持 MP3, WAV, OGG 等常见音频格式</p>
+                  </div>
+                </div>
+                
+                <div>
                   <label htmlFor="music-url" className="block text-sm font-medium mb-2">
                     音乐URL *
                   </label>
                   <Input
                     id="music-url"
                     name="url"
-                    placeholder="输入音乐文件URL"
+                    placeholder="输入音乐文件URL或通过上方上传"
                     className="bg-primary/50 border-accent"
                     required
                     defaultValue={editingMusic?.url || ""}
