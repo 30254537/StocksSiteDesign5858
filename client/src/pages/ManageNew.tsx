@@ -2131,10 +2131,252 @@ export default function ManageNew() {
         <Card className="shadow-lg mb-8">
           <CardHeader>
             <CardTitle>音乐管理</CardTitle>
+            <CardDescription>添加和管理音乐曲目</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <p>音乐管理功能已就绪</p>
+            {/* 添加音乐按钮 */}
+            <div className="flex justify-end mb-4">
+              <Button 
+                className="bg-accent text-black hover:bg-accent/80"
+                onClick={() => {
+                  setEditingMusic(null);
+                  // 重置表单
+                  const form = document.getElementById("music-form") as HTMLFormElement;
+                  if (form) form.reset();
+                  // 重置ID
+                  const idInput = document.getElementById("music-id") as HTMLInputElement;
+                  if (idInput) idInput.value = "0";
+                }}
+              >
+                添加新音乐
+              </Button>
+            </div>
+            
+            {/* 音乐表单 */}
+            <form
+              id="music-form"
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                try {
+                  // 获取表单数据
+                  const musicId = parseInt((document.getElementById("music-id") as HTMLInputElement).value);
+                  const title = (document.getElementById("music-title") as HTMLInputElement).value;
+                  const artist = (document.getElementById("music-artist") as HTMLInputElement).value;
+                  const style = (document.getElementById("music-style") as HTMLInputElement).value;
+                  const url = (document.getElementById("music-url") as HTMLInputElement).value;
+                  const filename = url.split('/').pop() || `music-${Date.now()}.mp3`;
+                  
+                  // 基本验证
+                  if (!title || !artist || !url) {
+                    toast({
+                      title: "表单不完整",
+                      description: "请填写所有必填字段",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  // 准备数据
+                  const musicData = {
+                    id: musicId || undefined,
+                    title,
+                    artist,
+                    style,
+                    url,
+                    filename,
+                    isPublic: 1, // 默认公开
+                    duration: 0, // 持续时间将在服务器端处理
+                  };
+                  
+                  // 确定API端点和方法
+                  const method = musicId > 0 ? "PUT" : "POST";
+                  const endpoint = musicId > 0 
+                    ? `/api/music/${musicId}` 
+                    : "/api/music";
+                  
+                  // 发送请求
+                  const response = await apiRequest(method, endpoint, musicData);
+                  
+                  if (!response.ok) {
+                    throw new Error("保存失败");
+                  }
+                  
+                  // 获取最新的音乐列表
+                  fetchMusicTracks();
+                  
+                  // 重置表单
+                  (e.target as HTMLFormElement).reset();
+                  (document.getElementById("music-id") as HTMLInputElement).value = "0";
+                  setEditingMusic(null);
+                  
+                  toast({
+                    title: musicId > 0 ? "更新成功" : "添加成功",
+                    description: musicId > 0 
+                      ? `音乐 ${title} 已更新` 
+                      : `新音乐 ${title} 已添加`,
+                  });
+                } catch (error) {
+                  console.error("保存音乐曲目错误:", error);
+                  toast({
+                    title: "操作失败",
+                    description: "无法保存音乐曲目，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <input type="hidden" id="music-id" name="id" value="0" />
+              
+              <div className="space-y-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="music-title" className="block text-sm font-medium mb-2">
+                      音乐标题 *
+                    </label>
+                    <Input
+                      id="music-title"
+                      name="title"
+                      placeholder="输入音乐标题"
+                      className="bg-primary/50 border-accent"
+                      required
+                      defaultValue={editingMusic?.title || ""}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="music-artist" className="block text-sm font-medium mb-2">
+                      艺术家 *
+                    </label>
+                    <Input
+                      id="music-artist"
+                      name="artist"
+                      placeholder="输入艺术家名称"
+                      className="bg-primary/50 border-accent"
+                      required
+                      defaultValue={editingMusic?.artist || ""}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="music-style" className="block text-sm font-medium mb-2">
+                    音乐风格
+                  </label>
+                  <Input
+                    id="music-style"
+                    name="style"
+                    placeholder="如: Rock, Electronic, Classical等"
+                    className="bg-primary/50 border-accent"
+                    defaultValue={editingMusic?.style || ""}
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="music-url" className="block text-sm font-medium mb-2">
+                    音乐URL *
+                  </label>
+                  <Input
+                    id="music-url"
+                    name="url"
+                    placeholder="输入音乐文件URL"
+                    className="bg-primary/50 border-accent"
+                    required
+                    defaultValue={editingMusic?.url || ""}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => {
+                    // 重置表单
+                    const form = document.getElementById("music-form") as HTMLFormElement;
+                    if (form) form.reset();
+                    // 重置ID
+                    const idInput = document.getElementById("music-id") as HTMLInputElement;
+                    if (idInput) idInput.value = "0";
+                    setEditingMusic(null);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button 
+                  type="submit"
+                  className="bg-accent text-black hover:bg-accent/80"
+                >
+                  {editingMusic ? "保存修改" : "添加音乐"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 音乐列表 */}
+            <div className="pt-4">
+              <h3 className="text-lg font-medium mb-4">当前音乐列表</h3>
+              
+              {loadingMusic ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                </div>
+              ) : musicTracks.length === 0 ? (
+                <div className="text-center py-6 border border-dashed border-accent/30 rounded-md">
+                  <p className="text-gray-400">暂无音乐曲目记录</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>标题</TableHead>
+                        <TableHead>艺术家</TableHead>
+                        <TableHead>风格</TableHead>
+                        <TableHead>试听</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {musicTracks.map((track) => (
+                        <TableRow key={track.id}>
+                          <TableCell>{track.id}</TableCell>
+                          <TableCell className="font-medium">{track.title}</TableCell>
+                          <TableCell>{track.artist}</TableCell>
+                          <TableCell>{track.style || "-"}</TableCell>
+                          <TableCell>
+                            <audio controls className="w-48 h-10">
+                              <source src={track.url} type="audio/mpeg" />
+                              您的浏览器不支持音频播放
+                            </audio>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-accent" 
+                                onClick={() => handleEditMusic(track)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-red-500" 
+                                onClick={() => handleDeleteMusic(track.id)}
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

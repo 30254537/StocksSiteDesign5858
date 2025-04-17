@@ -514,7 +514,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getMusicTracks(): Promise<MusicTrack[]> {
-    return db.select().from(musicTracks).orderBy(asc(musicTracks.order));
+    return db.select().from(musicTracks).orderBy(asc(musicTracks.id));
   }
   
   async getMusicTrack(id: number): Promise<MusicTrack | undefined> {
