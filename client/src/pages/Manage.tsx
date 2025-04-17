@@ -61,7 +61,7 @@ export default function Manage() {
       
       // 添加时间戳参数避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/products?t=${timestamp}`, null, {
+      const response = await apiRequest("GET", `/api/cms/products?t=${timestamp}`, null, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
@@ -377,7 +377,7 @@ export default function Manage() {
         });
         
         // 发送删除请求
-        await apiRequest("DELETE", `/api/products/${productId}`);
+        await apiRequest("DELETE", `/api/cms/products/${productId}`);
         
         toast({
           title: "删除成功",
@@ -610,7 +610,7 @@ export default function Manage() {
                 // 发送请求
                 if (isEditing) {
                   // 更新产品 - 确保不设置Content-Type以便浏览器自动添加带boundary的值
-                  await apiRequest("PUT", `/api/products/${productId.value}`, formData, {
+                  await apiRequest("PUT", `/api/cms/products/${productId.value}`, formData, {
                     headers: {} // 不设置Content-Type，让浏览器自动处理
                   });
                   
@@ -620,7 +620,7 @@ export default function Manage() {
                   });
                 } else {
                   // 创建新产品 - 确保不设置Content-Type以便浏览器自动添加带boundary的值
-                  await apiRequest("POST", "/api/products", formData, {
+                  await apiRequest("POST", "/api/cms/products", formData, {
                     headers: {} // 不设置Content-Type，让浏览器自动处理
                   });
                   
