@@ -2551,6 +2551,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 添加社区特点管理路由
   setupCommunityFeaturesRoutes(app);
   setupMusicRoutes(app);
+  
+  // 添加直接上传端点，绕过Vite中间件
+  const directUploadStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'music');
+      try {
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+          console.log('直接上传：成功创建音乐上传目录:', uploadDir);
+          fs.chmodSync(uploadDir, 0o777);
+        }
+        cb(null, uploadDir);
+      } catch (err) {
+        console.error('直接上传：创建目录失败:', err);
+        cb(null, path.join(process.cwd(), 'public'));
+      }
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      cb(null, 'direct-upload-' + uniqueSuffix + ext);
+    }
+  });
+
+  const directUploader = multer({
+    storage: directUploadStorage,
+    limits: { fileSize: 50 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+      // 接受所有文件类型 - 对于MP3文件，MIME类型有时被识别为application/octet-stream
+      console.log('接收到文件，MIME类型:', file.mimetype, '文件名:', file.originalname);
+      
+      // 检查文件扩展名是否为.mp3
+      const ext = path.extname(file.originalname).toLowerCase();
+      if (ext === '.mp3' || ext === '.wav' || ext === '.ogg' || ext === '.m4a' || file.mimetype.startsWith('audio/')) {
+        cb(null, true);
+      } else {
+        cb(new Error(`不支持的文件类型：${file.mimetype}，文件扩展名: ${ext}，只接受音频文件`));
+      }
+    }
+  });
+
+  // 使用直接响应避开Vite中间件
+  app.post('/api/direct-upload', directUploader.single('musicFile'), (req, res) => {
+    try {
+      console.log('=====> 直接上传处理:', req.file ? '文件已接收' : '未接收到文件');
+      
+      // 如果没有文件，返回错误
+      if (!req.file) {
+        console.log('=====> 直接上传：无文件');
+        // 防止Vite干扰，使用原始方法发送响应
+        res.setHeader('Content-Type', 'application/json');
+        res.statusCode = 400;
+        return res.end(JSON.stringify({ error: '未接收到文件' }));
+      }
+      
+      // 准备响应数据
+      const fileUrl = `/uploads/music/${req.file.filename}`;
+      let duration = 0;
+      
+      try {
+        const filePath = path.join(process.cwd(), 'public', fileUrl);
+        if (fs.existsSync(filePath)) {
+          console.log('=====> 直接上传：文件保存成功，路径:', filePath);
+        }
+      } catch (err) {
+        console.error('=====> 直接上传：检查文件失败:', err);
+      }
+      
+      // 构建响应数据
+      const responseData = {
+        success: true,
+        message: '文件上传成功',
+        file: {
+          url: fileUrl,
+          filename: req.file.filename,
+          originalname: req.file.originalname,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
+          duration
+        }
+      };
+      
+      console.log('=====> 直接上传：发送响应数据');
+      
+      // 使用原始方法发送响应，避免Vite干扰
+      res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 200;
+      res.end(JSON.stringify(responseData));
+      
+    } catch (error) {
+      console.error('=====> 直接上传错误:', error);
+      
+      // 设置错误响应
+      res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 500;
+      res.end(JSON.stringify({
+        error: true,
+        message: '文件上传失败',
+        details: String(error)
+      }));
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
