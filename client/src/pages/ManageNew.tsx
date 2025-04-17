@@ -2395,7 +2395,6 @@ export default function ManageNew() {
                           <TableCell>{track.id}</TableCell>
                           <TableCell className="font-medium">{track.title}</TableCell>
                           <TableCell>{track.artist}</TableCell>
-                          <TableCell>{track.style || "-"}</TableCell>
                           <TableCell>
                             <audio controls className="w-48 h-10">
                               <source src={track.url} type="audio/mpeg" />
