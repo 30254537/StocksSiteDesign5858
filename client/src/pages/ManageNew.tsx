@@ -2391,23 +2391,40 @@ export default function ManageNew() {
                               description: "音乐文件上传中，请稍候...",
                             });
                             
-                            // 使用新的直接上传端点
-                            const response = await fetch('/api/direct-upload', {
-                              method: 'POST',
-                              body: formData,
-                            });
-                            
-                            console.log('上传响应状态:', response.status, response.statusText);
-                            
-                            if (!response.ok) {
-                              throw new Error(`上传失败: ${response.statusText}`);
-                            }
-                            
-                            const data = await response.json();
-                            console.log('上传响应数据:', data);
-                            
-                            if (!data.success) {
-                              throw new Error(data.message || '上传失败，未知错误');
+                            try {
+                              // 检查上传URL
+                              const uploadUrl = '/api/direct-upload';
+                              console.log('准备上传到URL:', uploadUrl);
+                              
+                              // 记录FormData内容
+                              console.log('FormData内容:');
+                              for (const [key, value] of formData.entries()) {
+                                console.log(`- ${key}:`, typeof value === 'object' ? `文件: ${(value as File).name}, 大小: ${(value as File).size}字节` : value);
+                              }
+                              
+                              // 使用新的直接上传端点
+                              const response = await fetch(uploadUrl, {
+                                method: 'POST',
+                                body: formData,
+                              });
+                              
+                              console.log('上传响应状态:', response.status, response.statusText);
+                              
+                              if (!response.ok) {
+                                const errorText = await response.text();
+                                console.error('上传失败，响应内容:', errorText);
+                                throw new Error(`上传失败: ${response.statusText}，服务器返回: ${errorText}`);
+                              }
+                              
+                              const data = await response.json();
+                              console.log('上传响应数据:', data);
+                              
+                              if (!data.success) {
+                                throw new Error(data.message || '上传失败，未知错误');
+                              }
+                            } catch (uploadError) {
+                              console.error('上传过程中发生异常:', uploadError);
+                              throw uploadError;
                             }
                             
                             // 保存上传的URL到临时变量供表单提交使用
