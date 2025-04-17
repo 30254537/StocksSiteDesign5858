@@ -1372,7 +1372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // 配置音频文件上传
-  const musicUploadsDir = path.join(process.cwd(), 'public/music');
+  const musicUploadsDir = path.join(process.cwd(), 'public/uploads/music');
   if (!fs.existsSync(musicUploadsDir)) {
     fs.mkdirSync(musicUploadsDir, { recursive: true });
   }
@@ -1384,7 +1384,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       const ext = path.extname(file.originalname);
-      cb(null, uniqueSuffix + ext);
+      cb(null, 'music-' + uniqueSuffix + ext);
     }
   });
 
@@ -1473,7 +1473,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         artist,
         style,
         filename: file.filename,
-        url: `/music/${file.filename}`,
+        url: `/uploads/music/${file.filename}`,
         duration,
         isPublic: 1,
         createdBy: userId
@@ -1525,7 +1525,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           artist,
           style,
           filename: file.filename,
-          url: `/music/${file.filename}`,
+          url: `/uploads/music/${file.filename}`,
           duration,
           isPublic: 1,
           createdBy: userId
