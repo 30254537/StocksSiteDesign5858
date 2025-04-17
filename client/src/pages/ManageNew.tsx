@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import OrderManagement from "@/components/OrderManagement";
 import { X, Plus } from "lucide-react";
 
-export default function Manage() {
+function ManageNew() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
