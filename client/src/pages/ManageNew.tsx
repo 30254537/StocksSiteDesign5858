@@ -182,8 +182,16 @@ export default function ManageNew() {
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
+      console.log("正在获取社区活动数据...", `/api/community?t=${timestamp}`);
       const response = await apiRequest("GET", `/api/community?t=${timestamp}`);
+      
+      if (!response.ok) {
+        console.error("社区活动API响应状态错误:", response.status, response.statusText);
+        throw new Error(`API响应错误: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log("获取到社区活动数据:", data);
       setCommunityActivities(data);
     } catch (error) {
       console.error("获取社区活动失败:", error);
@@ -1535,10 +1543,12 @@ export default function ManageNew() {
                                 if (window.confirm("确定要删除此活动吗？此操作无法撤销。")) {
                                   // 添加时间戳参数以避免缓存问题
                                   const timestamp = new Date().getTime();
+                                  console.log("尝试删除社区活动:", activity.id, `/api/community/${activity.id}?t=${timestamp}`);
                                   apiRequest("DELETE", `/api/community/${activity.id}?t=${timestamp}`)
                                     .then(response => {
+                                      console.log("删除社区活动响应:", response.status, response.statusText);
                                       if (!response.ok) {
-                                        throw new Error('删除活动失败');
+                                        throw new Error(`删除活动失败: ${response.status} ${response.statusText}`);
                                       }
                                       toast({
                                         title: "删除成功",
