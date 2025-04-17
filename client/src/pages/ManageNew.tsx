@@ -1264,7 +1264,7 @@ export default function ManageNew() {
                   formData.append("title", title);
                   formData.append("content", content);
                   formData.append("location", location || "");
-                  formData.append("isActive", isActive ? "1" : "0");
+                  formData.append("isActive", isActive ? "true" : "false");
                   
                   if (startDate) {
                     formData.append("startDate", startDate);
@@ -1644,7 +1644,7 @@ export default function ManageNew() {
                   formData.append("price", price);
                   formData.append("stonksPrice", stonksPrice);
                   formData.append("stock", stock || "999");
-                  formData.append("isActive", active ? "1" : "0");
+                  formData.append("isActive", active ? "true" : "false");
                   
                   // 添加所有图片文件
                   if (productImageFiles.length > 0) {
