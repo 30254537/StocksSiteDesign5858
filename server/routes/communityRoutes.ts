@@ -164,13 +164,36 @@ export function setupCommunityRoutes(app: Express) {
         console.log(`上传了 ${req.files.length} 张图片:`, imageUrls);
       }
 
-      // 合并表单数据和图片URL
-      const formData = {
+      // 合并表单数据和图片URL，并确保字段格式正确
+      let formData = {
         ...req.body,
         imageUrl,
         imageUrls,
         isActive: req.body.isActive === 'true'
       };
+      
+      // 处理日期字段
+      if (formData.startDate && typeof formData.startDate === 'string' && formData.startDate.trim() !== '') {
+        try {
+          formData.startDate = new Date(formData.startDate);
+        } catch (e) {
+          console.error('无法解析开始日期:', formData.startDate, e);
+          delete formData.startDate;
+        }
+      } else if (formData.startDate === '') {
+        delete formData.startDate;
+      }
+      
+      if (formData.endDate && typeof formData.endDate === 'string' && formData.endDate.trim() !== '') {
+        try {
+          formData.endDate = new Date(formData.endDate);
+        } catch (e) {
+          console.error('无法解析结束日期:', formData.endDate, e);
+          delete formData.endDate;
+        }
+      } else if (formData.endDate === '') {
+        delete formData.endDate;
+      }
 
       console.log('即将验证社区活动表单数据:', JSON.stringify(formData, null, 2));
       
@@ -240,12 +263,35 @@ export function setupCommunityRoutes(app: Express) {
         imageUrl = `/uploads/community/${req.files[0].filename}`;
       }
 
-      // 合并表单数据和图片URL
-      const formData = {
+      // 合并表单数据和图片URL，并处理日期格式
+      let formData = {
         ...req.body,
         imageUrl,
         isActive: req.body.isActive === 'true'
       };
+      
+      // 处理日期字段
+      if (formData.startDate && typeof formData.startDate === 'string' && formData.startDate.trim() !== '') {
+        try {
+          formData.startDate = new Date(formData.startDate);
+        } catch (e) {
+          console.error('无法解析开始日期:', formData.startDate, e);
+          delete formData.startDate;
+        }
+      } else if (formData.startDate === '') {
+        delete formData.startDate;
+      }
+      
+      if (formData.endDate && typeof formData.endDate === 'string' && formData.endDate.trim() !== '') {
+        try {
+          formData.endDate = new Date(formData.endDate);
+        } catch (e) {
+          console.error('无法解析结束日期:', formData.endDate, e);
+          delete formData.endDate;
+        }
+      } else if (formData.endDate === '') {
+        delete formData.endDate;
+      }
 
       const activityData = insertCommunityActivitySchema.parse(formData);
       const newActivity = await storage.createCommunityActivity(activityData);
@@ -318,13 +364,36 @@ export function setupCommunityRoutes(app: Express) {
         console.log(`更新后的图片URL数组:`, imageUrls);
       }
 
-      // 合并表单数据和图片URL
-      const formData = {
+      // 合并表单数据和图片URL，并处理日期格式
+      let formData = {
         ...req.body,
         imageUrl,
         imageUrls,
         isActive: req.body.isActive === 'true'
       };
+      
+      // 处理日期字段
+      if (formData.startDate && typeof formData.startDate === 'string' && formData.startDate.trim() !== '') {
+        try {
+          formData.startDate = new Date(formData.startDate);
+        } catch (e) {
+          console.error('无法解析开始日期:', formData.startDate, e);
+          delete formData.startDate;
+        }
+      } else if (formData.startDate === '') {
+        delete formData.startDate;
+      }
+      
+      if (formData.endDate && typeof formData.endDate === 'string' && formData.endDate.trim() !== '') {
+        try {
+          formData.endDate = new Date(formData.endDate);
+        } catch (e) {
+          console.error('无法解析结束日期:', formData.endDate, e);
+          delete formData.endDate;
+        }
+      } else if (formData.endDate === '') {
+        delete formData.endDate;
+      }
       
       const updatedActivity = await storage.updateCommunityActivity(activityId, formData);
       
@@ -376,12 +445,35 @@ export function setupCommunityRoutes(app: Express) {
         }
       }
 
-      // 合并表单数据和图片URL
-      const formData = {
+      // 合并表单数据和图片URL，并处理日期格式
+      let formData = {
         ...req.body,
         imageUrl,
         isActive: req.body.isActive === 'true'
       };
+      
+      // 处理日期字段
+      if (formData.startDate && typeof formData.startDate === 'string' && formData.startDate.trim() !== '') {
+        try {
+          formData.startDate = new Date(formData.startDate);
+        } catch (e) {
+          console.error('无法解析开始日期:', formData.startDate, e);
+          delete formData.startDate;
+        }
+      } else if (formData.startDate === '') {
+        delete formData.startDate;
+      }
+      
+      if (formData.endDate && typeof formData.endDate === 'string' && formData.endDate.trim() !== '') {
+        try {
+          formData.endDate = new Date(formData.endDate);
+        } catch (e) {
+          console.error('无法解析结束日期:', formData.endDate, e);
+          delete formData.endDate;
+        }
+      } else if (formData.endDate === '') {
+        delete formData.endDate;
+      }
       
       const updatedActivity = await storage.updateCommunityActivity(activityId, formData);
       
