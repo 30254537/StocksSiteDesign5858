@@ -444,6 +444,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // 设置LOGO上传的存储配置
+  const logoUploadDir = path.join(process.cwd(), 'public/uploads/logo');
+  
+  // 确保logo上传目录存在
+  if (!fs.existsSync(logoUploadDir)) {
+    fs.mkdirSync(logoUploadDir, { recursive: true });
+  }
+  
+  const logoUpload = multer({
+    storage: multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, logoUploadDir);
+      },
+      filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, 'logo-' + uniqueSuffix + ext);
+      }
+    }),
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 限制5MB
+    },
+    fileFilter: function (req, file, cb) {
+      // 检查文件类型
+      const filetypes = /jpeg|jpg|png|gif|svg/;
+      const mimetype = filetypes.test(file.mimetype);
+      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+      
+      if (mimetype && extname) {
+        return cb(null, true);
+      }
+      cb(new Error("仅支持以下文件类型: " + filetypes));
+    }
+  });
+
+  // LOGO上传端点
+  app.post('/api/contact-info/logo', requireAdmin, logoUpload.single('logo'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: '没有提供LOGO文件' });
+      }
+      
+      console.log('LOGO上传成功:', req.file);
+      
+      // 文件上传成功，更新数据库中的LOGO URL
+      const logoUrl = `/uploads/logo/${req.file.filename}`;
+      await storage.updateContactInfo('logo', logoUrl);
+      
+      res.status(200).json({
+        success: true,
+        message: 'LOGO上传成功',
+        logo: logoUrl
+      });
+    } catch (error) {
+      console.error('LOGO上传错误:', error);
+      res.status(500).json({ 
+        success: false,
+        message: '上传LOGO时出错',
+        error: String(error)
+      });
+    }
+  });
+  
   // 更新联系信息（需要管理员权限）
   app.put('/api/contact-info/:key', requireAdmin, async (req, res) => {
     try {
