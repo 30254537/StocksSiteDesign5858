@@ -110,7 +110,39 @@ musicRouter.post('/', async (req: Request, res: Response) => {
     res.status(201).json(newMusicTrack);
   } catch (error) {
     console.error('创建音乐错误:', error);
-    res.status(500).json({ message: '创建音乐时出错', error: String(error) });
+    
+    // 检查是否是目录创建错误
+    if (String(error).includes('ENOENT') || String(error).includes('permission')) {
+      // 尝试创建目录
+      try {
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'music');
+        if (!fs.existsSync(path.join(process.cwd(), 'public', 'uploads'))) {
+          fs.mkdirSync(path.join(process.cwd(), 'public', 'uploads'), { recursive: true });
+          console.log('创建了上传目录:', path.join(process.cwd(), 'public', 'uploads'));
+        }
+        
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+          fs.chmodSync(uploadDir, 0o777);
+          console.log('创建了音乐上传目录，并设置了权限:', uploadDir);
+          
+          // 目录创建成功后，返回自定义错误提示用户重试
+          return res.status(500).json({ 
+            message: '上传目录刚刚创建完成，请重试上传', 
+            directoryCreated: true 
+          });
+        }
+      } catch (dirError) {
+        console.error('尝试创建目录失败:', dirError);
+      }
+    }
+    
+    res.status(500).json({ 
+      message: '创建音乐时出错', 
+      error: String(error),
+      errorType: typeof error,
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
   }
 });
 
@@ -171,7 +203,39 @@ musicRouter.put('/:id', async (req: Request, res: Response) => {
     res.status(200).json(updatedMusic);
   } catch (error) {
     console.error('更新音乐错误:', error);
-    res.status(500).json({ message: '更新音乐时出错', error: String(error) });
+    
+    // 检查是否是目录创建错误
+    if (String(error).includes('ENOENT') || String(error).includes('permission')) {
+      // 尝试创建目录
+      try {
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'music');
+        if (!fs.existsSync(path.join(process.cwd(), 'public', 'uploads'))) {
+          fs.mkdirSync(path.join(process.cwd(), 'public', 'uploads'), { recursive: true });
+          console.log('创建了上传目录:', path.join(process.cwd(), 'public', 'uploads'));
+        }
+        
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+          fs.chmodSync(uploadDir, 0o777);
+          console.log('创建了音乐上传目录，并设置了权限:', uploadDir);
+          
+          // 目录创建成功后，返回自定义错误提示用户重试
+          return res.status(500).json({ 
+            message: '上传目录刚刚创建完成，请重试上传', 
+            directoryCreated: true 
+          });
+        }
+      } catch (dirError) {
+        console.error('尝试创建目录失败:', dirError);
+      }
+    }
+    
+    res.status(500).json({ 
+      message: '更新音乐时出错', 
+      error: String(error),
+      errorType: typeof error,
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
   }
 });
 
@@ -212,7 +276,39 @@ musicRouter.delete('/:id', async (req: Request, res: Response) => {
     res.status(200).json({ message: '音乐已成功删除', id });
   } catch (error) {
     console.error('删除音乐错误:', error);
-    res.status(500).json({ message: '删除音乐时出错', error: String(error) });
+    
+    // 检查是否是目录创建错误
+    if (String(error).includes('ENOENT') || String(error).includes('permission')) {
+      // 尝试创建目录
+      try {
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'music');
+        if (!fs.existsSync(path.join(process.cwd(), 'public', 'uploads'))) {
+          fs.mkdirSync(path.join(process.cwd(), 'public', 'uploads'), { recursive: true });
+          console.log('创建了上传目录:', path.join(process.cwd(), 'public', 'uploads'));
+        }
+        
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+          fs.chmodSync(uploadDir, 0o777);
+          console.log('创建了音乐上传目录，并设置了权限:', uploadDir);
+          
+          // 目录创建成功后，返回自定义错误提示用户重试
+          return res.status(500).json({ 
+            message: '上传目录刚刚创建完成，请重试删除', 
+            directoryCreated: true 
+          });
+        }
+      } catch (dirError) {
+        console.error('尝试创建目录失败:', dirError);
+      }
+    }
+    
+    res.status(500).json({ 
+      message: '删除音乐时出错', 
+      error: String(error),
+      errorType: typeof error,
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
   }
 });
 
@@ -234,8 +330,16 @@ musicRouter.get('/style/:style', async (req: Request, res: Response) => {
 musicRouter.post('/upload', musicUpload.single('musicFile'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
+      console.error('上传失败：没有接收到文件');
       return res.status(400).json({ message: '没有提供音乐文件' });
     }
+
+    console.log('音乐上传成功，文件信息:', {
+      filename: req.file.filename,
+      originalname: req.file.originalname,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
 
     // 文件上传成功，生成URL
     const fileUrl = `/uploads/music/${req.file.filename}`;
@@ -244,22 +348,68 @@ musicRouter.post('/upload', musicUpload.single('musicFile'), async (req: Request
     let duration = 0;
     try {
       const filePath = path.join(process.cwd(), 'public', fileUrl);
-      duration = await getAudioDurationInSeconds(filePath);
+      if (fs.existsSync(filePath)) {
+        console.log('音频文件路径存在:', filePath);
+        duration = await getAudioDurationInSeconds(filePath);
+        console.log('获取到音频时长:', duration);
+      } else {
+        console.warn('音频文件路径不存在:', filePath);
+      }
     } catch (error) {
       console.warn('无法获取音频时长:', error);
     }
     
-    res.status(200).json({
+    // 构建音乐元数据
+    const musicData = {
       url: fileUrl,
       duration,
       filename: req.file.filename,
       originalname: req.file.originalname,
       mimetype: req.file.mimetype,
-      size: req.file.size
-    });
+      size: req.file.size,
+      title: req.body.title,
+      artist: req.body.artist || 'Unknown Artist',
+      style: req.body.style || 'General'
+    };
+
+    console.log('返回音乐上传数据:', musicData);
+    
+    res.status(200).json(musicData);
   } catch (error) {
     console.error('音乐文件上传错误:', error);
-    res.status(500).json({ message: '上传音乐文件时出错', error: String(error) });
+    
+    // 检查是否是目录创建错误
+    if (String(error).includes('ENOENT') || String(error).includes('permission')) {
+      // 尝试创建目录
+      try {
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'music');
+        if (!fs.existsSync(path.join(process.cwd(), 'public', 'uploads'))) {
+          fs.mkdirSync(path.join(process.cwd(), 'public', 'uploads'), { recursive: true });
+          console.log('创建了上传目录:', path.join(process.cwd(), 'public', 'uploads'));
+        }
+        
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+          fs.chmodSync(uploadDir, 0o777);
+          console.log('创建了音乐上传目录，并设置了权限:', uploadDir);
+          
+          // 目录创建成功后，返回自定义错误提示用户重试
+          return res.status(500).json({ 
+            message: '上传目录刚刚创建完成，请重试上传', 
+            directoryCreated: true 
+          });
+        }
+      } catch (dirError) {
+        console.error('尝试创建目录失败:', dirError);
+      }
+    }
+    
+    res.status(500).json({ 
+      message: '上传音乐文件时出错', 
+      error: String(error),
+      errorType: typeof error,
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
   }
 });
 
