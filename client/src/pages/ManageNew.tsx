@@ -2227,16 +2227,24 @@ export default function ManageNew() {
                   const musicId = parseInt((document.getElementById("music-id") as HTMLInputElement).value);
                   const title = (document.getElementById("music-title") as HTMLInputElement).value;
                   const artist = (document.getElementById("music-artist") as HTMLInputElement).value;
-                  // style字段不存在于数据库中，已移除
-                  // const style = (document.getElementById("music-style") as HTMLInputElement).value;
-                  const url = (document.getElementById("music-url") as HTMLInputElement).value;
-                  const filename = url.split('/').pop() || `music-${Date.now()}.mp3`;
                   
-                  // 基本验证
-                  if (!title || !artist || !url) {
+                  // 基本验证：现在我们强制要求通过文件上传获取音乐文件
+                  if (!title || !artist) {
                     toast({
                       title: "表单不完整",
                       description: "请填写所有必填字段",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  // 检查是否有上传URL（由文件上传设置）
+                  const musicFileInput = document.getElementById('music-file') as HTMLInputElement;
+                  
+                  if (!editingMusic && (!musicFileInput || !musicFileInput.files || musicFileInput.files.length === 0)) {
+                    toast({
+                      title: "请上传音乐文件",
+                      description: "必须通过文件上传来添加音乐曲目",
                       variant: "destructive",
                     });
                     return;
@@ -2247,9 +2255,8 @@ export default function ManageNew() {
                     id: musicId || undefined,
                     title,
                     artist,
-                    // style 字段不存在于数据库中，已移除
-                    url,
-                    filename,
+                    style: (document.getElementById("music-style") as HTMLInputElement).value,
+                    url: '', // 当编辑现有音乐时保留此字段，将由服务器处理
                     isPublic: 1, // 默认公开
                     duration: 0, // 持续时间将在服务器端处理
                   };
@@ -2399,19 +2406,7 @@ export default function ManageNew() {
                   </div>
                 </div>
                 
-                <div>
-                  <label htmlFor="music-url" className="block text-sm font-medium mb-2">
-                    音乐URL *
-                  </label>
-                  <Input
-                    id="music-url"
-                    name="url"
-                    placeholder="输入音乐文件URL或通过上方上传"
-                    className="bg-primary/50 border-accent"
-                    required
-                    defaultValue={editingMusic?.url || ""}
-                  />
-                </div>
+                {/* 已移除URL输入框，只保留本地文件上传 */}
               </div>
               
               <div className="flex justify-end space-x-2">
