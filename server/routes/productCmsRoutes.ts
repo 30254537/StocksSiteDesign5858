@@ -90,7 +90,7 @@ export function setupProductCmsRoutes(app: Express) {
         description: req.body.description || '',
         price: price,
         stonks_price: stonksPrice,
-        ethPrice: price / (await storage.getCurrentStonksPrice()), // 计算STONKS价格
+        ethPrice: price / 0.037, // 使用默认STONKS价格
         category: 'merchandise', // 默认分类
         inventory: inventory,
         is_active: req.body.isActive === '1' || req.body.isActive === 'true',
@@ -142,7 +142,7 @@ export function setupProductCmsRoutes(app: Express) {
       }
       
       // 保留现有图片URLs (如果存在)
-      const existingImageUrls = existingProduct.image_urls || [];
+      const existingImageUrls = existingProduct.imageUrls || [];
       
       // 合并现有图片和新上传的图片
       const combinedImageUrls = [...existingImageUrls, ...newImageUrls];
@@ -150,7 +150,7 @@ export function setupProductCmsRoutes(app: Express) {
       // 解析价格和库存为数字
       const price = parseFloat(req.body.price);
       const stonksPrice = parseFloat(req.body.stonksPrice);
-      const inventory = parseInt(req.body.inventory || existingProduct.inventory.toString());
+      const inventory = parseInt(req.body.inventory || existingProduct.stock.toString());
       
       // 准备更新的产品数据
       const productData = {
@@ -158,8 +158,8 @@ export function setupProductCmsRoutes(app: Express) {
         description: req.body.description || existingProduct.description,
         price: price,
         stonks_price: stonksPrice,
-        ethPrice: price / (await storage.getCurrentStonksPrice()), // 重新计算STONKS价格
-        inventory: inventory,
+        ethPrice: price / 0.037, // 使用默认STONKS价格
+        stock: inventory,
         is_active: req.body.isActive === '1' || req.body.isActive === 'true',
         imageUrl: combinedImageUrls.length > 0 ? combinedImageUrls[0] : existingProduct.imageUrl,
         imageUrls: combinedImageUrls
@@ -212,8 +212,8 @@ export function setupProductCmsRoutes(app: Express) {
       }
       
       // 删除所有附加图片文件
-      if (product.image_urls && Array.isArray(product.image_urls)) {
-        product.image_urls.forEach(imgUrl => {
+      if (product.imageUrls && Array.isArray(product.imageUrls)) {
+        product.imageUrls.forEach((imgUrl: string) => {
           if (imgUrl && imgUrl.startsWith('/uploads/')) {
             const imagePath = path.resolve(`public${imgUrl}`);
             if (fs.existsSync(imagePath)) {
