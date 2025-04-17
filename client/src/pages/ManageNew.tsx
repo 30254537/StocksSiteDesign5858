@@ -803,7 +803,7 @@ export default function ManageNew() {
       <div className="container mx-auto py-12 px-4 flex flex-col items-center justify-center min-h-[50vh]">
         <h1 className="text-3xl font-bold mb-4 text-accent">需要管理员权限</h1>
         <p className="mb-8">您没有访问此页面的权限</p>
-        <Button onClick={() => setLocation("/admin-stonks-dex-secret-login")}>前往登录</Button>
+        <Button onClick={() => navigate("/admin-stonks-dex-secret-login")}>前往登录</Button>
       </div>
     );
   }
@@ -824,7 +824,7 @@ export default function ManageNew() {
                 title: "已登出",
                 description: "您已成功登出管理系统",
               });
-              setLocation("/");
+              navigate("/");
             } catch (error) {
               console.error("登出错误:", error);
             }
