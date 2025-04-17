@@ -2323,7 +2323,18 @@ export default function ManageNew() {
                   </div>
                 </div>
                 
-                {/* 风格类型字段不存在于数据库中，已移除 */}
+                <div>
+                  <label htmlFor="music-style" className="block text-sm font-medium mb-2">
+                    音乐风格
+                  </label>
+                  <Input
+                    id="music-style"
+                    name="style"
+                    placeholder="如: Rock, Electronic, Classical等"
+                    className="bg-primary/50 border-accent"
+                    defaultValue={editingMusic?.style || ""}
+                  />
+                </div>
                 
                 <div>
                   <label htmlFor="music-url" className="block text-sm font-medium mb-2">
@@ -2385,6 +2396,7 @@ export default function ManageNew() {
                         <TableHead>ID</TableHead>
                         <TableHead>标题</TableHead>
                         <TableHead>艺术家</TableHead>
+                        <TableHead>风格</TableHead>
                         <TableHead>试听</TableHead>
                         <TableHead className="text-right">操作</TableHead>
                       </TableRow>
@@ -2395,6 +2407,7 @@ export default function ManageNew() {
                           <TableCell>{track.id}</TableCell>
                           <TableCell className="font-medium">{track.title}</TableCell>
                           <TableCell>{track.artist}</TableCell>
+                          <TableCell>{track.style || "-"}</TableCell>
                           <TableCell>
                             <audio controls className="w-48 h-10">
                               <source src={track.url} type="audio/mpeg" />
