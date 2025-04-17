@@ -392,7 +392,7 @@ export default function ManageNew() {
     if (stonksPriceInput) stonksPriceInput.value = product.stonks_price.toString();
     
     const inventoryInput = document.getElementById("product-inventory") as HTMLInputElement;
-    if (inventoryInput) inventoryInput.value = product.inventory.toString();
+    if (inventoryInput) inventoryInput.value = product.stock.toString();
     
     const activeCheckbox = document.getElementById("product-active") as HTMLInputElement;
     if (activeCheckbox) activeCheckbox.checked = product.is_active;
@@ -1633,7 +1633,7 @@ export default function ManageNew() {
                   formData.append("description", description || "");
                   formData.append("price", price);
                   formData.append("stonksPrice", stonksPrice);
-                  formData.append("inventory", inventory || "999");
+                  formData.append("stock", inventory || "999");
                   formData.append("isActive", active ? "1" : "0");
                   
                   // 添加所有图片文件
@@ -1895,7 +1895,7 @@ export default function ManageNew() {
                           <TableCell className="font-medium">{product.name}</TableCell>
                           <TableCell>${product.price !== undefined ? Number(product.price).toFixed(2) : '0.00'}</TableCell>
                           <TableCell>⊙ {product.stonks_price !== undefined ? Number(product.stonks_price).toFixed(6) : '0.000000'}</TableCell>
-                          <TableCell>{product.inventory}</TableCell>
+                          <TableCell>{product.stock}</TableCell>
                           <TableCell>
                             <Badge variant={product.is_active ? "default" : "secondary"}>
                               {product.is_active ? "上架中" : "已下架"}
