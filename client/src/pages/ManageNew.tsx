@@ -774,7 +774,7 @@ export default function ManageNew() {
       // 重置表单
       form.reset();
       idInput.value = "0";
-      setEditingMusicTrack(null);
+      setEditingMusic(null);
       setMusicFile(null);
       
       toast({
@@ -793,7 +793,7 @@ export default function ManageNew() {
   
   // 处理编辑音乐
   const handleEditMusicTrack = (track: MusicTrack) => {
-    setEditingMusicTrack(track);
+    setEditingMusic(track);
     
     // 填充表单数据
     const titleInput = document.querySelector("#music-title") as HTMLInputElement;
@@ -2333,7 +2333,7 @@ export default function ManageNew() {
                     name="style"
                     placeholder="如: Rock, Electronic, Classical等"
                     className="bg-primary/50 border-accent"
-                    defaultValue={editingMusic?.style || ""}
+                    defaultValue={""}
                   />
                 </div>
                 
@@ -2408,7 +2408,7 @@ export default function ManageNew() {
                           <TableCell>{track.id}</TableCell>
                           <TableCell className="font-medium">{track.title}</TableCell>
                           <TableCell>{track.artist}</TableCell>
-                          <TableCell>{track.style || "-"}</TableCell>
+                          <TableCell>-</TableCell>
                           <TableCell>
                             <audio controls className="w-48 h-10">
                               <source src={track.url} type="audio/mpeg" />
