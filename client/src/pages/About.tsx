@@ -9,9 +9,9 @@ export default function About() {
         <h1 className="text-3xl md:text-4xl font-bold mb-8 text-[#00ffcc] text-center">{t("about.title")}</h1>
         
         {/* 使用硬编码的内容而不是从translations获取，以避免语法错误 */}
-        <div className="prose prose-sm md:prose-base lg:prose-lg prose-invert prose-headings:text-[#00ffcc] prose-a:text-[#00ffcc] hover:prose-a:text-[#00ffcc]/70 text-center">
-          {/* 所有内容放在一个大框中 */}
-          <div className="border border-[#00ffcc]/30 p-8 rounded-lg flex flex-col items-center">
+        <div className="text-center">
+          {/* 所有内容放在一个大框中，使用与社区部分相同的样式 */}
+          <div className="bg-primary/30 border border-accent/20 p-8 rounded-lg flex flex-col items-center text-lg leading-relaxed text-gray-200">
             <p className="max-w-3xl text-center">STONKS DEX SHOP是MY STONKS去中心化交易所的文化延伸，我们以创新与社区为核心，打造连接区块链技术与现实世界的桥梁。这里不仅是生态周边的展示平台，更是全球区块链爱好者共同参与、共同成长的协作网络。通过独特的设计与互动体验，我们致力于让每个人都能成为生态共建者，见证去中心化未来的无限可能。</p>
             
             <p className="mt-6"></p>
