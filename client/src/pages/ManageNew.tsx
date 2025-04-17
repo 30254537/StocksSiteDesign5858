@@ -1860,10 +1860,255 @@ export default function ManageNew() {
         <Card className="shadow-lg mb-8">
           <CardHeader>
             <CardTitle>合约地址管理</CardTitle>
+            <CardDescription>添加和管理STONKS代币合约地址</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <p>合约地址管理功能已就绪</p>
+            <div className="flex justify-end mb-4">
+              <Button 
+                className="bg-accent text-black hover:bg-accent/80"
+                onClick={() => {
+                  setEditingAddress(null);
+                  // 重置表单
+                  const form = document.getElementById("address-form") as HTMLFormElement;
+                  if (form) form.reset();
+                  // 重置ID
+                  const idInput = document.getElementById("address-id") as HTMLInputElement;
+                  if (idInput) idInput.value = "0";
+                }}
+              >
+                添加新合约地址
+              </Button>
+            </div>
+            
+            {/* 合约地址表单 */}
+            <form
+              id="address-form"
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                try {
+                  // 获取表单数据
+                  const addressId = parseInt((document.getElementById("address-id") as HTMLInputElement).value);
+                  const network = (document.getElementById("address-network") as HTMLInputElement).value;
+                  const address = (document.getElementById("address-contract") as HTMLInputElement).value;
+                  const coinType = (document.getElementById("address-coin") as HTMLInputElement).value;
+                  
+                  // 基本验证
+                  if (!network || !address || !coinType) {
+                    toast({
+                      title: "表单不完整",
+                      description: "请填写所有必填字段",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  // 准备数据
+                  const contractData = {
+                    id: addressId || undefined,
+                    network,
+                    address,
+                    coinType
+                  };
+                  
+                  // 确定API端点和方法
+                  const method = addressId > 0 ? "PUT" : "POST";
+                  const endpoint = addressId > 0 
+                    ? `/api/contract-addresses/${addressId}` 
+                    : "/api/contract-addresses";
+                  
+                  // 发送请求
+                  const response = await apiRequest(method, endpoint, contractData);
+                  
+                  if (!response.ok) {
+                    throw new Error("保存失败");
+                  }
+                  
+                  // 获取最新的合约地址列表
+                  fetchContractAddresses();
+                  
+                  // 重置表单
+                  (e.target as HTMLFormElement).reset();
+                  (document.getElementById("address-id") as HTMLInputElement).value = "0";
+                  setEditingAddress(null);
+                  
+                  toast({
+                    title: addressId > 0 ? "更新成功" : "添加成功",
+                    description: addressId > 0 
+                      ? `合约地址 ${network} - ${coinType} 已更新` 
+                      : `新合约地址 ${network} - ${coinType} 已添加`,
+                  });
+                } catch (error) {
+                  console.error("保存合约地址错误:", error);
+                  toast({
+                    title: "操作失败",
+                    description: "无法保存合约地址，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <input type="hidden" id="address-id" name="id" value="0" />
+              
+              <div className="space-y-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label htmlFor="address-network" className="block text-sm font-medium mb-2">
+                      区块链网络 *
+                    </label>
+                    <Input
+                      id="address-network"
+                      name="network"
+                      placeholder="如: Ethereum, Solana, BSC"
+                      className="bg-primary/50 border-accent"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="address-coin" className="block text-sm font-medium mb-2">
+                      代币符号 *
+                    </label>
+                    <Input
+                      id="address-coin"
+                      name="coinType"
+                      placeholder="如: STONKS, USDT"
+                      className="bg-primary/50 border-accent"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="address-contract" className="block text-sm font-medium mb-2">
+                    合约地址 *
+                  </label>
+                  <Input
+                    id="address-contract"
+                    name="address"
+                    placeholder="输入完整的合约地址"
+                    className="bg-primary/50 border-accent"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => {
+                    // 重置表单
+                    const form = document.getElementById("address-form") as HTMLFormElement;
+                    if (form) form.reset();
+                    // 重置ID
+                    const idInput = document.getElementById("address-id") as HTMLInputElement;
+                    if (idInput) idInput.value = "0";
+                    setEditingAddress(null);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button 
+                  type="submit"
+                  className="bg-accent text-black hover:bg-accent/80"
+                >
+                  {editingAddress ? "保存修改" : "添加地址"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 合约地址列表 */}
+            <div className="pt-4">
+              <h3 className="text-lg font-medium mb-4">当前合约地址列表</h3>
+              
+              {loadingAddresses ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                </div>
+              ) : contractAddresses.length === 0 ? (
+                <div className="text-center py-6 border border-dashed border-accent/30 rounded-md">
+                  <p className="text-gray-400">暂无合约地址记录</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>区块链网络</TableHead>
+                        <TableHead>代币符号</TableHead>
+                        <TableHead>合约地址</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {contractAddresses.map((address) => (
+                        <TableRow key={address.id}>
+                          <TableCell>{address.network}</TableCell>
+                          <TableCell>{address.coinType}</TableCell>
+                          <TableCell className="font-mono text-xs">
+                            <div className="flex items-center">
+                              <span className="truncate max-w-[200px]">{address.address}</span>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 ml-1" 
+                                onClick={() => {
+                                  navigator.clipboard.writeText(address.address);
+                                  toast({
+                                    title: "已复制",
+                                    description: "合约地址已复制到剪贴板"
+                                  });
+                                }}
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M16 4h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path>
+                                  <path d="M8 14h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z"></path>
+                                  <path d="M10 14V8a2 2 0 0 1 2-2h2"></path>
+                                </svg>
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6" 
+                                onClick={() => {
+                                  window.open(`https://${address.network.toLowerCase() === 'ethereum' ? 'etherscan.io' : 
+                                    address.network.toLowerCase() === 'solana' ? 'solscan.io' : 
+                                    address.network.toLowerCase() === 'bsc' ? 'bscscan.com' : 
+                                    'explorer.solana.com'}/address/${address.address}`, '_blank' as any);
+                                }}
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-accent" 
+                                onClick={() => handleEditAddress(address)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-red-500" 
+                                onClick={() => handleDeleteAddress(address.id)}
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
