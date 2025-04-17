@@ -64,8 +64,7 @@ export function ImageZoomModal({
           <DialogTitle>{`${altText} - Image Zoom View`}</DialogTitle>
           <span id="zoom-modal-description">View larger image. Use arrow keys to navigate between images.</span>
         </VisuallyHidden>
-        <div className="relative w-[95vw] h-[90vh] max-h-[90vh] flex items-center justify-center">
-          {/* Close button */}
+        <div className="relative">
           <button
             onClick={onClose}
             className="absolute right-3 top-3 z-30 bg-black/70 hover:bg-accent/90 text-white p-2 rounded-full transition-colors opacity-90 shadow-lg"
@@ -74,59 +73,59 @@ export function ImageZoomModal({
             <X size={24} />
           </button>
           
-          {/* Centered image with border */}
-          <div className="max-w-full max-h-[85vh] relative">
-            <img
-              src={images[localIndex]}
-              alt={`${altText} - zoomed view`}
-              className="max-w-full max-h-[85vh] object-contain outline outline-2 outline-accent/70"
-              style={{
-                imageRendering: 'auto',
-                filter: 'drop-shadow(0 0 10px rgba(0, 255, 204, 0.2))',
-                transition: 'transform 0.3s ease-out'
-              }}
-              loading="eager"
-            />
+          <div className="relative w-[95vw] h-[90vh] max-h-[90vh] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+            <div className="relative border border-accent/50 bg-black/50 inline-flex items-center justify-center overflow-hidden">
+              <img
+                src={images[localIndex]}
+                alt={`${altText} - zoomed view`}
+                className="max-w-full max-h-[85vh] object-contain"
+                style={{
+                  imageRendering: 'auto',
+                  filter: 'drop-shadow(0 0 10px rgba(0, 255, 204, 0.2))',
+                  transition: 'transform 0.3s ease-out'
+                }}
+                loading="eager"
+              />
+            </div>
+            
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-4 z-20 bg-black/70 hover:bg-accent/90 text-white p-3 rounded-full transition-colors opacity-90 shadow-lg"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-4 z-20 bg-black/70 hover:bg-accent/90 text-white p-3 rounded-full transition-colors opacity-90 shadow-lg"
+                  aria-label="Next image"
+                >
+                  <ChevronRight size={24} />
+                </button>
+                
+                {/* Image counter */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                  {images.map((_, index) => (
+                    <button 
+                      key={index}
+                      onClick={() => {
+                        setLocalIndex(index);
+                        onIndexChange(index);
+                      }}
+                      className={`w-3 h-3 rounded-full transition-all shadow-md ${
+                        localIndex === index 
+                          ? "bg-accent scale-125" 
+                          : "bg-white/80 hover:bg-white"
+                      }`}
+                      aria-label={`View image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-          
-          {/* Navigation Controls */}
-          {images.length > 1 && (
-            <>
-              <button
-                onClick={handlePrevImage}
-                className="absolute left-4 z-20 bg-black/70 hover:bg-accent/90 text-white p-3 rounded-full transition-colors opacity-90 shadow-lg"
-                aria-label="Previous image"
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <button
-                onClick={handleNextImage}
-                className="absolute right-4 z-20 bg-black/70 hover:bg-accent/90 text-white p-3 rounded-full transition-colors opacity-90 shadow-lg"
-                aria-label="Next image"
-              >
-                <ChevronRight size={24} />
-              </button>
-              
-              {/* Image counter/dots */}
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-                {images.map((_, index) => (
-                  <button 
-                    key={index}
-                    onClick={() => {
-                      setLocalIndex(index);
-                      onIndexChange(index);
-                    }}
-                    className={`w-3 h-3 rounded-full transition-all shadow-md ${
-                      localIndex === index 
-                        ? "bg-accent scale-125" 
-                        : "bg-white/80 hover:bg-white"
-                    }`}
-                    aria-label={`View image ${index + 1}`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
         </div>
       </DialogContent>
     </Dialog>
