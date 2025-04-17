@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { transformProductToCamelCase, transformProductListToCamelCase } from "../utils/productUtils";
 
 // 配置multer用于处理产品图片上传
 const productUpload = multer({
@@ -35,7 +36,9 @@ export function setupProductCmsRoutes(app: Express) {
   app.get('/api/cms/products', async (req, res) => {
     try {
       const products = await storage.getProducts();
-      res.json(products);
+      // 将所有产品数据转换为驼峰命名格式
+      const formattedProducts = transformProductListToCamelCase(products);
+      res.json(formattedProducts);
     } catch (error) {
       console.error('获取产品列表时出错:', error);
       res.status(500).json({ message: '服务器错误' });
@@ -52,7 +55,9 @@ export function setupProductCmsRoutes(app: Express) {
         return res.status(404).json({ message: '未找到指定的产品' });
       }
       
-      res.json(product);
+      // 将产品数据转换为驼峰命名格式
+      const formattedProduct = transformProductToCamelCase(product);
+      res.json(formattedProduct);
     } catch (error) {
       console.error('获取产品详情时出错:', error);
       res.status(500).json({ message: '服务器错误' });
@@ -102,7 +107,9 @@ export function setupProductCmsRoutes(app: Express) {
       
       // 创建产品
       const newProduct = await storage.createProduct(productData);
-      res.status(201).json(newProduct);
+      // 转换为驼峰格式
+      const formattedProduct = transformProductToCamelCase(newProduct);
+      res.status(201).json(formattedProduct);
     } catch (error) {
       console.error('创建产品时出错:', error);
       res.status(500).json({ 
