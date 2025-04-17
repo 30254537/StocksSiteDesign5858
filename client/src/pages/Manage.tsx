@@ -817,7 +817,12 @@ export default function Manage() {
                       <TableRow key={product.id}>
                         <TableCell>{product.id}</TableCell>
                         <TableCell>{product.name}</TableCell>
-                        <TableCell>{product.price}</TableCell>
+                        <TableCell>
+                          <div>
+                            <div>⊙ {product.stonksPrice?.toFixed(6) || "0.000000"}</div>
+                            <div className="text-gray-400">${product.price}</div>
+                          </div>
+                        </TableCell>
                         <TableCell>{product.stock || "未设置"}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
