@@ -1312,17 +1312,29 @@ export default function ManageNew() {
                   formData.append("isActive", isActive ? "1" : "0"); // 使用1/0代替true/false，更好兼容后端
                   formData.append("isOnline", "1"); // 默认为线上活动
                   
+                  // 关键：如果是编辑模式，添加ID到表单数据中
+                  if (activityId && parseInt(activityId) > 0) {
+                    formData.append("id", activityId);
+                    
+                    // 在编辑模式下保留现有图片URL
+                    if (editingCommunityActivity?.imageUrl) {
+                      formData.append("imageUrl", editingCommunityActivity.imageUrl);
+                    }
+                    
+                    // 如果有多张图片，也一并保留
+                    if (editingCommunityActivity?.imageUrls && Array.isArray(editingCommunityActivity.imageUrls)) {
+                      editingCommunityActivity.imageUrls.forEach(url => {
+                        if (url) formData.append("existingImageUrls", url);
+                      });
+                    }
+                  }
+                  
                   if (startDate) {
                     formData.append("startDate", startDate);
                   }
                   
                   if (endDate) {
                     formData.append("endDate", endDate);
-                  }
-                  
-                  // 如果是编辑模式，保留现有图片URL
-                  if (activityId && parseInt(activityId) > 0 && editingCommunityActivity?.imageUrl) {
-                    formData.append("imageUrl", editingCommunityActivity.imageUrl);
                   }
                   
                   // 添加所有图片文件
