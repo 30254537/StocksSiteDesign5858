@@ -205,6 +205,7 @@ musicRouter.delete('/:id', async (req: Request, res: Response) => {
 });
 
 // 根据风格获取音乐
+/* 由于目前数据库中没有style列，我们暂时注释掉这个端点
 musicRouter.get('/style/:style', async (req: Request, res: Response) => {
   try {
     const style = req.params.style;
@@ -215,6 +216,7 @@ musicRouter.get('/style/:style', async (req: Request, res: Response) => {
     res.status(500).json({ message: '获取音乐列表时出错', error: String(error) });
   }
 });
+*/
 
 export const setupMusicRoutes = (app: Router) => {
   app.use('/music', musicRouter);
