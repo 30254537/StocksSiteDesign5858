@@ -543,5 +543,5 @@ musicRouter.post('/simple-upload', musicUpload.single('musicFile'), (req: Reques
 });
 
 export const setupMusicRoutes = (app: Router) => {
-  app.use('/music', musicRouter);
+  app.use('/api/music', musicRouter);
 };
