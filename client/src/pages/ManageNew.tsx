@@ -582,36 +582,77 @@ export default function ManageNew() {
       }
     }
     
-    // 填充表单
-    const idInput = document.getElementById("activity-id") as HTMLInputElement;
-    if (idInput) idInput.value = activity.id.toString();
-    
-    const titleInput = document.getElementById("activity-title") as HTMLInputElement;
-    if (titleInput) titleInput.value = activity.title;
-    
-    const contentInput = document.getElementById("activity-content") as HTMLTextAreaElement;
-    if (contentInput) contentInput.value = activity.content || "";
-    
-    const locationInput = document.getElementById("activity-location") as HTMLInputElement;
-    if (locationInput) locationInput.value = activity.location || "";
-    
-    const startDateInput = document.getElementById("activity-startDate") as HTMLInputElement;
-    if (startDateInput && activity.startDate) {
-      const date = new Date(activity.startDate);
-      const formattedDate = date.toISOString().split('T')[0];
-      startDateInput.value = formattedDate;
+    // 使用表单引用进行操作
+    const formRef = (window as any).activityFormRef;
+    if (formRef) {
+      // 如果有表单引用，使用它来设置字段值
+      const idInput = formRef.querySelector("#activity-id") as HTMLInputElement;
+      const titleInput = formRef.querySelector("#activity-title") as HTMLInputElement;
+      const contentInput = formRef.querySelector("#activity-content") as HTMLTextAreaElement;
+      const locationInput = formRef.querySelector("#activity-location") as HTMLInputElement;
+      const startDateInput = formRef.querySelector("#activity-startDate") as HTMLInputElement;
+      const endDateInput = formRef.querySelector("#activity-endDate") as HTMLInputElement;
+      const activeInput = formRef.querySelector("#activity-active") as HTMLInputElement;
+      
+      if (idInput) idInput.value = activity.id.toString();
+      if (titleInput) titleInput.value = activity.title;
+      if (contentInput) contentInput.value = activity.content || "";
+      if (locationInput) locationInput.value = activity.location || "";
+      
+      // 日期需要转换为YYYY-MM-DD格式
+      if (startDateInput && activity.startDate) {
+        const startDate = new Date(activity.startDate);
+        startDateInput.value = startDate.toISOString().split("T")[0];
+      } else if (startDateInput) {
+        startDateInput.value = "";
+      }
+      
+      if (endDateInput && activity.endDate) {
+        const endDate = new Date(activity.endDate);
+        endDateInput.value = endDate.toISOString().split("T")[0];
+      } else if (endDateInput) {
+        endDateInput.value = "";
+      }
+      
+      if (activeInput) activeInput.checked = activity.isActive || false;
+    } else {
+      // 回退到直接通过ID查找的方法
+      console.warn("未找到社区活动表单引用，将使用文档ID查询代替");
+      
+      // 填充表单
+      const idInput = document.getElementById("activity-id") as HTMLInputElement;
+      if (idInput) idInput.value = activity.id.toString();
+      
+      const titleInput = document.getElementById("activity-title") as HTMLInputElement;
+      if (titleInput) titleInput.value = activity.title;
+      
+      const contentInput = document.getElementById("activity-content") as HTMLTextAreaElement;
+      if (contentInput) contentInput.value = activity.content || "";
+      
+      const locationInput = document.getElementById("activity-location") as HTMLInputElement;
+      if (locationInput) locationInput.value = activity.location || "";
+      
+      const startDateInput = document.getElementById("activity-startDate") as HTMLInputElement;
+      if (startDateInput && activity.startDate) {
+        const date = new Date(activity.startDate);
+        const formattedDate = date.toISOString().split('T')[0];
+        startDateInput.value = formattedDate;
+      } else if (startDateInput) {
+        startDateInput.value = "";
+      }
+      
+      const endDateInput = document.getElementById("activity-endDate") as HTMLInputElement;
+      if (endDateInput && activity.endDate) {
+        const date = new Date(activity.endDate);
+        const formattedDate = date.toISOString().split('T')[0];
+        endDateInput.value = formattedDate;
+      } else if (endDateInput) {
+        endDateInput.value = "";
+      }
+      
+      const activeInput = document.getElementById("activity-active") as HTMLInputElement;
+      if (activeInput) activeInput.checked = activity.isActive || false;
     }
-    
-    const endDateInput = document.getElementById("activity-endDate") as HTMLInputElement;
-    if (endDateInput && activity.endDate) {
-      const date = new Date(activity.endDate);
-      const formattedDate = date.toISOString().split('T')[0];
-      endDateInput.value = formattedDate;
-    }
-    
-    // 设置活动状态复选框
-    const activeCheckbox = document.getElementById("activity-active") as HTMLInputElement;
-    if (activeCheckbox) activeCheckbox.checked = Boolean(activity.isActive);
     
     // 滚动到表单
     window.scrollTo({ top: document.getElementById("activity-form")?.offsetTop || 0, behavior: "smooth" });
@@ -1235,6 +1276,10 @@ export default function ManageNew() {
             <form
               id="activity-form"
               className="mb-8 border-b border-accent/30 pb-8"
+              ref={(formRef) => {
+                // 保存表单引用以便后续操作
+                (window as any).activityFormRef = formRef;
+              }}
               onSubmit={async (e) => {
                 e.preventDefault();
                 
@@ -1338,8 +1383,32 @@ export default function ManageNew() {
                     // 更新活动列表
                     await fetchCommunityActivities();
                     
-                    // 安全地重置表单和状态
-                    if (e.currentTarget) {
+                    // 使用保存的表单引用安全地重置表单
+                    const formRef = (window as any).activityFormRef;
+                    if (formRef) {
+                      try {
+                        formRef.reset();
+                      } catch (resetError) {
+                        console.warn("表单引用重置出错，尝试使用currentTarget", resetError);
+                        
+                        // 尝试使用event.currentTarget作为备用方案
+                        if (e.currentTarget) {
+                          try {
+                            e.currentTarget.reset();
+                          } catch (e2) {
+                            console.warn("所有表单重置方法失败，手动清除字段", e2);
+                            // 手动清除字段
+                            const titleInput = document.getElementById("activity-title") as HTMLInputElement;
+                            const contentInput = document.getElementById("activity-content") as HTMLTextAreaElement;
+                            const locationInput = document.getElementById("activity-location") as HTMLInputElement;
+                            if (titleInput) titleInput.value = "";
+                            if (contentInput) contentInput.value = "";
+                            if (locationInput) locationInput.value = "";
+                          }
+                        }
+                      }
+                    } else if (e.currentTarget) {
+                      // 如果没有保存的引用，仍然尝试使用currentTarget
                       try {
                         e.currentTarget.reset();
                       } catch (resetError) {
