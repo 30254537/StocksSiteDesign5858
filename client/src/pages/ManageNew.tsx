@@ -173,12 +173,13 @@ export default function Manage() {
     // 填充表单数据
     const titleInput = document.querySelector("#music-title") as HTMLInputElement;
     const artistInput = document.querySelector("#music-artist") as HTMLInputElement;
-    const styleInput = document.querySelector("#music-style") as HTMLInputElement;
+    // 样式字段在数据库中不存在，暂时注释掉
+    // const styleInput = document.querySelector("#music-style") as HTMLInputElement;
     const idInput = document.querySelector("#music-id") as HTMLInputElement;
     
     if (titleInput) titleInput.value = track.title;
     if (artistInput) artistInput.value = track.artist;
-    if (styleInput) styleInput.value = track.style || "";
+    // if (styleInput) styleInput.value = track.style || "";
     if (idInput) idInput.value = track.id.toString();
     
     // 滚动到表单位置
