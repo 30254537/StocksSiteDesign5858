@@ -1823,7 +1823,7 @@ export default function ManageNew() {
                       {/* 显示已有图片 */}
                       {editingProduct && editingProduct.imageUrls && editingProduct.imageUrls.length > 0 && (
                         <div className="mt-4">
-                          <p className="text-sm font-medium mb-2">已有图片:</p>
+                          <p className="text-sm font-medium mb-2">已有图片 (点击删除按钮可删除单张图片):</p>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                             {editingProduct.imageUrls.map((url, index) => (
                               <div key={index} className="relative group">
@@ -1832,6 +1832,50 @@ export default function ManageNew() {
                                   alt={`产品图片 ${index + 1}`}
                                   className="w-full h-24 object-cover rounded-md"
                                 />
+                                <button
+                                  type="button"
+                                  className="absolute top-1 right-1 bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={async () => {
+                                    if (window.confirm("确定要删除这张图片吗？此操作无法撤销。")) {
+                                      try {
+                                        const timestamp = new Date().getTime();
+                                        const response = await fetch(`/api/cms/products/${editingProduct.id}/image?t=${timestamp}`, {
+                                          method: "DELETE",
+                                          headers: {
+                                            "Content-Type": "application/json"
+                                          },
+                                          body: JSON.stringify({ imageUrl: url })
+                                        });
+                                        
+                                        if (!response.ok) {
+                                          throw new Error("删除图片失败");
+                                        }
+                                        
+                                        const updatedProduct = await response.json();
+                                        
+                                        // 更新编辑中的产品
+                                        setEditingProduct(updatedProduct);
+                                        
+                                        toast({
+                                          title: "删除成功",
+                                          description: "图片已成功删除",
+                                        });
+                                        
+                                        // 刷新产品列表
+                                        await fetchProducts();
+                                      } catch (error) {
+                                        console.error("删除图片时出错:", error);
+                                        toast({
+                                          title: "删除失败",
+                                          description: "无法删除图片，请稍后再试",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }
+                                  }}
+                                >
+                                  <X size={12} />
+                                </button>
                               </div>
                             ))}
                           </div>
@@ -1884,11 +1928,11 @@ export default function ManageNew() {
                               <img
                                 src={product.imageUrls[0]}
                                 alt={product.name}
-                                className="w-10 h-10 object-cover rounded-md"
+                                className="w-16 h-16 object-cover rounded-md"
                               />
                             ) : (
-                              <div className="w-10 h-10 bg-gray-800 rounded-md flex items-center justify-center">
-                                <ImageIcon size={16} className="text-gray-400" />
+                              <div className="w-16 h-16 bg-gray-800 rounded-md flex items-center justify-center">
+                                <ImageIcon size={20} className="text-gray-400" />
                               </div>
                             )}
                           </TableCell>

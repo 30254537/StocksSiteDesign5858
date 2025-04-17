@@ -32,6 +32,75 @@ const productUpload = multer({
 
 // 设置产品管理路由
 export function setupProductCmsRoutes(app: Express) {
+  // 删除产品单张图片
+  app.delete('/api/cms/products/:id/image', async (req, res) => {
+    try {
+      if (!global.adminLoggedIn) {
+        return res.status(401).json({ message: '需要管理员权限' });
+      }
+      
+      const { id } = req.params;
+      const productId = parseInt(id);
+      const { imageUrl } = req.body;
+      
+      // 获取现有产品信息
+      const product = await storage.getProduct(productId);
+      if (!product) {
+        return res.status(404).json({ message: '未找到指定的产品' });
+      }
+      
+      // 验证要删除的图片URL存在于产品中
+      if (!imageUrl || !product.imageUrls || !product.imageUrls.includes(imageUrl)) {
+        return res.status(400).json({ message: '无效的图片URL' });
+      }
+      
+      // 从文件系统中删除图片
+      if (imageUrl.startsWith('/uploads/')) {
+        const imagePath = path.resolve(`public${imageUrl}`);
+        try {
+          if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+            console.log(`已删除产品图片: ${imagePath}`);
+          }
+        } catch (err) {
+          console.error(`删除产品图片文件时出错:`, err);
+          // 即使文件删除失败也继续处理数据库更新
+        }
+      }
+      
+      // 更新产品的图片URLs列表
+      const updatedImageUrls = product.imageUrls.filter(url => url !== imageUrl);
+      
+      // 如果删除的是主图，需要更新主图
+      let imageUrlUpdate = {};
+      if (product.imageUrl === imageUrl) {
+        imageUrlUpdate = {
+          imageUrl: updatedImageUrls.length > 0 ? updatedImageUrls[0] : ''
+        };
+      }
+      
+      // 更新产品信息
+      const updatedProduct = await storage.updateProduct(productId, {
+        ...imageUrlUpdate,
+        imageUrls: updatedImageUrls
+      });
+      
+      if (!updatedProduct) {
+        return res.status(500).json({ message: '更新产品失败' });
+      }
+      
+      // 转换为驼峰格式返回给前端
+      const formattedProduct = transformProductToCamelCase(updatedProduct);
+      res.json(formattedProduct);
+    } catch (error) {
+      console.error('删除产品图片时出错:', error);
+      res.status(500).json({ 
+        message: '服务器错误',
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   // 获取所有产品
   app.get('/api/cms/products', async (req, res) => {
     try {
