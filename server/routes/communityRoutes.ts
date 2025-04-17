@@ -209,8 +209,12 @@ export function setupCommunityRoutes(app: Express) {
       
       try {
         // 写入临时日志文件
-        const fs = require('fs');
-        fs.appendFileSync('/tmp/logs/community_errors.log', `尝试创建社区活动，表单数据: ${JSON.stringify(formData, null, 2)}\n`);
+        try {
+          // 使用已经导入的fs模块
+          fs.appendFileSync('/tmp/logs/community_errors.log', `尝试创建社区活动，表单数据: ${JSON.stringify(formData, null, 2)}\n`);
+        } catch (fsError) {
+          console.error('写入日志文件失败:', fsError);
+        }
         
         console.log('社区活动表单数据验证前:', JSON.stringify(formData, null, 2));
         
@@ -237,8 +241,11 @@ export function setupCommunityRoutes(app: Express) {
         }
       } catch (error) {
         console.error('社区活动整体处理错误:', error);
-        const fs = require('fs');
-        fs.appendFileSync('/tmp/logs/community_errors.log', `整体错误: ${error}\n`);
+        try {
+          fs.appendFileSync('/tmp/logs/community_errors.log', `整体错误: ${error}\n`);
+        } catch (fsError) {
+          console.error('写入错误日志失败:', fsError);
+        }
         
         if (error instanceof z.ZodError) {
           console.error('社区活动表单数据验证失败:', JSON.stringify(error.errors, null, 2));
