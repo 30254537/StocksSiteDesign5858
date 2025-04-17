@@ -1494,7 +1494,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // 获取音乐信息（用于获取文件路径）
-      const track = await storage.getMusicTrackById(id);
+      const track = await storage.getMusicTrack(id);
       if (!track) {
         return res.status(404).json({ message: "未找到音乐" });
       }
