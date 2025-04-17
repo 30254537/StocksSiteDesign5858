@@ -6,10 +6,10 @@ export default function About() {
   return (
     <div className="py-20 px-4 md:px-8 lg:px-16 mt-16">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-[#00ffcc]">{t("about.title")}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-[#00ffcc] text-center">{t("about.title")}</h1>
         
         {/* 使用硬编码的内容而不是从translations获取，以避免语法错误 */}
-        <div className="prose prose-sm md:prose-base lg:prose-lg prose-invert prose-headings:text-[#00ffcc] prose-a:text-[#00ffcc] hover:prose-a:text-[#00ffcc]/70">
+        <div className="prose prose-sm md:prose-base lg:prose-lg prose-invert prose-headings:text-[#00ffcc] prose-a:text-[#00ffcc] hover:prose-a:text-[#00ffcc]/70 text-center">
           {/* 所有内容放在一个大框中 */}
           <div className="border border-[#00ffcc]/30 p-8 rounded-lg">
             <p>STONKS DEX SHOP是MY STONKS去中心化交易所的文化延伸，我们以创新与社区为核心，打造连接区块链技术与现实世界的桥梁。这里不仅是生态周边的展示平台，更是全球区块链爱好者共同参与、共同成长的协作网络。通过独特的设计与互动体验，我们致力于让每个人都能成为生态共建者，见证去中心化未来的无限可能。</p>
@@ -39,25 +39,27 @@ export default function About() {
             <p className="text-[#00ffcc] font-bold mt-6">加入这场革新运动</p>
             <p>STONKS DEX SHOP不属于某个团队，而是属于所有相信去中心化未来的人。无论你是开发者、设计师，还是区块链文化的传播者，这里都有属于你的角色：</p>
             
-            <p className="ml-5 mt-2">加入Telegram社区，获取MY STONKS代币，成为生态共建股东。</p>
-            <p className="ml-5">参与周边共创计划，让你的设计成为社区文化符号。</p>
-            <p className="ml-5">出席全球线下活动，与志同道合者探索区块链的更多可能。</p>
-            
-            <p className="mt-6">我们正在书写一个新时代的故事——技术属于大众，价值回归社区，创新没有边界。</p>
-            <p className="mt-4 font-bold text-[#00ffcc]">STONKS TO THE MOON，未来由你定义！</p>
-            <p className="mt-2">→ <a href="https://t.me/STONKSOPEN" target="_blank" className="text-[#00ffcc]">立即加入社区</a> | <a href="/products" className="text-[#00ffcc]">探索周边系列</a></p>
-            <p className="mt-4 italic">MY STONKS生态：因为相信，所以看见！</p>
+            <div className="flex flex-col items-center">
+              <p className="mt-2">加入Telegram社区，获取MY STONKS代币，成为生态共建股东。</p>
+              <p>参与周边共创计划，让你的设计成为社区文化符号。</p>
+              <p>出席全球线下活动，与志同道合者探索区块链的更多可能。</p>
+              
+              <p className="mt-6">我们正在书写一个新时代的故事——技术属于大众，价值回归社区，创新没有边界。</p>
+              <p className="mt-4 font-bold text-[#00ffcc]">STONKS TO THE MOON，未来由你定义！</p>
+              <p className="mt-2">→ <a href="https://t.me/STONKSOPEN" target="_blank" className="text-[#00ffcc]">立即加入社区</a> | <a href="/products" className="text-[#00ffcc]">探索周边系列</a></p>
+              <p className="mt-4 italic">MY STONKS生态：因为相信，所以看见！</p>
+            </div>
           </div>
         </div>
         
         {/* Community Section */}
-        <div className="mt-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[#00ffcc]">{t("about.communityTitle")}</h2>
+        <div className="mt-16 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[#00ffcc] text-center">{t("about.communityTitle")}</h2>
           
           <div className="bg-primary/30 border border-accent/20 p-8 rounded-lg">
             <p className="mb-6">{t("about.communityDescription")}</p>
             
-            <ul className="list-disc pl-5 space-y-2 mb-6">
+            <ul className="list-disc pl-5 text-left space-y-2 mb-6">
               <li>{t("about.communityPoint1")}</li>
               <li>{t("about.communityPoint2")}</li>
               <li>{t("about.communityPoint3")}</li>
