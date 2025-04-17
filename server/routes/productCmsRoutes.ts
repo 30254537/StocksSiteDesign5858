@@ -179,7 +179,9 @@ export function setupProductCmsRoutes(app: Express) {
         return res.status(500).json({ message: '更新产品失败' });
       }
       
-      res.json(updatedProduct);
+      // 转换为驼峰格式返回给前端
+      const formattedProduct = transformProductToCamelCase(updatedProduct);
+      res.json(formattedProduct);
     } catch (error) {
       console.error('更新产品时出错:', error);
       res.status(500).json({ 
