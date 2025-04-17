@@ -112,14 +112,15 @@ export default function Manage() {
       const form = e.target as HTMLFormElement;
       const titleInput = form.querySelector("#music-title") as HTMLInputElement;
       const artistInput = form.querySelector("#music-artist") as HTMLInputElement;
-      const styleInput = form.querySelector("#music-style") as HTMLInputElement;
+      // 由于style字段在数据库中不存在，暂时注释掉
+      // const styleInput = form.querySelector("#music-style") as HTMLInputElement;
       const idInput = form.querySelector("#music-id") as HTMLInputElement;
       
       const trackId = parseInt(idInput.value);
       
       formData.append("title", titleInput.value);
       formData.append("artist", artistInput.value);
-      formData.append("style", styleInput.value || "");
+      // formData.append("style", styleInput.value || "");
       
       if (musicFile) {
         formData.append("music", musicFile);
