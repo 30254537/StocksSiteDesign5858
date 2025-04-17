@@ -92,7 +92,7 @@ export function setupProductCmsRoutes(app: Express) {
         stonks_price: stonksPrice,
         ethPrice: price / 0.037, // 使用默认STONKS价格
         category: 'merchandise', // 默认分类
-        inventory: inventory,
+        stock: inventory,
         is_active: req.body.isActive === '1' || req.body.isActive === 'true',
         featured: 0,
         imageUrl: imageUrls.length > 0 ? imageUrls[0] : '',
