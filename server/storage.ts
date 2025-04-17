@@ -159,6 +159,24 @@ export class DatabaseStorage implements IStorage {
     this.sessionStore = sessionStore;
   }
   
+  // 获取当前STONKS代币价格
+  async getCurrentStonksPrice(): Promise<number> {
+    try {
+      // 从API获取最新STONKS价格
+      const response = await axios.get('/api/stonks-price');
+      if (response.data && response.data.price) {
+        return response.data.price;
+      }
+      
+      // 如果无法获取实时价格，返回默认值
+      return 0.037;
+    } catch (error) {
+      console.error('获取STONKS价格失败:', error);
+      // 返回默认价格
+      return 0.037;
+    }
+  }
+  
   async createUser(user: InsertUser): Promise<User> {
     const hashedPassword = await bcrypt.hash(user.password, 10);
     const [createdUser] = await db.insert(users)

@@ -7,15 +7,18 @@
 export function transformProductToCamelCase(product: any): any {
   if (!product) return null;
   
+  // 使用实时的STONKS/USD价格计算stonksPrice (如果没有提供stonks_price字段)
+  const stonksPrice = product.stonks_price || product.stonksPrice || (product.price / 0.037);
+  
   return {
     id: product.id,
     name: product.name,
     description: product.description,
     price: product.price,
-    stonksPrice: product.stonks_price,
+    stonksPrice: stonksPrice,
     ethPrice: product.ethPrice,
     stock: product.stock || product.inventory, // 支持两种字段名
-    isActive: product.is_active,
+    isActive: product.is_active !== undefined ? product.is_active : true,  // 默认激活
     imageUrl: product.image_url || product.imageUrl, // 支持两种字段名
     imageUrls: product.image_urls || product.imageUrls || [], // 支持两种字段名
     category: product.category,
