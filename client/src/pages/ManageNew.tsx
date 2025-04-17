@@ -161,7 +161,7 @@ export default function ManageNew() {
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
-      const response = await apiRequest("GET", `/api/cms/about?t=${timestamp}`);
+      const response = await apiRequest("GET", `/api/about?t=${timestamp}`);
       const data = await response.json();
       setAboutContents(data);
     } catch (error) {
@@ -467,7 +467,7 @@ export default function ManageNew() {
       try {
         // 添加时间戳参数以避免缓存问题
         const timestamp = new Date().getTime();
-        const response = await apiRequest("DELETE", `/api/cms/about/${contentId}?t=${timestamp}`);
+        const response = await apiRequest("DELETE", `/api/about/${contentId}?t=${timestamp}`);
         
         if (!response.ok) {
           throw new Error('删除关于我们内容失败');
@@ -1275,11 +1275,11 @@ export default function ManageNew() {
                   
                   // 确定请求方法和端点
                   let method = "POST";
-                  let endpoint = "/api/cms/community";
+                  let endpoint = "/api/community";
                   
                   if (activityId && parseInt(activityId) > 0) {
                     method = "PUT";
-                    endpoint = `/api/cms/community/${activityId}`;
+                    endpoint = `/api/community/${activityId}`;
                   }
                   
                   // 发送请求
@@ -1535,7 +1535,7 @@ export default function ManageNew() {
                                 if (window.confirm("确定要删除此活动吗？此操作无法撤销。")) {
                                   // 添加时间戳参数以避免缓存问题
                                   const timestamp = new Date().getTime();
-                                  apiRequest("DELETE", `/api/cms/community/${activity.id}?t=${timestamp}`)
+                                  apiRequest("DELETE", `/api/community/${activity.id}?t=${timestamp}`)
                                     .then(response => {
                                       if (!response.ok) {
                                         throw new Error('删除活动失败');
