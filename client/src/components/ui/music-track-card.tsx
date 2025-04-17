@@ -9,7 +9,7 @@ export interface MusicTrack {
   id: number;
   title: string;
   artist: string;
-  style: string; // 添加音乐风格字段
+  // style字段在数据库中不存在，已移除
   filename: string;
   duration: number;
   url: string;
