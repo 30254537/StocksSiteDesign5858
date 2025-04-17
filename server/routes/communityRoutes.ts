@@ -175,18 +175,44 @@ export function setupCommunityRoutes(app: Express) {
       console.log('即将验证社区活动表单数据:', JSON.stringify(formData, null, 2));
       
       try {
+        // 写入临时日志文件
+        const fs = require('fs');
+        fs.appendFileSync('/tmp/logs/community_errors.log', `尝试创建社区活动，表单数据: ${JSON.stringify(formData, null, 2)}\n`);
+        
         console.log('社区活动表单数据验证前:', JSON.stringify(formData, null, 2));
-        const activityData = insertCommunityActivitySchema.parse(formData);
-        console.log('社区活动表单数据验证成功:', JSON.stringify(activityData, null, 2));
-        const newActivity = await storage.createCommunityActivity(activityData);
-        res.status(200).json(newActivity); // 使用200而非201，更符合前端期望
+        
+        try {
+          const activityData = insertCommunityActivitySchema.parse(formData);
+          console.log('社区活动表单数据验证成功:', JSON.stringify(activityData, null, 2));
+          fs.appendFileSync('/tmp/logs/community_errors.log', `验证成功，准备保存: ${JSON.stringify(activityData, null, 2)}\n`);
+          
+          const newActivity = await storage.createCommunityActivity(activityData);
+          console.log('社区活动创建成功:', JSON.stringify(newActivity, null, 2));
+          fs.appendFileSync('/tmp/logs/community_errors.log', `创建成功: ${JSON.stringify(newActivity, null, 2)}\n`);
+          
+          res.status(200).json(newActivity); // 使用200而非201，更符合前端期望
+        } catch (validationError) {
+          if (validationError instanceof z.ZodError) {
+            console.error('社区活动表单数据验证失败:', JSON.stringify(validationError.errors, null, 2));
+            fs.appendFileSync('/tmp/logs/community_errors.log', `验证失败: ${JSON.stringify(validationError.errors, null, 2)}\n`);
+            res.status(400).json({ message: '数据验证失败', errors: validationError.errors });
+          } else {
+            console.error('社区活动创建其他错误:', validationError);
+            fs.appendFileSync('/tmp/logs/community_errors.log', `其他错误: ${validationError}\n`);
+            throw validationError;
+          }
+        }
       } catch (error) {
+        console.error('社区活动整体处理错误:', error);
+        const fs = require('fs');
+        fs.appendFileSync('/tmp/logs/community_errors.log', `整体错误: ${error}\n`);
+        
         if (error instanceof z.ZodError) {
           console.error('社区活动表单数据验证失败:', JSON.stringify(error.errors, null, 2));
           res.status(400).json({ message: '数据验证失败', errors: error.errors });
         } else {
           console.error('社区活动创建其他错误:', error);
-          throw error;
+          res.status(500).json({ message: '服务器内部错误', error: String(error) });
         }
       }
     } catch (error) {

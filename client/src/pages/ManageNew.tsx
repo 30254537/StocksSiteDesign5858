@@ -1290,6 +1290,27 @@ export default function ManageNew() {
                     endpoint = `/api/community/${activityId}`;
                   }
                   
+                  console.log("社区活动表单数据内容检查:", {
+                    title,
+                    content,
+                    location,
+                    startDate: startDate || null,
+                    endDate: endDate || null,
+                    isActive,
+                    imageFiles: activityImageFiles.length
+                  });
+                  
+                  // 打印FormData内容以便调试
+                  const formDataEntries = {};
+                  for (const [key, value] of formData.entries()) {
+                    if (typeof value === 'string') {
+                      formDataEntries[key] = value;
+                    } else {
+                      formDataEntries[key] = value.name || '(文件)';
+                    }
+                  }
+                  console.log("表单数据:", formDataEntries);
+                  
                   // 发送请求
                   const timestamp = new Date().getTime();
                   const response = await fetch(`${endpoint}?t=${timestamp}`, {
