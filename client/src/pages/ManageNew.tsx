@@ -1348,9 +1348,14 @@ export default function ManageNew() {
                   let method = "POST";
                   let endpoint = "/api/community";
                   
+                  // 编辑模式使用PUT请求
                   if (activityId && parseInt(activityId) > 0) {
                     method = "PUT";
                     endpoint = `/api/community/${activityId}`;
+                    
+                    // 明确告知服务器这是编辑请求，而非新增
+                    formData.append("_method", "PUT");
+                    formData.append("activityId", activityId);
                   }
                   
                   console.log("社区活动表单数据内容检查:", {

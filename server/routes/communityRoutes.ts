@@ -338,19 +338,32 @@ export function setupCommunityRoutes(app: Express) {
         return res.status(404).json({ message: '未找到指定的社区活动' });
       }
       
+      // 首先检查是否有明确的活动ID参数，特别是来自表单数据的
+      const formActivityId = req.body.activityId ? parseInt(req.body.activityId) : null;
+      const effectiveActivityId = formActivityId || activityId;
+      
+      if (formActivityId && formActivityId !== activityId) {
+        console.log(`注意: 表单中的活动ID (${formActivityId}) 与路径参数中的ID (${activityId}) 不一致, 将使用 ${effectiveActivityId}`);
+      }
+      
       // 处理上传的图片文件
       let imageUrl = req.body.imageUrl || existingActivity.imageUrl || '';
       // 保持现有的图片数组，如果没有上传新图片则使用原来的
       let imageUrls = existingActivity.imageUrls || [];
       
       // 检查是否有从表单传递的existingImageUrls参数
-      if (req.body.existingImageUrls && Array.isArray(req.body.existingImageUrls)) {
-        // 如果前端传递了现有图片URL的数组，直接使用它
-        console.log("使用前端传递的现有图片URLs:", req.body.existingImageUrls);
-        imageUrls = Array.isArray(req.body.existingImageUrls) ? req.body.existingImageUrls : [req.body.existingImageUrls];
-      } else if (req.body.existingImageUrls && typeof req.body.existingImageUrls === 'string') {
-        // 如果是单个字符串
-        imageUrls = [req.body.existingImageUrls];
+      if (req.body.existingImageUrls) {
+        console.log("检测到从表单传递的现有图片URLs:", req.body.existingImageUrls);
+        
+        if (Array.isArray(req.body.existingImageUrls)) {
+          // 如果前端传递了现有图片URL的数组，直接使用它
+          imageUrls = req.body.existingImageUrls;
+        } else if (typeof req.body.existingImageUrls === 'string') {
+          // 如果是单个字符串
+          imageUrls = [req.body.existingImageUrls];
+        }
+        
+        console.log("使用这些现有图片URLs:", imageUrls);
       }
 
       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
@@ -444,8 +457,8 @@ export function setupCommunityRoutes(app: Express) {
           return res.status(400).json({ message: '内容不能为空' });
         }
         
-        // 更新活动
-        const updatedActivity = await storage.updateCommunityActivity(activityId, formData);
+        // 更新活动，使用有效的活动ID（可能来自表单或URL路径）
+        const updatedActivity = await storage.updateCommunityActivity(effectiveActivityId, formData);
         
         if (!updatedActivity) {
           res.status(404).json({ message: '未找到指定的社区活动' });
