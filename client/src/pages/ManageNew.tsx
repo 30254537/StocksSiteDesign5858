@@ -2391,6 +2391,8 @@ export default function ManageNew() {
                               description: "音乐文件上传中，请稍候...",
                             });
                             
+                            let uploadResultData = null;
+                            
                             try {
                               // 检查上传URL
                               const uploadUrl = '/api/direct-upload';
@@ -2398,9 +2400,14 @@ export default function ManageNew() {
                               
                               // 记录FormData内容
                               console.log('FormData内容:');
-                              for (const [key, value] of formData.entries()) {
-                                console.log(`- ${key}:`, typeof value === 'object' ? `文件: ${(value as File).name}, 大小: ${(value as File).size}字节` : value);
+                              // 使用简单方式记录关键信息，不使用迭代器
+                              const musicFile = formData.get('musicFile');
+                              if (musicFile && musicFile instanceof File) {
+                                console.log(`- musicFile: 文件: ${musicFile.name}, 大小: ${musicFile.size}字节`);
                               }
+                              console.log('- title:', formData.get('title'));
+                              console.log('- artist:', formData.get('artist'));
+                              console.log('- style:', formData.get('style'));
                               
                               // 使用新的直接上传端点
                               const response = await fetch(uploadUrl, {
@@ -2416,19 +2423,19 @@ export default function ManageNew() {
                                 throw new Error(`上传失败: ${response.statusText}，服务器返回: ${errorText}`);
                               }
                               
-                              const data = await response.json();
-                              console.log('上传响应数据:', data);
+                              uploadResultData = await response.json();
+                              console.log('上传响应数据:', uploadResultData);
                               
-                              if (!data.success) {
-                                throw new Error(data.message || '上传失败，未知错误');
+                              if (!uploadResultData.success) {
+                                throw new Error(uploadResultData.message || '上传失败，未知错误');
                               }
+                              
+                              // 保存上传的URL到临时变量供表单提交使用
+                              window.uploadedMusicUrl = uploadResultData.file?.url || uploadResultData.url;
                             } catch (uploadError) {
                               console.error('上传过程中发生异常:', uploadError);
                               throw uploadError;
                             }
-                            
-                            // 保存上传的URL到临时变量供表单提交使用
-                            window.uploadedMusicUrl = data.file?.url || data.url;
                             
                             toast({
                               title: "上传成功",
