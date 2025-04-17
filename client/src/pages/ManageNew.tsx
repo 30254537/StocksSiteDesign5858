@@ -2251,9 +2251,11 @@ export default function Manage() {
                   }
                   
                   // 添加所有图片文件
-                  activityImageFiles.forEach(file => {
-                    formData.append("images", file);
-                  });
+                  if (activityImageFiles.length > 0) {
+                    activityImageFiles.forEach(file => {
+                      formData.append("images", file);
+                    });
+                  }
                   
                   // 确定请求方法和端点
                   let method = "POST";
@@ -2307,7 +2309,7 @@ export default function Manage() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <input type="hidden" id="activity-id" value="0" />
+                  <input type="hidden" id="activity-id" defaultValue="0" />
                   
                   <div>
                     <label htmlFor="activity-title" className="block text-sm font-medium mb-2">
