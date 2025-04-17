@@ -121,9 +121,8 @@ export default function ManageNew() {
   
   // 音乐管理状态
   const [musicTracks, setMusicTracks] = useState<MusicTrack[]>([]);
-  const [loadingMusicTracks, setLoadingMusicTracks] = useState(false);
-  const [editingMusicTrack, setEditingMusicTrack] = useState<MusicTrack | null>(null);
-  const [musicFile, setMusicFile] = useState<File | null>(null);
+  const [loadingMusic, setLoadingMusic] = useState(false);
+  const [editingMusic, setEditingMusic] = useState<MusicTrack | null>(null);
   
   // 获取商品列表
   const fetchProducts = async () => {
@@ -190,7 +189,7 @@ export default function ManageNew() {
   
   // 获取音乐列表
   const fetchMusicTracks = async () => {
-    setLoadingMusicTracks(true);
+    setLoadingMusic(true);
     try {
       // 添加时间戳参数以避免缓存问题
       const timestamp = new Date().getTime();
@@ -205,7 +204,66 @@ export default function ManageNew() {
         variant: "destructive",
       });
     } finally {
-      setLoadingMusicTracks(false);
+      setLoadingMusic(false);
+    }
+  };
+  
+  // 处理编辑音乐
+  const handleEditMusic = (track: MusicTrack) => {
+    setEditingMusic(track);
+    
+    // 填充表单
+    const idInput = document.getElementById("music-id") as HTMLInputElement;
+    if (idInput) idInput.value = track.id.toString();
+    
+    const titleInput = document.getElementById("music-title") as HTMLInputElement;
+    if (titleInput) titleInput.value = track.title;
+    
+    const artistInput = document.getElementById("music-artist") as HTMLInputElement;
+    if (artistInput) artistInput.value = track.artist;
+    
+    const styleInput = document.getElementById("music-style") as HTMLInputElement;
+    if (styleInput) styleInput.value = track.style || "";
+    
+    const urlInput = document.getElementById("music-url") as HTMLInputElement;
+    if (urlInput) urlInput.value = track.url;
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("music-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑音乐",
+      description: `正在编辑: ${track.title}`,
+    });
+  };
+  
+  // 处理删除音乐
+  const handleDeleteMusic = async (trackId: number) => {
+    if (window.confirm("确定要删除此音乐吗？此操作无法撤销。")) {
+      try {
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/music/${trackId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除音乐失败');
+        }
+        
+        toast({
+          title: "删除成功",
+          description: "音乐已成功删除",
+        });
+        
+        // 重新获取音乐列表以更新UI
+        await fetchMusicTracks();
+      } catch (error) {
+        console.error("删除音乐时出错:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除音乐，请稍后再试",
+          variant: "destructive",
+        });
+      }
     }
   };
   
