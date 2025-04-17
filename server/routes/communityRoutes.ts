@@ -169,13 +169,22 @@ export function setupCommunityRoutes(app: Express) {
         ...req.body,
         imageUrl,
         imageUrls,
-        isActive: req.body.isActive === 'true'
+        isActive: req.body.isActive === 'true' || req.body.isActive === '1', // 处理布尔值
+        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || req.body.isOnline === undefined // 默认为线上活动
       };
+      
+      console.log('处理前的原始字段值:', {
+        isActive: req.body.isActive,
+        isOnline: req.body.isOnline,
+        startDate: formData.startDate,
+        endDate: formData.endDate
+      });
       
       // 处理日期字段
       if (formData.startDate && typeof formData.startDate === 'string' && formData.startDate.trim() !== '') {
         try {
           formData.startDate = new Date(formData.startDate);
+          console.log('处理后的开始日期:', formData.startDate);
         } catch (e) {
           console.error('无法解析开始日期:', formData.startDate, e);
           delete formData.startDate;
@@ -187,6 +196,7 @@ export function setupCommunityRoutes(app: Express) {
       if (formData.endDate && typeof formData.endDate === 'string' && formData.endDate.trim() !== '') {
         try {
           formData.endDate = new Date(formData.endDate);
+          console.log('处理后的结束日期:', formData.endDate);
         } catch (e) {
           console.error('无法解析结束日期:', formData.endDate, e);
           delete formData.endDate;
@@ -369,7 +379,8 @@ export function setupCommunityRoutes(app: Express) {
         ...req.body,
         imageUrl,
         imageUrls,
-        isActive: req.body.isActive === 'true'
+        isActive: req.body.isActive === 'true' || req.body.isActive === '1',
+        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || req.body.isOnline === undefined
       };
       
       // 处理日期字段
