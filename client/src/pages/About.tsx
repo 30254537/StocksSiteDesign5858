@@ -35,20 +35,6 @@ export default function About() {
             
             <p className="text-[#00ffcc] font-bold mt-6 text-center">6.透明机制 信任为基</p>
             <p className="max-w-3xl text-center">所有生态决策、资金流向均通过公开渠道可查，社区成员可实时追踪每一份贡献如何转化为平台土壤。这种开放性，正是我们对"去中心化"的真诚诠释。</p>
-            
-            <p className="text-[#00ffcc] font-bold mt-6 text-center">加入这场革新运动</p>
-            <p className="max-w-3xl text-center">STONKS DEX SHOP不属于某个团队，而是属于所有相信去中心化未来的人。无论你是开发者、设计师，还是区块链文化的传播者，这里都有属于你的角色：</p>
-            
-            <div className="flex flex-col items-center mt-2">
-              <p className="text-center">加入Telegram社区，获取MY STONKS代币，成为生态共建股东。</p>
-              <p className="text-center">参与周边共创计划，让你的设计成为社区文化符号。</p>
-              <p className="text-center">出席全球线下活动，与志同道合者探索区块链的更多可能。</p>
-              
-              <p className="mt-6 text-center">我们正在书写一个新时代的故事——技术属于大众，价值回归社区，创新没有边界。</p>
-              <p className="mt-4 font-bold text-[#00ffcc] text-center">STONKS TO THE MOON，未来由你定义！</p>
-              <p className="mt-2 text-center">→ <a href="https://t.me/STONKSOPEN" target="_blank" className="text-[#00ffcc]">立即加入社区</a> | <a href="/products" className="text-[#00ffcc]">探索周边系列</a></p>
-              <p className="mt-4 italic text-center">MY STONKS生态：因为相信，所以看见！</p>
-            </div>
           </div>
         </div>
         
