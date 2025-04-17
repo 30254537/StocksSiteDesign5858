@@ -148,10 +148,14 @@ export function setupCommunityRoutes(app: Express) {
         return res.status(401).json({ message: '需要管理员权限' });
       }
 
+      console.log("收到社区活动添加请求，表单数据:", req.body);
+      console.log("上传的文件:", req.files);
+
       // 处理上传的图片文件
       let imageUrl = req.body.imageUrl || '';
       let imageUrls: string[] = [];
 
+      // 如果存在已上传的图片
       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
         // 处理所有上传的图片
         imageUrls = (req.files as Express.Multer.File[]).map(file => 
@@ -162,6 +166,11 @@ export function setupCommunityRoutes(app: Express) {
         imageUrl = imageUrls[0];
         
         console.log(`上传了 ${req.files.length} 张图片:`, imageUrls);
+      } else if (req.body.imageUrl) {
+        // 如果没有上传新图片但有提供imageUrl，确保imageUrls包含它
+        imageUrl = req.body.imageUrl;
+        imageUrls = [imageUrl];
+        console.log("使用已提供的图片URL:", imageUrl);
       }
 
       // 合并表单数据和图片URL，并确保字段格式正确
@@ -169,11 +178,12 @@ export function setupCommunityRoutes(app: Express) {
         ...req.body,
         imageUrl,
         imageUrls,
-        isActive: req.body.isActive === 'true' || req.body.isActive === '1', // 处理布尔值
-        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || req.body.isOnline === undefined // 默认为线上活动
+        // 统一处理布尔值字段
+        isActive: req.body.isActive === 'true' || req.body.isActive === '1' || req.body.isActive === true, 
+        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || req.body.isOnline === true || req.body.isOnline === undefined
       };
       
-      console.log('处理前的原始字段值:', {
+      console.log('原始字段值:', {
         isActive: req.body.isActive,
         isOnline: req.body.isOnline,
         startDate: formData.startDate,
@@ -208,61 +218,47 @@ export function setupCommunityRoutes(app: Express) {
       console.log('即将验证社区活动表单数据:', JSON.stringify(formData, null, 2));
       
       try {
-        // 写入临时日志文件
-        try {
-          // 使用已经导入的fs模块
-          fs.appendFileSync('/tmp/logs/community_errors.log', `尝试创建社区活动，表单数据: ${JSON.stringify(formData, null, 2)}\n`);
-        } catch (fsError) {
-          console.error('写入日志文件失败:', fsError);
+        // 确保这些字段是必填的
+        if (!formData.title) {
+          return res.status(400).json({ message: '标题不能为空' });
         }
         
-        console.log('社区活动表单数据验证前:', JSON.stringify(formData, null, 2));
-        
-        try {
-          const activityData = insertCommunityActivitySchema.parse(formData);
-          console.log('社区活动表单数据验证成功:', JSON.stringify(activityData, null, 2));
-          fs.appendFileSync('/tmp/logs/community_errors.log', `验证成功，准备保存: ${JSON.stringify(activityData, null, 2)}\n`);
-          
-          const newActivity = await storage.createCommunityActivity(activityData);
-          console.log('社区活动创建成功:', JSON.stringify(newActivity, null, 2));
-          fs.appendFileSync('/tmp/logs/community_errors.log', `创建成功: ${JSON.stringify(newActivity, null, 2)}\n`);
-          
-          res.status(200).json(newActivity); // 使用200而非201，更符合前端期望
-        } catch (validationError) {
-          if (validationError instanceof z.ZodError) {
-            console.error('社区活动表单数据验证失败:', JSON.stringify(validationError.errors, null, 2));
-            fs.appendFileSync('/tmp/logs/community_errors.log', `验证失败: ${JSON.stringify(validationError.errors, null, 2)}\n`);
-            res.status(400).json({ message: '数据验证失败', errors: validationError.errors });
-          } else {
-            console.error('社区活动创建其他错误:', validationError);
-            fs.appendFileSync('/tmp/logs/community_errors.log', `其他错误: ${validationError}\n`);
-            throw validationError;
-          }
-        }
-      } catch (error) {
-        console.error('社区活动整体处理错误:', error);
-        try {
-          fs.appendFileSync('/tmp/logs/community_errors.log', `整体错误: ${error}\n`);
-        } catch (fsError) {
-          console.error('写入错误日志失败:', fsError);
+        if (!formData.content) {
+          return res.status(400).json({ message: '内容不能为空' });
         }
         
-        if (error instanceof z.ZodError) {
-          console.error('社区活动表单数据验证失败:', JSON.stringify(error.errors, null, 2));
-          res.status(400).json({ message: '数据验证失败', errors: error.errors });
+        // 使用insertCommunityActivitySchema验证和转换数据
+        const activityData = insertCommunityActivitySchema.parse({
+          title: formData.title,
+          content: formData.content,
+          imageUrl: formData.imageUrl || null,
+          imageUrls: formData.imageUrls || [],
+          location: formData.location || null,
+          startDate: formData.startDate || null,
+          endDate: formData.endDate || null,
+          isActive: formData.isActive,
+          isOnline: formData.isOnline
+        });
+        
+        console.log('社区活动表单数据验证成功:', JSON.stringify(activityData, null, 2));
+        
+        // 创建活动
+        const newActivity = await storage.createCommunityActivity(activityData);
+        console.log('社区活动创建成功:', JSON.stringify(newActivity, null, 2));
+        
+        res.status(200).json(newActivity);
+      } catch (validationError) {
+        if (validationError instanceof z.ZodError) {
+          console.error('社区活动表单数据验证失败:', JSON.stringify(validationError.errors, null, 2));
+          res.status(400).json({ message: '数据验证失败', errors: validationError.errors });
         } else {
-          console.error('社区活动创建其他错误:', error);
-          res.status(500).json({ message: '服务器内部错误', error: String(error) });
+          console.error('社区活动创建其他错误:', validationError);
+          res.status(500).json({ message: '服务器内部错误', error: String(validationError) });
         }
       }
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.error('社区活动表单数据验证失败:', JSON.stringify(error.errors, null, 2));
-        res.status(400).json({ message: '数据验证失败', errors: error.errors });
-      } else {
-        console.error('创建社区活动时出错:', error);
-        res.status(500).json({ message: '服务器错误' });
-      }
+      console.error('创建社区活动时出错:', error);
+      res.status(500).json({ message: '服务器错误', error: String(error) });
     }
   });
   
@@ -330,6 +326,9 @@ export function setupCommunityRoutes(app: Express) {
         return res.status(401).json({ message: '需要管理员权限' });
       }
 
+      console.log("收到社区活动更新请求，ID:", req.params.id, "表单数据:", req.body);
+      console.log("上传的文件:", req.files);
+
       const { id } = req.params;
       const activityId = parseInt(id);
 
@@ -386,14 +385,23 @@ export function setupCommunityRoutes(app: Express) {
         ...req.body,
         imageUrl,
         imageUrls,
-        isActive: req.body.isActive === 'true' || req.body.isActive === '1',
-        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || req.body.isOnline === undefined
+        // 统一处理布尔值字段
+        isActive: req.body.isActive === 'true' || req.body.isActive === '1' || req.body.isActive === true,
+        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || req.body.isOnline === true || req.body.isOnline === undefined
       };
+      
+      console.log('原始字段值:', {
+        isActive: req.body.isActive,
+        isOnline: req.body.isOnline,
+        startDate: formData.startDate,
+        endDate: formData.endDate
+      });
       
       // 处理日期字段
       if (formData.startDate && typeof formData.startDate === 'string' && formData.startDate.trim() !== '') {
         try {
           formData.startDate = new Date(formData.startDate);
+          console.log('处理后的开始日期:', formData.startDate);
         } catch (e) {
           console.error('无法解析开始日期:', formData.startDate, e);
           delete formData.startDate;
@@ -405,6 +413,7 @@ export function setupCommunityRoutes(app: Express) {
       if (formData.endDate && typeof formData.endDate === 'string' && formData.endDate.trim() !== '') {
         try {
           formData.endDate = new Date(formData.endDate);
+          console.log('处理后的结束日期:', formData.endDate);
         } catch (e) {
           console.error('无法解析结束日期:', formData.endDate, e);
           delete formData.endDate;
@@ -413,17 +422,35 @@ export function setupCommunityRoutes(app: Express) {
         delete formData.endDate;
       }
       
-      const updatedActivity = await storage.updateCommunityActivity(activityId, formData);
+      console.log('即将更新社区活动表单数据:', JSON.stringify(formData, null, 2));
       
-      if (!updatedActivity) {
-        res.status(404).json({ message: '未找到指定的社区活动' });
-        return;
+      try {
+        // 确保这些字段是必填的
+        if (!formData.title) {
+          return res.status(400).json({ message: '标题不能为空' });
+        }
+        
+        if (!formData.content) {
+          return res.status(400).json({ message: '内容不能为空' });
+        }
+        
+        // 更新活动
+        const updatedActivity = await storage.updateCommunityActivity(activityId, formData);
+        
+        if (!updatedActivity) {
+          res.status(404).json({ message: '未找到指定的社区活动' });
+          return;
+        }
+        
+        console.log('社区活动更新成功:', JSON.stringify(updatedActivity, null, 2));
+        res.json(updatedActivity);
+      } catch (error) {
+        console.error('更新社区活动时出错:', error);
+        res.status(500).json({ message: '服务器错误', error: String(error) });
       }
-      
-      res.json(updatedActivity);
     } catch (error) {
       console.error('更新社区活动时出错:', error);
-      res.status(500).json({ message: '服务器错误' });
+      res.status(500).json({ message: '服务器错误', error: String(error) });
     }
   });
   
