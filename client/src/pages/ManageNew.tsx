@@ -70,7 +70,7 @@ interface MusicTrack {
   artist: string;
   duration: number;
   url: string;
-  style?: string;
+  // style字段在数据库中不存在，已从接口中移除
 }
 
 export default function ManageNew() {
@@ -222,8 +222,9 @@ export default function ManageNew() {
     const artistInput = document.getElementById("music-artist") as HTMLInputElement;
     if (artistInput) artistInput.value = track.artist;
     
-    const styleInput = document.getElementById("music-style") as HTMLInputElement;
-    if (styleInput) styleInput.value = track.style || "";
+    // style字段不存在于数据库中，已移除
+    // const styleInput = document.getElementById("music-style") as HTMLInputElement;
+    // if (styleInput) styleInput.value = track.style || "";
     
     const urlInput = document.getElementById("music-url") as HTMLInputElement;
     if (urlInput) urlInput.value = track.url;
