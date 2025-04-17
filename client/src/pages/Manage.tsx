@@ -571,6 +571,7 @@ export default function Manage() {
                   description: description.value,
                   price: parseFloat(price.value),
                   stock: parseInt(stock.value),
+                  stonksPrice: parseFloat(price.value) / 0.037, // 添加STONKS价格字段
                 };
                 
                 // 如果是编辑模式并且有现有图片列表，添加到数据
@@ -819,8 +820,8 @@ export default function Manage() {
                         <TableCell>{product.name}</TableCell>
                         <TableCell>
                           <div>
-                            <div>⊙ {product.stonksPrice?.toFixed(6) || "0.000000"}</div>
-                            <div className="text-gray-400">${product.price}</div>
+                            <div className="text-accent">⊙ {product.stonksPrice ? product.stonksPrice.toFixed(6) : (product.price / 0.037).toFixed(6)}</div>
+                            <div className="text-gray-400">${product.price.toFixed(2)}</div>
                           </div>
                         </TableCell>
                         <TableCell>{product.stock || "未设置"}</TableCell>
