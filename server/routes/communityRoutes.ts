@@ -172,11 +172,24 @@ export function setupCommunityRoutes(app: Express) {
         isActive: req.body.isActive === 'true'
       };
 
-      const activityData = insertCommunityActivitySchema.parse(formData);
-      const newActivity = await storage.createCommunityActivity(activityData);
-      res.status(200).json(newActivity); // 使用200而非201，更符合前端期望
+      console.log('即将验证社区活动表单数据:', JSON.stringify(formData, null, 2));
+      
+      try {
+        const activityData = insertCommunityActivitySchema.parse(formData);
+        console.log('社区活动表单数据验证成功:', JSON.stringify(activityData, null, 2));
+        const newActivity = await storage.createCommunityActivity(activityData);
+        res.status(200).json(newActivity); // 使用200而非201，更符合前端期望
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.error('社区活动表单数据验证失败:', JSON.stringify(error.errors, null, 2));
+          res.status(400).json({ message: '数据验证失败', errors: error.errors });
+        } else {
+          throw error;
+        }
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('社区活动表单数据验证失败:', JSON.stringify(error.errors, null, 2));
         res.status(400).json({ message: '数据验证失败', errors: error.errors });
       } else {
         console.error('创建社区活动时出错:', error);
