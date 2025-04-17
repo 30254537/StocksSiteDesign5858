@@ -2173,6 +2173,387 @@ export default function Manage() {
         </Card>
       )}
       
+      {/* 社区活动管理 */}
+      {activeTab === "community" && (
+        <Card className="shadow-lg mb-8">
+          <CardHeader>
+            <CardTitle>社区活动管理</CardTitle>
+            <CardDescription>添加、编辑和管理社区活动</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-end mb-4">
+              <Button 
+                className="bg-accent text-black hover:bg-accent/80"
+                onClick={() => {
+                  setEditingCommunityActivity(null);
+                  
+                  // 重置表单
+                  const form = document.getElementById("community-activity-form") as HTMLFormElement;
+                  if (form) form.reset();
+                  
+                  // 重置ID
+                  const idInput = document.getElementById("activity-id") as HTMLInputElement;
+                  if (idInput) idInput.value = "0";
+                  
+                  // 清空图片区域
+                  const existingImagesContainer = document.getElementById("existing-activity-images");
+                  if (existingImagesContainer) existingImagesContainer.innerHTML = "";
+                  
+                  // 清空已选图片
+                  setActivityImageFiles([]);
+                }}
+              >
+                添加新活动
+              </Button>
+            </div>
+            
+            {/* 活动表单 */}
+            <form
+              id="community-activity-form"
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                try {
+                  const formData = new FormData();
+                  
+                  // 获取表单数据
+                  const activityId = (document.getElementById("activity-id") as HTMLInputElement).value;
+                  const title = (document.getElementById("activity-title") as HTMLInputElement).value;
+                  const content = (document.getElementById("activity-content") as HTMLTextAreaElement).value;
+                  const location = (document.getElementById("activity-location") as HTMLInputElement).value;
+                  const startDate = (document.getElementById("activity-startDate") as HTMLInputElement).value;
+                  const endDate = (document.getElementById("activity-endDate") as HTMLInputElement).value;
+                  const isActive = (document.getElementById("activity-active") as HTMLInputElement).checked;
+                  
+                  // 基本验证
+                  if (!title || !content) {
+                    toast({
+                      title: "表单错误",
+                      description: "请填写标题和内容",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  // 添加表单数据到FormData
+                  formData.append("title", title);
+                  formData.append("content", content);
+                  formData.append("location", location || "");
+                  formData.append("isActive", isActive ? "1" : "0");
+                  
+                  if (startDate) {
+                    formData.append("startDate", startDate);
+                  }
+                  
+                  if (endDate) {
+                    formData.append("endDate", endDate);
+                  }
+                  
+                  // 添加所有图片文件
+                  activityImageFiles.forEach(file => {
+                    formData.append("images", file);
+                  });
+                  
+                  // 确定请求方法和端点
+                  let method = "POST";
+                  let endpoint = "/api/cms/community";
+                  
+                  if (activityId && parseInt(activityId) > 0) {
+                    method = "PUT";
+                    endpoint = `/api/cms/community/${activityId}`;
+                  }
+                  
+                  // 发送请求
+                  const timestamp = new Date().getTime();
+                  const response = await fetch(`${endpoint}?t=${timestamp}`, {
+                    method,
+                    body: formData
+                  });
+                  
+                  if (!response.ok) {
+                    throw new Error(`操作失败: ${response.statusText}`);
+                  }
+                  
+                  // 更新活动列表
+                  await fetchCommunityActivities();
+                  
+                  // 重置表单和状态
+                  e.currentTarget.reset();
+                  setEditingCommunityActivity(null);
+                  setActivityImageFiles([]);
+                  
+                  // 清空已存在的图片预览
+                  const existingImagesContainer = document.getElementById("existing-activity-images");
+                  if (existingImagesContainer) existingImagesContainer.innerHTML = "";
+                  
+                  // 重置ID
+                  const idInput = document.getElementById("activity-id") as HTMLInputElement;
+                  if (idInput) idInput.value = "0";
+                  
+                  toast({
+                    title: parseInt(activityId) > 0 ? "更新成功" : "添加成功",
+                    description: parseInt(activityId) > 0 ? "活动已成功更新" : "新活动已成功添加",
+                  });
+                } catch (error) {
+                  console.error("活动表单提交错误:", error);
+                  toast({
+                    title: "操作失败",
+                    description: "提交活动表单时出错，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <input type="hidden" id="activity-id" value="0" />
+                  
+                  <div>
+                    <label htmlFor="activity-title" className="block text-sm font-medium mb-2">
+                      活动标题 *
+                    </label>
+                    <Input
+                      id="activity-title"
+                      type="text"
+                      placeholder="输入活动标题"
+                      className="bg-primary/50 border-accent"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="activity-location" className="block text-sm font-medium mb-2">
+                      活动地点
+                    </label>
+                    <Input
+                      id="activity-location"
+                      type="text"
+                      placeholder="输入活动地点"
+                      className="bg-primary/50 border-accent"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="activity-startDate" className="block text-sm font-medium mb-2">
+                        开始日期
+                      </label>
+                      <Input
+                        id="activity-startDate"
+                        type="date"
+                        className="bg-primary/50 border-accent"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="activity-endDate" className="block text-sm font-medium mb-2">
+                        结束日期
+                      </label>
+                      <Input
+                        id="activity-endDate"
+                        type="date"
+                        className="bg-primary/50 border-accent"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="activity-active" defaultChecked />
+                    <label
+                      htmlFor="activity-active"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      发布活动
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="activity-content" className="block text-sm font-medium mb-2">
+                      活动内容 *
+                    </label>
+                    <Textarea
+                      id="activity-content"
+                      placeholder="输入活动详细内容"
+                      className="min-h-[200px] bg-primary/50 border-accent"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="activity-images" className="block text-sm font-medium mb-2">
+                      活动图片
+                    </label>
+                    <Input
+                      id="activity-images"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="bg-primary/50 border-accent"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          const newFiles = Array.from(e.target.files);
+                          
+                          // 检查文件大小
+                          const oversizedFiles = newFiles.filter(file => file.size > 5 * 1024 * 1024);
+                          if (oversizedFiles.length > 0) {
+                            toast({
+                              title: "文件过大",
+                              description: "某些图片超过5MB大小限制，已被忽略",
+                              variant: "destructive",
+                            });
+                          }
+                          
+                          // 过滤掉大于5MB的文件
+                          const validFiles = newFiles.filter(file => file.size <= 5 * 1024 * 1024);
+                          
+                          setActivityImageFiles(prev => [...prev, ...validFiles]);
+                          
+                          // 清空输入框，允许再次选择同样的文件
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                    
+                    {/* 显示当前选择的图片文件 */}
+                    {activityImageFiles.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm text-muted-foreground mb-2">已选择 {activityImageFiles.length} 张图片:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {activityImageFiles.map((file, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`预览图 ${index + 1}`}
+                                className="h-16 w-auto rounded border border-accent/30"
+                              />
+                              <button
+                                type="button"
+                                className="absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
+                                  setActivityImageFiles(prev => prev.filter((_, i) => i !== index));
+                                }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* 显示现有图片（编辑时） */}
+                    <div id="existing-activity-images" className="mt-4"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <Button 
+                  type="submit"
+                  className="bg-accent text-black hover:bg-accent/80"
+                >
+                  {editingCommunityActivity ? "更新活动" : "添加活动"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 活动列表 */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold mb-4">活动列表</h3>
+              
+              {loadingCommunityActivities ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : communityActivities.length === 0 ? (
+                <p className="text-center py-8 text-gray-400">暂无活动数据</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>标题</TableHead>
+                        <TableHead>地点</TableHead>
+                        <TableHead>开始日期</TableHead>
+                        <TableHead>结束日期</TableHead>
+                        <TableHead>状态</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {communityActivities.map((activity) => (
+                        <TableRow key={activity.id}>
+                          <TableCell>{activity.id}</TableCell>
+                          <TableCell className="font-medium">{activity.title}</TableCell>
+                          <TableCell>{activity.location || "-"}</TableCell>
+                          <TableCell>
+                            {activity.startDate ? new Date(activity.startDate).toLocaleDateString() : "-"}
+                          </TableCell>
+                          <TableCell>
+                            {activity.endDate ? new Date(activity.endDate).toLocaleDateString() : "-"}
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={activity.isActive ? "bg-green-500" : "bg-gray-500"}>
+                              {activity.isActive ? "已发布" : "未发布"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-accent text-accent"
+                              onClick={() => handleEditCommunityActivity(activity)}
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => {
+                                if (window.confirm("确定要删除此活动吗？此操作无法撤销。")) {
+                                  // 添加时间戳参数以避免缓存问题
+                                  const timestamp = new Date().getTime();
+                                  apiRequest("DELETE", `/api/cms/community/${activity.id}?t=${timestamp}`)
+                                    .then(response => {
+                                      if (!response.ok) {
+                                        throw new Error('删除活动失败');
+                                      }
+                                      toast({
+                                        title: "删除成功",
+                                        description: "活动已成功删除",
+                                      });
+                                      // 重新获取活动列表
+                                      fetchCommunityActivities();
+                                    })
+                                    .catch(error => {
+                                      console.error("删除活动错误:", error);
+                                      toast({
+                                        title: "删除失败",
+                                        description: "无法删除活动，请稍后再试",
+                                        variant: "destructive",
+                                      });
+                                    });
+                                }
+                              }}
+                            >
+                              删除
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* 联系信息管理 */}
       {activeTab === "contact" && (
         <Card className="shadow-lg mb-8">
