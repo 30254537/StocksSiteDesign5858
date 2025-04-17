@@ -30,10 +30,10 @@ interface Product {
   description: string;
   price: number;
   stonks_price: number;
-  inventory: number;
+  stock: number;
   is_active: boolean;
   image_urls?: string[];
-  stock?: number;
+  /* inventory property was removed in favor of stock */
   category?: string;
   featured?: boolean;
   hasSizes?: boolean;
@@ -391,8 +391,8 @@ export default function ManageNew() {
     const stonksPriceInput = document.getElementById("product-stonks-price") as HTMLInputElement;
     if (stonksPriceInput) stonksPriceInput.value = product.stonks_price.toString();
     
-    const inventoryInput = document.getElementById("product-inventory") as HTMLInputElement;
-    if (inventoryInput) inventoryInput.value = product.stock.toString();
+    const stockInput = document.getElementById("product-stock") as HTMLInputElement;
+    if (stockInput) stockInput.value = product.stock.toString();
     
     const activeCheckbox = document.getElementById("product-active") as HTMLInputElement;
     if (activeCheckbox) activeCheckbox.checked = product.is_active;
@@ -1615,7 +1615,7 @@ export default function ManageNew() {
                   const description = (document.getElementById("product-description") as HTMLTextAreaElement).value;
                   const price = (document.getElementById("product-price") as HTMLInputElement).value;
                   const stonksPrice = (document.getElementById("product-stonks-price") as HTMLInputElement).value;
-                  const inventory = (document.getElementById("product-inventory") as HTMLInputElement).value;
+                  const stock = (document.getElementById("product-stock") as HTMLInputElement).value;
                   const active = (document.getElementById("product-active") as HTMLInputElement).checked;
                   
                   // 基本验证
@@ -1633,7 +1633,7 @@ export default function ManageNew() {
                   formData.append("description", description || "");
                   formData.append("price", price);
                   formData.append("stonksPrice", stonksPrice);
-                  formData.append("stock", inventory || "999");
+                  formData.append("stock", stock || "999");
                   formData.append("isActive", active ? "1" : "0");
                   
                   // 添加所有图片文件
@@ -1738,12 +1738,12 @@ export default function ManageNew() {
                   </div>
                   
                   <div>
-                    <label htmlFor="product-inventory" className="block text-sm font-medium mb-2">
+                    <label htmlFor="product-stock" className="block text-sm font-medium mb-2">
                       库存数量
                     </label>
                     <Input
-                      id="product-inventory"
-                      name="inventory"
+                      id="product-stock"
+                      name="stock"
                       type="number"
                       min="0"
                       placeholder="库存数量"
