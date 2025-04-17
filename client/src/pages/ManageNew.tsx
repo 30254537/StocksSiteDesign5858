@@ -123,6 +123,7 @@ export default function ManageNew() {
   const [musicTracks, setMusicTracks] = useState<MusicTrack[]>([]);
   const [loadingMusic, setLoadingMusic] = useState(false);
   const [editingMusic, setEditingMusic] = useState<MusicTrack | null>(null);
+  const [musicFile, setMusicFile] = useState<File | null>(null);
   
   // 获取商品列表
   const fetchProducts = async () => {
@@ -721,7 +722,7 @@ export default function ManageNew() {
   const handleMusicFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!musicFile && !editingMusicTrack) {
+    if (!musicFile && !editingMusic) {
       toast({
         title: "请选择音乐文件",
         description: "请先选择一个要上传的音乐文件",
