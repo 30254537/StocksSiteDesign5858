@@ -63,6 +63,170 @@ export default function Manage() {
   const [loadingCommunityActivities, setLoadingCommunityActivities] = useState(false);
   const [editingCommunityActivity, setEditingCommunityActivity] = useState<CommunityActivity | null>(null);
   
+  // 处理编辑社区活动
+  const handleEditCommunityActivity = (activity: CommunityActivity) => {
+    console.log('编辑活动:', activity);
+    
+    setEditingCommunityActivity(activity);
+    
+    // 重置文件输入框，但不要直接清空状态
+    const fileInput = document.getElementById("activity-images") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+    
+    // 清空已选择的新图片
+    setActivityImageFiles([]);
+    
+    // 显示现有图片
+    const existingImagesContainer = document.getElementById("existing-activity-images");
+    if (existingImagesContainer) {
+      existingImagesContainer.innerHTML = "";
+      
+      // 处理多图片情况
+      if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "mb-4";
+        
+        const title = document.createElement("p");
+        title.className = "text-sm text-muted-foreground mb-2";
+        title.textContent = "现有图片 (点击删除按钮可删除单张图片):";
+        wrapper.appendChild(title);
+        
+        const imagesContainer = document.createElement("div");
+        imagesContainer.className = "flex flex-wrap gap-2";
+        
+        activity.imageUrls.forEach(imgUrl => {
+          const imageWrapper = document.createElement("div");
+          imageWrapper.className = "relative group inline-block mr-2 mb-2";
+          
+          const img = document.createElement("img");
+          img.src = imgUrl;
+          img.alt = "活动图片";
+          img.className = "h-16 w-auto rounded border border-accent/30";
+          imageWrapper.appendChild(img);
+          
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity";
+          deleteBtn.textContent = "×";
+          deleteBtn.onclick = () => handleDeleteActivityImage(activity.id, imgUrl);
+          imageWrapper.appendChild(deleteBtn);
+          
+          imagesContainer.appendChild(imageWrapper);
+        });
+        
+        wrapper.appendChild(imagesContainer);
+        existingImagesContainer.appendChild(wrapper);
+      } 
+      // 处理单图片情况
+      else if (activity.imageUrl) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "mb-4";
+        
+        const title = document.createElement("p");
+        title.className = "text-sm text-muted-foreground mb-2";
+        title.textContent = "现有图片:";
+        wrapper.appendChild(title);
+        
+        const imageWrapper = document.createElement("div");
+        imageWrapper.className = "relative group inline-block mr-2 mb-2";
+        
+        const img = document.createElement("img");
+        img.src = activity.imageUrl;
+        img.alt = "活动主图";
+        img.className = "h-16 w-auto rounded border border-accent/30";
+        imageWrapper.appendChild(img);
+        
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "absolute -top-2 -right-2 bg-destructive text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity";
+        deleteBtn.textContent = "×";
+        deleteBtn.onclick = () => handleDeleteActivityImage(activity.id, activity.imageUrl || "");
+        imageWrapper.appendChild(deleteBtn);
+        
+        wrapper.appendChild(imageWrapper);
+        existingImagesContainer.appendChild(wrapper);
+      }
+    }
+    
+    // 填充表单
+    const idInput = document.getElementById("activity-id") as HTMLInputElement;
+    if (idInput) idInput.value = activity.id.toString();
+    
+    const titleInput = document.getElementById("activity-title") as HTMLInputElement;
+    if (titleInput) titleInput.value = activity.title;
+    
+    const contentInput = document.getElementById("activity-content") as HTMLTextAreaElement;
+    if (contentInput) contentInput.value = activity.content || "";
+    
+    const locationInput = document.getElementById("activity-location") as HTMLInputElement;
+    if (locationInput) locationInput.value = activity.location || "";
+    
+    const startDateInput = document.getElementById("activity-startDate") as HTMLInputElement;
+    if (startDateInput && activity.startDate) {
+      const date = new Date(activity.startDate);
+      const formattedDate = date.toISOString().split('T')[0];
+      startDateInput.value = formattedDate;
+    }
+    
+    const endDateInput = document.getElementById("activity-endDate") as HTMLInputElement;
+    if (endDateInput && activity.endDate) {
+      const date = new Date(activity.endDate);
+      const formattedDate = date.toISOString().split('T')[0];
+      endDateInput.value = formattedDate;
+    }
+    
+    // 设置活动状态复选框
+    const activeCheckbox = document.getElementById("activity-active") as HTMLInputElement;
+    if (activeCheckbox) activeCheckbox.checked = Boolean(activity.isActive);
+    
+    // 滚动到表单
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑社区活动",
+      description: `正在编辑: ${activity.title}`,
+    });
+  };
+  
+  // 处理删除活动图片
+  const handleDeleteActivityImage = async (activityId: number, imageUrl: string) => {
+    if (window.confirm("确定要删除这张图片吗？此操作无法撤销。")) {
+      try {
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/cms/community/${activityId}/image?t=${timestamp}`, { imageUrl });
+        
+        if (!response.ok) {
+          throw new Error('删除图片失败');
+        }
+        
+        const updatedActivity = await response.json();
+        
+        // 更新编辑中的活动
+        if (editingCommunityActivity && editingCommunityActivity.id === activityId) {
+          setEditingCommunityActivity(updatedActivity);
+          
+          // 重新显示编辑中活动的图片
+          handleEditCommunityActivity(updatedActivity);
+        }
+        
+        toast({
+          title: "删除成功",
+          description: "图片已成功删除",
+        });
+        
+        // 刷新活动列表
+        await fetchCommunityActivities();
+      } catch (error) {
+        console.error("删除图片时出错:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除图片，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
   // 音乐管理状态
   const [musicTracks, setMusicTracks] = useState<MusicTrack[]>([]);
   const [loadingMusicTracks, setLoadingMusicTracks] = useState(false);
@@ -2261,9 +2425,9 @@ export default function Manage() {
                   
                   // 添加所有图片文件
                   if (activityImageFiles.length > 0) {
-                    activityImageFiles.forEach(file => {
+                    for (const file of activityImageFiles) {
                       formData.append("images", file);
-                    });
+                    }
                   }
                   
                   // 确定请求方法和端点
