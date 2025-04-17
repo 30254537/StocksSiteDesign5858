@@ -146,10 +146,12 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
           if (xhr.status >= 200 && xhr.status < 300 && responseData.success) {
             console.log('上传成功，文件URL:', responseData.file.url);
             
-            // 在全局对象上存储上传的音乐URL，以便管理页面可以使用
+            // 在全局对象上存储上传的音乐URL和filename，以便管理页面可以使用
             if (window) {
               (window as any).uploadedMusicUrl = responseData.file.url;
+              (window as any).uploadedMusicFilename = responseData.file.filename;
               console.log('保存uploadedMusicUrl:', responseData.file.url);
+              console.log('保存uploadedMusicFilename:', responseData.file.filename);
             }
             
             toast({
