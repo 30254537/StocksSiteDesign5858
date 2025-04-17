@@ -90,8 +90,8 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
   const handleUpload = async () => {
     if (files.length === 0) {
       toast({
-        title: "No files selected",
-        description: "Please select at least one audio file to upload",
+        title: language === 'en' ? "No files selected" : "未选择文件",
+        description: language === 'en' ? "Please select at least one audio file to upload" : "请至少选择一个音频文件上传",
         variant: "destructive"
       });
       return;
@@ -99,8 +99,8 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
     
     if (!trackTitle) {
       toast({
-        title: "Missing information",
-        description: "Please enter a track title",
+        title: language === 'en' ? "Missing information" : "缺少信息",
+        description: language === 'en' ? "Please enter a track title" : "请输入歌曲标题",
         variant: "destructive"
       });
       return;
@@ -110,24 +110,20 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
     setUploadProgress(0);
     
     try {
-      // 确定使用哪个API端点和字段名
-      let apiEndpoint;
-      let fileFieldName;
+      // 首先尝试使用直接上传API端点
+      const apiEndpoint = '/api/direct-upload'; // 使用新的直接上传端点
+      const fileFieldName = 'musicFile';
       
-      // 对单个文件和多个文件使用不同的处理方式
-      if (files.length === 1) {
-        apiEndpoint = '/api/music/upload';
-        fileFieldName = 'musicFile';
-      } else {
-        apiEndpoint = '/api/music';
-        fileFieldName = 'music';
-      }
+      // 我们只处理一个文件，如果有多个文件，只取第一个
+      const file = files[0];
       
       const formData = new FormData();
-      files.forEach(file => formData.append(fileFieldName, file));
+      formData.append(fileFieldName, file);
       formData.append('title', trackTitle);
       formData.append('artist', artist || 'Unknown Artist');
       formData.append('style', style || 'General');
+      
+      console.log('开始上传文件:', file.name, '大小:', file.size, '类型:', file.type);
       
       const xhr = new XMLHttpRequest();
       
@@ -135,65 +131,64 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
         if (event.lengthComputable) {
           const percentComplete = Math.round((event.loaded / event.total) * 100);
           setUploadProgress(percentComplete);
+          console.log('上传进度:', percentComplete + '%');
         }
       });
       
       xhr.onload = async () => {
-        console.log('Upload response:', xhr.status, xhr.responseText);
-        if (xhr.status >= 200 && xhr.status < 300) {
-          toast({
-            title: language === 'en' ? "Upload successful" : "上传成功",
-            description: language === 'en' ? "Your music has been uploaded" : "音乐已成功上传",
-            variant: "default"
-          });
+        console.log('上传响应状态:', xhr.status);
+        console.log('上传响应内容:', xhr.responseText);
+        
+        try {
+          // 尝试解析响应JSON
+          const responseData = JSON.parse(xhr.responseText);
           
-          // 重置表单
-          setFiles([]);
-          setTrackTitle('');
-          setArtist('');
-          setStyle('');
-          
-          // 调用成功回调
-          if (onSuccess) onSuccess();
-        } else {
-          console.error('Upload failed:', xhr.status, xhr.responseText);
-          
-          try {
-            // 尝试解析响应JSON
-            const responseData = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300 && responseData.success) {
+            console.log('上传成功，文件URL:', responseData.file.url);
             
-            // 检查是否是目录创建错误
-            if (responseData.directoryCreated) {
-              toast({
-                title: language === 'en' ? "Almost there!" : "即将完成！",
-                description: language === 'en' 
-                  ? "Upload directory was just created. Please try again." 
-                  : "上传目录刚刚创建完成，请重新上传一次。",
-                variant: "default"
-              });
-              // 不算作真正的错误，不需要重置
-              setIsUploading(false);
-              return;
+            // 在全局对象上存储上传的音乐URL，以便管理页面可以使用
+            if (window) {
+              (window as any).uploadedMusicUrl = responseData.file.url;
+              console.log('保存uploadedMusicUrl:', responseData.file.url);
             }
+            
+            toast({
+              title: language === 'en' ? "Upload successful" : "上传成功",
+              description: language === 'en' ? "Your music has been uploaded" : "音乐已成功上传",
+              variant: "default"
+            });
+            
+            // 重置表单
+            setFiles([]);
+            setTrackTitle('');
+            setArtist('');
+            setStyle('');
+            
+            // 调用成功回调
+            if (onSuccess) onSuccess();
+          } else {
+            console.error('上传失败:', responseData.message || '未知错误');
             
             toast({
               title: language === 'en' ? "Upload failed" : "上传失败",
               description: responseData.message || (language === 'en' ? "Server error" : "服务器错误"),
               variant: "destructive"
             });
-          } catch (parseError) {
-            toast({
-              title: language === 'en' ? "Upload failed" : "上传失败",
-              description: language === 'en' ? "Server error" : "服务器错误",
-              variant: "destructive"
-            });
           }
+        } catch (parseError) {
+          console.error('解析响应失败:', parseError);
+          toast({
+            title: language === 'en' ? "Upload failed" : "上传失败",
+            description: language === 'en' ? "Server error" : "服务器错误",
+            variant: "destructive"
+          });
         }
+        
         setIsUploading(false);
       };
       
       xhr.onerror = (error) => {
-        console.error('Upload error:', error);
+        console.error('上传错误:', error);
         toast({
           title: language === 'en' ? "Upload failed" : "上传失败",
           description: language === 'en' ? "An error occurred during upload" : "上传过程中发生错误",
@@ -202,6 +197,7 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
         setIsUploading(false);
       };
       
+      console.log('准备发送请求到:', apiEndpoint);
       xhr.open('POST', apiEndpoint);
       xhr.send(formData);
       
