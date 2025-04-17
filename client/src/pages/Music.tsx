@@ -173,8 +173,8 @@ export default function MusicPage() {
         {/* Music Tabs and Track List */}
         <div className="bg-background/30 backdrop-blur-sm rounded-xl border border-accent/10 p-6">
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">{t('music.tracksTitle')}</h2>
+            <div className="flex flex-col text-center items-center mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">{t('music.tracksTitle')}</h2>
               
               <TabsList className="bg-background/50">
                 <TabsTrigger value="all" className="data-[state=active]:bg-accent data-[state=active]:text-primary">
@@ -218,14 +218,16 @@ export default function MusicPage() {
     if (tracks.length === 0) {
       return (
         <div className="py-12 text-center">
-          <p className="text-xl text-gray-400">No tracks found in this category</p>
+          <p className="text-xl text-gray-400">
+            {language === 'zh' ? "在此分类中没有找到曲目" : "No tracks found in this category"}
+          </p>
           {activeTab !== 'all' && (
             <Button 
               onClick={() => setActiveTab('all')}
               variant="link" 
               className="text-accent mt-2"
             >
-              View all tracks
+              {language === 'zh' ? "查看所有曲目" : "View all tracks"}
             </Button>
           )}
         </div>
