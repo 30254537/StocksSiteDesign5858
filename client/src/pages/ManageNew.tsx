@@ -1045,10 +1045,10 @@ export default function ManageNew() {
                   
                   if (aboutId) {
                     // 编辑模式
-                    response = await apiRequest("PUT", `/api/cms/about/${aboutId}`, aboutData);
+                    response = await apiRequest("PUT", `/api/about/${aboutId}`, aboutData);
                   } else {
                     // 新增模式
-                    response = await apiRequest("POST", "/api/cms/about", aboutData);
+                    response = await apiRequest("POST", "/api/about", aboutData);
                   }
                   
                   if (response.ok) {
