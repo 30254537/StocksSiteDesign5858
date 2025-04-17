@@ -105,8 +105,8 @@ export function setupProductCmsRoutes(app: Express) {
   app.get('/api/cms/products', async (req, res) => {
     try {
       const products = await storage.getProducts();
-      // 将所有产品数据转换为驼峰命名格式
-      const formattedProducts = transformProductListToCamelCase(products);
+      // 将所有产品数据转换为驼峰命名格式（使用异步方式）
+      const formattedProducts = await transformProductListToCamelCase(products);
       res.json(formattedProducts);
     } catch (error) {
       console.error('获取产品列表时出错:', error);
@@ -124,8 +124,8 @@ export function setupProductCmsRoutes(app: Express) {
         return res.status(404).json({ message: '未找到指定的产品' });
       }
       
-      // 将产品数据转换为驼峰命名格式
-      const formattedProduct = transformProductToCamelCase(product);
+      // 将产品数据转换为驼峰命名格式（使用异步方式）
+      const formattedProduct = await transformProductToCamelCase(product);
       res.json(formattedProduct);
     } catch (error) {
       console.error('获取产品详情时出错:', error);
@@ -176,8 +176,8 @@ export function setupProductCmsRoutes(app: Express) {
       
       // 创建产品
       const newProduct = await storage.createProduct(productData);
-      // 转换为驼峰格式
-      const formattedProduct = transformProductToCamelCase(newProduct);
+      // 转换为驼峰格式（使用异步方式）
+      const formattedProduct = await transformProductToCamelCase(newProduct);
       res.status(201).json(formattedProduct);
     } catch (error) {
       console.error('创建产品时出错:', error);
@@ -248,8 +248,8 @@ export function setupProductCmsRoutes(app: Express) {
         return res.status(500).json({ message: '更新产品失败' });
       }
       
-      // 转换为驼峰格式返回给前端
-      const formattedProduct = transformProductToCamelCase(updatedProduct);
+      // 转换为驼峰格式返回给前端（使用异步方式）
+      const formattedProduct = await transformProductToCamelCase(updatedProduct);
       res.json(formattedProduct);
     } catch (error) {
       console.error('更新产品时出错:', error);
