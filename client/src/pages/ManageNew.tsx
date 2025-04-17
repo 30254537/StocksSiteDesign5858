@@ -2379,6 +2379,11 @@ export default function ManageNew() {
                             // 创建FormData对象
                             const formData = new FormData();
                             formData.append('musicFile', file);
+                            formData.append('title', file.name.replace(/\.[^/.]+$/, "")); // 文件名作为标题
+                            formData.append('artist', 'Unknown Artist');
+                            formData.append('style', 'General');
+                            
+                            console.log('准备上传音乐文件:', file.name, '大小:', file.size, '类型:', file.type);
                             
                             // 显示上传中的提示
                             toast({
@@ -2386,20 +2391,27 @@ export default function ManageNew() {
                               description: "音乐文件上传中，请稍候...",
                             });
                             
-                            // 上传文件
-                            const response = await fetch('/api/music/upload', {
+                            // 使用新的直接上传端点
+                            const response = await fetch('/api/direct-upload', {
                               method: 'POST',
                               body: formData,
                             });
+                            
+                            console.log('上传响应状态:', response.status, response.statusText);
                             
                             if (!response.ok) {
                               throw new Error(`上传失败: ${response.statusText}`);
                             }
                             
                             const data = await response.json();
+                            console.log('上传响应数据:', data);
+                            
+                            if (!data.success) {
+                              throw new Error(data.message || '上传失败，未知错误');
+                            }
                             
                             // 保存上传的URL到临时变量供表单提交使用
-                            window.uploadedMusicUrl = data.url;
+                            window.uploadedMusicUrl = data.file?.url || data.url;
                             
                             toast({
                               title: "上传成功",
