@@ -94,11 +94,11 @@ export function setupProductCmsRoutes(app: Express) {
         name: req.body.name,
         description: req.body.description || '',
         price: price,
-        stonks_price: stonksPrice,
+        stonksPrice: stonksPrice,
         ethPrice: price / 0.037, // 使用默认STONKS价格
         category: 'merchandise', // 默认分类
         stock: stock,
-        is_active: req.body.isActive === '1' || req.body.isActive === 'true',
+        isActive: req.body.isActive === '1' || req.body.isActive === 'true',
         featured: 0,
         imageUrl: imageUrls.length > 0 ? imageUrls[0] : '',
         imageUrls: imageUrls,
@@ -164,10 +164,10 @@ export function setupProductCmsRoutes(app: Express) {
         name: req.body.name,
         description: req.body.description || existingProduct.description,
         price: price,
-        stonks_price: stonksPrice,
+        stonksPrice: stonksPrice,
         ethPrice: price / 0.037, // 使用默认STONKS价格
         stock: stock,
-        is_active: req.body.isActive === '1' || req.body.isActive === 'true',
+        isActive: req.body.isActive === '1' || req.body.isActive === 'true',
         imageUrl: combinedImageUrls.length > 0 ? combinedImageUrls[0] : existingProduct.imageUrl,
         imageUrls: combinedImageUrls
       };

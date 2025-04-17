@@ -1880,9 +1880,9 @@ export default function ManageNew() {
                       {products.map((product) => (
                         <TableRow key={product.id}>
                           <TableCell>
-                            {product.image_urls && product.image_urls.length > 0 ? (
+                            {product.imageUrls && product.imageUrls.length > 0 ? (
                               <img
-                                src={product.image_urls[0]}
+                                src={product.imageUrls[0]}
                                 alt={product.name}
                                 className="w-10 h-10 object-cover rounded-md"
                               />
@@ -1894,11 +1894,11 @@ export default function ManageNew() {
                           </TableCell>
                           <TableCell className="font-medium">{product.name}</TableCell>
                           <TableCell>${product.price !== undefined ? Number(product.price).toFixed(2) : '0.00'}</TableCell>
-                          <TableCell>⊙ {product.stonks_price !== undefined ? Number(product.stonks_price).toFixed(6) : '0.000000'}</TableCell>
+                          <TableCell>⊙ {product.stonksPrice !== undefined ? Number(product.stonksPrice).toFixed(6) : '0.000000'}</TableCell>
                           <TableCell>{product.stock}</TableCell>
                           <TableCell>
-                            <Badge variant={product.is_active ? "default" : "secondary"}>
-                              {product.is_active ? "上架中" : "已下架"}
+                            <Badge variant={product.isActive ? "default" : "secondary"}>
+                              {product.isActive ? "上架中" : "已下架"}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right space-x-2">
