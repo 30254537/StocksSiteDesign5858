@@ -19,6 +19,7 @@ import { X, ImageIcon, ExternalLink, PlayCircle, TrashIcon, Pencil } from "lucid
 declare global {
   interface Window {
     uploadedMusicUrl?: string;
+    uploadedMusicFilename?: string;
   }
 }
 
@@ -78,6 +79,7 @@ interface MusicTrack {
   duration: number;
   url: string;
   style?: string; // style字段在数据库中确实存在，需要保留
+  filename?: string; // 添加filename字段
 }
 
 export default function ManageNew() {
@@ -234,8 +236,9 @@ export default function ManageNew() {
     const styleInput = document.getElementById("music-style") as HTMLInputElement;
     if (styleInput) styleInput.value = track.style || "";
     
-    // 清除临时上传URL，因为我们正在编辑现有的音乐
+    // 清除临时上传URL和文件名，因为我们正在编辑现有的音乐
     window.uploadedMusicUrl = undefined;
+    window.uploadedMusicFilename = undefined;
     
     // 滚动到表单
     window.scrollTo({ top: document.getElementById("music-form")?.offsetTop || 0, behavior: "smooth" });
