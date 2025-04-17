@@ -735,14 +735,16 @@ export default function ManageNew() {
       const form = e.target as HTMLFormElement;
       const titleInput = form.querySelector("#music-title") as HTMLInputElement;
       const artistInput = form.querySelector("#music-artist") as HTMLInputElement;
-      const styleInput = form.querySelector("#music-style") as HTMLInputElement;
+      // style字段不存在于数据库中，已移除
+      // const styleInput = form.querySelector("#music-style") as HTMLInputElement;
       const idInput = form.querySelector("#music-id") as HTMLInputElement;
       
       const trackId = parseInt(idInput.value);
       
       formData.append("title", titleInput.value);
       formData.append("artist", artistInput.value);
-      formData.append("style", styleInput.value || "");
+      // 不再发送style字段
+      // formData.append("style", styleInput.value || "");
       
       if (musicFile) {
         formData.append("music", musicFile);
@@ -795,12 +797,13 @@ export default function ManageNew() {
     // 填充表单数据
     const titleInput = document.querySelector("#music-title") as HTMLInputElement;
     const artistInput = document.querySelector("#music-artist") as HTMLInputElement;
-    const styleInput = document.querySelector("#music-style") as HTMLInputElement;
+    // style字段不存在于数据库中，已移除
+    // const styleInput = document.querySelector("#music-style") as HTMLInputElement;
     const idInput = document.querySelector("#music-id") as HTMLInputElement;
     
     if (titleInput) titleInput.value = track.title;
     if (artistInput) artistInput.value = track.artist;
-    if (styleInput) styleInput.value = track.style || "";
+    // if (styleInput) styleInput.value = track.style || "";
     if (idInput) idInput.value = track.id.toString();
     
     // 滚动到表单位置
@@ -2223,7 +2226,8 @@ export default function ManageNew() {
                   const musicId = parseInt((document.getElementById("music-id") as HTMLInputElement).value);
                   const title = (document.getElementById("music-title") as HTMLInputElement).value;
                   const artist = (document.getElementById("music-artist") as HTMLInputElement).value;
-                  const style = (document.getElementById("music-style") as HTMLInputElement).value;
+                  // style字段不存在于数据库中，已移除
+                  // const style = (document.getElementById("music-style") as HTMLInputElement).value;
                   const url = (document.getElementById("music-url") as HTMLInputElement).value;
                   const filename = url.split('/').pop() || `music-${Date.now()}.mp3`;
                   
@@ -2242,7 +2246,7 @@ export default function ManageNew() {
                     id: musicId || undefined,
                     title,
                     artist,
-                    style,
+                    // style 字段不存在于数据库中，已移除
                     url,
                     filename,
                     isPublic: 1, // 默认公开
@@ -2319,18 +2323,7 @@ export default function ManageNew() {
                   </div>
                 </div>
                 
-                <div>
-                  <label htmlFor="music-style" className="block text-sm font-medium mb-2">
-                    音乐风格
-                  </label>
-                  <Input
-                    id="music-style"
-                    name="style"
-                    placeholder="如: Rock, Electronic, Classical等"
-                    className="bg-primary/50 border-accent"
-                    defaultValue={editingMusic?.style || ""}
-                  />
-                </div>
+                {/* 风格类型字段不存在于数据库中，已移除 */}
                 
                 <div>
                   <label htmlFor="music-url" className="block text-sm font-medium mb-2">
@@ -2392,7 +2385,6 @@ export default function ManageNew() {
                         <TableHead>ID</TableHead>
                         <TableHead>标题</TableHead>
                         <TableHead>艺术家</TableHead>
-                        <TableHead>风格</TableHead>
                         <TableHead>试听</TableHead>
                         <TableHead className="text-right">操作</TableHead>
                       </TableRow>
