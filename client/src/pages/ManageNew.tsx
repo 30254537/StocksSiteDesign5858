@@ -1319,31 +1319,61 @@ export default function ManageNew() {
                   
                   // 发送请求
                   const timestamp = new Date().getTime();
-                  const response = await fetch(`${endpoint}?t=${timestamp}`, {
-                    method,
-                    body: formData
-                  });
-                  
-                  if (!response.ok) {
-                    throw new Error(`操作失败: ${response.statusText}`);
+                  try {
+                    console.log(`发送${method}请求到 ${endpoint}`);
+                    const response = await fetch(`${endpoint}?t=${timestamp}`, {
+                      method,
+                      body: formData
+                    });
+                    
+                    if (!response.ok) {
+                      const errorText = await response.text();
+                      console.error("服务器返回错误:", response.status, errorText);
+                      throw new Error(`操作失败: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const responseData = await response.json().catch(() => ({}));
+                    console.log("服务器响应成功:", responseData);
+                    
+                    // 更新活动列表
+                    await fetchCommunityActivities();
+                    
+                    // 安全地重置表单和状态
+                    if (e.currentTarget) {
+                      try {
+                        e.currentTarget.reset();
+                      } catch (resetError) {
+                        console.warn("表单重置出错，手动清除字段", resetError);
+                        // 手动清除字段
+                        const titleInput = document.getElementById("activity-title") as HTMLInputElement;
+                        const contentInput = document.getElementById("activity-content") as HTMLTextAreaElement;
+                        const locationInput = document.getElementById("activity-location") as HTMLInputElement;
+                        if (titleInput) titleInput.value = "";
+                        if (contentInput) contentInput.value = "";
+                        if (locationInput) locationInput.value = "";
+                      }
+                    }
+                    
+                    setEditingCommunityActivity(null);
+                    setActivityImageFiles([]);
+                  } catch (fetchError) {
+                    console.error("请求发送错误:", fetchError);
+                    throw fetchError;
                   }
                   
-                  // 更新活动列表
-                  await fetchCommunityActivities();
+                  try {
+                    // 清空已存在的图片预览
+                    const existingImagesContainer = document.getElementById("existing-activity-images");
+                    if (existingImagesContainer) existingImagesContainer.innerHTML = "";
+                    
+                    // 重置ID
+                    const idInput = document.getElementById("activity-id") as HTMLInputElement;
+                    if (idInput) idInput.value = "0";
+                  } catch (cleanupError) {
+                    console.warn("清理表单时出错:", cleanupError);
+                  }
                   
-                  // 重置表单和状态
-                  e.currentTarget.reset();
-                  setEditingCommunityActivity(null);
-                  setActivityImageFiles([]);
-                  
-                  // 清空已存在的图片预览
-                  const existingImagesContainer = document.getElementById("existing-activity-images");
-                  if (existingImagesContainer) existingImagesContainer.innerHTML = "";
-                  
-                  // 重置ID
-                  const idInput = document.getElementById("activity-id") as HTMLInputElement;
-                  if (idInput) idInput.value = "0";
-                  
+                  // 显示成功提示
                   toast({
                     title: parseInt(activityId) > 0 ? "更新成功" : "添加成功",
                     description: parseInt(activityId) > 0 ? "活动已成功更新" : "新活动已成功添加",
