@@ -1364,7 +1364,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "无效的音乐ID" });
       }
 
-      const track = await storage.getMusicTrackById(id);
+      const track = await storage.getMusicTrack(id);
       if (!track) {
         return res.status(404).json({ message: "未找到音乐" });
       }

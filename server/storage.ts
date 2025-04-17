@@ -514,14 +514,48 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getMusicTracks(): Promise<MusicTrack[]> {
-    return db.select().from(musicTracks).orderBy(asc(musicTracks.id));
+    // 查询所有音乐记录，但不要包含style字段（数据库中不存在）
+    const tracks = await db.select({
+      id: musicTracks.id,
+      title: musicTracks.title,
+      artist: musicTracks.artist,
+      filename: musicTracks.filename,
+      url: musicTracks.url,
+      duration: musicTracks.duration,
+      isPublic: musicTracks.isPublic,
+      createdBy: musicTracks.createdBy,
+      createdAt: musicTracks.createdAt
+    }).from(musicTracks).orderBy(asc(musicTracks.id));
+    
+    // 手动添加style字段以兼容前端显示
+    return tracks.map(track => ({
+      ...track,
+      style: "" // 默认为空字符串
+    }));
   }
   
   async getMusicTrack(id: number): Promise<MusicTrack | undefined> {
-    const [track] = await db.select().from(musicTracks)
+    const [track] = await db.select({
+      id: musicTracks.id,
+      title: musicTracks.title,
+      artist: musicTracks.artist,
+      filename: musicTracks.filename,
+      url: musicTracks.url,
+      duration: musicTracks.duration,
+      isPublic: musicTracks.isPublic,
+      createdBy: musicTracks.createdBy,
+      createdAt: musicTracks.createdAt
+    }).from(musicTracks)
       .where(eq(musicTracks.id, id));
     
-    return track;
+    if (track) {
+      return {
+        ...track,
+        style: "" // 默认为空字符串
+      };
+    }
+    
+    return undefined;
   }
   
   // 加密货币推文相关方法
@@ -1050,18 +1084,37 @@ export class DatabaseStorage implements IStorage {
   // 不使用style列，因为它在当前数据库表中不存在
   
   async createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack> {
+    // 移除style字段以避免数据库错误
+    const { style, ...validTrack } = track as any;
+    
     const [newTrack] = await db.insert(musicTracks)
-      .values(track)
+      .values(validTrack)
       .returning();
-    return newTrack;
+    
+    // 添加虚拟style字段
+    return {
+      ...newTrack,
+      style: style || ""
+    };
   }
   
   async updateMusicTrack(id: number, data: Partial<MusicTrack>): Promise<MusicTrack | undefined> {
+    // 移除style字段以避免数据库错误
+    const { style, ...validData } = data;
+
     const [updatedTrack] = await db.update(musicTracks)
-      .set(data)
+      .set(validData)
       .where(eq(musicTracks.id, id))
       .returning();
-    return updatedTrack;
+    
+    if (updatedTrack) {
+      return {
+        ...updatedTrack,
+        style: style || "" // 保留虚拟的style字段以支持前端
+      };
+    }
+    
+    return undefined;
   }
   
   async deleteMusicTrack(id: number): Promise<boolean> {
