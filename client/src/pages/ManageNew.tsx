@@ -1820,8 +1820,8 @@ export default function ManageNew() {
                             )}
                           </TableCell>
                           <TableCell className="font-medium">{product.name}</TableCell>
-                          <TableCell>${parseFloat(product.price).toFixed(2)}</TableCell>
-                          <TableCell>⊙ {parseFloat(product.stonks_price).toFixed(6)}</TableCell>
+                          <TableCell>${typeof product.price === 'string' ? parseFloat(product.price).toFixed(2) : product.price.toFixed(2)}</TableCell>
+                          <TableCell>⊙ {typeof product.stonks_price === 'string' ? parseFloat(product.stonks_price).toFixed(6) : product.stonks_price.toFixed(6)}</TableCell>
                           <TableCell>{product.inventory}</TableCell>
                           <TableCell>
                             <Badge variant={product.is_active ? "default" : "secondary"}>
