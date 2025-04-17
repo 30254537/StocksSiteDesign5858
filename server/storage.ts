@@ -1083,35 +1083,17 @@ export class DatabaseStorage implements IStorage {
   // 已删除以避免重复，使用上面516行的实现
   // 不使用style列，因为它在当前数据库表中不存在
   
-  async createMusicTrack(track: InsertMusicTrack): Promise<MusicTrack> {
-    // 移除style字段以避免数据库错误
-    const { style, ...validTrack } = track as any;
-    
-    const [newTrack] = await db.insert(musicTracks)
-      .values(validTrack)
-      .returning();
-    
-    // 添加虚拟style字段
-    return {
-      ...newTrack,
-      style: style || ""
-    };
-  }
+  // 注意: createMusicTrack 方法已在前面定义，不需要重复实现
   
   async updateMusicTrack(id: number, data: Partial<MusicTrack>): Promise<MusicTrack | undefined> {
-    // 移除style字段以避免数据库错误
-    const { style, ...validData } = data;
-
+    // 不需要移除style字段，因为数据库中存在该字段
     const [updatedTrack] = await db.update(musicTracks)
-      .set(validData)
+      .set(data)
       .where(eq(musicTracks.id, id))
       .returning();
     
     if (updatedTrack) {
-      return {
-        ...updatedTrack,
-        style: style || "" // 保留虚拟的style字段以支持前端
-      };
+      return updatedTrack;
     }
     
     return undefined;
