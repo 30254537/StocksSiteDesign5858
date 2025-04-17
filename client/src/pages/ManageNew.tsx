@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { X, ImageIcon, ExternalLink, PlayCircle, TrashIcon, Pencil } from "lucide-react";
 
 // 定义类型
 interface Product {
@@ -20,6 +21,10 @@ interface Product {
   name: string;
   description: string;
   price: number;
+  stonks_price: number;
+  inventory: number;
+  is_active: boolean;
+  image_urls?: string[];
   stock?: number;
   category?: string;
   featured?: boolean;
@@ -83,9 +88,11 @@ export default function ManageNew() {
   // 产品管理状态
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [selectedFilesObjects, setSelectedFilesObjects] = useState<File[]>([]);
+  const [productImageFiles, setProductImageFiles] = useState<File[]>([]);
   
   // 联系信息管理状态
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
@@ -286,6 +293,78 @@ export default function ManageNew() {
 
     checkAuth();
   }, []);
+  
+  // 处理编辑商品
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    
+    // 重置文件输入框，但不要直接清空状态
+    const fileInput = document.getElementById("product-images") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+    
+    // 清空已选图片
+    setProductImageFiles([]);
+    
+    // 填充表单
+    const idInput = document.getElementById("product-id") as HTMLInputElement;
+    if (idInput) idInput.value = product.id.toString();
+    
+    const nameInput = document.getElementById("product-name") as HTMLInputElement;
+    if (nameInput) nameInput.value = product.name;
+    
+    const descriptionInput = document.getElementById("product-description") as HTMLTextAreaElement;
+    if (descriptionInput) descriptionInput.value = product.description || "";
+    
+    const priceInput = document.getElementById("product-price") as HTMLInputElement;
+    if (priceInput) priceInput.value = product.price.toString();
+    
+    const stonksPriceInput = document.getElementById("product-stonks-price") as HTMLInputElement;
+    if (stonksPriceInput) stonksPriceInput.value = product.stonks_price.toString();
+    
+    const inventoryInput = document.getElementById("product-inventory") as HTMLInputElement;
+    if (inventoryInput) inventoryInput.value = product.inventory.toString();
+    
+    const activeCheckbox = document.getElementById("product-active") as HTMLInputElement;
+    if (activeCheckbox) activeCheckbox.checked = product.is_active;
+    
+    // 滚动到表单
+    window.scrollTo({ top: document.getElementById("product-form")?.offsetTop || 0, behavior: "smooth" });
+    
+    toast({
+      title: "编辑商品",
+      description: `正在编辑: ${product.name}`,
+    });
+  };
+  
+  // 处理删除商品
+  const handleDeleteProduct = async (productId: number) => {
+    if (window.confirm("确定要删除此商品吗？此操作无法撤销。")) {
+      try {
+        // 添加时间戳参数以避免缓存问题
+        const timestamp = new Date().getTime();
+        const response = await apiRequest("DELETE", `/api/cms/products/${productId}?t=${timestamp}`);
+        
+        if (!response.ok) {
+          throw new Error('删除商品失败');
+        }
+        
+        toast({
+          title: "删除成功",
+          description: "商品已成功删除",
+        });
+        
+        // 重新获取商品列表以更新UI
+        await fetchProducts();
+      } catch (error) {
+        console.error("删除商品错误:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除商品，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
 
   // 处理编辑关于我们内容
   const handleEditAboutContent = (content: AboutContent) => {
