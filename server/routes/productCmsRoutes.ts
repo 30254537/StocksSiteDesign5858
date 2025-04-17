@@ -82,7 +82,7 @@ export function setupProductCmsRoutes(app: Express) {
       // 解析价格和库存为数字
       const price = parseFloat(req.body.price);
       const stonksPrice = parseFloat(req.body.stonksPrice);
-      const inventory = parseInt(req.body.inventory || '999');
+      const stock = parseInt(req.body.stock || '999');
       
       // 准备产品数据
       const productData = {
@@ -92,7 +92,7 @@ export function setupProductCmsRoutes(app: Express) {
         stonks_price: stonksPrice,
         ethPrice: price / 0.037, // 使用默认STONKS价格
         category: 'merchandise', // 默认分类
-        stock: inventory,
+        stock: stock,
         is_active: req.body.isActive === '1' || req.body.isActive === 'true',
         featured: 0,
         imageUrl: imageUrls.length > 0 ? imageUrls[0] : '',
@@ -150,7 +150,7 @@ export function setupProductCmsRoutes(app: Express) {
       // 解析价格和库存为数字
       const price = parseFloat(req.body.price);
       const stonksPrice = parseFloat(req.body.stonksPrice);
-      const inventory = parseInt(req.body.inventory || existingProduct.stock.toString());
+      const stock = parseInt(req.body.stock || existingProduct.stock.toString());
       
       // 准备更新的产品数据
       const productData = {
@@ -159,7 +159,7 @@ export function setupProductCmsRoutes(app: Express) {
         price: price,
         stonks_price: stonksPrice,
         ethPrice: price / 0.037, // 使用默认STONKS价格
-        stock: inventory,
+        stock: stock,
         is_active: req.body.isActive === '1' || req.body.isActive === 'true',
         imageUrl: combinedImageUrls.length > 0 ? combinedImageUrls[0] : existingProduct.imageUrl,
         imageUrls: combinedImageUrls
