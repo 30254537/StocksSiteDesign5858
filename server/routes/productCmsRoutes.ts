@@ -89,8 +89,8 @@ export function setupProductCmsRoutes(app: Express) {
         return res.status(500).json({ message: '更新产品失败' });
       }
       
-      // 转换为驼峰格式返回给前端
-      const formattedProduct = transformProductToCamelCase(updatedProduct);
+      // 转换为驼峰格式返回给前端（使用异步方式）
+      const formattedProduct = await transformProductToCamelCase(updatedProduct);
       res.json(formattedProduct);
     } catch (error) {
       console.error('删除产品图片时出错:', error);

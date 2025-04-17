@@ -1104,33 +1104,5 @@ export class DatabaseStorage implements IStorage {
 }
 
 // 创建并导出存储实例
-// STONKS价格获取方法
-async function getCurrentStonksPrice(): Promise<number> {
-  try {
-    // 尝试从Gmgn服务获取价格
-    const response = await fetch('https://api.stonksdex.io/api/v1/price', {
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      return data.price || 0.037; // 如果数据格式正确则返回价格，否则使用默认值
-    }
-    
-    // 如果从API获取失败，返回默认价格
-    console.warn('无法获取STONKS实时价格，使用默认价格');
-    return 0.037; // 默认价格
-  } catch (error) {
-    console.error('获取STONKS价格时出错:', error);
-    return 0.037; // 出错时使用默认价格
-  }
-}
-
-// 实现getCurrentStonksPrice方法
-DatabaseStorage.prototype.getCurrentStonksPrice = async function(): Promise<number> {
-  return await getCurrentStonksPrice();
-};
 
 export const storage = new DatabaseStorage();

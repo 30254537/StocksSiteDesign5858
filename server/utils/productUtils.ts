@@ -1,14 +1,17 @@
 // 产品数据格式转换工具
+import { storage } from "../storage";
 
 /**
  * 将蛇形命名(snake_case)的产品数据转换为驼峰命名(camelCase)
  * 用于API响应给前端
  */
-export function transformProductToCamelCase(product: any): any {
+export async function transformProductToCamelCase(product: any): Promise<any> {
   if (!product) return null;
   
   // 使用实时的STONKS/USD价格计算stonksPrice (如果没有提供stonks_price字段)
-  const stonksPrice = product.stonks_price || product.stonksPrice || (product.price / 0.037);
+  // 从storage获取实时STONKS价格
+  const currentStonksPrice = await storage.getCurrentStonksPrice();
+  const stonksPrice = product.stonks_price || product.stonksPrice || (product.price / currentStonksPrice);
   
   return {
     id: product.id,
@@ -58,7 +61,13 @@ export function transformProductToSnakeCase(product: any): any {
 /**
  * 转换产品列表
  */
-export function transformProductListToCamelCase(products: any[]): any[] {
+export async function transformProductListToCamelCase(products: any[]): Promise<any[]> {
   if (!products || !Array.isArray(products)) return [];
-  return products.map(transformProductToCamelCase);
+  
+  // 使用Promise.all处理异步转换
+  const transformedProducts = await Promise.all(
+    products.map(product => transformProductToCamelCase(product))
+  );
+  
+  return transformedProducts;
 }
