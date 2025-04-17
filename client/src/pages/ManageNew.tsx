@@ -2312,6 +2312,7 @@ export default function Manage() {
                   />
                 </div>
                 
+                {/* 由于数据库中没有 style 字段，暂时注释掉此部分
                 <div className="space-y-2">
                   <label htmlFor="music-style" className="block text-sm font-medium">
                     音乐风格
@@ -2323,6 +2324,7 @@ export default function Manage() {
                     className="bg-primary/50 border-accent"
                   />
                 </div>
+                */}
                 
                 <div className="space-y-2">
                   <label htmlFor="music-file" className="block text-sm font-medium">
@@ -2381,7 +2383,7 @@ export default function Manage() {
                       <TableRow>
                         <TableHead>标题</TableHead>
                         <TableHead>艺术家</TableHead>
-                        <TableHead>风格</TableHead>
+                        {/* <TableHead>风格</TableHead> */}
                         <TableHead>时长</TableHead>
                         <TableHead>上传时间</TableHead>
                         <TableHead className="text-right">操作</TableHead>
@@ -2392,7 +2394,8 @@ export default function Manage() {
                         <TableRow key={track.id}>
                           <TableCell className="font-medium">{track.title}</TableCell>
                           <TableCell>{track.artist}</TableCell>
-                          <TableCell>{track.style || "-"}</TableCell>
+                          {/* 数据库中不存在style字段，暂时注释掉 */}
+                          {/* <TableCell>{track.style || "-"}</TableCell> */}
                           <TableCell>{formatDuration(track.duration)}</TableCell>
                           <TableCell>{new Date(track.createdAt).toLocaleDateString()}</TableCell>
                           <TableCell className="text-right space-x-2">
