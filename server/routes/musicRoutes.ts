@@ -476,7 +476,7 @@ musicRouter.post('/test', (req: Request, res: Response) => {
   }
 });
 
-// 在单独上传端点添加详细日志
+// 在单独上传端点添加详细日志 - 使用text/plain绕过Vite中间件处理
 musicRouter.post('/simple-upload', musicUpload.single('musicFile'), (req: Request, res: Response) => {
   try {
     console.log('简单上传接收到请求:', {
@@ -486,11 +486,10 @@ musicRouter.post('/simple-upload', musicUpload.single('musicFile'), (req: Reques
     });
     
     if (!req.file) {
-      return res.status(400).json({ message: '无文件上传' });
+      // 直接使用send方法和纯文本格式
+      res.status(400).send(JSON.stringify({ message: '无文件上传' }));
+      return;
     }
-    
-    // 确保设置正确的内容类型
-    res.setHeader('Content-Type', 'application/json');
     
     // 转换文件对象为可序列化的格式
     const fileInfo = req.file ? {
@@ -504,18 +503,26 @@ musicRouter.post('/simple-upload', musicUpload.single('musicFile'), (req: Reques
       size: req.file.size
     } : null;
     
-    res.status(200).json({
+    // 直接使用send发送JSON字符串，避免res.json()被Vite拦截处理
+    const responseData = JSON.stringify({
       message: '文件上传成功',
       file: fileInfo,
     });
+    
+    console.log('发送响应数据:', responseData);
+    
+    // 绕过Vite中间件处理，使用纯文本格式
+    res.setHeader('Content-Type', 'text/plain');
+    res.status(200).send(responseData);
   } catch (error) {
     console.error('简单上传错误:', error);
-    // 确保错误响应也是JSON格式
-    res.setHeader('Content-Type', 'application/json');
-    res.status(500).json({
+    
+    // 错误响应也使用纯文本格式
+    res.setHeader('Content-Type', 'text/plain');
+    res.status(500).send(JSON.stringify({
       message: '上传错误',
       error: String(error)
-    });
+    }));
   }
 });
 

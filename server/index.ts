@@ -10,9 +10,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// 设置正确的编码
+// 只对API请求设置JSON内容类型
 app.use((req, res, next) => {
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  // 只有API请求才设置JSON响应类型
+  if (req.path.startsWith('/api')) {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  }
   next();
 });
 
@@ -61,8 +64,30 @@ app.use((req, res, next) => {
   // 为静态上传文件提供服务
   app.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
   
+  // 特别确保API路由在此处注册 - 这是最重要的！
   const server = await registerRoutes(app);
 
+  // 为音乐API路由添加特殊中间件，预先设置内容类型
+  app.use('/api/music/*', (req, res, next) => {
+    // 保存原始的res.send方法
+    const originalSend = res.send;
+    
+    // 覆盖res.send方法，确保在发送之前设置正确的Content-Type
+    res.send = function(...args) {
+      // 如果还没设置Content-Type或者它被设置为HTML
+      if (!res.get('Content-Type') || res.get('Content-Type').includes('text/html')) {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        console.log('预先设置音乐API路由的Content-Type为application/json');
+      }
+      
+      // 调用原始send方法
+      return originalSend.apply(res, args);
+    };
+    
+    next();
+  });
+
+  // 错误处理中间件
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -71,9 +96,8 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // 注意：Vite设置应该在所有API路由之后
+  // 这样catch-all路由才不会干扰其他路由
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
