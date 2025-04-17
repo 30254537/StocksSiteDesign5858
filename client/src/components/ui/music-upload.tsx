@@ -21,6 +21,7 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
   const [uploadProgress, setUploadProgress] = useState(0);
   const [trackTitle, setTrackTitle] = useState('');
   const [artist, setArtist] = useState('');
+  const [style, setStyle] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,10 +110,24 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
     setUploadProgress(0);
     
     try {
+      // 确定使用哪个API端点和字段名
+      let apiEndpoint;
+      let fileFieldName;
+      
+      // 对单个文件和多个文件使用不同的处理方式
+      if (files.length === 1) {
+        apiEndpoint = '/api/music/upload';
+        fileFieldName = 'musicFile';
+      } else {
+        apiEndpoint = '/api/music';
+        fileFieldName = 'music';
+      }
+      
       const formData = new FormData();
-      files.forEach(file => formData.append('music', file));
+      files.forEach(file => formData.append(fileFieldName, file));
       formData.append('title', trackTitle);
       formData.append('artist', artist || 'Unknown Artist');
+      formData.append('style', style || 'General');
       
       const xhr = new XMLHttpRequest();
       
@@ -124,35 +139,40 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
       });
       
       xhr.onload = async () => {
+        console.log('Upload response:', xhr.status, xhr.responseText);
         if (xhr.status >= 200 && xhr.status < 300) {
           toast({
-            title: t('music.uploadSuccess'),
+            title: language === 'en' ? "Upload successful" : "上传成功",
+            description: language === 'en' ? "Your music has been uploaded" : "音乐已成功上传",
             variant: "default"
           });
           
-          // Reset form
+          // 重置表单
           setFiles([]);
           setTrackTitle('');
           setArtist('');
+          setStyle('');
           
-          // Call onSuccess callback
+          // 调用成功回调
           if (onSuccess) onSuccess();
         } else {
+          console.error('Upload failed:', xhr.status, xhr.responseText);
           throw new Error(xhr.responseText || 'Upload failed');
         }
         setIsUploading(false);
       };
       
-      xhr.onerror = () => {
+      xhr.onerror = (error) => {
+        console.error('Upload error:', error);
         toast({
-          title: t('music.uploadError'),
-          description: "An error occurred during upload",
+          title: language === 'en' ? "Upload failed" : "上传失败",
+          description: language === 'en' ? "An error occurred during upload" : "上传过程中发生错误",
           variant: "destructive"
         });
         setIsUploading(false);
       };
       
-      xhr.open('POST', '/api/music/upload');
+      xhr.open('POST', apiEndpoint);
       xhr.send(formData);
       
     } catch (error: any) {
@@ -243,6 +263,17 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
             value={artist}
             onChange={(e) => setArtist(e.target.value)}
             placeholder={language === 'en' ? "Enter artist name (optional)" : "输入艺术家名称（可选）"}
+            className="bg-background/60 border-accent/30 text-white"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="style" className="text-white/80">{language === 'en' ? "Music Style" : "音乐风格"}</Label>
+          <Input 
+            id="style"
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+            placeholder={language === 'en' ? "Enter music style (optional)" : "输入音乐风格（可选）"}
             className="bg-background/60 border-accent/30 text-white"
           />
         </div>
