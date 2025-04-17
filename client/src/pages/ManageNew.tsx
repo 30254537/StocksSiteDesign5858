@@ -1264,7 +1264,8 @@ export default function ManageNew() {
                   formData.append("title", title);
                   formData.append("content", content);
                   formData.append("location", location || "");
-                  formData.append("isActive", isActive ? "true" : "false");
+                  formData.append("isActive", isActive ? "1" : "0"); // 使用1/0代替true/false，更好兼容后端
+                  formData.append("isOnline", "1"); // 默认为线上活动
                   
                   if (startDate) {
                     formData.append("startDate", startDate);
@@ -1272,6 +1273,11 @@ export default function ManageNew() {
                   
                   if (endDate) {
                     formData.append("endDate", endDate);
+                  }
+                  
+                  // 如果是编辑模式，保留现有图片URL
+                  if (activityId && parseInt(activityId) > 0 && editingCommunityActivity?.imageUrl) {
+                    formData.append("imageUrl", editingCommunityActivity.imageUrl);
                   }
                   
                   // 添加所有图片文件
