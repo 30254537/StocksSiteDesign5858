@@ -100,8 +100,8 @@ export default function ManageNew() {
     address: '',
     logo: ''
   });
-  const [loadingContactInfo, setLoadingContactInfo] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [loadingContactInfo, setLoadingContactInfo] = useState(false);
   
   // 合约地址管理状态
   const [contractAddresses, setContractAddresses] = useState<ContractAddress[]>([]);
@@ -2478,8 +2478,139 @@ export default function ManageNew() {
             <CardTitle>LOGO设置</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <p>LOGO设置功能已就绪</p>
+            <div className="mb-6 bg-primary/20 p-6 rounded-lg border border-accent/30">
+              <h3 className="text-xl mb-4 text-accent">网站LOGO设置</h3>
+              <form 
+                id="logo-form" 
+                className="space-y-4" 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  
+                  if (!logoFile) {
+                    toast({
+                      title: "请选择文件",
+                      description: "请先选择一个LOGO图片文件",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  try {
+                    setLoadingContactInfo(true);
+                    
+                    // 创建FormData用于文件上传
+                    const formData = new FormData();
+                    formData.append("logo", logoFile);
+                    
+                    // 上传LOGO
+                    const response = await fetch("/api/contact-info/logo", {
+                      method: "POST",
+                      body: formData
+                    });
+                    
+                    if (response.ok) {
+                      const data = await response.json();
+                      
+                      // 更新本地状态的LOGO URL
+                      setContactInfo(prev => ({
+                        ...prev,
+                        logo: data.logo
+                      }));
+                      
+                      toast({
+                        title: "上传成功",
+                        description: "网站LOGO已更新",
+                      });
+                      
+                      // 重置文件输入
+                      setLogoFile(null);
+                      const fileInput = document.getElementById("logo-file") as HTMLInputElement;
+                      if (fileInput) fileInput.value = "";
+                    } else {
+                      throw new Error("上传失败");
+                    }
+                  } catch (error) {
+                    console.error("LOGO上传错误:", error);
+                    toast({
+                      title: "上传失败",
+                      description: "无法上传LOGO，请稍后再试",
+                      variant: "destructive",
+                    });
+                  } finally {
+                    setLoadingContactInfo(false);
+                  }
+                }}
+              >
+                <div>
+                  <label htmlFor="logo-file" className="block text-sm font-medium mb-2">
+                    选择LOGO图片 (推荐PNG格式透明背景)
+                  </label>
+                  <div className="relative cursor-pointer" onClick={() => document.getElementById("logo-file")?.click()}>
+                    <Input 
+                      id="logo-file" 
+                      type="file" 
+                      accept="image/*"
+                      className="bg-primary/50 border-accent sr-only" 
+                      onChange={(e) => {
+                        const files = e.target.files;
+                        if (files && files.length > 0) {
+                          setLogoFile(files[0]);
+                        }
+                      }}
+                    />
+                    <div className="w-full h-24 bg-primary/30 border-2 border-dashed border-accent/50 rounded-md flex items-center justify-center hover:bg-primary/40 transition-colors">
+                      <div className="text-center">
+                        <ImageIcon className="w-6 h-6 text-accent mb-2 mx-auto" />
+                        <p className="text-sm text-accent">点击选择LOGO图片</p>
+                        <p className="text-xs text-gray-400 mt-1">接受所有常见图片格式</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* 显示选择的文件名 */}
+                  {logoFile && (
+                    <div className="mt-2">
+                      <p className="text-xs mb-1 text-accent">已选择文件:</p>
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-300">
+                        <div className="bg-primary/50 px-2 py-1 rounded-md flex items-center">
+                          <span className="truncate max-w-[200px]">{logoFile.name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* 显示当前LOGO预览 */}
+                  {contactInfo.logo && (
+                    <div className="mt-4">
+                      <p className="text-xs mb-2">当前LOGO:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <div className="relative p-4 bg-black/20 border border-accent/30 rounded-lg">
+                          <img 
+                            src={contactInfo.logo} 
+                            alt="当前LOGO" 
+                            className="h-16 object-contain"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex justify-end mt-4">
+                  <Button 
+                    type="submit"
+                    disabled={!logoFile || loadingContactInfo}
+                    className="bg-accent text-primary hover:bg-accent/80"
+                  >
+                    {loadingContactInfo ? (
+                      <>
+                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                        上传中...
+                      </>
+                    ) : "上传LOGO"}
+                  </Button>
+                </div>
+              </form>
             </div>
           </CardContent>
         </Card>
