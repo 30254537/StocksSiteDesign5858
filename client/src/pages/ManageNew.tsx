@@ -29,15 +29,15 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  stonks_price: number;
+  stonksPrice: number; // 改为驼峰命名
   stock: number;
-  is_active: boolean;
-  image_urls?: string[];
+  isActive: boolean; // 改为驼峰命名
+  imageUrls?: string[]; // 改为驼峰命名
+  imageUrl?: string; // 添加单张图片URL
   /* inventory property was removed in favor of stock */
   category?: string;
   featured?: boolean;
   hasSizes?: boolean;
-  images?: string[];
 }
 
 interface ContactInfo {
@@ -389,13 +389,13 @@ export default function ManageNew() {
     if (priceInput) priceInput.value = product.price !== undefined ? product.price.toString() : "0";
     
     const stonksPriceInput = document.getElementById("product-stonks-price") as HTMLInputElement;
-    if (stonksPriceInput) stonksPriceInput.value = product.stonks_price !== undefined ? product.stonks_price.toString() : "0";
+    if (stonksPriceInput) stonksPriceInput.value = product.stonksPrice !== undefined ? product.stonksPrice.toString() : "0";
     
     const stockInput = document.getElementById("product-stock") as HTMLInputElement;
     if (stockInput) stockInput.value = product.stock !== undefined ? product.stock.toString() : "0";
     
     const activeCheckbox = document.getElementById("product-active") as HTMLInputElement;
-    if (activeCheckbox) activeCheckbox.checked = product.is_active;
+    if (activeCheckbox) activeCheckbox.checked = product.isActive;
     
     // 滚动到表单
     window.scrollTo({ top: document.getElementById("product-form")?.offsetTop || 0, behavior: "smooth" });
@@ -1821,11 +1821,11 @@ export default function ManageNew() {
                       )}
                       
                       {/* 显示已有图片 */}
-                      {editingProduct && editingProduct.image_urls && editingProduct.image_urls.length > 0 && (
+                      {editingProduct && editingProduct.imageUrls && editingProduct.imageUrls.length > 0 && (
                         <div className="mt-4">
                           <p className="text-sm font-medium mb-2">已有图片:</p>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                            {editingProduct.image_urls.map((url, index) => (
+                            {editingProduct.imageUrls.map((url, index) => (
                               <div key={index} className="relative group">
                                 <img
                                   src={url}
