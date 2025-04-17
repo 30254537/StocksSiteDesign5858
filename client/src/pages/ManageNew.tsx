@@ -1506,15 +1506,358 @@ export default function ManageNew() {
         </Card>
       )}
 
-      {/* 其他管理选项卡内容 - 为了简化示例，这里暂时只保留简单框架 */}
+      {/* 商品管理 */}
       {activeTab === "products" && (
         <Card className="shadow-lg mb-8">
           <CardHeader>
             <CardTitle>商品管理</CardTitle>
+            <CardDescription>添加、编辑和管理商品信息</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <p>商品管理功能已就绪</p>
+            <div className="flex justify-end mb-4">
+              <Button 
+                className="bg-accent text-black hover:bg-accent/80"
+                onClick={() => {
+                  setEditingProduct(null);
+                  // 重置表单
+                  const form = document.getElementById("product-form") as HTMLFormElement;
+                  if (form) form.reset();
+                  // 重置ID
+                  const idInput = document.getElementById("product-id") as HTMLInputElement;
+                  if (idInput) idInput.value = "0";
+                  // 清空已选图片
+                  setProductImageFiles([]);
+                }}
+              >
+                添加新商品
+              </Button>
+            </div>
+            
+            {/* 商品表单 */}
+            <form
+              id="product-form"
+              className="mb-8 border-b border-accent/30 pb-8"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                
+                try {
+                  const formData = new FormData();
+                  
+                  // 获取表单数据
+                  const productId = (document.getElementById("product-id") as HTMLInputElement).value;
+                  const name = (document.getElementById("product-name") as HTMLInputElement).value;
+                  const description = (document.getElementById("product-description") as HTMLTextAreaElement).value;
+                  const price = (document.getElementById("product-price") as HTMLInputElement).value;
+                  const stonksPrice = (document.getElementById("product-stonks-price") as HTMLInputElement).value;
+                  const inventory = (document.getElementById("product-inventory") as HTMLInputElement).value;
+                  const active = (document.getElementById("product-active") as HTMLInputElement).checked;
+                  
+                  // 基本验证
+                  if (!name || !price || !stonksPrice) {
+                    toast({
+                      title: "表单错误",
+                      description: "请填写商品名称、价格和STONKS价格",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  // 添加表单数据到FormData
+                  formData.append("name", name);
+                  formData.append("description", description || "");
+                  formData.append("price", price);
+                  formData.append("stonksPrice", stonksPrice);
+                  formData.append("inventory", inventory || "999");
+                  formData.append("isActive", active ? "1" : "0");
+                  
+                  // 添加所有图片文件
+                  if (productImageFiles.length > 0) {
+                    for (const file of productImageFiles) {
+                      formData.append("images", file);
+                    }
+                  }
+                  
+                  // 确定请求方法和端点
+                  let method = "POST";
+                  let endpoint = "/api/cms/products";
+                  
+                  if (productId && parseInt(productId) > 0) {
+                    method = "PUT";
+                    endpoint = `/api/cms/products/${productId}`;
+                  }
+                  
+                  // 发送请求
+                  const timestamp = new Date().getTime();
+                  const response = await fetch(`${endpoint}?t=${timestamp}`, {
+                    method,
+                    body: formData
+                  });
+                  
+                  if (!response.ok) {
+                    throw new Error(`操作失败: ${response.statusText}`);
+                  }
+                  
+                  // 更新产品列表
+                  await fetchProducts();
+                  
+                  // 重置表单和状态
+                  e.currentTarget.reset();
+                  setEditingProduct(null);
+                  setProductImageFiles([]);
+                  
+                  toast({
+                    title: parseInt(productId) > 0 ? "更新成功" : "添加成功",
+                    description: parseInt(productId) > 0 ? "商品已成功更新" : "商品已成功添加",
+                  });
+                } catch (error) {
+                  console.error("提交商品表单错误:", error);
+                  toast({
+                    title: "操作失败",
+                    description: "提交商品表单时出错，请稍后再试",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <input type="hidden" id="product-id" name="id" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="product-name" className="block text-sm font-medium mb-2">
+                      商品名称 *
+                    </label>
+                    <Input
+                      id="product-name"
+                      name="name"
+                      type="text"
+                      placeholder="输入商品名称"
+                      className="bg-primary/50 border-accent"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="product-price" className="block text-sm font-medium mb-2">
+                        价格 (USDT) *
+                      </label>
+                      <Input
+                        id="product-price"
+                        name="price"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="USDT价格"
+                        className="bg-primary/50 border-accent"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="product-stonks-price" className="block text-sm font-medium mb-2">
+                        价格 (STONKS) *
+                      </label>
+                      <Input
+                        id="product-stonks-price"
+                        name="stonksPrice"
+                        type="number"
+                        step="0.000001"
+                        min="0"
+                        placeholder="STONKS价格"
+                        className="bg-primary/50 border-accent"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="product-inventory" className="block text-sm font-medium mb-2">
+                      库存数量
+                    </label>
+                    <Input
+                      id="product-inventory"
+                      name="inventory"
+                      type="number"
+                      min="0"
+                      placeholder="库存数量"
+                      className="bg-primary/50 border-accent"
+                    />
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="product-active" name="active" defaultChecked />
+                    <label
+                      htmlFor="product-active"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      上架商品（对外显示）
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="product-description" className="block text-sm font-medium mb-2">
+                      商品描述
+                    </label>
+                    <Textarea
+                      id="product-description"
+                      name="description"
+                      placeholder="输入商品描述"
+                      className="min-h-[150px] bg-primary/50 border-accent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      商品图片
+                    </label>
+                    <div className="border-2 border-dashed border-accent/40 rounded-lg p-4 bg-primary/30">
+                      <Input
+                        id="product-images"
+                        name="images"
+                        type="file"
+                        className="mb-2"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          if (files && files.length > 0) {
+                            const filesArray = Array.from(files);
+                            setProductImageFiles(prev => [...prev, ...filesArray]);
+                          }
+                        }}
+                      />
+                      
+                      {/* 预览已选择的图片 */}
+                      {productImageFiles.length > 0 && (
+                        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {productImageFiles.map((file, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`预览 ${index + 1}`}
+                                className="w-full h-24 object-cover rounded-md"
+                              />
+                              <button
+                                type="button"
+                                className="absolute top-1 right-1 bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
+                                  setProductImageFiles(files => files.filter((_, i) => i !== index));
+                                }}
+                              >
+                                <X size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* 显示已有图片 */}
+                      {editingProduct && editingProduct.image_urls && editingProduct.image_urls.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-sm font-medium mb-2">已有图片:</p>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                            {editingProduct.image_urls.map((url, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={url}
+                                  alt={`产品图片 ${index + 1}`}
+                                  className="w-full h-24 object-cover rounded-md"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <Button 
+                  type="submit"
+                  className="bg-accent text-black hover:bg-accent/80"
+                >
+                  {editingProduct ? "更新商品" : "添加商品"}
+                </Button>
+              </div>
+            </form>
+            
+            {/* 商品列表 */}
+            <div className="mt-8">
+              <h3 className="text-xl font-bold mb-4">商品列表</h3>
+              
+              {loadingProducts ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+                </div>
+              ) : products.length === 0 ? (
+                <p className="text-center py-8 text-gray-400">暂无商品</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">图片</TableHead>
+                        <TableHead>商品名称</TableHead>
+                        <TableHead>价格(USDT)</TableHead>
+                        <TableHead>价格(STONKS)</TableHead>
+                        <TableHead>库存</TableHead>
+                        <TableHead>状态</TableHead>
+                        <TableHead className="text-right">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {products.map((product) => (
+                        <TableRow key={product.id}>
+                          <TableCell>
+                            {product.image_urls && product.image_urls.length > 0 ? (
+                              <img
+                                src={product.image_urls[0]}
+                                alt={product.name}
+                                className="w-10 h-10 object-cover rounded-md"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 bg-gray-800 rounded-md flex items-center justify-center">
+                                <ImageIcon size={16} className="text-gray-400" />
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-medium">{product.name}</TableCell>
+                          <TableCell>${parseFloat(product.price).toFixed(2)}</TableCell>
+                          <TableCell>⊙ {parseFloat(product.stonks_price).toFixed(6)}</TableCell>
+                          <TableCell>{product.inventory}</TableCell>
+                          <TableCell>
+                            <Badge variant={product.is_active ? "default" : "secondary"}>
+                              {product.is_active ? "上架中" : "已下架"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-accent text-accent"
+                              onClick={() => handleEditProduct(product)}
+                            >
+                              编辑
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteProduct(product.id)}
+                            >
+                              删除
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
