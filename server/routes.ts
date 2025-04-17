@@ -30,6 +30,7 @@ import { setupTeamMembersRoutes } from "./routes/teamMembersRoutes";
 import { setupCommunityFeaturesRoutes } from "./routes/communityFeaturesRoutes";
 import { setupCmsRoutes } from "./routes/cmsRoutes";
 import { setupMusicRoutes } from "./routes/musicRoutes";
+import { setupProductCmsRoutes } from "./routes/productCmsRoutes";
 import { syncCryptoNews } from "./services/cryptoNewsService";
 // 注意：financeNewsRoutes 不存在，将在下面注释相关代码
 import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
@@ -2551,6 +2552,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 添加社区特点管理路由
   setupCommunityFeaturesRoutes(app);
   setupMusicRoutes(app);
+  
+  // 添加产品CMS管理路由
+  setupProductCmsRoutes(app);
   
   // 添加直接上传端点，绕过Vite中间件
   const directUploadStorage = multer.diskStorage({
