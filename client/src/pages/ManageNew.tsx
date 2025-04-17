@@ -700,6 +700,191 @@ function ManageNew() {
 
 
   
+  // 获取商品列表
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/products");
+      if (!response.ok) {
+        throw new Error("获取商品列表失败");
+      }
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("获取商品列表错误:", error);
+      toast({
+        title: "获取商品列表失败",
+        description: "请稍后再试",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 处理商品图片选择
+  const handleProductImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      // 检查文件大小和数量
+      if (files.length > 5) {
+        toast({
+          title: "超出数量限制",
+          description: "最多只能上传5张图片",
+          variant: "destructive",
+        });
+        e.target.value = ""; // 清空选择
+        return;
+      }
+
+      // 检查每个文件的大小
+      const oversizedFiles = files.filter(file => file.size > 5 * 1024 * 1024); // 5MB
+      if (oversizedFiles.length > 0) {
+        toast({
+          title: "文件过大",
+          description: `${oversizedFiles.length}张图片超出5MB限制`,
+          variant: "destructive",
+        });
+        e.target.value = ""; // 清空选择
+        return;
+      }
+
+      // 存储文件对象以便后续提交
+      setSelectedFilesObjects(files);
+
+      // 创建预览URL
+      const fileUrls = files.map(file => URL.createObjectURL(file));
+      setSelectedFiles(fileUrls);
+    }
+  };
+
+  // 处理移除已选择的图片
+  const handleRemoveSelectedImage = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setSelectedFilesObjects(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // 处理移除产品现有图片
+  const handleRemoveExistingImage = async (productId: number, imageUrl: string) => {
+    if (window.confirm("确定要删除这张图片吗？此操作无法撤销。")) {
+      try {
+        const response = await apiRequest("DELETE", `/api/products/${productId}/image`, {
+          imageUrl: imageUrl,
+        });
+
+        if (!response.ok) {
+          throw new Error("删除图片失败");
+        }
+
+        // 更新编辑中的产品信息，移除已删除的图片
+        if (editingProduct) {
+          setEditingProduct({
+            ...editingProduct,
+            imageUrls: editingProduct.imageUrls?.filter(url => url !== imageUrl) || [],
+          });
+        }
+
+        toast({
+          title: "删除成功",
+          description: "图片已成功删除",
+        });
+
+        // 重新获取产品列表以更新UI
+        fetchProducts();
+      } catch (error) {
+        console.error("删除图片时出错:", error);
+        toast({
+          title: "删除失败",
+          description: "无法删除图片，请稍后再试",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  // 处理商品表单提交
+  const handleProductFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const form = e.target as HTMLFormElement;
+      const formData = new FormData();
+
+      // 获取基本表单字段
+      const idInput = form.querySelector("#product-id") as HTMLInputElement;
+      const productId = parseInt(idInput.value);
+      const name = (form.querySelector("#product-name") as HTMLInputElement).value;
+      const price = parseFloat((form.querySelector("#product-price") as HTMLInputElement).value);
+      const description = (form.querySelector("#product-description") as HTMLTextAreaElement).value;
+      const stock = parseInt((form.querySelector("#product-stock") as HTMLInputElement).value || "0");
+      const active = (form.querySelector("#product-active") as HTMLInputElement).checked;
+
+      // 验证表单输入
+      if (!name || isNaN(price) || price <= 0) {
+        toast({
+          title: "表单验证失败",
+          description: "请确保商品名称和价格有效",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // 添加基本字段到FormData
+      formData.append("name", name);
+      formData.append("price", price.toString());
+      formData.append("description", description);
+      formData.append("stock", stock.toString());
+      formData.append("active", active.toString());
+
+      // 添加所有选择的图片
+      selectedFilesObjects.forEach(file => {
+        formData.append("images", file);
+      });
+
+      // 确定是更新还是创建新商品
+      let endpoint = "/api/products";
+      let method = "POST";
+
+      if (productId > 0) {
+        endpoint = `/api/products/${productId}`;
+        method = "PUT";
+      }
+
+      // 发送请求
+      const response = await fetch(endpoint, {
+        method,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`操作失败: ${response.statusText}`);
+      }
+
+      // 成功处理
+      toast({
+        title: productId > 0 ? "更新成功" : "添加成功",
+        description: productId > 0 ? "商品信息已更新" : "新商品已添加",
+      });
+
+      // 重置表单和状态
+      form.reset();
+      idInput.value = "0";
+      setEditingProduct(null);
+      setSelectedFiles([]);
+      setSelectedFilesObjects([]);
+
+      // 重新获取商品列表
+      fetchProducts();
+    } catch (error) {
+      console.error("提交商品表单时出错:", error);
+      toast({
+        title: "操作失败",
+        description: error instanceof Error ? error.message : "未知错误",
+        variant: "destructive",
+      });
+    }
+  };
+
   // 处理编辑产品
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
@@ -719,43 +904,12 @@ function ManageNew() {
     const stockInput = document.getElementById("product-stock") as HTMLInputElement;
     if (stockInput) stockInput.value = product.stock?.toString() || "0";
     
-    // 设置类别
-    try {
-      const categoryTrigger = document.querySelector('[data-id="product-category"]');
-      if (categoryTrigger) {
-        // 更新 data-value 属性
-        categoryTrigger.setAttribute('data-value', product.category || 'clothing');
-        
-        // 更新显示文本
-        const valueElement = categoryTrigger.querySelector('[data-radix-select-value-id]');
-        if (valueElement) {
-          const categoryMap: {[key: string]: string} = {
-            'clothing': '服装',
-            'accessories': '配件',
-            'collectibles': '收藏品',
-            'other': '其他'
-          };
-          valueElement.textContent = categoryMap[product.category] || '服装';
-        }
-      }
-    } catch (e) {
-      console.error("设置类别选择器失败:", e);
-    }
-    
-    // 设置复选框
-    const featuredCheckbox = document.getElementById("product-featured") as HTMLInputElement;
-    if (featuredCheckbox) featuredCheckbox.checked = Boolean(product.featured);
-    
-    const hasSizesCheckbox = document.getElementById("product-hasSizes") as HTMLInputElement;
-    if (hasSizesCheckbox) hasSizesCheckbox.checked = Boolean(product.hasSizes);
+    // 清空当前选择的文件
+    setSelectedFiles([]);
+    setSelectedFilesObjects([]);
     
     // 滚动到表单
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    
-    toast({
-      title: "编辑产品",
-      description: `正在编辑: ${product.name}`,
-    });
+    window.scrollTo({ top: document.getElementById("product-form")?.offsetTop || 0, behavior: "smooth" });
   };
   
   // 处理删除产品
@@ -785,26 +939,6 @@ function ManageNew() {
           variant: "destructive",
         });
       }
-    }
-  };
-  
-  // 处理文件选择变化
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    
-    if (files && files.length > 0) {
-      // 将FileList转换为数组
-      const newFiles = Array.from(files);
-      const fileNames = newFiles.map(file => file.name);
-      
-      // 保存所有选择的文件名称
-      setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...fileNames]);
-      
-      // 保存文件对象引用
-      setSelectedFilesObjects(prevFiles => [...prevFiles, ...newFiles]);
-      
-      // 重置文件输入框，以便用户可以再次选择同一文件
-      e.target.value = '';
     }
   };
 
@@ -1207,7 +1341,13 @@ function ManageNew() {
           </CardHeader>
           <CardContent>
             <div className="text-center p-8">
-              <p>商品管理功能正在维护中，请稍后再试</p>
+              <p>商品管理功能正在恢复中，请稍后再试</p>
+              <Button 
+                className="mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={() => fetchProducts()}
+              >
+                获取商品列表
+              </Button>
             </div>
           </CardContent>
         </Card>
