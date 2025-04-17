@@ -175,6 +175,7 @@ export function setupCommunityRoutes(app: Express) {
       console.log('即将验证社区活动表单数据:', JSON.stringify(formData, null, 2));
       
       try {
+        console.log('社区活动表单数据验证前:', JSON.stringify(formData, null, 2));
         const activityData = insertCommunityActivitySchema.parse(formData);
         console.log('社区活动表单数据验证成功:', JSON.stringify(activityData, null, 2));
         const newActivity = await storage.createCommunityActivity(activityData);
@@ -184,6 +185,7 @@ export function setupCommunityRoutes(app: Express) {
           console.error('社区活动表单数据验证失败:', JSON.stringify(error.errors, null, 2));
           res.status(400).json({ message: '数据验证失败', errors: error.errors });
         } else {
+          console.error('社区活动创建其他错误:', error);
           throw error;
         }
       }

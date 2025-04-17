@@ -1323,9 +1323,10 @@ export default function ManageNew() {
                   });
                 } catch (error) {
                   console.error("活动表单提交错误:", error);
+                  // 显示更详细的错误信息
                   toast({
                     title: "操作失败",
-                    description: "提交活动表单时出错，请稍后再试",
+                    description: error.message || "提交活动表单时出错，请稍后再试",
                     variant: "destructive",
                   });
                 }
