@@ -514,48 +514,15 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getMusicTracks(): Promise<MusicTrack[]> {
-    // 查询所有音乐记录，但不要包含style字段（数据库中不存在）
-    const tracks = await db.select({
-      id: musicTracks.id,
-      title: musicTracks.title,
-      artist: musicTracks.artist,
-      filename: musicTracks.filename,
-      url: musicTracks.url,
-      duration: musicTracks.duration,
-      isPublic: musicTracks.isPublic,
-      createdBy: musicTracks.createdBy,
-      createdAt: musicTracks.createdAt
-    }).from(musicTracks).orderBy(asc(musicTracks.id));
-    
-    // 手动添加style字段以兼容前端显示
-    return tracks.map(track => ({
-      ...track,
-      style: "" // 默认为空字符串
-    }));
+    // 查询所有音乐记录，包含style字段（数据库中现在已存在）
+    return db.select().from(musicTracks).orderBy(asc(musicTracks.id));
   }
   
   async getMusicTrack(id: number): Promise<MusicTrack | undefined> {
-    const [track] = await db.select({
-      id: musicTracks.id,
-      title: musicTracks.title,
-      artist: musicTracks.artist,
-      filename: musicTracks.filename,
-      url: musicTracks.url,
-      duration: musicTracks.duration,
-      isPublic: musicTracks.isPublic,
-      createdBy: musicTracks.createdBy,
-      createdAt: musicTracks.createdAt
-    }).from(musicTracks)
+    const [track] = await db.select().from(musicTracks)
       .where(eq(musicTracks.id, id));
     
-    if (track) {
-      return {
-        ...track,
-        style: "" // 默认为空字符串
-      };
-    }
-    
-    return undefined;
+    return track;
   }
   
   // 加密货币推文相关方法
@@ -1079,14 +1046,11 @@ export class DatabaseStorage implements IStorage {
   // 团队成员管理（已移除）
   
   // 音乐管理相关方法
-  // 这里曾经存在重复的getMusicTracks、getMusicTrackById和getMusicTracksByStyle方法
-  // 已删除以避免重复，使用上面516行的实现
-  // 不使用style列，因为它在当前数据库表中不存在
-  
-  // 注意: createMusicTrack 方法已在前面定义，不需要重复实现
+  // 这里曾经存在重复的getMusicTracks、getMusicTrackById方法
+  // 已删除以避免重复，使用上面的实现
+  // style字段在数据库表中已存在，无需特殊处理
   
   async updateMusicTrack(id: number, data: Partial<MusicTrack>): Promise<MusicTrack | undefined> {
-    // 不需要移除style字段，因为数据库中存在该字段
     const [updatedTrack] = await db.update(musicTracks)
       .set(data)
       .where(eq(musicTracks.id, id))
