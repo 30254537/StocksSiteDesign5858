@@ -2266,6 +2266,7 @@ export default function ManageNew() {
                     url: editingMusic ? editingMusic.url : (window.uploadedMusicUrl || ''),
                     isPublic: 1, // 默认公开
                     duration: 0, // 持续时间将在服务器端处理
+                    filename: window.uploadedMusicFilename || (editingMusic?.filename || '') // 添加filename字段
                   };
                   
                   // 检查 URL 是否可用 - 编辑模式可以保留原URL，新建模式必须有上传URL
@@ -2430,8 +2431,9 @@ export default function ManageNew() {
                                 throw new Error(uploadResultData.message || '上传失败，未知错误');
                               }
                               
-                              // 保存上传的URL到临时变量供表单提交使用
+                              // 保存上传的URL和文件名到临时变量供表单提交使用
                               window.uploadedMusicUrl = uploadResultData.file?.url || uploadResultData.url;
+                              window.uploadedMusicFilename = uploadResultData.file?.filename || '';
                             } catch (uploadError) {
                               console.error('上传过程中发生异常:', uploadError);
                               throw uploadError;
