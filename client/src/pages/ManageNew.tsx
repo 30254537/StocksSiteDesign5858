@@ -386,13 +386,13 @@ export default function ManageNew() {
     if (descriptionInput) descriptionInput.value = product.description || "";
     
     const priceInput = document.getElementById("product-price") as HTMLInputElement;
-    if (priceInput) priceInput.value = product.price.toString();
+    if (priceInput) priceInput.value = product.price !== undefined ? product.price.toString() : "0";
     
     const stonksPriceInput = document.getElementById("product-stonks-price") as HTMLInputElement;
-    if (stonksPriceInput) stonksPriceInput.value = product.stonks_price.toString();
+    if (stonksPriceInput) stonksPriceInput.value = product.stonks_price !== undefined ? product.stonks_price.toString() : "0";
     
     const stockInput = document.getElementById("product-stock") as HTMLInputElement;
-    if (stockInput) stockInput.value = product.stock.toString();
+    if (stockInput) stockInput.value = product.stock !== undefined ? product.stock.toString() : "0";
     
     const activeCheckbox = document.getElementById("product-active") as HTMLInputElement;
     if (activeCheckbox) activeCheckbox.checked = product.is_active;
