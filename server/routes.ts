@@ -1373,8 +1373,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 配置音频文件上传
   const musicUploadsDir = path.join(process.cwd(), 'public/uploads/music');
-  if (!fs.existsSync(musicUploadsDir)) {
-    fs.mkdirSync(musicUploadsDir, { recursive: true });
+  try {
+    if (!fs.existsSync(musicUploadsDir)) {
+      fs.mkdirSync(musicUploadsDir, { recursive: true });
+      console.log('成功创建音乐上传目录:', musicUploadsDir);
+      // 确保目录权限正确
+      fs.chmodSync(musicUploadsDir, 0o777);
+      console.log('设置音乐上传目录权限为777');
+    }
+  } catch (err) {
+    console.error('创建音乐上传目录失败:', err);
   }
 
   const musicStorage = multer.diskStorage({

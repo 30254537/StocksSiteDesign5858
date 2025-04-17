@@ -13,10 +13,22 @@ const musicRouter = Router();
 const musicStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'music');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    try {
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+        console.log('音乐路由: 成功创建音乐上传目录:', uploadDir);
+        // 确保目录权限正确
+        fs.chmodSync(uploadDir, 0o777);
+        console.log('音乐路由: 设置音乐上传目录权限为777');
+      }
+      cb(null, uploadDir);
+    } catch (err) {
+      console.error('音乐路由: 创建音乐上传目录失败:', err);
+      // 尝试使用备用目录
+      const fallbackDir = path.join(process.cwd(), 'public');
+      console.log('音乐路由: 使用备用目录:', fallbackDir);
+      cb(null, fallbackDir);
     }
-    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
