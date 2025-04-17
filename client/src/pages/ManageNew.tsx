@@ -15,6 +15,13 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { X, ImageIcon, ExternalLink, PlayCircle, TrashIcon, Pencil } from "lucide-react";
 
+// 为window添加uploadedMusicUrl属性
+declare global {
+  interface Window {
+    uploadedMusicUrl?: string;
+  }
+}
+
 // 定义类型
 interface Product {
   id: number;
@@ -70,7 +77,7 @@ interface MusicTrack {
   artist: string;
   duration: number;
   url: string;
-  // style字段在数据库中不存在，已从接口中移除
+  style?: string; // style字段在数据库中确实存在，需要保留
 }
 
 export default function ManageNew() {
@@ -223,12 +230,12 @@ export default function ManageNew() {
     const artistInput = document.getElementById("music-artist") as HTMLInputElement;
     if (artistInput) artistInput.value = track.artist;
     
-    // style字段不存在于数据库中，已移除
-    // const styleInput = document.getElementById("music-style") as HTMLInputElement;
-    // if (styleInput) styleInput.value = track.style || "";
+    // style字段是需要的
+    const styleInput = document.getElementById("music-style") as HTMLInputElement;
+    if (styleInput) styleInput.value = track.style || "";
     
-    const urlInput = document.getElementById("music-url") as HTMLInputElement;
-    if (urlInput) urlInput.value = track.url;
+    // 清除临时上传URL，因为我们正在编辑现有的音乐
+    window.uploadedMusicUrl = undefined;
     
     // 滚动到表单
     window.scrollTo({ top: document.getElementById("music-form")?.offsetTop || 0, behavior: "smooth" });
@@ -2256,10 +2263,20 @@ export default function ManageNew() {
                     title,
                     artist,
                     style: (document.getElementById("music-style") as HTMLInputElement).value,
-                    url: '', // 当编辑现有音乐时保留此字段，将由服务器处理
+                    url: editingMusic ? editingMusic.url : (window.uploadedMusicUrl || ''),
                     isPublic: 1, // 默认公开
                     duration: 0, // 持续时间将在服务器端处理
                   };
+                  
+                  // 检查 URL 是否可用 - 编辑模式可以保留原URL，新建模式必须有上传URL
+                  if (!editingMusic && !window.uploadedMusicUrl) {
+                    toast({
+                      title: "缺少音乐文件",
+                      description: "请先上传音乐文件",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
                   
                   // 确定API端点和方法
                   const method = musicId > 0 ? "PUT" : "POST";
@@ -2381,11 +2398,8 @@ export default function ManageNew() {
                             
                             const data = await response.json();
                             
-                            // 更新URL输入框的值
-                            const urlInput = document.getElementById('music-url') as HTMLInputElement;
-                            if (urlInput) {
-                              urlInput.value = data.url;
-                            }
+                            // 保存上传的URL到临时变量供表单提交使用
+                            window.uploadedMusicUrl = data.url;
                             
                             toast({
                               title: "上传成功",
@@ -2465,7 +2479,7 @@ export default function ManageNew() {
                           <TableCell>{track.id}</TableCell>
                           <TableCell className="font-medium">{track.title}</TableCell>
                           <TableCell>{track.artist}</TableCell>
-                          <TableCell>-</TableCell>
+                          <TableCell>{track.style || "-"}</TableCell>
                           <TableCell>
                             <audio controls className="w-48 h-10">
                               <source src={track.url} type="audio/mpeg" />
