@@ -1319,12 +1319,17 @@ export default function ManageNew() {
                     // 在编辑模式下保留现有图片URL
                     if (editingCommunityActivity?.imageUrl) {
                       formData.append("imageUrl", editingCommunityActivity.imageUrl);
+                      console.log(`保留主图片URL: ${editingCommunityActivity.imageUrl}`);
                     }
                     
                     // 如果有多张图片，也一并保留
                     if (editingCommunityActivity?.imageUrls && Array.isArray(editingCommunityActivity.imageUrls)) {
+                      console.log(`保留 ${editingCommunityActivity.imageUrls.length} 张现有图片`);
                       editingCommunityActivity.imageUrls.forEach(url => {
-                        if (url) formData.append("existingImageUrls", url);
+                        if (url) {
+                          formData.append("existingImageUrls", url);
+                          console.log(`添加现有图片URL: ${url}`);
+                        }
                       });
                     }
                   }
@@ -1356,6 +1361,11 @@ export default function ManageNew() {
                     // 明确告知服务器这是编辑请求，而非新增
                     formData.append("_method", "PUT");
                     formData.append("activityId", activityId);
+                    
+                    // 调试信息
+                    console.log(`编辑模式：活动ID ${activityId}，使用${method}请求到 ${endpoint}`);
+                  } else {
+                    console.log("新增模式：使用POST请求到 /api/community");
                   }
                   
                   console.log("社区活动表单数据内容检查:", {

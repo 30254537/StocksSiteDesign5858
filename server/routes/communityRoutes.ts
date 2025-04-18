@@ -358,12 +358,15 @@ export function setupCommunityRoutes(app: Express) {
         if (Array.isArray(req.body.existingImageUrls)) {
           // 如果前端传递了现有图片URL的数组，直接使用它
           imageUrls = req.body.existingImageUrls;
+          console.log("使用前端传递的图片URL数组:", imageUrls);
         } else if (typeof req.body.existingImageUrls === 'string') {
           // 如果是单个字符串
           imageUrls = [req.body.existingImageUrls];
+          console.log("使用前端传递的单个图片URL:", imageUrls);
         }
-        
-        console.log("使用这些现有图片URLs:", imageUrls);
+      } else {
+        // 如果前端没有传递existingImageUrls，保留现有图片
+        console.log("前端未传递existingImageUrls，保留现有图片:", imageUrls);
       }
 
       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
@@ -457,8 +460,20 @@ export function setupCommunityRoutes(app: Express) {
           return res.status(400).json({ message: '内容不能为空' });
         }
         
+        // 打印全部活动数据供调试
+        console.log('准备更新社区活动，活动ID:', effectiveActivityId);
+        console.log('现有活动数据:', JSON.stringify(existingActivity, null, 2));
+        console.log('待更新数据:', JSON.stringify(formData, null, 2));
+        
+        // 对日期字段做额外处理，确保正确解析（如果格式不正确会导致更新失败）
+        const finalFormData = {
+          ...formData,
+          // 确保保留原有ID
+          id: effectiveActivityId
+        };
+        
         // 更新活动，使用有效的活动ID（可能来自表单或URL路径）
-        const updatedActivity = await storage.updateCommunityActivity(effectiveActivityId, formData);
+        const updatedActivity = await storage.updateCommunityActivity(effectiveActivityId, finalFormData);
         
         if (!updatedActivity) {
           res.status(404).json({ message: '未找到指定的社区活动' });
