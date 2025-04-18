@@ -1361,6 +1361,22 @@ export default function ManageNew() {
                     // 明确告知服务器这是编辑请求，而非新增
                     formData.append("_method", "PUT");
                     formData.append("activityId", activityId);
+                    formData.append("id", activityId);
+                    
+                    // 确保保留现有图片（如果没有上传新图片）
+                    const activity = editingCommunityActivity;
+                    if (activity) {
+                      if (activity.imageUrl && !formData.has("imageUrl")) {
+                        formData.append("imageUrl", activity.imageUrl);
+                      }
+                      
+                      if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
+                        // 转换为字符串数组，因为FormData只能存储字符串
+                        activity.imageUrls.forEach(url => {
+                          formData.append("existingImageUrls", url);
+                        });
+                      }
+                    }
                     
                     // 调试信息
                     console.log(`编辑模式：活动ID ${activityId}，使用${method}请求到 ${endpoint}`);

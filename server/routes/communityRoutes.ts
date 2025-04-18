@@ -326,166 +326,136 @@ export function setupCommunityRoutes(app: Express) {
         return res.status(401).json({ message: '需要管理员权限' });
       }
 
-      console.log("收到社区活动更新请求，ID:", req.params.id, "表单数据:", req.body);
-      console.log("上传的文件:", req.files);
-
+      console.log("\n=== 社区活动编辑请求 ===");
+      console.log("路径参数ID:", req.params.id);
+      console.log("表单数据:", req.body);
+      
+      // 解析ID
       const { id } = req.params;
       const activityId = parseInt(id);
-
+      
       // 获取现有活动信息
       const existingActivity = await storage.getCommunityActivity(activityId);
       if (!existingActivity) {
         return res.status(404).json({ message: '未找到指定的社区活动' });
       }
       
-      // 首先检查是否有明确的活动ID参数，特别是来自表单数据的
-      const formActivityId = req.body.activityId ? parseInt(req.body.activityId) : null;
-      const effectiveActivityId = formActivityId || activityId;
+      console.log("现有活动数据:", existingActivity);
       
-      if (formActivityId && formActivityId !== activityId) {
-        console.log(`注意: 表单中的活动ID (${formActivityId}) 与路径参数中的ID (${activityId}) 不一致, 将使用 ${effectiveActivityId}`);
-      }
-      
-      // 处理上传的图片文件
-      let imageUrl = req.body.imageUrl || existingActivity.imageUrl || '';
-      // 保持现有的图片数组，如果没有上传新图片则使用原来的
-      let imageUrls = existingActivity.imageUrls || [];
-      
-      // 检查是否有从表单传递的existingImageUrls参数
-      if (req.body.existingImageUrls) {
-        console.log("检测到从表单传递的现有图片URLs:", req.body.existingImageUrls);
-        
-        if (Array.isArray(req.body.existingImageUrls)) {
-          // 如果前端传递了现有图片URL的数组，直接使用它
-          imageUrls = req.body.existingImageUrls;
-          console.log("使用前端传递的图片URL数组:", imageUrls);
-        } else if (typeof req.body.existingImageUrls === 'string') {
-          // 如果是单个字符串
-          imageUrls = [req.body.existingImageUrls];
-          console.log("使用前端传递的单个图片URL:", imageUrls);
-        }
-      } else {
-        // 如果前端没有传递existingImageUrls，保留现有图片
-        console.log("前端未传递existingImageUrls，保留现有图片:", imageUrls);
-      }
-
-      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-        // 创建新的图片URL数组
-        const newImageUrls = (req.files as Express.Multer.File[]).map(file => 
-          `/uploads/community/${file.filename}`
-        );
-
-        // 使用第一张新上传的图片作为主图片
-        imageUrl = newImageUrls[0];
-        
-        // 如果明确选择了替换所有图片（而不是添加），可以删除旧图片文件
-        if (req.body.replaceAllImages === 'true') {
-          // 删除旧的图片文件
-          if (existingActivity.imageUrls && existingActivity.imageUrls.length > 0) {
-            existingActivity.imageUrls.forEach(imgUrl => {
-              if (imgUrl && imgUrl.startsWith('/uploads/community/')) {
-                const oldImagePath = path.resolve(`public${imgUrl}`);
-                if (fs.existsSync(oldImagePath)) {
-                  try {
-                    fs.unlinkSync(oldImagePath);
-                    console.log(`已删除旧图片: ${oldImagePath}`);
-                  } catch (err) {
-                    console.error(`删除旧图片时出错:`, err);
-                  }
-                }
-              }
-            });
-          }
-          // 替换为新图片数组
-          imageUrls = newImageUrls;
-        } else {
-          // 将新图片添加到现有图片数组中
-          imageUrls = [...imageUrls, ...newImageUrls];
-        }
-        
-        console.log(`更新后的图片URL数组:`, imageUrls);
-      }
-
-      // 合并表单数据和图片URL，并处理日期格式
-      let formData = {
-        ...req.body,
-        imageUrl,
-        imageUrls,
-        // 统一处理布尔值字段
-        isActive: req.body.isActive === 'true' || req.body.isActive === '1' || req.body.isActive === true,
-        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || req.body.isOnline === true || req.body.isOnline === undefined
+      // 构建基本活动数据
+      let updatedActivity: any = {
+        id: activityId,
+        title: req.body.title,
+        content: req.body.content,
+        location: req.body.location || existingActivity.location,
+        isActive: req.body.isActive === 'true' || req.body.isActive === '1',
+        isOnline: req.body.isOnline === 'true' || req.body.isOnline === '1' || existingActivity.isOnline,
       };
       
-      console.log('原始字段值:', {
-        isActive: req.body.isActive,
-        isOnline: req.body.isOnline,
-        startDate: formData.startDate,
-        endDate: formData.endDate
-      });
-      
-      // 处理日期字段
-      if (formData.startDate && typeof formData.startDate === 'string' && formData.startDate.trim() !== '') {
+      // 处理日期
+      if (req.body.startDate && req.body.startDate.trim() !== '') {
         try {
-          formData.startDate = new Date(formData.startDate);
-          console.log('处理后的开始日期:', formData.startDate);
+          updatedActivity.startDate = new Date(req.body.startDate);
         } catch (e) {
-          console.error('无法解析开始日期:', formData.startDate, e);
-          delete formData.startDate;
+          console.warn('无法解析开始日期:', req.body.startDate);
         }
-      } else if (formData.startDate === '') {
-        delete formData.startDate;
+      } else if (existingActivity.startDate) {
+        updatedActivity.startDate = existingActivity.startDate;
       }
       
-      if (formData.endDate && typeof formData.endDate === 'string' && formData.endDate.trim() !== '') {
+      if (req.body.endDate && req.body.endDate.trim() !== '') {
         try {
-          formData.endDate = new Date(formData.endDate);
-          console.log('处理后的结束日期:', formData.endDate);
+          updatedActivity.endDate = new Date(req.body.endDate);
         } catch (e) {
-          console.error('无法解析结束日期:', formData.endDate, e);
-          delete formData.endDate;
+          console.warn('无法解析结束日期:', req.body.endDate);
         }
-      } else if (formData.endDate === '') {
-        delete formData.endDate;
+      } else if (existingActivity.endDate) {
+        updatedActivity.endDate = existingActivity.endDate;
       }
       
-      console.log('即将更新社区活动表单数据:', JSON.stringify(formData, null, 2));
+      // 处理图片 - 分两步走：1. 处理现有图片 2. 处理新上传图片
       
-      try {
-        // 确保这些字段是必填的
-        if (!formData.title) {
-          return res.status(400).json({ message: '标题不能为空' });
+      // Step 1: 处理现有图片 - 是否保留或删除
+      let existingImageUrls: string[] = [];
+      
+      // 如果表单传递了existingImageUrls，使用它们
+      if (req.body.existingImageUrls) {
+        if (Array.isArray(req.body.existingImageUrls)) {
+          existingImageUrls = req.body.existingImageUrls.map(url => String(url));
+          console.log("使用表单提供的多个现有图片:", existingImageUrls);
+        } else if (typeof req.body.existingImageUrls === 'string') {
+          existingImageUrls = [req.body.existingImageUrls];
+          console.log("使用表单提供的单个现有图片:", existingImageUrls);
+        }
+      } 
+      // 如果表单没有传递existingImageUrls但传递了imageUrl，则使用它
+      else if (req.body.imageUrl) {
+        existingImageUrls = [req.body.imageUrl];
+        console.log("使用表单提供的主图片URL:", existingImageUrls);
+      } 
+      // 如果表单没有传递任何现有图片相关信息，则保留所有现有图片
+      else {
+        // 保留原有图片
+        if (existingActivity.imageUrl && !existingImageUrls.includes(existingActivity.imageUrl)) {
+          existingImageUrls.push(existingActivity.imageUrl);
         }
         
-        if (!formData.content) {
-          return res.status(400).json({ message: '内容不能为空' });
+        if (existingActivity.imageUrls && Array.isArray(existingActivity.imageUrls)) {
+          existingActivity.imageUrls.forEach(url => {
+            if (url && !existingImageUrls.includes(url)) {
+              existingImageUrls.push(url);
+            }
+          });
         }
         
-        // 打印全部活动数据供调试
-        console.log('准备更新社区活动，活动ID:', effectiveActivityId);
-        console.log('现有活动数据:', JSON.stringify(existingActivity, null, 2));
-        console.log('待更新数据:', JSON.stringify(formData, null, 2));
-        
-        // 对日期字段做额外处理，确保正确解析（如果格式不正确会导致更新失败）
-        const finalFormData = {
-          ...formData,
-          // 确保保留原有ID
-          id: effectiveActivityId
-        };
-        
-        // 更新活动，使用有效的活动ID（可能来自表单或URL路径）
-        const updatedActivity = await storage.updateCommunityActivity(effectiveActivityId, finalFormData);
-        
-        if (!updatedActivity) {
-          res.status(404).json({ message: '未找到指定的社区活动' });
-          return;
-        }
-        
-        console.log('社区活动更新成功:', JSON.stringify(updatedActivity, null, 2));
-        res.json(updatedActivity);
-      } catch (error) {
-        console.error('更新社区活动时出错:', error);
-        res.status(500).json({ message: '服务器错误', error: String(error) });
+        console.log("保留所有现有图片:", existingImageUrls);
       }
+      
+      // Step 2: 处理新上传的图片
+      const newImageUrls: string[] = [];
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        console.log("有新上传的图片文件:", req.files.length, "个");
+        
+        for (const file of req.files as Express.Multer.File[]) {
+          const imageUrl = `/uploads/community/${file.filename}`;
+          newImageUrls.push(imageUrl);
+          console.log("新增图片:", imageUrl);
+        }
+      }
+      
+      // 综合处理图片
+      let finalImageUrls = [...existingImageUrls, ...newImageUrls];
+      
+      // 确保至少有一张图片作为主图片
+      let mainImageUrl = '';
+      if (finalImageUrls.length > 0) {
+        mainImageUrl = finalImageUrls[0];
+        // 如果有新上传的图片，使用第一张新图片作为主图
+        if (newImageUrls.length > 0) {
+          mainImageUrl = newImageUrls[0];
+        }
+      }
+      
+      // 完整更新数据
+      const finalUpdateData = {
+        ...updatedActivity,
+        imageUrl: mainImageUrl,
+        imageUrls: finalImageUrls
+      };
+      
+      console.log("最终更新数据:", finalUpdateData);
+      
+      // 执行数据库更新
+      const result = await storage.updateCommunityActivity(activityId, finalUpdateData);
+      
+      if (!result) {
+        return res.status(404).json({ message: '更新社区活动失败，未找到活动或数据库错误' });
+      }
+      
+      console.log("更新社区活动成功:", result);
+      console.log("=== 社区活动编辑完成 ===\n");
+      
+      res.json(result);
     } catch (error) {
       console.error('更新社区活动时出错:', error);
       res.status(500).json({ message: '服务器错误', error: String(error) });
