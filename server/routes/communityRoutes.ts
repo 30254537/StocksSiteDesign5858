@@ -440,9 +440,10 @@ export function setupCommunityRoutes(app: Express) {
         }
       }
       
-      // 4.3 合并新旧图片URL
-      const finalImageUrls = [...existingImageUrls, ...newImageUrls].filter(url => !!url);
-      console.log("最终合并的图片URLs:", finalImageUrls);
+      // 4.3 合并新旧图片URL，使用Set确保URL不重复
+      const uniqueUrls = new Set<string>([...existingImageUrls, ...newImageUrls].filter(url => !!url));
+      const finalImageUrls = Array.from(uniqueUrls);
+      console.log("最终合并的图片URLs (已去重):", finalImageUrls);
       
       // 4.4 选择主图
       let mainImageUrl = '';

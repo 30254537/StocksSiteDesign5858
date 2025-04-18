@@ -1316,19 +1316,27 @@ export default function ManageNew() {
                   if (activityId && parseInt(activityId) > 0) {
                     formData.append("id", activityId);
                     
-                    // 在编辑模式下保留现有图片URL
+                    // 在编辑模式下保留现有图片URL - 避免重复添加
+                    // 通过以下改进确保我们没有重复添加图片路径
+                    const processedUrls = new Set<string>();
+                    
+                    // 如果有单张主图，添加到处理集合
                     if (editingCommunityActivity?.imageUrl) {
                       formData.append("imageUrl", editingCommunityActivity.imageUrl);
+                      processedUrls.add(editingCommunityActivity.imageUrl);
                       console.log(`保留主图片URL: ${editingCommunityActivity.imageUrl}`);
                     }
                     
-                    // 如果有多张图片，也一并保留
+                    // 如果有多张图片，检查重复后添加
                     if (editingCommunityActivity?.imageUrls && Array.isArray(editingCommunityActivity.imageUrls)) {
-                      console.log(`保留 ${editingCommunityActivity.imageUrls.length} 张现有图片`);
+                      console.log(`处理 ${editingCommunityActivity.imageUrls.length} 张现有图片`);
                       editingCommunityActivity.imageUrls.forEach(url => {
-                        if (url) {
+                        if (url && !processedUrls.has(url)) {
                           formData.append("existingImageUrls", url);
+                          processedUrls.add(url);
                           console.log(`添加现有图片URL: ${url}`);
+                        } else if (url) {
+                          console.log(`跳过重复图片URL: ${url}`);
                         }
                       });
                     }
@@ -1364,20 +1372,9 @@ export default function ManageNew() {
                     formData.append("activityId", activityId);
                     formData.append("id", activityId);
                     
-                    // 确保保留现有图片（如果没有上传新图片）
-                    const activity = editingCommunityActivity;
-                    if (activity) {
-                      if (activity.imageUrl && !formData.has("imageUrl")) {
-                        formData.append("imageUrl", activity.imageUrl);
-                      }
-                      
-                      if (activity.imageUrls && Array.isArray(activity.imageUrls) && activity.imageUrls.length > 0) {
-                        // 转换为字符串数组，因为FormData只能存储字符串
-                        activity.imageUrls.forEach(url => {
-                          formData.append("existingImageUrls", url);
-                        });
-                      }
-                    }
+                    // 这部分代码已被上方的优化处理替代，不再需要重复添加现有图片
+                    // 移除此部分代码以避免重复添加图片URLs
+                    console.log("使用上方优化的图片处理逻辑，避免重复添加");
                     
                     // 调试信息
                     console.log(`编辑模式：活动ID ${activityId}，使用${method}请求到 ${endpoint}`);
