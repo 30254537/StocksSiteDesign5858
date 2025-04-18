@@ -1410,17 +1410,55 @@ export default function ManageNew() {
                   const timestamp = new Date().getTime();
                   try {
                     console.log(`发送${method}请求到 ${endpoint}`);
-                    const response = await fetch(`${endpoint}?t=${timestamp}`, {
-                      method,
-                      body: formData
-                    });
                     
-                    if (!response.ok) {
-                      const errorText = await response.text();
-                      console.error("服务器返回错误:", response.status, errorText);
-                      throw new Error(`操作失败: ${response.status} ${response.statusText}`);
+                    // 调试信息 - 检查表单内容
+                    console.log('表单内容检查:');
+                    for (const [key, value] of formData.entries()) {
+                      console.log(`${key}: ${typeof value === 'string' ? value : 'File'}`);
                     }
                     
+                    // 对于编辑操作，强制使用特定的实现方式确保PUT请求被正确处理
+                    let response;
+                    if (method === 'PUT') {
+                      // 编辑模式下，使用XMLHttpRequest来确保PUT请求正确发送
+                      response = await new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('PUT', `${endpoint}?t=${timestamp}`, true);
+                        
+                        xhr.onload = function() {
+                          if (this.status >= 200 && this.status < 300) {
+                            resolve({
+                              ok: true,
+                              json: () => JSON.parse(xhr.responseText),
+                              text: () => xhr.responseText,
+                              status: xhr.status
+                            });
+                          } else {
+                            reject(new Error(`请求失败: ${xhr.status} ${xhr.statusText}`));
+                          }
+                        };
+                        
+                        xhr.onerror = function() {
+                          reject(new Error('网络请求失败'));
+                        };
+                        
+                        xhr.send(formData);
+                      });
+                    } else {
+                      // 新增模式，使用fetch
+                      response = await fetch(`${endpoint}?t=${timestamp}`, {
+                        method,
+                        body: formData
+                      });
+                      
+                      if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error("服务器返回错误:", response.status, errorText);
+                        throw new Error(`操作失败: ${response.status} ${response.statusText}`);
+                      }
+                    }
+                    
+                    // 处理响应
                     const responseData = await response.json().catch(() => ({}));
                     console.log("服务器响应成功:", responseData);
                     
