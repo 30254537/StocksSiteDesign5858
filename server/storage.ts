@@ -930,33 +930,56 @@ export class DatabaseStorage implements IStorage {
   }
   
   async updateCommunityActivity(id: number, activity: Partial<CommunityActivity>): Promise<CommunityActivity | undefined> {
-    // 手动处理日期字段，确保是 Date 对象
-    const processedActivity = { ...activity };
+    console.log(`=============== 开始数据库更新操作 ID: ${id} ===============`);
+    console.log("接收到的更新数据:", JSON.stringify(activity, null, 2));
     
-    // 处理 startDate (如果存在)
-    if (processedActivity.startDate) {
-      if (typeof processedActivity.startDate === 'string') {
-        processedActivity.startDate = new Date(processedActivity.startDate);
+    try {
+      // 手动处理日期字段，确保是 Date 对象
+      const processedActivity = { ...activity };
+      
+      // 确保删除ID字段，避免冲突
+      if ('id' in processedActivity) {
+        console.log(`发现需要移除的id字段，值为 ${processedActivity.id}`);
+        delete processedActivity.id;
       }
-    }
-    
-    // 处理 endDate (如果存在)
-    if (processedActivity.endDate) {
-      if (typeof processedActivity.endDate === 'string') {
-        processedActivity.endDate = new Date(processedActivity.endDate);
+      
+      // 处理 startDate (如果存在)
+      if (processedActivity.startDate) {
+        if (typeof processedActivity.startDate === 'string') {
+          processedActivity.startDate = new Date(processedActivity.startDate);
+          console.log(`转换startDate字符串为日期对象: ${processedActivity.startDate}`);
+        }
       }
+      
+      // 处理 endDate (如果存在)
+      if (processedActivity.endDate) {
+        if (typeof processedActivity.endDate === 'string') {
+          processedActivity.endDate = new Date(processedActivity.endDate);
+          console.log(`转换endDate字符串为日期对象: ${processedActivity.endDate}`);
+        }
+      }
+      
+      console.log(`处理后的更新数据:`, JSON.stringify(processedActivity, null, 2));
+      console.log(`即将更新ID为 ${id} 的记录`);
+      
+      // 执行更新
+      const [updatedActivity] = await db.update(communityActivities)
+        .set({
+          ...processedActivity,
+          updatedAt: new Date()
+        })
+        .where(eq(communityActivities.id, id))
+        .returning();
+      
+      console.log(`更新成功，返回数据:`, updatedActivity ? JSON.stringify(updatedActivity, null, 2) : "无返回数据");
+      console.log(`=============== 数据库更新操作完成 ===============`);
+      
+      return updatedActivity;
+    } catch (error) {
+      console.error("数据库更新操作失败:", error);
+      console.log(`=============== 数据库更新操作失败 ===============`);
+      throw error;
     }
-    
-    // 执行更新
-    const [updatedActivity] = await db.update(communityActivities)
-      .set({
-        ...processedActivity,
-        updatedAt: new Date()
-      })
-      .where(eq(communityActivities.id, id))
-      .returning();
-    
-    return updatedActivity;
   }
   
   async deleteCommunityActivity(id: number): Promise<boolean> {
