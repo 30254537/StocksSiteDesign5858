@@ -2597,7 +2597,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // 使用直接响应避开Vite中间件
-  app.post('/api/direct-upload', directUploader.single('musicFile'), (req, res) => {
+  app.post('/api/direct-upload', directUploader.single('musicFile'), async (req, res) => {
     try {
       console.log('=====> 直接上传处理:', req.file ? '文件已接收' : '未接收到文件');
       
@@ -2618,10 +2618,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const filePath = path.join(process.cwd(), 'public', fileUrl);
         if (fs.existsSync(filePath)) {
           console.log('=====> 直接上传：文件保存成功，路径:', filePath);
+          
+          // 尝试获取音频时长
+          try {
+            duration = await getAudioDurationInSeconds(filePath);
+            console.log('=====> 直接上传：获取到音频时长:', duration);
+          } catch (durationError) {
+            console.warn('=====> 直接上传：无法获取音频时长:', durationError);
+          }
         }
       } catch (err) {
         console.error('=====> 直接上传：检查文件失败:', err);
       }
+      
+      // 获取表单中的标题和艺术家信息
+      const title = req.body.title || req.file.originalname.replace(/\.[^/.]+$/, "");
+      const artist = req.body.artist || "Unknown Artist";
+      const style = req.body.style || "General";
       
       // 构建响应数据
       const responseData = {
@@ -2636,6 +2649,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
           duration
         }
       };
+      
+      // 关键修复：将音乐信息保存到数据库
+      try {
+        const musicData = {
+          title,
+          artist,
+          style,
+          url: fileUrl,
+          filename: req.file.filename,
+          originalname: req.file.originalname,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
+          duration
+        };
+        
+        console.log('=====> 直接上传：将音乐信息保存到数据库:', musicData);
+        
+        // 保存到数据库
+        const savedMusic = await storage.createMusicTrack(musicData);
+        console.log('=====> 直接上传：音乐已保存到数据库，ID:', savedMusic.id);
+        
+        // 将数据库ID添加到响应中
+        responseData.id = savedMusic.id;
+      } catch (dbError) {
+        console.error('=====> 直接上传：保存音乐到数据库失败:', dbError);
+        // 继续发送响应，前端仍可以使用文件URL
+      }
       
       console.log('=====> 直接上传：发送响应数据');
       
