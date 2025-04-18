@@ -143,7 +143,8 @@ export default function MusicUpload({ onSuccess, className = '' }: MusicUploadPr
           // 尝试解析响应JSON
           const responseData = JSON.parse(xhr.responseText);
           
-          if (xhr.status >= 200 && xhr.status < 300 && responseData.success) {
+          // 修复：服务器响应可能不包含success字段，应该根据状态码和文件URL判断成功
+          if (xhr.status >= 200 && xhr.status < 300 && responseData.file && responseData.file.url) {
             console.log('上传成功，文件URL:', responseData.file.url);
             
             // 在全局对象上存储上传的音乐URL和filename，以便管理页面可以使用
