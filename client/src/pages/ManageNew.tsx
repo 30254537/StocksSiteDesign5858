@@ -1359,7 +1359,8 @@ export default function ManageNew() {
                     endpoint = `/api/community/${activityId}`;
                     
                     // 明确告知服务器这是编辑请求，而非新增
-                    formData.append("_method", "PUT");
+                    // 注意：不再添加_method，让浏览器直接使用PUT方法
+                    // 只添加ID以确保服务器知道我们在更新哪个记录
                     formData.append("activityId", activityId);
                     formData.append("id", activityId);
                     

@@ -423,18 +423,27 @@ export function setupCommunityRoutes(app: Express) {
         }
       }
       
-      // 综合处理图片
+      // 综合处理图片 - 确保现有图片在前，新图片在后
       let finalImageUrls = [...existingImageUrls, ...newImageUrls];
+      console.log("合并后的图片列表:", finalImageUrls);
       
       // 确保至少有一张图片作为主图片
       let mainImageUrl = '';
       if (finalImageUrls.length > 0) {
+        // 默认使用第一张图片作为主图
         mainImageUrl = finalImageUrls[0];
+        
         // 如果有新上传的图片，使用第一张新图片作为主图
         if (newImageUrls.length > 0) {
           mainImageUrl = newImageUrls[0];
         }
+        // 如果没有新上传的图片且原来有主图，则保留原来的主图
+        else if (existingActivity.imageUrl) {
+          mainImageUrl = existingActivity.imageUrl;
+        }
       }
+      
+      console.log("最终选择的主图:", mainImageUrl);
       
       // 完整更新数据
       const finalUpdateData = {
