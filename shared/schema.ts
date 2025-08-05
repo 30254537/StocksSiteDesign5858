@@ -1,17 +1,17 @@
-import { pgTable, text, serial, integer, doublePrecision, timestamp, primaryKey, foreignKey, boolean } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // User model
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
+  updatedAt: text("updated_at").default("CURRENT_TIMESTAMP").notNull(),
   role: text("role").default("user").notNull(),
-  lastLogin: timestamp("last_login"),
+  lastLogin: text("last_login"),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
 });
@@ -29,24 +29,20 @@ export const insertUserSchema = createInsertSchema(users).omit({
 });
 
 // Product model
-export const products = pgTable("products", {
-  id: serial("id").primaryKey(),
+export const products = sqliteTable("products", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  price: doublePrecision("price").notNull(),
-  ethPrice: doublePrecision("eth_price").notNull(),
+  price: real("price").notNull(),
+  ethPrice: real("eth_price").notNull(),
   category: text("category").notNull(),
-  imageUrl: text("image_url").notNull(), // 保留主图兼容旧数据
-  imageUrls: text("image_urls").array(), // 新增多图支持
+  imageUrl: text("image_url").notNull(),
+  imageUrls: text("image_urls"), // JSON string for array
   stock: integer("stock").notNull().default(10),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
+  updatedAt: text("updated_at").default("CURRENT_TIMESTAMP").notNull(),
   featured: integer("featured").default(0),
   hasSizes: integer("has_sizes").default(0),
-  // status: text("status").default("available").notNull(), // 商品状态: available(有货), unavailable(无货), upcoming(待上架)
-  // NOTE: status column is not in the actual database
-  // shoeSizes: text("shoe_sizes").array(), // 鞋类尺码选项，如果是鞋类商品使用
-  // NOTE: shoe_sizes column is not in the actual database
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
@@ -54,17 +50,16 @@ export const insertProductSchema = createInsertSchema(products).omit({
   createdAt: true,
   updatedAt: true,
   featured: true,
-  // status: true, // status column doesn't exist in the actual database
 });
 
 // Cart item model
-export const cartItems = pgTable("cart_items", {
-  id: serial("id").primaryKey(),
-  productId: integer("product_id").notNull().references(() => products.id, { onDelete: 'cascade' }),
+export const cartItems = sqliteTable("cart_items", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  productId: integer("product_id").notNull(),
   sessionId: text("session_id").notNull(),
   quantity: integer("quantity").notNull().default(1),
   size: text("size"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
 });
 
 export const insertCartItemSchema = createInsertSchema(cartItems).omit({
@@ -73,25 +68,23 @@ export const insertCartItemSchema = createInsertSchema(cartItems).omit({
 });
 
 // Order model
-export const orders = pgTable("orders", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
+export const orders = sqliteTable("orders", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id"),
   sessionId: text("session_id").notNull(),
   status: text("status").notNull().default("pending"),
-  total: doublePrecision("total").notNull(),
-  ethTotal: doublePrecision("eth_total").notNull(),
+  total: real("total").notNull(),
+  ethTotal: real("eth_total").notNull(),
   paymentMethod: text("payment_method").notNull(),
-  // 收件人信息字段
   customerName: text("customer_name"),
   customerEmail: text("customer_email"),
   customerPhone: text("customer_phone"),
   shippingAddress: text("shipping_address"),
   trackingNumber: text("tracking_number"),
-  // 支付相关信息
-  transactionHash: text("transaction_hash"), // 交易哈希
+  transactionHash: text("transaction_hash"),
   notes: text("notes"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
+  updatedAt: text("updated_at").default("CURRENT_TIMESTAMP").notNull(),
 });
 
 export const insertOrderSchema = createInsertSchema(orders).omit({
@@ -100,290 +93,114 @@ export const insertOrderSchema = createInsertSchema(orders).omit({
   updatedAt: true,
 });
 
-// Order items model
-export const orderItems = pgTable("order_items", {
-  id: serial("id").primaryKey(),
-  orderId: integer("order_id").notNull().references(() => orders.id, { onDelete: 'cascade' }),
-  productId: integer("product_id").notNull().references(() => products.id),
+// Order item model
+export const orderItems = sqliteTable("order_items", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  orderId: integer("order_id").notNull(),
+  productId: integer("product_id").notNull(),
   quantity: integer("quantity").notNull(),
-  price: doublePrecision("price").notNull(),
-  ethPrice: doublePrecision("eth_price").notNull(),
+  price: real("price").notNull(),
+  ethPrice: real("eth_price").notNull(),
   size: text("size"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
   id: true,
-  createdAt: true,
 });
 
-// 类型定义在下方统一定义
-
-// Newsletter subscribers
-export const subscribers = pgTable("subscribers", {
-  id: serial("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  active: integer("active").default(1).notNull(),
+// Telegram messages for crypto news
+export const telegramMessages = sqliteTable("telegram_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  messageId: integer("message_id").notNull(),
+  channelId: text("channel_id").notNull(),
+  content: text("content").notNull(),
+  timestamp: text("timestamp").notNull(),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
 });
 
-export const insertSubscriberSchema = createInsertSchema(subscribers).omit({
-  id: true,
-  createdAt: true,
-  active: true,
-});
-
-// Type definitions
-export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema> & { passwordHash: string };
-export type Product = typeof products.$inferSelect;
-export type InsertProduct = z.infer<typeof insertProductSchema>;
-export type CartItem = typeof cartItems.$inferSelect;
-export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
-export type Order = typeof orders.$inferSelect;
-export type InsertOrder = z.infer<typeof insertOrderSchema>;
-export type OrderItem = typeof orderItems.$inferSelect;
-export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
-export type Subscriber = typeof subscribers.$inferSelect;
-export type InsertSubscriber = z.infer<typeof insertSubscriberSchema>;
-
-// Extended types with relations
-export type CartItemWithProduct = CartItem & { product: Product };
-export type OrderWithItems = Order & { items: (OrderItem & { product: Product })[] };
-export type OrderItemWithProduct = OrderItem & { product: Product };
-
-// Music Models
-export const musicTracks = pgTable("music_tracks", {
-  id: serial("id").primaryKey(),
+// Crypto news
+export const cryptoNews = sqliteTable("crypto_news", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
-  artist: text("artist").default("Unknown Artist"),
-  style: text("style").default("General"), // 音乐风格字段：如 "Rock", "Electronic", "Classical" 等
-  filename: text("filename").notNull(),
-  url: text("url").notNull(),
-  duration: doublePrecision("duration").notNull().default(0),
-  isPublic: integer("is_public").default(1),
-  createdBy: integer("created_by").references(() => users.id, {
-    onDelete: "set null",
-  }),
-  createdAt: timestamp("created_at").defaultNow(),
+  content: text("content").notNull(),
+  source: text("source").notNull(),
+  url: text("url"),
+  publishedAt: text("published_at").notNull(),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
+  category: text("category").default("general"),
 });
 
-export const insertMusicTrackSchema = createInsertSchema(musicTracks).omit({
-  id: true,
-  createdAt: true,
+// Crypto prices
+export const cryptoPrices = sqliteTable("crypto_prices", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  symbol: text("symbol").notNull(),
+  name: text("name").notNull(),
+  price: real("price").notNull(),
+  change24h: real("change_24h"),
+  marketCap: real("market_cap"),
+  volume24h: real("volume_24h"),
+  updatedAt: text("updated_at").default("CURRENT_TIMESTAMP").notNull(),
 });
 
-export type MusicTrack = typeof musicTracks.$inferSelect;
-export type InsertMusicTrack = z.infer<typeof insertMusicTrackSchema>;
-
-// 联系信息相关表
-export const contactInfo = pgTable("contact_info", {
-  id: serial("id").primaryKey(),
-  key: text("key").notNull(),  // 键名，如 "email", "address"
-  value: text("value").notNull(), // 键值
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
+// Community posts
+export const communityPosts = sqliteTable("community_posts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  authorId: integer("author_id"),
+  authorName: text("author_name").notNull(),
+  category: text("category").default("general"),
+  tags: text("tags"), // JSON string for array
+  likes: integer("likes").default(0),
+  views: integer("views").default(0),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
+  updatedAt: text("updated_at").default("CURRENT_TIMESTAMP").notNull(),
 });
 
-export const insertContactInfoSchema = createInsertSchema(contactInfo).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
+// Community comments
+export const communityComments = sqliteTable("community_comments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  postId: integer("post_id").notNull(),
+  content: text("content").notNull(),
+  authorId: integer("author_id"),
+  authorName: text("author_name").notNull(),
+  parentId: integer("parent_id"),
+  likes: integer("likes").default(0),
+  createdAt: text("created_at").default("CURRENT_TIMESTAMP").notNull(),
 });
 
-export type ContactInfo = typeof contactInfo.$inferSelect;
-export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
-
-// 加密货币合约地址表
-export const contractAddresses = pgTable("contract_addresses", {
-  id: serial("id").primaryKey(),
-  network: text("network").notNull(),  // 网络，如 "TRC20", "ERC20", "BEP20", "SOL"
-  coinType: text("coin_type").notNull(), // 币种类型，如 "USDT", "STONKS"
-  address: text("address").notNull(),  // 合约地址
-  isActive: integer("is_active").default(1).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
-
-export const insertContractAddressSchema = createInsertSchema(contractAddresses).omit({
+export const insertCommunityPostSchema = createInsertSchema(communityPosts).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-  isActive: true
-});
-
-export type ContractAddress = typeof contractAddresses.$inferSelect;
-export type InsertContractAddress = z.infer<typeof insertContractAddressSchema>;
-
-// 加密快讯模型
-export const cryptoNews = pgTable("crypto_news", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  source: text("source").notNull(), // 新闻来源网站
-  sourceUrl: text("source_url").notNull(), // 原始链接
-  imageUrl: text("image_url"), // 可选的新闻图片
-  category: text("category").default("general"), // 分类如：比特币、以太坊、DeFi等
-  isHighlighted: integer("is_highlighted").default(0), // 是否为重点新闻
-  publishedAt: timestamp("published_at").notNull(), // 原始发布时间
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
-
-export const insertCryptoNewsSchema = createInsertSchema(cryptoNews).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-});
-
-export type CryptoNews = typeof cryptoNews.$inferSelect;
-export type InsertCryptoNews = z.infer<typeof insertCryptoNewsSchema>;
-
-// X推文模型
-export const cryptoTweets = pgTable("crypto_tweets", {
-  id: serial("id").primaryKey(),
-  tweetId: text("tweet_id").notNull().unique(), // X平台原始推文ID
-  text: text("text").notNull(), // 推文内容
-  authorName: text("author_name").notNull(), // 作者名称
-  authorUsername: text("author_username").notNull(), // 作者用户名
-  authorProfileImage: text("author_profile_image"), // 作者头像URL
-  likeCount: integer("like_count").default(0), // 点赞数
-  retweetCount: integer("retweet_count").default(0), // 转发数
-  replyCount: integer("reply_count").default(0), // 回复数
-  quoteCount: integer("quote_count").default(0), // 引用数
-  url: text("url").notNull(), // 推文URL
-  createdAt: timestamp("created_at").defaultNow(), // 创建时间
-  source: text("source").default("x"), // 来源，默认为X
-  category: text("category").default("crypto"), // 分类
-  language: text("language").default("en"), // 语言
-  translatedText: text("translated_text"), // 翻译后的内容
-  contractAddress: text("contract_address"), // 提取的合约地址
-});
-
-export const insertCryptoTweetSchema = createInsertSchema(cryptoTweets).omit({
-  id: true,
-  createdAt: true,
-});
-
-export type CryptoTweet = typeof cryptoTweets.$inferSelect;
-export type InsertCryptoTweet = z.infer<typeof insertCryptoTweetSchema>;
-
-// Telegram 消息模型
-export const telegramMessages = pgTable("telegram_messages", {
-  id: serial("id").primaryKey(),
-  messageId: integer("message_id").notNull().unique(), // Telegram 消息ID
-  text: text("text").notNull(), // 消息内容
-  sender: text("sender"), // 发送者名称
-  channelTitle: text("channel_title"), // 频道名称
-  mediaUrl: text("media_url"), // 媒体URL (如图片、视频等)
-  sourceUrl: text("source_url"), // 来源URL，用于阅读全文跳转
-  date: timestamp("date").defaultNow().notNull(), // 消息日期
-  createdAt: timestamp("created_at").defaultNow(), // 创建时间
-  updatedAt: timestamp("updated_at").defaultNow(), // 更新时间
-  isDisplayed: boolean("is_displayed").default(true), // 是否显示
-  channelId: text("channel_id"), // 频道ID
-});
-
-export const insertTelegramMessageSchema = createInsertSchema(telegramMessages).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export type TelegramMessage = typeof telegramMessages.$inferSelect;
-export type InsertTelegramMessage = z.infer<typeof insertTelegramMessageSchema>;
-
-// MoontokListing 推文模型
-export const tweets = pgTable("tweets", {
-  id: serial("id").primaryKey(),
-  tweetId: text("tweet_id").notNull().unique(), // 推文ID
-  text: text("text").notNull(), // 推文内容
-  authorId: text("author_id").notNull(), // 作者ID
-  authorName: text("author_name").notNull(), // 作者名称
-  authorUsername: text("author_username").notNull(), // 作者用户名
-  profileImageUrl: text("profile_image_url"), // 作者头像
-  mediaUrl: text("media_url"), // 媒体URL (图片、视频链接)
-  createdAt: timestamp("created_at").defaultNow().notNull(), // 创建时间
-  isDisplayed: boolean("is_displayed").default(true), // 是否显示
-});
-
-export const insertTweetSchema = createInsertSchema(tweets).omit({
-  id: true,
-  createdAt: true,
-});
-
-export type Tweet = typeof tweets.$inferSelect;
-export type InsertTweet = z.infer<typeof insertTweetSchema>;
-
-// 关于我们内容管理
-export const aboutContent = pgTable("about_content", {
-  id: serial("id").primaryKey(),
-  section: text("section").notNull(), // 区块标识，如"mission", "team", "values"等
-  title: text("title").notNull(), // 区块标题
-  content: text("content").notNull(), // 内容（支持HTML或Markdown）
-  orderIndex: integer("order_index").default(0), // 排序索引
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
-
-export const insertAboutContentSchema = createInsertSchema(aboutContent).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-});
-
-export type AboutContent = typeof aboutContent.$inferSelect;
-export type InsertAboutContent = z.infer<typeof insertAboutContentSchema>;
-
-// 社区活动
-export const communityActivities = pgTable("community_activities", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  imageUrl: text("image_url"), // 可选的活动主图片（兼容性字段）
-  imageUrls: text("image_urls").array(), // 新增：多图片支持
-  startDate: timestamp("start_date"), // 活动开始时间
-  endDate: timestamp("end_date"), // 活动结束时间
-  location: text("location"), // 活动地点或链接
-  isOnline: boolean("is_online").default(true), // 是否为线上活动
-  isActive: boolean("is_active").default(true), // 是否启用
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
-
-export const insertCommunityActivitySchema = createInsertSchema(communityActivities).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-});
-
-export type CommunityActivity = typeof communityActivities.$inferSelect;
-export type InsertCommunityActivity = z.infer<typeof insertCommunityActivitySchema>;
-
-// 金狗监测内容
-export const goldDogMonitor = pgTable("gold_dog_monitor", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(), // 标题
-  content: text("content").notNull(), // 内容（支持HTML或Markdown）
-  imageUrl: text("image_url"), // 可选的相关图片
-  sourceUrl: text("source_url"), // 来源链接
-  publishTime: timestamp("publish_time"), // 发布时间，可以预设未来发布
-  isPublished: boolean("is_published").default(false), // 是否已发布
-  isTop: boolean("is_top").default(false), // 是否置顶
-  views: integer("views").default(0), // 浏览次数
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
-});
-
-export const insertGoldDogMonitorSchema = createInsertSchema(goldDogMonitor).omit({
-  id: true,
+  likes: true,
   views: true,
-  createdAt: true,
-  updatedAt: true
 });
 
-export type GoldDogMonitor = typeof goldDogMonitor.$inferSelect;
-export type InsertGoldDogMonitor = z.infer<typeof insertGoldDogMonitorSchema>;
+export const insertCommunityCommentSchema = createInsertSchema(communityComments).omit({
+  id: true,
+  createdAt: true,
+  likes: true,
+});
 
-// 这里已移除团队成员管理和社区特点管理的代码
-// 相关数据表仍然存在于数据库中，但在应用程序中不再引用
+// Export type definitions
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
+export type CartItem = typeof cartItems.$inferSelect;
+export type NewCartItem = typeof cartItems.$inferInsert;
+export type Order = typeof orders.$inferSelect;
+export type NewOrder = typeof orders.$inferInsert;
+export type OrderItem = typeof orderItems.$inferSelect;
+export type NewOrderItem = typeof orderItems.$inferInsert;
+export type TelegramMessage = typeof telegramMessages.$inferSelect;
+export type NewTelegramMessage = typeof telegramMessages.$inferInsert;
+export type CryptoNews = typeof cryptoNews.$inferSelect;
+export type NewCryptoNews = typeof cryptoNews.$inferInsert;
+export type CryptoPrice = typeof cryptoPrices.$inferSelect;
+export type NewCryptoPrice = typeof cryptoPrices.$inferInsert;
+export type CommunityPost = typeof communityPosts.$inferSelect;
+export type NewCommunityPost = typeof communityPosts.$inferInsert;
+export type CommunityComment = typeof communityComments.$inferSelect;
+export type NewCommunityComment = typeof communityComments.$inferInsert;

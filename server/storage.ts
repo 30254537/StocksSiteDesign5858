@@ -1,28 +1,23 @@
 import { db } from "./db";
 import fetch from 'node-fetch';
 import {
-  User, InsertUser,
-  Product, InsertProduct,
-  CartItem, InsertCartItem,
-  Order, InsertOrder,
-  OrderItem, InsertOrderItem,
-  MusicTrack, InsertMusicTrack,
-  CryptoTweet, InsertCryptoTweet,
-  TelegramMessage, InsertTelegramMessage,
-  CryptoNews, InsertCryptoNews,
-  ContractAddress, InsertContractAddress,
-  AboutContent, InsertAboutContent,
-  CommunityActivity, InsertCommunityActivity,
-  GoldDogMonitor, InsertGoldDogMonitor
-  // TeamMember, InsertTeamMember, CommunityFeature, InsertCommunityFeature models have been removed
+  User, NewUser,
+  Product, NewProduct,
+  CartItem, NewCartItem,
+  Order, NewOrder,
+  OrderItem, NewOrderItem,
+  TelegramMessage, NewTelegramMessage,
+  CryptoNews, NewCryptoNews,
+  CryptoPrice, NewCryptoPrice,
+  CommunityPost, NewCommunityPost,
+  CommunityComment, NewCommunityComment
 } from "@shared/schema";
 import {
   users, products, cartItems, 
-  orders, orderItems, musicTracks, 
-  cryptoTweets, telegramMessages, 
-  cryptoNews, contractAddresses, tweets,
-  contactInfo, aboutContent, communityActivities, goldDogMonitor
-  // teamMembers, communityFeatures have been removed
+  orders, orderItems, 
+  telegramMessages, 
+  cryptoNews, cryptoPrices,
+  communityPosts, communityComments
 } from "@shared/schema";
 import { eq, and, or, like, desc, count, isNull, asc } from "drizzle-orm";
 import * as bcrypt from "bcryptjs";

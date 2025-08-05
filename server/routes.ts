@@ -7,11 +7,8 @@ import {
   insertCartItemSchema, 
   insertOrderSchema, 
   insertOrderItemSchema, 
-  insertMusicTrackSchema, 
-  InsertCryptoTweet, 
-  telegramMessages, 
-  tweets,
-  CartItemWithProduct  // Import the CartItemWithProduct type
+  telegramMessages
+  // Removed imports for non-existent tables: insertMusicTrackSchema, InsertCryptoTweet, tweets, CartItemWithProduct
 } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
@@ -23,21 +20,22 @@ import fs from "fs";
 import session from "express-session";
 import { getAudioDurationInSeconds } from "get-audio-duration";
 import { setupCryptoNewsRoutes } from "./routes/cryptoNewsRoutes";
-import { setupAboutRoutes } from "./routes/aboutRoutes";
-import { setupCommunityRoutes } from "./routes/communityRoutes";
-import { setupGoldDogRoutes } from "./routes/goldDogRoutes";
-import { setupTeamMembersRoutes } from "./routes/teamMembersRoutes";
-import { setupCommunityFeaturesRoutes } from "./routes/communityFeaturesRoutes";
-import { setupCmsRoutes } from "./routes/cmsRoutes";
-import { setupMusicRoutes } from "./routes/musicRoutes";
-import { setupProductCmsRoutes } from "./routes/productCmsRoutes";
+// Temporarily disabled routes that use removed schema tables
+// import { setupAboutRoutes } from "./routes/aboutRoutes";
+// import { setupCommunityRoutes } from "./routes/communityRoutes";
+// import { setupGoldDogRoutes } from "./routes/goldDogRoutes";
+// import { setupTeamMembersRoutes } from "./routes/teamMembersRoutes";
+// import { setupCommunityFeaturesRoutes } from "./routes/communityFeaturesRoutes";
+// import { setupCmsRoutes } from "./routes/cmsRoutes";
+// import { setupMusicRoutes } from "./routes/musicRoutes";
+// import { setupProductCmsRoutes } from "./routes/productCmsRoutes";
 import { syncCryptoNews } from "./services/cryptoNewsService";
 // 注意：financeNewsRoutes 不存在，将在下面注释相关代码
 import { translateAllUntranslatedTweets, initTweetTranslationScheduler, translateTweetText } from "./services/translationService";
 import { syncCryptoTweets } from "./services/xService";
 import * as cron from "node-cron";
 import { telegramService } from "./services/telegramService";
-import * as twitterService from "./services/twitterService";
+// import * as twitterService from "./services/twitterService";
 import * as financeNewsService from "./services/financeNewsService";
 import * as blockBeatsService from "./services/blockBeatsService";
 import * as cryptoTwitterService from "./services/cryptoTwitterService";
@@ -51,11 +49,13 @@ declare module 'express-session' {
   }
 }
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing STRIPE_SECRET_KEY environment variable");
+// Initialize Stripe only if secret key is provided
+let stripe: Stripe | null = null;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+} else {
+  console.warn("STRIPE_SECRET_KEY not provided - payment features will be disabled");
 }
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // 管理员会话变量 (使用全局变量以便其他模块可以访问)
 global.adminLoggedIn = false;
@@ -1173,6 +1173,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert to cents for Stripe
       const amountInCents = Math.round(total * 100);
       
+      // Check if Stripe is available
+      if (!stripe) {
+        return res.status(503).json({ message: "Payment service is not available" });
+      }
+
       // Create payment intent
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents,
@@ -1212,6 +1217,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Payment intent ID is required" });
       }
       
+      // Check if Stripe is available
+      if (!stripe) {
+        return res.status(503).json({ message: "Payment service is not available" });
+      }
+
       // Retrieve the payment intent to get the metadata
       const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
       
@@ -2199,7 +2209,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Twitter 相关 API 端点
   
-  // 获取 MoontokListing 的最新推文
+  // 获取 MoontokListing 的最新推文 - Temporarily disabled
+  /*
   app.get('/api/tweets', async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -2210,8 +2221,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: '获取推文失败' });
     }
   });
+  */
   
-  // 手动同步推文端点 - 获取 MoontokListing 的推文
+  // 手动同步推文端点 - 获取 MoontokListing 的推文 - Temporarily disabled
+  /*
   app.post('/api/sync-tweets', async (req, res) => {
     try {
       console.log('用户触发 Twitter 推文同步...');
@@ -2232,6 +2245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  */
   
   // 切换推文显示状态 (仅管理员)
   app.patch('/api/tweets/:id/toggle-display', requireAdmin, async (req, res) => {
@@ -2464,16 +2478,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 设置定时任务，每5分钟同步一次 MoontokListing 的推文
-  cron.schedule('*/5 * * * *', async () => {
-    console.log('[Cron] 开始同步 MoontokListing 推文...');
-    try {
-      const tweets = await twitterService.fetchAndStoreTweets();
-      console.log(`[Cron] 成功同步 ${tweets.length} 条 MoontokListing 推文`);
-    } catch (error) {
-      console.error('[Cron] 同步 MoontokListing 推文失败:', error);
-    }
-  });
+  // 设置定时任务，每5分钟同步一次 MoontokListing 的推文 - Temporarily disabled
+  // cron.schedule('*/5 * * * *', async () => {
+  //   console.log('[Cron] 开始同步 MoontokListing 推文...');
+  //   try {
+  //     const tweets = await twitterService.fetchAndStoreTweets();
+  //     console.log(`[Cron] 成功同步 ${tweets.length} 条 MoontokListing 推文`);
+  //   } catch (error) {
+  //     console.error('[Cron] 同步 MoontokListing 推文失败:', error);
+  //   }
+  // });
 
   // 在应用启动时立即同步一次所有来源的加密资讯
   (async () => {
@@ -2490,9 +2504,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cryptoTweets = await cryptoTwitterService.storeCryptoKolTweets(5);
       console.log(`初始化: 成功同步 ${cryptoTweets.length} 条加密KOL的X推文`);
       
-      console.log('初始化: 开始获取 MoontokListing 推文...');
-      const tweets = await twitterService.fetchAndStoreTweets();
-      console.log(`初始化: 成功同步 ${tweets.length} 条 MoontokListing 推文`);
+      // console.log('初始化: 开始获取 MoontokListing 推文...');
+      // const tweets = await twitterService.fetchAndStoreTweets();
+      // console.log(`初始化: 成功同步 ${tweets.length} 条 MoontokListing 推文`);
       
       console.log('初始化: 开始获取财经快讯...');
       const newsItems = await financeNewsService.fetchAndStoreFinanceNews(10);
@@ -2534,27 +2548,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 添加加密新闻路由
   setupCryptoNewsRoutes(app);
   
-  // 添加关于我们内容管理路由
-  setupAboutRoutes(app);
+  // Temporarily disabled routes that use removed schema tables
+  // setupAboutRoutes(app);
+  // setupCommunityRoutes(app);
+  // setupGoldDogRoutes(app);
+  // setupCmsRoutes(app);
   
-  // 添加社区活动管理路由
-  setupCommunityRoutes(app);
-  
-  // 添加金狗监测路由
-  setupGoldDogRoutes(app);
-  
-  // 添加CMS内容管理路由
-  setupCmsRoutes(app);
-  
-  // 添加团队成员管理路由
-  setupTeamMembersRoutes(app);
-  
-  // 添加社区特点管理路由
-  setupCommunityFeaturesRoutes(app);
-  setupMusicRoutes(app);
-  
-  // 添加产品CMS管理路由
-  setupProductCmsRoutes(app);
+  // More temporarily disabled routes
+  // setupTeamMembersRoutes(app);
+  // setupCommunityFeaturesRoutes(app);
+  // setupMusicRoutes(app);
+  // setupProductCmsRoutes(app);
   
   // 添加直接上传端点，绕过Vite中间件
   const directUploadStorage = multer.diskStorage({
