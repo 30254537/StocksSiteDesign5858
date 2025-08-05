@@ -1,0 +1,4013 @@
+nohup: ignoring input
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+初始化加密快讯数据...
+STRIPE_SECRET_KEY not provided - payment features will be disabled
+初始化: 开始获取综合加密快讯...
+开始从金色财经API获取快讯...
+数据库中没有加密快讯，添加初始数据
+开始从金色财经API获取快讯...
+8:07:43 AM [express] serving on port 5000
+从金色财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at Unzip.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at Unzip.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.scrapeJinseNews (/workspace/server/services/financeNewsService.ts:37:22)
+    at async TelegramService.getFinanceNews (/workspace/server/services/telegramService.ts:62:25)
+    at async TelegramService.getAllCryptoNews (/workspace/server/services/telegramService.ts:104:27)
+    at async TelegramService.fetchAndStoreMessages (/workspace/server/services/telegramService.ts:367:23)
+    at async <anonymous> (/workspace/server/routes.ts:2496:24) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://www.jinse.cn/',
+      Origin: 'https://www.jinse.cn',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://www.jinse.cn/\r\n' +
+      'Origin: https://www.jinse.cn\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: www.jinse.cn\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 2,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'www.jinse.cn',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'www.jinse.cn',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'www.jinse.cn',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 2284,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 8568,
+        [Symbol(triggerId)]: 8566,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      server: 'nginx/1.20.2',
+      date: 'Tue, 05 Aug 2025 08:07:43 GMT',
+      'content-type': 'application/json',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding',
+      'cache-control': 'no-cache, private',
+      via: 'ens-cache77.l2cn7367[152,151,404-1280,M], ens-cache13.l2cn7367[153,0], kunlun2.cn8001[165,165,404-1280,M], kunlun7.cn8001[169,0]',
+      'ali-swift-global-savetime': '1754381263',
+      'x-cache': 'MISS TCP_MISS dirn:-2:-2',
+      'x-swift-error': 'orig response 4XX error',
+      'x-swift-savetime': 'Tue, 05 Aug 2025 08:07:43 GMT',
+      'x-swift-cachetime': '0',
+      'timing-allow-origin': '*',
+      eagleid: 'dcb5a61b17543812637327697e'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://www.jinse.cn/\r\n' +
+        'Origin: https://www.jinse.cn\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: www.jinse.cn\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'www.jinse.cn',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: { message: '404 Not Found', status_code: 404 }
+  },
+  status: 404
+}
+无法获取金色财经实时快讯，返回空数组
+开始从火星财经API获取快讯...
+从金色财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at Unzip.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at Unzip.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.scrapeJinseNews (/workspace/server/services/financeNewsService.ts:37:22)
+    at async TelegramService.getFinanceNews (/workspace/server/services/telegramService.ts:62:25)
+    at async TelegramService.getAllCryptoNews (/workspace/server/services/telegramService.ts:104:27)
+    at async TelegramService.fetchAndStoreMessages (/workspace/server/services/telegramService.ts:367:23)
+    at async initializeCryptoNewsData (/workspace/server/services/telegramService.ts:507:7) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://www.jinse.cn/',
+      Origin: 'https://www.jinse.cn',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://www.jinse.cn/\r\n' +
+      'Origin: https://www.jinse.cn\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: www.jinse.cn\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 3,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'www.jinse.cn',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'www.jinse.cn',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'www.jinse.cn',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 2303,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 8604,
+        [Symbol(triggerId)]: 8602,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      server: 'nginx/1.20.2',
+      date: 'Tue, 05 Aug 2025 08:07:43 GMT',
+      'content-type': 'application/json',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding, Accept-Encoding',
+      'cache-control': 'no-cache, private',
+      via: 'ens-cache77.l2cn7367[148,147,404-1280,M], ens-cache80.l2cn7367[149,0], kunlun2.cn8001[169,169,404-1280,M], kunlun10.cn8001[171,0]',
+      'ali-swift-global-savetime': '1754381263',
+      'x-cache': 'MISS TCP_MISS dirn:-2:-2',
+      'x-swift-error': 'orig response 4XX error',
+      'x-swift-savetime': 'Tue, 05 Aug 2025 08:07:43 GMT',
+      'x-swift-cachetime': '0',
+      'timing-allow-origin': '*',
+      eagleid: 'dcb5a61e17543812637412970e'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://www.jinse.cn/\r\n' +
+        'Origin: https://www.jinse.cn\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: www.jinse.cn\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'www.jinse.cn',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: { message: '404 Not Found', status_code: 404 }
+  },
+  status: 404
+}
+无法获取金色财经实时快讯，返回空数组
+开始从火星财经API获取快讯...
+从火星财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at BrotliDecompress.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at BrotliDecompress.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.scrapeMarsbitNews (/workspace/server/services/financeNewsService.ts:108:22)
+    at async TelegramService.getFinanceNews (/workspace/server/services/telegramService.ts:63:27)
+    at async TelegramService.getAllCryptoNews (/workspace/server/services/telegramService.ts:104:27)
+    at async TelegramService.fetchAndStoreMessages (/workspace/server/services/telegramService.ts:367:23)
+    at async <anonymous> (/workspace/server/routes.ts:2496:24) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://news.marsbit.co',
+      Origin: 'https://news.marsbit.co',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://news.marsbit.co\r\n' +
+      'Origin: https://news.marsbit.co\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: news.marsbit.co\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 4,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/apiNews/flashList?size=30',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: true,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'news.marsbit.co',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'news.marsbit.co',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'news.marsbit.co',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      autoSelectFamilyAttemptedAddresses: [Array],
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 2584,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 8649,
+        [Symbol(triggerId)]: 8647,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      date: 'Tue, 05 Aug 2025 08:07:44 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding, Accept-Encoding',
+      'x-powered-by': 'Express',
+      'content-language': '30',
+      'cf-cache-status': 'DYNAMIC',
+      'report-to': '{"endpoints":[{"url":"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=BgwhoanSXcROZQ7zspMraDiyI%2BDTItN94wH50HAABCHrVpXvzcRtEDZ2eIWscVE6c5sEaKlwpd%2BBOWVs9%2FofYhglsz1YOQQ9eSj1o8HuwcZNal%2BY%2FZW%2BNksPQWukxhuMRoY%3D"}],"group":"cf-nel","max_age":604800}',
+      nel: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}',
+      server: 'cloudflare',
+      'cf-ray': '96a4cd745ca21320-IAD',
+      'alt-svc': 'h3=":443"; ma=86400',
+      'server-timing': 'cfL4;desc="?proto=TCP&rtt=2488&min_rtt=2192&rtt_var=1034&sent=4&recv=5&lost=0&retrans=0&sent_bytes=2819&recv_bytes=892&delivery_rate=1321167&cwnd=252&unsent_bytes=0&cid=87cdbf53e04b201b&ts=270&x=0"'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://news.marsbit.co\r\n' +
+        'Origin: https://news.marsbit.co\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: news.marsbit.co\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/apiNews/flashList?size=30',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'news.marsbit.co',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!DOCTYPE html>\n' +
+      '<html lang="zh-cmn-Hans">\n' +
+      '    <head>\n' +
+      '        <meta charset="UTF-8">\n' +
+      '        <title>MarsBit-聚焦全球区块链科技前沿动态</title>\n' +
+      '        <meta name="keywords"\n' +
+      '              content="区块链,比特币,Bitcoin,数字货币,王峰十问,以太坊,ETH,EOS,莱特币,瑞波币,挖矿,区块链是什么,区块链技术,区块链开发,比特币行情,比特币价格,比特币价格,监管,金融局,王峰十问">\n' +
+      '        <meta name="description"\n' +
+      '              content="MarsBit系集新闻、资讯、数据等于一体的区块链产业信息服务平台。由资深互联网团队倾力打造，已完成来自IDG等投资机构的多轮融资。致力于为中国及全球用户提供快速、全面、深度的资讯及数据服务，推动区块链产业迅猛发展">\n' +
+      '        <meta name="author" content="">\n' +
+      '        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n' +
+      '        <meta name="renderer" content="webkit|ie-comp|ie-stand"/>\n' +
+      '        <meta name="force-rendering" content="webkit"/>\n' +
+      '        <meta\n' +
+      '            name="viewport"\n' +
+      '            content="\n' +
+      '            width=device-width,\n' +
+      '            initial-scale=1.0,\n' +
+      '            minimum-scale=1.0,\n' +
+      '            maximum-scale=1.0,\n' +
+      '            user-scalable=no"\n' +
+      '        />\n' +
+      "        <link rel='icon' href='/resource/images/favicon.ico' type='image/x-ico'>\n" +
+      '        <script type="a7717b3ad24be709e947fc29-text/javascript" src="/resource/plugin/gather.js"></script>\n' +
+      '\n' +
+      '        <style>\n' +
+      '            body {\n' +
+      '                margin: 0;\n' +
+      '                padding: 0;\n' +
+      '                background-color: #fff;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp {\n' +
+      '                font-size: 12px;\n' +
+      '                color: #2e2e30;\n' +
+      '                text-align: center;\n' +
+      '                position: absolute;\n' +
+      '                top: 50%;\n' +
+      '                left: 50%;\n' +
+      '                width: 262px;\n' +
+      '                height: 312px;\n' +
+      '                margin-left: -131px;\n' +
+      '                margin-top: -156px;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp a {\n' +
+      '                color: #2e2e30;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp p {\n' +
+      '                padding: 10px;\n' +
+      '            }\n' +
+      '        </style>\n' +
+      '    </head>\n' +
+      '    <body>\n' +
+      '        <div class="error-warp">\n' +
+      '            <img src="/resource/images/404.png">\n' +
+      '            <p>你所查看的页面不存在</p>\n' +
+      '            <a href="/">返回首页</a>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <div style="display: none">\n' +
+      '            <h1>Not Found</h1>\n' +
+      '            <h2></h2>\n' +
+      '            <pre></pre>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <!--统计代码-->\n' +
+      '        <!--baidu-->\n' +
+      '        <script type="a7717b3ad24be709e947fc29-text/javascript">\n' +
+      '            var _hmt = _hmt || [];\n' +
+      '            (function () {\n' +
+      '                var hm = document.createElement("script");\n' +
+      '                hm.src = "https://hm.baidu.com/hm.js?d70f8822d1ff168453d5ea7b3e359297";\n' +
+      '                var s = document.getElementsByTagName("script")[0];\n' +
+      '                s.parentNode.insertBefore(hm, s);\n' +
+      '            })();\n' +
+      '        </script>\n' +
+      '        <!--友盟-->\n' +
+      '        <div style="display: none">\n' +
+      '            <script type="a7717b3ad24be709e947fc29-text/javascript" src="https://s22.cnzz.com/z_stat.php?id=1272858809&web_id=1272858809"></script>\n' +
+      '        </div>\n' +
+      '    <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="a7717b3ad24be709e947fc29-|49" defer></script></body>\n' +
+      '</html>\n'
+  },
+  status: 404
+}
+无法获取火星财经实时快讯，返回空数组
+没有找到财经快讯数据，返回空数组
+开始从BlockBeats获取快讯...
+从火星财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at BrotliDecompress.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at BrotliDecompress.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.scrapeMarsbitNews (/workspace/server/services/financeNewsService.ts:108:22)
+    at async TelegramService.getFinanceNews (/workspace/server/services/telegramService.ts:63:27)
+    at async TelegramService.getAllCryptoNews (/workspace/server/services/telegramService.ts:104:27)
+    at async TelegramService.fetchAndStoreMessages (/workspace/server/services/telegramService.ts:367:23)
+    at async initializeCryptoNewsData (/workspace/server/services/telegramService.ts:507:7) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://news.marsbit.co',
+      Origin: 'https://news.marsbit.co',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://news.marsbit.co\r\n' +
+      'Origin: https://news.marsbit.co\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: news.marsbit.co\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 5,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/apiNews/flashList?size=30',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: true,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'news.marsbit.co',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'news.marsbit.co',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'news.marsbit.co',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      autoSelectFamilyAttemptedAddresses: [Array],
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 3305,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 8693,
+        [Symbol(triggerId)]: 8691,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      date: 'Tue, 05 Aug 2025 08:07:45 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding, Accept-Encoding',
+      'x-powered-by': 'Express',
+      'content-language': '30',
+      'cf-cache-status': 'DYNAMIC',
+      'report-to': '{"endpoints":[{"url":"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=3yIyL5d7JGzQrwZIM2bZ5sLBtGZ5BAePjk8EXfOhvjKEZozIPu2j2zVdFTuBjcxUqaB3yWQ8oromuETQ0U16Xndaljkev5ETU2fMJlFAEjtfdezA5HOa4%2F8xThGSvpm09Co%3D"}],"group":"cf-nel","max_age":604800}',
+      nel: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}',
+      server: 'cloudflare',
+      'cf-ray': '96a4cd7458a85980-IAD',
+      'alt-svc': 'h3=":443"; ma=86400',
+      'server-timing': 'cfL4;desc="?proto=TCP&rtt=2318&min_rtt=2050&rtt_var=960&sent=4&recv=5&lost=0&retrans=0&sent_bytes=2820&recv_bytes=892&delivery_rate=1412682&cwnd=32&unsent_bytes=0&cid=bbb34ecbc4b794b6&ts=984&x=0"'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://news.marsbit.co\r\n' +
+        'Origin: https://news.marsbit.co\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: news.marsbit.co\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/apiNews/flashList?size=30',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'news.marsbit.co',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!DOCTYPE html>\n' +
+      '<html lang="zh-cmn-Hans">\n' +
+      '    <head>\n' +
+      '        <meta charset="UTF-8">\n' +
+      '        <title>MarsBit-聚焦全球区块链科技前沿动态</title>\n' +
+      '        <meta name="keywords"\n' +
+      '              content="区块链,比特币,Bitcoin,数字货币,王峰十问,以太坊,ETH,EOS,莱特币,瑞波币,挖矿,区块链是什么,区块链技术,区块链开发,比特币行情,比特币价格,比特币价格,监管,金融局,王峰十问">\n' +
+      '        <meta name="description"\n' +
+      '              content="MarsBit系集新闻、资讯、数据等于一体的区块链产业信息服务平台。由资深互联网团队倾力打造，已完成来自IDG等投资机构的多轮融资。致力于为中国及全球用户提供快速、全面、深度的资讯及数据服务，推动区块链产业迅猛发展">\n' +
+      '        <meta name="author" content="">\n' +
+      '        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n' +
+      '        <meta name="renderer" content="webkit|ie-comp|ie-stand"/>\n' +
+      '        <meta name="force-rendering" content="webkit"/>\n' +
+      '        <meta\n' +
+      '            name="viewport"\n' +
+      '            content="\n' +
+      '            width=device-width,\n' +
+      '            initial-scale=1.0,\n' +
+      '            minimum-scale=1.0,\n' +
+      '            maximum-scale=1.0,\n' +
+      '            user-scalable=no"\n' +
+      '        />\n' +
+      "        <link rel='icon' href='/resource/images/favicon.ico' type='image/x-ico'>\n" +
+      '        <script type="1adfa48466dd12ed239e7351-text/javascript" src="/resource/plugin/gather.js"></script>\n' +
+      '\n' +
+      '        <style>\n' +
+      '            body {\n' +
+      '                margin: 0;\n' +
+      '                padding: 0;\n' +
+      '                background-color: #fff;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp {\n' +
+      '                font-size: 12px;\n' +
+      '                color: #2e2e30;\n' +
+      '                text-align: center;\n' +
+      '                position: absolute;\n' +
+      '                top: 50%;\n' +
+      '                left: 50%;\n' +
+      '                width: 262px;\n' +
+      '                height: 312px;\n' +
+      '                margin-left: -131px;\n' +
+      '                margin-top: -156px;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp a {\n' +
+      '                color: #2e2e30;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp p {\n' +
+      '                padding: 10px;\n' +
+      '            }\n' +
+      '        </style>\n' +
+      '    </head>\n' +
+      '    <body>\n' +
+      '        <div class="error-warp">\n' +
+      '            <img src="/resource/images/404.png">\n' +
+      '            <p>你所查看的页面不存在</p>\n' +
+      '            <a href="/">返回首页</a>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <div style="display: none">\n' +
+      '            <h1>Not Found</h1>\n' +
+      '            <h2></h2>\n' +
+      '            <pre></pre>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <!--统计代码-->\n' +
+      '        <!--baidu-->\n' +
+      '        <script type="1adfa48466dd12ed239e7351-text/javascript">\n' +
+      '            var _hmt = _hmt || [];\n' +
+      '            (function () {\n' +
+      '                var hm = document.createElement("script");\n' +
+      '                hm.src = "https://hm.baidu.com/hm.js?d70f8822d1ff168453d5ea7b3e359297";\n' +
+      '                var s = document.getElementsByTagName("script")[0];\n' +
+      '                s.parentNode.insertBefore(hm, s);\n' +
+      '            })();\n' +
+      '        </script>\n' +
+      '        <!--友盟-->\n' +
+      '        <div style="display: none">\n' +
+      '            <script type="1adfa48466dd12ed239e7351-text/javascript" src="https://s22.cnzz.com/z_stat.php?id=1272858809&web_id=1272858809"></script>\n' +
+      '        </div>\n' +
+      '    <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="1adfa48466dd12ed239e7351-|49" defer></script></body>\n' +
+      '</html>\n'
+  },
+  status: 404
+}
+无法获取火星财经实时快讯，返回空数组
+没有找到财经快讯数据，返回空数组
+开始从BlockBeats获取快讯...
+从BlockBeats获取了 0 条快讯
+开始获取加密货币KOL的X推文...
+未配置X Bearer Token，使用模拟数据
+成功获取 5 条加密货币KOL的X推文
+成功获取 5 条加密KOL的X推文
+总共获取到 5 条来自所有来源的加密资讯
+对 5 条快讯进行去重后，剩余 5 条唯一快讯
+已清空现有快讯记录
+准备存储 5 条来自多个来源的加密资讯
+获取并存储加密快讯失败: TypeError: SQLite3 can only bind numbers, strings, bigints, buffers, and null
+    at PreparedQuery.values (/workspace/node_modules/src/better-sqlite3/session.ts:156:26)
+    at PreparedQuery.all (/workspace/node_modules/src/better-sqlite3/session.ts:124:21)
+    at QueryPromise.all (/workspace/node_modules/src/sqlite-core/query-builders/insert.ts:396:26)
+    at QueryPromise.execute (/workspace/node_modules/src/sqlite-core/query-builders/insert.ts:408:40)
+    at QueryPromise.then (/workspace/node_modules/src/query-promise.ts:31:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+初始化: 成功同步 0 条综合加密快讯
+初始化: 开始获取律动BlockBeats资讯...
+开始从BlockBeats获取快讯...
+从BlockBeats获取了 0 条快讯
+初始化: 成功同步 0 条律动BlockBeats资讯
+初始化: 开始获取加密KOL的X推文...
+开始获取加密货币KOL的X推文...
+未配置X Bearer Token，使用模拟数据
+成功获取 5 条加密货币KOL的X推文
+准备存储 5 条加密KOL的X推文到数据库
+存储加密KOL的X推文失败: SqliteError: near "=": syntax error
+    at Database.prepare (/workspace/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21)
+    at BetterSQLiteSession.prepareQuery (/workspace/node_modules/src/better-sqlite3/session.ts:50:28)
+    at BetterSQLiteSession.prepareOneTimeQuery (/workspace/node_modules/src/sqlite-core/session.ts:135:15)
+    at QueryPromise._prepare (/workspace/node_modules/src/sqlite-core/query-builders/delete.ts:266:78)
+    at QueryPromise.execute (/workspace/node_modules/src/sqlite-core/query-builders/delete.ts:295:15)
+    at QueryPromise.then (/workspace/node_modules/src/query-promise.ts:31:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 'SQLITE_ERROR'
+}
+初始化: 成功同步 0 条加密KOL的X推文
+初始化: 开始获取财经快讯...
+开始从金色财经API获取快讯...
+从BlockBeats获取了 0 条快讯
+开始获取加密货币KOL的X推文...
+未配置X Bearer Token，使用模拟数据
+成功获取 5 条加密货币KOL的X推文
+成功获取 5 条加密KOL的X推文
+总共获取到 5 条来自所有来源的加密资讯
+对 5 条快讯进行去重后，剩余 5 条唯一快讯
+已清空现有快讯记录
+准备存储 5 条来自多个来源的加密资讯
+获取并存储加密快讯失败: TypeError: SQLite3 can only bind numbers, strings, bigints, buffers, and null
+    at PreparedQuery.values (/workspace/node_modules/src/better-sqlite3/session.ts:156:26)
+    at PreparedQuery.all (/workspace/node_modules/src/better-sqlite3/session.ts:124:21)
+    at QueryPromise.all (/workspace/node_modules/src/sqlite-core/query-builders/insert.ts:396:26)
+    at QueryPromise.execute (/workspace/node_modules/src/sqlite-core/query-builders/insert.ts:408:40)
+    at QueryPromise.then (/workspace/node_modules/src/query-promise.ts:31:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+从金色财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at Unzip.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at Unzip.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async scrapeJinseNews (/workspace/server/services/financeNewsService.ts:37:22)
+    at async Module.fetchAndStoreFinanceNews (/workspace/server/services/financeNewsService.ts:182:23)
+    at async <anonymous> (/workspace/server/routes.ts:2512:25) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://www.jinse.cn/',
+      Origin: 'https://www.jinse.cn',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://www.jinse.cn/\r\n' +
+      'Origin: https://www.jinse.cn\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: www.jinse.cn\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype] {},
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 6,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: true,
+    host: 'www.jinse.cn',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'www.jinse.cn',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'www.jinse.cn',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 4877,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 8876,
+        [Symbol(triggerId)]: 8874,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      server: 'nginx/1.20.2',
+      date: 'Tue, 05 Aug 2025 08:07:46 GMT',
+      'content-type': 'application/json',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding, Accept-Encoding',
+      'cache-control': 'no-cache, private',
+      via: 'ens-cache77.l2cn7367[141,140,404-1280,M], ens-cache29.l2cn7367[142,0], kunlun2.cn8001[156,155,404-1280,M], kunlun11.cn8001[158,0]',
+      'ali-swift-global-savetime': '1754381266',
+      'x-cache': 'MISS TCP_MISS dirn:-2:-2',
+      'x-swift-error': 'orig response 4XX error',
+      'x-swift-savetime': 'Tue, 05 Aug 2025 08:07:46 GMT',
+      'x-swift-cachetime': '0',
+      'timing-allow-origin': '*',
+      eagleid: 'dcb5a61f17543812663338557e'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://www.jinse.cn/\r\n' +
+        'Origin: https://www.jinse.cn\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: www.jinse.cn\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: true,
+      host: 'www.jinse.cn',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: { message: '404 Not Found', status_code: 404 }
+  },
+  status: 404
+}
+无法获取金色财经实时快讯，返回空数组
+开始从火星财经API获取快讯...
+从火星财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at BrotliDecompress.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at BrotliDecompress.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async scrapeMarsbitNews (/workspace/server/services/financeNewsService.ts:108:22)
+    at async Module.fetchAndStoreFinanceNews (/workspace/server/services/financeNewsService.ts:183:25)
+    at async <anonymous> (/workspace/server/routes.ts:2512:25) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://news.marsbit.co',
+      Origin: 'https://news.marsbit.co',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://news.marsbit.co\r\n' +
+      'Origin: https://news.marsbit.co\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: news.marsbit.co\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype] {},
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 6,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/apiNews/flashList?size=30',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: true,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: true,
+    host: 'news.marsbit.co',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'news.marsbit.co',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'news.marsbit.co',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      autoSelectFamilyAttemptedAddresses: [Array],
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 5137,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 8911,
+        [Symbol(triggerId)]: 8909,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      date: 'Tue, 05 Aug 2025 08:07:46 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding, Accept-Encoding',
+      'x-powered-by': 'Express',
+      'content-language': '30',
+      'cf-cache-status': 'DYNAMIC',
+      'report-to': '{"endpoints":[{"url":"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=rP7Pft6PGEAa3m20WAFrBUC%2BXX2%2F4V2tzPdJOiB9APUJVqJMt8tFMdbgdbXJPDS%2FSPBV9X6ccJa1HTMWwCuCrwoNtU5gbCwCcRuyCseE4jFj3j86f0oZUIXgZY8Aw7Ih%2FTY%3D"}],"group":"cf-nel","max_age":604800}',
+      nel: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}',
+      server: 'cloudflare',
+      'cf-ray': '96a4cd84586a5980-IAD',
+      'alt-svc': 'h3=":443"; ma=86400',
+      'server-timing': 'cfL4;desc="?proto=TCP&rtt=2314&min_rtt=2050&rtt_var=729&sent=10&recv=8&lost=0&retrans=0&sent_bytes=5733&recv_bytes=1331&delivery_rate=2535901&cwnd=36&unsent_bytes=0&cid=bbb34ecbc4b794b6&ts=2816&x=0"'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://news.marsbit.co\r\n' +
+        'Origin: https://news.marsbit.co\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: news.marsbit.co\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/apiNews/flashList?size=30',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: true,
+      host: 'news.marsbit.co',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!DOCTYPE html>\n' +
+      '<html lang="zh-cmn-Hans">\n' +
+      '    <head>\n' +
+      '        <meta charset="UTF-8">\n' +
+      '        <title>MarsBit-聚焦全球区块链科技前沿动态</title>\n' +
+      '        <meta name="keywords"\n' +
+      '              content="区块链,比特币,Bitcoin,数字货币,王峰十问,以太坊,ETH,EOS,莱特币,瑞波币,挖矿,区块链是什么,区块链技术,区块链开发,比特币行情,比特币价格,比特币价格,监管,金融局,王峰十问">\n' +
+      '        <meta name="description"\n' +
+      '              content="MarsBit系集新闻、资讯、数据等于一体的区块链产业信息服务平台。由资深互联网团队倾力打造，已完成来自IDG等投资机构的多轮融资。致力于为中国及全球用户提供快速、全面、深度的资讯及数据服务，推动区块链产业迅猛发展">\n' +
+      '        <meta name="author" content="">\n' +
+      '        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n' +
+      '        <meta name="renderer" content="webkit|ie-comp|ie-stand"/>\n' +
+      '        <meta name="force-rendering" content="webkit"/>\n' +
+      '        <meta\n' +
+      '            name="viewport"\n' +
+      '            content="\n' +
+      '            width=device-width,\n' +
+      '            initial-scale=1.0,\n' +
+      '            minimum-scale=1.0,\n' +
+      '            maximum-scale=1.0,\n' +
+      '            user-scalable=no"\n' +
+      '        />\n' +
+      "        <link rel='icon' href='/resource/images/favicon.ico' type='image/x-ico'>\n" +
+      '        <script type="47e419dadde6bfc48e0fca62-text/javascript" src="/resource/plugin/gather.js"></script>\n' +
+      '\n' +
+      '        <style>\n' +
+      '            body {\n' +
+      '                margin: 0;\n' +
+      '                padding: 0;\n' +
+      '                background-color: #fff;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp {\n' +
+      '                font-size: 12px;\n' +
+      '                color: #2e2e30;\n' +
+      '                text-align: center;\n' +
+      '                position: absolute;\n' +
+      '                top: 50%;\n' +
+      '                left: 50%;\n' +
+      '                width: 262px;\n' +
+      '                height: 312px;\n' +
+      '                margin-left: -131px;\n' +
+      '                margin-top: -156px;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp a {\n' +
+      '                color: #2e2e30;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp p {\n' +
+      '                padding: 10px;\n' +
+      '            }\n' +
+      '        </style>\n' +
+      '    </head>\n' +
+      '    <body>\n' +
+      '        <div class="error-warp">\n' +
+      '            <img src="/resource/images/404.png">\n' +
+      '            <p>你所查看的页面不存在</p>\n' +
+      '            <a href="/">返回首页</a>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <div style="display: none">\n' +
+      '            <h1>Not Found</h1>\n' +
+      '            <h2></h2>\n' +
+      '            <pre></pre>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <!--统计代码-->\n' +
+      '        <!--baidu-->\n' +
+      '        <script type="47e419dadde6bfc48e0fca62-text/javascript">\n' +
+      '            var _hmt = _hmt || [];\n' +
+      '            (function () {\n' +
+      '                var hm = document.createElement("script");\n' +
+      '                hm.src = "https://hm.baidu.com/hm.js?d70f8822d1ff168453d5ea7b3e359297";\n' +
+      '                var s = document.getElementsByTagName("script")[0];\n' +
+      '                s.parentNode.insertBefore(hm, s);\n' +
+      '            })();\n' +
+      '        </script>\n' +
+      '        <!--友盟-->\n' +
+      '        <div style="display: none">\n' +
+      '            <script type="47e419dadde6bfc48e0fca62-text/javascript" src="https://s22.cnzz.com/z_stat.php?id=1272858809&web_id=1272858809"></script>\n' +
+      '        </div>\n' +
+      '    <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="47e419dadde6bfc48e0fca62-|49" defer></script></body>\n' +
+      '</html>\n'
+  },
+  status: 404
+}
+无法获取火星财经实时快讯，返回空数组
+没有获取到任何财经快讯
+初始化: 成功同步 0 条财经快讯
+首次启动同步加密新闻...
+[Cron] 开始同步加密快讯实时资讯...
+开始从BlockBeats获取快讯...
+从BlockBeats获取了 0 条快讯
+开始从金色财经API获取快讯...
+开始从金色财经API获取快讯...
+从金色财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at Unzip.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at Unzip.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async fetchJinseNews (/workspace/server/services/jinseService.ts:9:22)
+    at async syncCryptoNews (/workspace/server/services/cryptoNewsService.ts:16:23)
+    at async Timeout._onTimeout (/workspace/server/routes/cryptoNewsRoutes.ts:74:7) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 5000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://www.jinse.cn/newsflash',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /newsflash HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: www.jinse.cn\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype] {},
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 6,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/newsflash',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://www.jinse.cn/newsflash',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 14,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: true,
+    host: 'www.jinse.cn',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://www.jinse.cn/newsflash',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'www.jinse.cn',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'www.jinse.cn',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 6887,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 9008,
+        [Symbol(triggerId)]: 9006,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      server: 'nginx/1.20.2',
+      date: 'Tue, 05 Aug 2025 08:07:48 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 5000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://www.jinse.cn/newsflash',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /newsflash HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: www.jinse.cn\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/newsflash',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: true,
+      host: 'www.jinse.cn',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!doctype html>\n' +
+      '<html data-n-head-ssr lang="ch" data-n-head="lang">\n' +
+      '  <head >\n' +
+      '    <title>金色财经_区块链资讯_数字货币行情分析</title><meta data-n-head="ssr" charset="utf-8"><meta data-n-head="ssr" data-hid="keywords" name="keywords" content="金色财经，金色，jinse，coinlive，coinmarket，Jinse Finance，区块链，加密货币，Web3，Crypto，Blockchain，比特币，BTC，以太坊，以太，ETH，币安，BNB，Binance，USDT，泰达，狗狗币，Doge，ZK，L2，Rollup"><meta data-n-head="ssr" data-hid="description" name="description" content="金色财经是集行业新闻、资讯、行情、数据等一站式区块链产业服务平台，我们追求及时、全面、专业、准确的资讯与数据，致力于为区块链创业者以及数字货币投资者提供最好的产品和服务。"><meta data-n-head="ssr" name="author" data-hid="author" content="金色财经"><meta data-n-head="ssr" name="apple-itunes-app" content="app-id=1277571963, app-argument=jinse://jinseapp/index"><meta data-n-head="ssr" name="shenma-site-verification" content="f1fad04adb33a83a2158186e53f36eee_1622775331"><meta data-n-head="ssr" name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover"><link data-n-head="ssr" rel="favicon" href="favicon.ico"><base href="/"><link rel="preload" href="https://staticn.jinse.cn/w/c0c8b0a03e174d39c019.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/80382a9441bd17ce6c06.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/bf57e431f5c0176bbec7.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/47a5ea5547155cde69f3.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/8b0f99c1487c73bdebf4.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/5959bde2b8f6640b2415.css" as="style"><link rel="preload" href="https://staticn.jinse.cn/w/0e4df5880caa2cb01f9d.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/75ddfcdfb103bc049e0b.css" as="style"><link rel="preload" href="https://staticn.jinse.cn/w/619f1a438a9ac952c6ef.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/8bb41aec898a1456d486.css" as="style"><link rel="preload" href="https://staticn.jinse.cn/w/e54ba08f1c0297306cad.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/c72bda31a9c72ba7ebe9.css" as="style"><link rel="preload" href="https://staticn.jinse.cn/w/c64d8e81931891553ae4.js" as="script"><link rel="preload" href="https://staticn.jinse.cn/w/7ed293f82eb491df51d8.js" as="script"><link rel="stylesheet" href="https://staticn.jinse.cn/w/5959bde2b8f6640b2415.css"><link rel="stylesheet" href="https://staticn.jinse.cn/w/75ddfcdfb103bc049e0b.css"><link rel="stylesheet" href="https://staticn.jinse.cn/w/8bb41aec898a1456d486.css"><link rel="stylesheet" href="https://staticn.jinse.cn/w/c72bda31a9c72ba7ebe9.css">\n' +
+      '  </head>\n' +
+      '  <body >\n' +
+      '    <div data-server-rendered="true" id="__nuxt"><!----><div id="__layout"><div class="js-web"><header class="header_height88" data-v-5e50b4a2><div class="js-header js-header_fixd" data-v-5e50b4a2 data-v-5e50b4a2><section class="js-topTip__box" data-v-1fabf4a0 data-v-5e50b4a2><div class="js-topTip" data-v-1fabf4a0><div class="js-topTip_left" data-v-1fabf4a0><span data-v-1fabf4a0>免责声明：金色财经所有资讯仅代表作者个人观点，不构成任何投资理财建议。请确保访问网址为（jinse.cn）</span> <a href="javascript:;" data-v-1fabf4a0>举报</a></div> <div class="js-topTip_right" data-v-1fabf4a0><ul data-v-1fabf4a0></ul></div></div></section> <div class="js-menu-top" data-v-5e50b4a2><div class="js-menu__box height56" data-v-5e50b4a2 data-v-5e50b4a2><a href="/" title="logo" class="js-logoBox" data-v-5e50b4a2><!----> <img src="https://staticn.jinse.cn/w/img/b6900fe.png" alt="logo" class="js-logoBox--logo__small" data-v-5e50b4a2></a> <!----> <div class="js-menu-bottom js-menu-bottom_height56" data-v-5e50b4a2><nav class="js-nav-top" data-v-5e50b4a2><a href="/" target="" class="js-nav-top__item" data-v-5e50b4a2><div data-v-5e50b4a2><!----> <div data-v-5e50b4a2>\n' +
+      '                      首页\n' +
+      '                    </div></div></a><a href="/lives" target="" class="js-nav-top__item" data-v-5e50b4a2><div data-v-5e50b4a2><!----> <div data-v-5e50b4a2>\n' +
+      '                      7*24快讯\n' +
+      '                    </div></div></a><a href="/channel/nft" target="" class="js-nav-top__item" data-v-5e50b4a2><div data-v-5e50b4a2><!----> <div data-v-5e50b4a2>\n' +
+      '                      NFT\n' +
+      '                    </div></div></a><a href="/dissertation" target="" class="js-nav-top__item" data-v-5e50b4a2><div data-v-5e50b4a2><!----> <div data-v-5e50b4a2>\n' +
+      '                      专题\n' +
+      '                    </div></div></a><a href="/columns" target="" class="js-nav-top__item" data-v-5e50b4a2><div data-v-5e50b4a2><!----> <div data-v-5e50b4a2>\n' +
+      '                      专栏\n' +
+      '                    </div></div></a><a href="/activity" target="" class="js-nav-top__item" data-v-5e50b4a2><div data-v-5e50b4a2><!----> <div data-v-5e50b4a2>\n' +
+      '                      活动\n' +
+      '                    </div></div></a></nav></div> <div class="js-header__func" data-v-5e50b4a2 data-v-5e50b4a2><div class="js-func  margin21" data-v-5e50b4a2><div class="js-func-search-box_small" data-v-5e50b4a2><div class="js-func-search-box__con" data-v-5e50b4a2><!----></div> <div class="js-func-search-box__btn" data-v-5e50b4a2><img src="https://staticn.jinse.cn/w/img/76ed31d.png" alt="搜索" data-v-5e50b4a2></div></div></div> <!----> <div class="js-func js-func__app margin21" data-v-5e50b4a2><div class="js-func__item--app_small" data-v-5e50b4a2></div> <div class="js-func__download" data-v-5e50b4a2><div class="qr" data-v-5e50b4a2><img src="https://img.jinse.cn/jinse_1663151055960502683_true.png" alt="金色财经中国版App下载" data-v-5e50b4a2> <span class="js-func__download_des" data-v-5e50b4a2>Android &amp; iPhone</span></div></div></div> <div class="js-func js-func__user js-userBox margin0" data-v-5e50b4a2><!----> <!----></div></div></div></div> <!----></div> <!----> <!----> <div class="js-block" data-v-5e50b4a2></div> <!----></header> <div class="container js-content" data-v-0af038ac><div class="js-noPage" data-v-0af038ac><img src="https://staticn.jinse.cn/w/img/f4471c8.png" alt="404" data-v-0af038ac></div></div> <footer class="js-footer" data-v-970105de><div class="js-container js-partner-spacing" data-v-970105de><div class="con_box" data-v-970105de><div style="display:flex;flex-direction: column;" data-v-970105de><div class="js-footer--item-content  width450" data-v-970105de><h3 class="js-partner-title" data-v-970105de>\n' +
+      '            友情链接\n' +
+      '          </h3> <div class="js-partner link_box" data-v-970105de><a href="https://www.baidu.com" title="baidu" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/5506bbf.png" alt="baidu" class="js-partner__item--logo" data-v-970105de></a><a href="http://news.sogou.com" title="sogou" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/341eb64.png" alt="sogou" class="js-partner__item--logo" data-v-970105de></a><a href="http://www.sina.com.cn" title="sina" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/2106aed.png" alt="sina" class="js-partner__item--logo" data-v-970105de></a><a href="http://www.163.com" title="NetEase" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/d2fa4bf.png" alt="NetEase" class="js-partner__item--logo" data-v-970105de></a><a href="http://blockchain.hexun.com" title="hexun" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/6a8a99f.png" alt="hexun" class="js-partner__item--logo" data-v-970105de></a><a href="http://www.qq.com" title="tencent" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/2c5204e.png" alt="tencent" class="js-partner__item--logo" data-v-970105de></a><a href="http://36kr.com" title="36kr" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/569256e.png" alt="36kr" class="js-partner__item--logo" data-v-970105de></a><a href="http://www.lieyunwang.com" title="lieyun" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/f01e8a5.png" alt="lieyun" class="js-partner__item--logo" data-v-970105de></a><a href="http://www.donews.com" title="donews" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/ad878f0.png" alt="donews" class="js-partner__item--logo" data-v-970105de></a><a href="http://www.iyiou.com" title="yio" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/83fae74.png" alt="yio" class="js-partner__item--logo" data-v-970105de></a><a href="http://www.ifeng.com" title="ifeng" target="__blank" rel="nofollow" class="js-partner__item_img marginRight30" data-v-970105de><img src="https://staticn.jinse.cn/w/img/8e4afa6.png" alt="ifeng" class="js-partner__item--logo" data-v-970105de></a></div></div> <div class="js-footer--item-cooper width40" data-v-970105de><h3 class="js-partner-title" data-v-970105de>\n' +
+      '            RSS\n' +
+      '          </h3> <div class="js-fotter--con" data-v-970105de><a href="https://www.coinmeta.info/" target="__blank" class="js-partner__item" data-v-970105de><div class="item_con width40" data-v-970105de>\n' +
+      '                快讯\n' +
+      '              </div></a><a href="https://www.coinmeta.info/" target="__blank" class="js-partner__item" data-v-970105de><div class="item_con width40" data-v-970105de>\n' +
+      '                文章\n' +
+      '              </div></a></div></div></div> <div type="flex" direction="column" justify="space-between" data-v-970105de><div data-v-970105de><h3 class="js-partner-title fontSize14" data-v-970105de>金色财经APP下载</h3> <div class="js-appDownload" data-v-970105de><img alt="iOS &amp; Android" src="https://img.jinse.cn/jinse_1663151055960502683_true.png" class="js-'... 8580 more characters
+  },
+  status: 404
+}
+开始从火星财经API获取快讯...
+开始从火星财经获取快讯...
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+从火星财经获取快讯失败: AxiosError: timeout of 5000ms exceeded
+    at RedirectableRequest.handleRequestTimeout (file:///workspace/node_modules/axios/lib/adapters/http.js:657:16)
+    at RedirectableRequest.emit (node:events:518:28)
+    at Timeout.<anonymous> (/workspace/node_modules/follow-redirects/index.js:221:12)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at async fetchHuoxingNews (/workspace/server/services/huoxingService.ts:9:22)
+    at async syncCryptoNews (/workspace/server/services/cryptoNewsService.ts:18:25)
+    at async Timeout._onTimeout (/workspace/server/routes/cryptoNewsRoutes.ts:74:7) {
+  code: 'ECONNABORTED',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 5000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://www.huoxing24.com/news',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> Writable {
+    _events: {
+      close: undefined,
+      error: [Function: handleRequestError],
+      prefinish: undefined,
+      finish: undefined,
+      drain: undefined,
+      response: [Function: handleResponse],
+      socket: [Array],
+      timeout: undefined,
+      abort: undefined
+    },
+    _writableState: WritableState {
+      highWaterMark: 65536,
+      length: 0,
+      corked: 0,
+      onwrite: [Function: bound onwrite],
+      writelen: 0,
+      bufferedIndex: 0,
+      pendingcb: 0,
+      [Symbol(kState)]: 17580812,
+      [Symbol(kBufferedValue)]: null
+    },
+    _maxListeners: undefined,
+    _options: {
+      maxRedirects: 21,
+      maxBodyLength: Infinity,
+      protocol: 'https:',
+      path: '/news',
+      method: 'GET',
+      headers: [Object: null prototype],
+      agents: [Object],
+      auth: undefined,
+      family: undefined,
+      beforeRedirect: [Function: dispatchBeforeRedirect],
+      beforeRedirects: [Object],
+      hostname: 'www.huoxing24.com',
+      port: '',
+      agent: undefined,
+      nativeProtocols: [Object],
+      pathname: '/news'
+    },
+    _ended: true,
+    _ending: true,
+    _redirectCount: 0,
+    _redirects: [],
+    _requestBodyLength: 0,
+    _requestBodyBuffers: [],
+    _eventsCount: 3,
+    _onNativeResponse: [Function (anonymous)],
+    _currentRequest: ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: false,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: false,
+      _header: 'GET /news HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: www.huoxing24.com\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/news',
+      _ended: false,
+      res: null,
+      aborted: false,
+      timeoutCb: [Function: emitRequestTimeout],
+      upgradeOrConnect: false,
+      parser: [HTTPParser],
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'www.huoxing24.com',
+      protocol: 'https:',
+      _redirectable: [Circular *1],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    _currentUrl: 'https://www.huoxing24.com/news',
+    _timeout: null,
+    [Symbol(shapeMode)]: true,
+    [Symbol(kCapture)]: false
+  }
+}
+总共获取到 0 条来自所有来源的加密资讯
+没有获取到任何加密快讯，跳过后续处理
+8:07:57 AM [express] GET /api/products 200 in 2ms :: []
+[Cron] 开始同步加密快讯实时资讯...
+开始从金色财经API获取快讯...
+从金色财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at Unzip.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at Unzip.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.scrapeJinseNews (/workspace/server/services/financeNewsService.ts:37:22)
+    at async TelegramService.getFinanceNews (/workspace/server/services/telegramService.ts:62:25)
+    at async TelegramService.getAllCryptoNews (/workspace/server/services/telegramService.ts:104:27)
+    at async TelegramService.fetchAndStoreMessages (/workspace/server/services/telegramService.ts:367:23)
+    at async Task._execution (/workspace/server/routes.ts:2452:24) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://www.jinse.cn/',
+      Origin: 'https://www.jinse.cn',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://www.jinse.cn/\r\n' +
+      'Origin: https://www.jinse.cn\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: www.jinse.cn\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype] {},
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 1,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'www.jinse.cn',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'www.jinse.cn',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'www.jinse.cn',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [TimersList],
+        _idleStart: 19369,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 10316,
+        [Symbol(triggerId)]: 10314,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      server: 'nginx/1.20.2',
+      date: 'Tue, 05 Aug 2025 08:08:00 GMT',
+      'content-type': 'application/json',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding, Accept-Encoding',
+      'cache-control': 'no-cache, private',
+      via: 'ens-cache77.l2cn7367[176,176,404-1280,M], ens-cache63.l2cn7367[177,0], kunlun2.cn8001[190,190,404-1280,M], kunlun9.cn8001[191,0]',
+      'ali-swift-global-savetime': '1754381280',
+      'x-cache': 'MISS TCP_MISS dirn:-2:-2',
+      'x-swift-error': 'orig response 4XX error',
+      'x-swift-savetime': 'Tue, 05 Aug 2025 08:08:00 GMT',
+      'x-swift-cachetime': '0',
+      'timing-allow-origin': '*',
+      eagleid: 'dcb5a61d17543812807878109e'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://www.jinse.cn/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /api/v1/lives/getList?limit=30&reading=false&flag=down HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://www.jinse.cn/\r\n' +
+        'Origin: https://www.jinse.cn\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: www.jinse.cn\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/api/v1/lives/getList?limit=30&reading=false&flag=down',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'www.jinse.cn',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: { message: '404 Not Found', status_code: 404 }
+  },
+  status: 404
+}
+无法获取金色财经实时快讯，返回空数组
+开始从火星财经API获取快讯...
+从火星财经获取快讯失败: AxiosError: Request failed with status code 404
+    at settle (file:///workspace/node_modules/axios/lib/core/settle.js:19:12)
+    at BrotliDecompress.handleStreamEnd (file:///workspace/node_modules/axios/lib/adapters/http.js:599:11)
+    at BrotliDecompress.emit (node:events:530:35)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (file:///workspace/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Module.scrapeMarsbitNews (/workspace/server/services/financeNewsService.ts:108:22)
+    at async TelegramService.getFinanceNews (/workspace/server/services/telegramService.ts:63:27)
+    at async TelegramService.getAllCryptoNews (/workspace/server/services/telegramService.ts:104:27)
+    at async TelegramService.fetchAndStoreMessages (/workspace/server/services/telegramService.ts:367:23)
+    at async Task._execution (/workspace/server/routes.ts:2452:24) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 15000,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function [FormData]], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': undefined,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      Referer: 'https://news.marsbit.co',
+      Origin: 'https://news.marsbit.co',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'get',
+    url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+    allowAbsoluteUrls: true,
+    data: undefined
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: true,
+    _last: true,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: false,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: 0,
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: true,
+    _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+      'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+      'Referer: https://news.marsbit.co\r\n' +
+      'Origin: https://news.marsbit.co\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: news.marsbit.co\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 443,
+      protocol: 'https:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype] {},
+      freeSockets: [Object: null prototype],
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 2,
+      maxCachedSessions: 100,
+      _sessionCache: [Object],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'GET',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/apiNews/flashList?size=30',
+    _ended: true,
+    res: IncomingMessage {
+      _events: [Object],
+      _readableState: [ReadableState],
+      _maxListeners: undefined,
+      socket: null,
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      client: [TLSSocket],
+      _consuming: true,
+      _dumped: false,
+      req: [Circular *1],
+      _eventsCount: 4,
+      responseUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      redirects: [],
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 32,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: null,
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'news.marsbit.co',
+    protocol: 'https:',
+    _redirectable: Writable {
+      _events: [Object],
+      _writableState: [WritableState],
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 0,
+      _requestBodyBuffers: [],
+      _eventsCount: 3,
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      _timeout: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(shapeMode)]: false,
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kChunkedBuffer)]: [],
+    [Symbol(kChunkedLength)]: 0,
+    [Symbol(kSocket)]: TLSSocket {
+      _tlsOptions: [Object],
+      _secureEstablished: true,
+      _securePending: false,
+      _newSessionPending: false,
+      _controlReleased: true,
+      secureConnecting: false,
+      _SNICallback: null,
+      servername: 'news.marsbit.co',
+      alpnProtocol: false,
+      authorized: true,
+      authorizationError: null,
+      encrypted: true,
+      _events: [Object: null prototype],
+      _eventsCount: 9,
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'news.marsbit.co',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _maxListeners: undefined,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: undefined,
+      _server: null,
+      ssl: [TLSWrap],
+      _requestCert: true,
+      _rejectUnauthorized: true,
+      timeout: 5000,
+      parser: null,
+      _httpMessage: null,
+      autoSelectFamilyAttemptedAddresses: [Array],
+      [Symbol(alpncallback)]: null,
+      [Symbol(res)]: [TLSWrap],
+      [Symbol(verified)]: true,
+      [Symbol(pendingSession)]: null,
+      [Symbol(async_id_symbol)]: -1,
+      [Symbol(kHandle)]: [TLSWrap],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: 5000,
+        _idlePrev: [TimersList],
+        _idleNext: [Timeout],
+        _idleStart: 20372,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 10366,
+        [Symbol(triggerId)]: 10364,
+        [Symbol(kAsyncContextFrame)]: undefined
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(shapeMode)]: true,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 1,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(connect-options)]: [Object]
+    },
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'user-agent': [Array],
+      'accept-language': [Array],
+      referer: [Array],
+      origin: [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 65536,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 404,
+    statusText: 'Not Found',
+    headers: Object [AxiosHeaders] {
+      date: 'Tue, 05 Aug 2025 08:08:02 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      'transfer-encoding': 'chunked',
+      connection: 'keep-alive',
+      vary: 'Accept-Encoding, Accept-Encoding',
+      'x-powered-by': 'Express',
+      'content-language': '30',
+      'cf-cache-status': 'DYNAMIC',
+      'report-to': '{"endpoints":[{"url":"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=5hQYzt5oWUu5Nz0x1LEKIgrnOg%2BUnQ6gRiRt6Ceguv8re6aebRaa1QsKL9M36qydnC79%2B0W%2BySmBvrJD0nKQFgAez96YAzD21eZaS3axDSp7EaZzYCknf8ldsM9NAbdVAAs%3D"}],"group":"cf-nel","max_age":604800}',
+      nel: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}',
+      server: 'cloudflare',
+      'cf-ray': '96a4cddefb0e8f2c-IAD',
+      'alt-svc': 'h3=":443"; ma=86400',
+      'server-timing': 'cfL4;desc="?proto=TCP&rtt=2204&min_rtt=2038&rtt_var=883&sent=3&recv=5&lost=0&retrans=0&sent_bytes=219&recv_bytes=1163&delivery_rate=710500&cwnd=31&unsent_bytes=0&cid=04b750f836af36f7&ts=988&x=0"'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 15000,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'get',
+      url: 'https://news.marsbit.co/apiNews/flashList?size=30',
+      allowAbsoluteUrls: true,
+      data: undefined
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: true,
+      _last: true,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: false,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: 0,
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: true,
+      _header: 'GET /apiNews/flashList?size=30 HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n' +
+        'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n' +
+        'Referer: https://news.marsbit.co\r\n' +
+        'Origin: https://news.marsbit.co\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: news.marsbit.co\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'GET',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/apiNews/flashList?size=30',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: null,
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'news.marsbit.co',
+      protocol: 'https:',
+      _redirectable: [Writable],
+      [Symbol(shapeMode)]: false,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kChunkedBuffer)]: [],
+      [Symbol(kChunkedLength)]: 0,
+      [Symbol(kSocket)]: [TLSSocket],
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 65536,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!DOCTYPE html>\n' +
+      '<html lang="zh-cmn-Hans">\n' +
+      '    <head>\n' +
+      '        <meta charset="UTF-8">\n' +
+      '        <title>MarsBit-聚焦全球区块链科技前沿动态</title>\n' +
+      '        <meta name="keywords"\n' +
+      '              content="区块链,比特币,Bitcoin,数字货币,王峰十问,以太坊,ETH,EOS,莱特币,瑞波币,挖矿,区块链是什么,区块链技术,区块链开发,比特币行情,比特币价格,比特币价格,监管,金融局,王峰十问">\n' +
+      '        <meta name="description"\n' +
+      '              content="MarsBit系集新闻、资讯、数据等于一体的区块链产业信息服务平台。由资深互联网团队倾力打造，已完成来自IDG等投资机构的多轮融资。致力于为中国及全球用户提供快速、全面、深度的资讯及数据服务，推动区块链产业迅猛发展">\n' +
+      '        <meta name="author" content="">\n' +
+      '        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n' +
+      '        <meta name="renderer" content="webkit|ie-comp|ie-stand"/>\n' +
+      '        <meta name="force-rendering" content="webkit"/>\n' +
+      '        <meta\n' +
+      '            name="viewport"\n' +
+      '            content="\n' +
+      '            width=device-width,\n' +
+      '            initial-scale=1.0,\n' +
+      '            minimum-scale=1.0,\n' +
+      '            maximum-scale=1.0,\n' +
+      '            user-scalable=no"\n' +
+      '        />\n' +
+      "        <link rel='icon' href='/resource/images/favicon.ico' type='image/x-ico'>\n" +
+      '        <script type="9e8534132346bbeb2a3addc2-text/javascript" src="/resource/plugin/gather.js"></script>\n' +
+      '\n' +
+      '        <style>\n' +
+      '            body {\n' +
+      '                margin: 0;\n' +
+      '                padding: 0;\n' +
+      '                background-color: #fff;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp {\n' +
+      '                font-size: 12px;\n' +
+      '                color: #2e2e30;\n' +
+      '                text-align: center;\n' +
+      '                position: absolute;\n' +
+      '                top: 50%;\n' +
+      '                left: 50%;\n' +
+      '                width: 262px;\n' +
+      '                height: 312px;\n' +
+      '                margin-left: -131px;\n' +
+      '                margin-top: -156px;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp a {\n' +
+      '                color: #2e2e30;\n' +
+      '            }\n' +
+      '\n' +
+      '            .error-warp p {\n' +
+      '                padding: 10px;\n' +
+      '            }\n' +
+      '        </style>\n' +
+      '    </head>\n' +
+      '    <body>\n' +
+      '        <div class="error-warp">\n' +
+      '            <img src="/resource/images/404.png">\n' +
+      '            <p>你所查看的页面不存在</p>\n' +
+      '            <a href="/">返回首页</a>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <div style="display: none">\n' +
+      '            <h1>Not Found</h1>\n' +
+      '            <h2></h2>\n' +
+      '            <pre></pre>\n' +
+      '        </div>\n' +
+      '\n' +
+      '        <!--统计代码-->\n' +
+      '        <!--baidu-->\n' +
+      '        <script type="9e8534132346bbeb2a3addc2-text/javascript">\n' +
+      '            var _hmt = _hmt || [];\n' +
+      '            (function () {\n' +
+      '                var hm = document.createElement("script");\n' +
+      '                hm.src = "https://hm.baidu.com/hm.js?d70f8822d1ff168453d5ea7b3e359297";\n' +
+      '                var s = document.getElementsByTagName("script")[0];\n' +
+      '                s.parentNode.insertBefore(hm, s);\n' +
+      '            })();\n' +
+      '        </script>\n' +
+      '        <!--友盟-->\n' +
+      '        <div style="display: none">\n' +
+      '            <script type="9e8534132346bbeb2a3addc2-text/javascript" src="https://s22.cnzz.com/z_stat.php?id=1272858809&web_id=1272858809"></script>\n' +
+      '        </div>\n' +
+      '    <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="9e8534132346bbeb2a3addc2-|49" defer></script></body>\n' +
+      '</html>\n'
+  },
+  status: 404
+}
+无法获取火星财经实时快讯，返回空数组
+没有找到财经快讯数据，返回空数组
+开始从BlockBeats获取快讯...
+从BlockBeats获取了 0 条快讯
+开始获取加密货币KOL的X推文...
+未配置X Bearer Token，使用模拟数据
+成功获取 5 条加密货币KOL的X推文
+成功获取 5 条加密KOL的X推文
+总共获取到 5 条来自所有来源的加密资讯
+对 5 条快讯进行去重后，剩余 5 条唯一快讯
+已清空现有快讯记录
+准备存储 5 条来自多个来源的加密资讯
+获取并存储加密快讯失败: TypeError: SQLite3 can only bind numbers, strings, bigints, buffers, and null
+    at PreparedQuery.values (/workspace/node_modules/src/better-sqlite3/session.ts:156:26)
+    at PreparedQuery.all (/workspace/node_modules/src/better-sqlite3/session.ts:124:21)
+    at QueryPromise.all (/workspace/node_modules/src/sqlite-core/query-builders/insert.ts:396:26)
+    at QueryPromise.execute (/workspace/node_modules/src/sqlite-core/query-builders/insert.ts:408:40)
+    at QueryPromise.then (/workspace/node_modules/src/query-promise.ts:31:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[Cron] 成功同步 0 条加密快讯实时资讯
